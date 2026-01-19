@@ -17,13 +17,15 @@ import {
     Menu,
     X,
     ChevronLeft,
-    Layers
+    Layers,
+    Tags
 } from 'lucide-react';
 
 const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
     { icon: Layers, label: 'Categories', path: '/categories' },
     { icon: Package, label: 'Products', path: '/products' },
+    { icon: Tags, label: 'Variants', path: '/variants' },
     { icon: Users, label: 'Clients', path: '/clients' },
     { icon: DollarSign, label: 'Sales', path: '/sales' },
     { icon: ShoppingCart, label: 'Orders', path: '/orders' },

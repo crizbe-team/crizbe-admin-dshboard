@@ -150,7 +150,6 @@ export default function ProductsPage() {
         images: [] as string[],
         description: '',
         ingredients: '',
-        variants: [] as SizeVariant[],
     });
 
     // Get all unique categories
@@ -222,7 +221,6 @@ export default function ProductsPage() {
             images: [],
             description: '',
             ingredients: '',
-            variants: [],
         });
         setIsModalOpen(true);
     };
@@ -275,13 +273,12 @@ export default function ProductsPage() {
         setFormData({
             name: product.name,
             category: product.category,
-            price: '', // Base price removed
+            price: product.price.replace('$', ''),
             stock: product.stock.toString(),
             icon: product.icon,
             images: product.images || [],
             description: product.description || '',
             ingredients: product.ingredients || '',
-            variants: product.variants || [],
         });
         setIsModalOpen(true);
     };
@@ -290,10 +287,12 @@ export default function ProductsPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Calculate price from variants if available, otherwise use default
-        let productPrice = '$0.00';
-        if (formData.variants && formData.variants.length > 0 && formData.variants[0].price) {
-            productPrice = `$${parseFloat(formData.variants[0].price).toFixed(2)}`;
+        // Format price
+        let productPrice = formData.price;
+        if (productPrice && !productPrice.startsWith('$')) {
+             productPrice = `$${parseFloat(productPrice).toFixed(2)}`;
+        } else if (!productPrice) {
+            productPrice = '$0.00';
         }
 
         const newProduct: Product = {
@@ -308,7 +307,7 @@ export default function ProductsPage() {
             images: formData.images.length > 0 ? formData.images : undefined,
             description: formData.description || undefined,
             ingredients: formData.ingredients || undefined,
-            variants: formData.variants.length > 0 ? formData.variants : undefined,
+            variants: editingProduct?.variants || undefined,
         };
 
         if (editingProduct) {
@@ -330,7 +329,6 @@ export default function ProductsPage() {
             images: [],
             description: '',
             ingredients: '',
-            variants: [],
         });
     };
 
@@ -368,7 +366,6 @@ export default function ProductsPage() {
             images: [],
             description: '',
             ingredients: '',
-            variants: [],
         });
     };
 

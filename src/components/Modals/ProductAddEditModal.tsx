@@ -1,9 +1,10 @@
 import React from 'react'
-import { X, Trash2, Plus } from 'lucide-react';
+import { X, Trash2 } from 'lucide-react';
 
 export interface SizeVariant {
     size: string;
     price: string;
+    quantity?: string; // Made optional or string to match usage in other files if needed
 }
 
 interface ProductFormData {
@@ -11,12 +12,38 @@ interface ProductFormData {
     category: string;
     icon: string;
     images: string[];
+    // price: string; 
+    // Wait, in original code price was removed from form?
+    // In step 52:
+    // price: string;
+    // stock: string;
+    // ...
+    // But in the logic:
+    // const newProduct: Product = { ... price: productPrice, ... }
+    // where productPrice was calculated from variants.
+    // If I remove variants, I MUST add a base Price field?
+    // User said "add without adding variants".
+    // Usually a product has a price.
+    // In original code (step 11/14), there was no "base price" input in the form?
+    // Line 278: `price: '', // Base price removed` in `handleEditProduct`.
+    // And inputs: `Product Name`, `Category`, `Stock`, `Description`, `Ingredients`.
+    // NO PRICE INPUT!
+    // It relied on variants for price. `productPrice = ... variants[0].price`.
+    // If I remove variants, I NEED A PRICE INPUT.
+    // "product and then we can add the variuant with gmsize,amount, quantity".
+    // If the product itself doesn't have a price (only variants do), then creating a product without variants implies it has NO price?
+    // Or maybe a base price?
+    // I should add a Price field to the main product form if variants are removed.
+    // User didn't explicitly ask for Price field, but "add without variants" implies the product exists.
+    // If I don't add price, price will be 0.
+    // I will ADD a Price field to be safe.
+    
     price: string;
     stock: string;
     description: string;
     ingredients: string;
-    variants: SizeVariant[];
 }
+
 type Product = {
     id: string;
     name: string;
@@ -43,55 +70,7 @@ interface Props {
 }
 
 function ProductAddEditModal({ isModalOpen, editingProduct, handleCloseModal, handleSubmit, formData, setFormData, handleImageFilesChange, handleImageUrlAdd, handleImageRemove }: Props) {
-    const [selectedSize, setSelectedSize] = React.useState('100gm');
-
-    const availableSizes = ['100gm', '200gm', '400gm'];
-
-    // Get sizes that haven't been added yet
-    const addedSizes = formData.variants.map(v => v.size);
-    const remainingSizes = availableSizes.filter(size => !addedSizes.includes(size));
-
-    const handleAddVariant = () => {
-        // Check if this size already exists
-        const existingVariant = formData.variants.find(v => v.size === selectedSize);
-        if (existingVariant) {
-            return; // Don't add duplicate sizes
-        }
-
-        const newVariants = [...formData.variants, { size: selectedSize, price: '' }];
-        setFormData({
-            ...formData,
-            variants: newVariants
-        });
-
-        // Auto-select the first remaining size after adding
-        const newAddedSizes = newVariants.map(v => v.size);
-        const nextAvailableSizes = availableSizes.filter(size => !newAddedSizes.includes(size));
-        if (nextAvailableSizes.length > 0) {
-            setSelectedSize(nextAvailableSizes[0]);
-        }
-    };
-
-    const handleVariantPriceChange = (index: number, price: string) => {
-        const updatedVariants = [...formData.variants];
-        updatedVariants[index].price = price;
-        setFormData({ ...formData, variants: updatedVariants });
-    };
-
-    const handleRemoveVariant = (index: number) => {
-        const removedSize = formData.variants[index].size;
-        const newVariants = formData.variants.filter((_, i) => i !== index);
-        setFormData({
-            ...formData,
-            variants: newVariants
-        });
-
-        // Auto-select the removed size in dropdown if it's available
-        if (availableSizes.includes(removedSize)) {
-            setSelectedSize(removedSize);
-        }
-    };
-
+    
     return (
         <>
             {
@@ -189,19 +168,36 @@ function ProductAddEditModal({ isModalOpen, editingProduct, handleCloseModal, ha
                                         </select>
                                     </div>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                                        Stock
-                                    </label>
-                                    <input
-                                        type="number"
-                                        required
-                                        min="0"
-                                        value={formData.stock}
-                                        onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                                        className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                        placeholder="0"
-                                    />
+                                <div className='grid grid-cols-2 gap-4'>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                                            Price ($)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            required
+                                            min="0"
+                                            step="0.01"
+                                            value={formData.price}
+                                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                                            placeholder="0.00"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                                            Stock
+                                        </label>
+                                        <input
+                                            type="number"
+                                            required
+                                            min="0"
+                                            value={formData.stock}
+                                            onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                                            placeholder="0"
+                                        />
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -226,87 +222,6 @@ function ProductAddEditModal({ isModalOpen, editingProduct, handleCloseModal, ha
                                         placeholder="Enter product ingredients"
                                         rows={4}
                                     />
-                                </div>
-
-                                {/* Size Variants Section */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                                        Size Variants (gm) - Add Multiple Sizes with Prices
-                                    </label>
-                                    <div className="space-y-3">
-                                        {remainingSizes.length > 0 ? (
-                                            <div className="flex space-x-2">
-                                                <select
-                                                    value={selectedSize}
-                                                    onChange={(e) => setSelectedSize(e.target.value)}
-                                                    className="flex-1 bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                                >
-                                                    {remainingSizes.map((size) => (
-                                                        <option key={size} value={size}>
-                                                            {size}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                <button
-                                                    type="button"
-                                                    onClick={handleAddVariant}
-                                                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center space-x-2"
-                                                >
-                                                    <Plus className="w-4 h-4" />
-                                                    <span>Add Variant</span>
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="bg-[#2a2a2a] px-4 py-3 rounded-lg border border-[#3a3a3a] text-sm text-gray-400">
-                                                All size variants (100gm, 200gm, 400gm) have been added.
-                                            </div>
-                                        )}
-
-                                        {formData.variants.length > 0 && (
-                                            <div className="space-y-2">
-                                                <p className="text-xs text-gray-400 mb-2 font-medium">
-                                                    Added Variants ({formData.variants.length}):
-                                                </p>
-                                                {formData.variants.map((variant, index) => (
-                                                    <div key={index} className="flex items-center space-x-2 bg-[#2a2a2a] p-3 rounded-lg border border-[#3a3a3a]">
-                                                        <div className="flex-1 grid grid-cols-2 gap-3">
-                                                            <div>
-                                                                <label className="block text-xs text-gray-400 mb-1">
-                                                                    Size
-                                                                </label>
-                                                                <div className="bg-[#1a1a1a] text-gray-100 px-3 py-2 rounded border border-[#3a3a3a] font-medium">
-                                                                    {variant.size}
-                                                                </div>
-                                                            </div>
-                                                            <div>
-                                                                <label className="block text-xs text-gray-400 mb-1">
-                                                                    Price ($) <span className="text-red-400">*</span>
-                                                                </label>
-                                                                <input
-                                                                    type="number"
-                                                                    required
-                                                                    step="0.01"
-                                                                    min="0"
-                                                                    value={variant.price}
-                                                                    onChange={(e) => handleVariantPriceChange(index, e.target.value)}
-                                                                    className="w-full bg-[#1a1a1a] text-gray-100 px-3 py-2 rounded border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                                                    placeholder="0.00"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleRemoveVariant(index)}
-                                                            className="p-2 bg-red-600 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors shrink-0"
-                                                            title="Remove variant"
-                                                        >
-                                                            <Trash2 className="w-4 h-4 text-red-400" />
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
 
                                 <div className="flex justify-end space-x-3 pt-4">
