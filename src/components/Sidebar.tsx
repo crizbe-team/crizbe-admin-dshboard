@@ -126,6 +126,7 @@ export default function Sidebar() {
                                 </span>
                             </Link>
                         );
+                        
                     })}
                 </nav>
             </aside>
