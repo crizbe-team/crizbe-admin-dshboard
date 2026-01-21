@@ -22,17 +22,17 @@ import {
 } from 'lucide-react';
 
 const menuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-    { icon: Layers, label: 'Categories', path: '/categories' },
-    { icon: Package, label: 'Products', path: '/products' },
-    { icon: Tags, label: 'Variants', path: '/variants' },
-    { icon: Users, label: 'Clients', path: '/clients' },
-    { icon: DollarSign, label: 'Sales', path: '/sales' },
-    { icon: ShoppingCart, label: 'Orders', path: '/orders' },
-    { icon: Settings, label: 'Settings', path: '/settings' },
-    { icon: Mail, label: 'Messages', path: '/messages' },
-    { icon: Bell, label: 'Notifications', path: '/notifications' },
-    { icon: HelpCircle, label: 'Help', path: '/help' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: Layers, label: 'Categories', path: '/dashboard/categories' },
+    { icon: Package, label: 'Products', path: '/dashboard/products' },
+    { icon: Tags, label: 'Variants', path: '/dashboard/variants' },
+    { icon: Users, label: 'Clients', path: '/dashboard/clients' },
+    { icon: DollarSign, label: 'Sales', path: '/dashboard/sales' },
+    { icon: ShoppingCart, label: 'Orders', path: '/dashboard/orders' },
+    { icon: Settings, label: 'Settings', path: '/dashboard/settings' },
+    { icon: Mail, label: 'Messages', path: '/dashboard/messages' },
+    { icon: Bell, label: 'Notifications', path: '/dashboard/notifications' },
+    { icon: HelpCircle, label: 'Help', path: '/dashboard/help' },
 ];
 
 export default function Sidebar() {
