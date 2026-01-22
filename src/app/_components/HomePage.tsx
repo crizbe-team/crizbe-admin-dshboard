@@ -3,9 +3,9 @@ import React from 'react';
 
 export default function HomePage() {
     return (
-        <div className="bg-gradient-to-b from-[#FFFAEF] to-[#E3D1A5]">
+        <div className="bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5] h-screen">
             <Header />
-            <div>
+            <div className="wrapper pt-[210px]">
                 <div>
                     <h2>
                         Feel the Crunch.
