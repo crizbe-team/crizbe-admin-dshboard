@@ -36,7 +36,7 @@ function VariantAddEditModal({
 
     const [customSize, setCustomSize] = useState('');
     const [useCustomSize, setUseCustomSize] = useState(false);
-    
+
     // Default sizes, but user can add custom
     const commonSizes = ['100gm', '200gm', '250gm', '400gm', '500gm', '1kg'];
 
@@ -146,7 +146,7 @@ function VariantAddEditModal({
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Price ($)
+                                Price (₹)
                             </label>
                             <input
                                 type="number"

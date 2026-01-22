@@ -37,7 +37,7 @@ interface ProductFormData {
     // User didn't explicitly ask for Price field, but "add without variants" implies the product exists.
     // If I don't add price, price will be 0.
     // I will ADD a Price field to be safe.
-    
+
     price: string;
     stock: string;
     description: string;
@@ -70,7 +70,7 @@ interface Props {
 }
 
 function ProductAddEditModal({ isModalOpen, editingProduct, handleCloseModal, handleSubmit, formData, setFormData, handleImageFilesChange, handleImageUrlAdd, handleImageRemove }: Props) {
-    
+
     return (
         <>
             {
@@ -171,7 +171,7 @@ function ProductAddEditModal({ isModalOpen, editingProduct, handleCloseModal, ha
                                 <div className='grid grid-cols-2 gap-4'>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-300 mb-2">
-                                            Price ($)
+                                            Price (per kg)
                                         </label>
                                         <input
                                             type="number"
@@ -186,7 +186,7 @@ function ProductAddEditModal({ isModalOpen, editingProduct, handleCloseModal, ha
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-300 mb-2">
-                                            Stock
+                                            Stock (kg)
                                         </label>
                                         <input
                                             type="number"

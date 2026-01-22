@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  DollarSign,
+  IndianRupee,
   Users,
   Package,
   Box
@@ -14,8 +14,8 @@ import ProductPerformanceChart from '@/components/ProductPerformanceChart';
 const stats = [
   {
     title: 'Total Sales',
-    value: '$182,450',
-    icon: DollarSign,
+    value: '₹182,450',
+    icon: IndianRupee,
     color: 'text-blue-400',
   },
   {

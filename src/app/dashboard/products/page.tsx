@@ -4,12 +4,12 @@ import { useState } from 'react';
 import {
     Package,
     Box,
-    DollarSign,
     Layers,
     Search,
     Edit,
     Trash2,
     Plus,
+    IndianRupee,
 } from 'lucide-react';
 import ProductAddEditModal from '@/components/Modals/ProductAddEditModal';
 import DeleteModal from '@/components/Modals/DeleteModal';
@@ -188,7 +188,7 @@ export default function ProductsPage() {
         {
             title: 'Total Sold',
             value: totalSold.toLocaleString(),
-            icon: DollarSign,
+            icon: IndianRupee,
             color: 'text-purple-400',
         },
         {
@@ -290,7 +290,7 @@ export default function ProductsPage() {
         // Format price
         let productPrice = formData.price;
         if (productPrice && !productPrice.startsWith('$')) {
-             productPrice = `$${parseFloat(productPrice).toFixed(2)}`;
+            productPrice = `$${parseFloat(productPrice).toFixed(2)}`;
         } else if (!productPrice) {
             productPrice = '$0.00';
         }
