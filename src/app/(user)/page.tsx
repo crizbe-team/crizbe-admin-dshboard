@@ -1,7 +1,5 @@
-import Cookie from "../_components/Cookie";
+import HomePage from '../_components/HomePage';
 
 export default function Home() {
-  return (
-    <Cookie />
-  );
+    return <HomePage />;
 }
