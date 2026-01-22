@@ -6,8 +6,9 @@
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
-    --font-sans: var(--font-geist-sans);
+    --font-sans: var(--font-inter-tight);
     --font-mono: var(--font-geist-mono);
+    --font-bricolage: var(--font-bricolage);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -45,13 +46,6 @@
     --radius-3xl: calc(var(--radius) + 12px);
     --radius-4xl: calc(var(--radius) + 16px);
 }
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
 
 .wrapper {
     max-width: 1440px;
@@ -302,5 +296,26 @@
     }
     body {
         @apply bg-background text-foreground;
+    }
+}
+@layer utilities {
+    .title-highlight {
+        position: relative;
+        z-index: 1;
+        display: inline-block;
+        padding: 0 32px;
+        color: #f9f1df;
+    }
+
+    .title-highlight::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 85%;
+        background-color: #c2a065;
+        transform: translate(-50%, -50%) rotate(-2deg);
+        z-index: -1;
     }
 }
