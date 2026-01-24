@@ -292,60 +292,99 @@ export default function SmoothScroll() {
                             end: 'top top',
                             scrub: true,
                             invalidateOnRefresh: true,
-                            onToggle: (self) => {
-                                const isPastEnd = self.progress === 1;
+                            onUpdate: (self) => {
+                                const isAtEnd = self.progress >= 0.99;
                                 const oldBottle = document.querySelector('#pista-bottle-target');
                                 const newBottle = document.querySelector('#next-pista-bottle');
-
-                                if (isPastEnd) {
-                                    gsap.set(oldBottle, { opacity: 0, visibility: 'hidden' });
-                                    gsap.set(newBottle, { opacity: 1, visibility: 'visible' });
-                                } else {
-                                    gsap.set(oldBottle, { opacity: 1, visibility: 'visible' });
-                                    gsap.set(newBottle, { opacity: 0, visibility: 'hidden' });
+                                if (oldBottle && newBottle) {
+                                    if (isAtEnd) {
+                                        gsap.set(oldBottle, { opacity: 0, visibility: 'hidden' });
+                                        gsap.set(newBottle, { opacity: 1, visibility: 'visible' });
+                                    } else {
+                                        gsap.set(oldBottle, { opacity: 1, visibility: 'visible' });
+                                        gsap.set(newBottle, { opacity: 0, visibility: 'hidden' });
+                                    }
                                 }
                             },
+                            onEnter: () => {
+                                // Only invalidate on forward enter to capture
+                                // the bottle's position after horizontal scroll
+                                tlTransition.invalidate();
+                            },
+                            // onEnterBack is left empty to PRESERVE the path calculated on entry
                         },
                     });
 
                     if (pistaBottleTarget) {
-                        tlTransition.to('#pista-bottle-target', {
-                            x: () => {
-                                const target = document.querySelector(
-                                    '#next-flavour-bottle-target'
-                                );
-                                const bottle = document.querySelector('#pista-bottle-target');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curX = gsap.getProperty(bottle, 'x');
-                                return (
-                                    tRect.left +
-                                    tRect.width / 2 -
-                                    (bRect.left + bRect.width / 2) +
-                                    curX
-                                );
+                        // 1. Path & Flow (Bidirectional)
+                        tlTransition.to(
+                            '#pista-bottle-target',
+                            {
+                                x: () => {
+                                    const target = document.querySelector(
+                                        '#next-flavour-bottle-target'
+                                    );
+                                    const bottle = document.querySelector('#pista-bottle-target');
+                                    if (!target || !bottle) return 0;
+                                    const tRect = target.getBoundingClientRect();
+                                    const bRect = bottle.getBoundingClientRect();
+                                    const curX = gsap.getProperty(bottle, 'x');
+                                    return (
+                                        tRect.left +
+                                        tRect.width / 2 -
+                                        (bRect.left + bRect.width / 2) +
+                                        curX
+                                    );
+                                },
+                                y: () => {
+                                    const target = document.querySelector(
+                                        '#next-flavour-bottle-target'
+                                    );
+                                    const bottle = document.querySelector('#pista-bottle-target');
+                                    if (!target || !bottle) return 0;
+                                    const tRect = target.getBoundingClientRect();
+                                    const bRect = bottle.getBoundingClientRect();
+                                    const curY = gsap.getProperty(bottle, 'y');
+                                    return (
+                                        tRect.top +
+                                        tRect.height / 2 -
+                                        (bRect.top + bRect.height / 2) +
+                                        curY
+                                    );
+                                },
+                                width: '230px',
+                                ease: 'none',
+                                duration: 1,
                             },
-                            y: () => {
-                                const target = document.querySelector(
-                                    '#next-flavour-bottle-target'
-                                );
-                                const bottle = document.querySelector('#pista-bottle-target');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curY = gsap.getProperty(bottle, 'y');
-                                return (
-                                    tRect.top +
-                                    tRect.height / 2 -
-                                    (bRect.top + bRect.height / 2) +
-                                    curY
-                                );
+                            0
+                        );
+
+                        // 2. River Flow (Non-conflicting property: yPercent)
+                        tlTransition.to(
+                            '#pista-bottle-target',
+                            {
+                                yPercent: 15,
+                                rotate: -12,
+                                duration: 0.5,
+                                yoyo: true,
+                                repeat: 1,
+                                ease: 'sine.inOut',
                             },
-                            rotate: '0deg',
-                            width: '230px',
-                            ease: 'none',
-                        });
+                            0
+                        );
+
+                        // 3. Micro-Oscillations (Non-conflicting: xPercent)
+                        tlTransition.to(
+                            '#pista-bottle-target',
+                            {
+                                xPercent: 5,
+                                duration: 0.2,
+                                repeat: 4,
+                                yoyo: true,
+                                ease: 'sine.inOut',
+                            },
+                            0
+                        );
                     }
 
                     const tl2 = gsap.timeline({
