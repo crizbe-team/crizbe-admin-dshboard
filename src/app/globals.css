@@ -319,4 +319,49 @@ body {
         transform: translate(-50%, -50%) rotate(-2deg);
         z-index: -1;
     }
+
+    /* Ingredient Orbits */
+    .ingredient-orbit-1 {
+        transition-delay: 0.1s;
+        transform: translate(0, 0) rotate(0deg);
+    }
+    .ingredient-orbit-2 {
+        transition-delay: 0.15s;
+        transform: translate(0, 0) rotate(0deg);
+    }
+    .ingredient-orbit-3 {
+        transition-delay: 0.05s;
+        transform: translate(0, 0) rotate(0deg);
+    }
+    .ingredient-orbit-4 {
+        transition-delay: 0.2s;
+        transform: translate(0, 0) rotate(0deg);
+    }
+    .ingredient-orbit-5 {
+        transition-delay: 0.12s;
+        transform: translate(0, 0) rotate(0deg);
+    }
+    .ingredient-orbit-6 {
+        transition-delay: 0.18s;
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    .group:hover .ingredient-orbit-1 {
+        transform: translate(-170px, -150px) rotate(-15deg);
+    }
+    .group:hover .ingredient-orbit-2 {
+        transform: translate(160px, -160px) rotate(20deg);
+    }
+    .group:hover .ingredient-orbit-3 {
+        transform: translate(-190px, 0px) rotate(-10deg);
+    }
+    .group:hover .ingredient-orbit-4 {
+        transform: translate(185px, 40px) rotate(15deg);
+    }
+    .group:hover .ingredient-orbit-5 {
+        transform: translate(-140px, 160px) rotate(5deg);
+    }
+    .group:hover .ingredient-orbit-6 {
+        transform: translate(170px, 150px) rotate(-5deg);
+    }
 }
