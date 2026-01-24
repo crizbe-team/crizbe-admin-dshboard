@@ -77,6 +77,20 @@ export default function SmoothScroll() {
                             duration: 1,
                         });
 
+                        // Subtle entry parallax for title and cards
+                        // This only feels like parallax when first reaching the section
+                        horizontalTl.from(
+                            '.flavours-section h2, .flavours-section button:not(.view-all-btn), .flavours-section .parallax-content',
+                            {
+                                x: 100,
+                                opacity: 0.8,
+                                stagger: 0.05,
+                                ease: 'power2.out',
+                                duration: 0.3,
+                            },
+                            0
+                        );
+
                         horizontalTl.set(
                             '.view-all-btn',
                             {
