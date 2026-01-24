@@ -20,7 +20,7 @@ export default function NextFlavour() {
                     <Image
                         id="next-pista-bottle"
                         src="/images/user/pista-bottle.png"
-                        alt=""
+                        alt="Crizbe Pista Premium Crunch Stick Bottle - Next Flavor Discovery"
                         width={100}
                         height={100}
                         className="w-full h-auto opacity-0"
@@ -30,7 +30,7 @@ export default function NextFlavour() {
                     <div className="flex items-center mb-[50px] next-flavour-card">
                         <Image
                             src="/images/user/line.svg"
-                            alt=""
+                            alt="Decorative separator"
                             width={100}
                             height={100}
                             className="w-[140px]"
@@ -43,7 +43,7 @@ export default function NextFlavour() {
                     <div className="flex items-center mb-[50px] next-flavour-card">
                         <Image
                             src="/images/user/line.svg"
-                            alt=""
+                            alt="Decorative separator"
                             width={100}
                             height={100}
                             className="w-[140px]"
@@ -55,7 +55,7 @@ export default function NextFlavour() {
                     <div className="flex items-center mb-[50px] next-flavour-card">
                         <Image
                             src="/images/user/line.svg"
-                            alt=""
+                            alt="Decorative separator"
                             width={100}
                             height={100}
                             className="w-[140px]"
@@ -67,7 +67,7 @@ export default function NextFlavour() {
                     <div className="flex items-center next-flavour-card">
                         <Image
                             src="/images/user/line.svg"
-                            alt=""
+                            alt="Decorative separator"
                             width={100}
                             height={100}
                             className="w-[140px]"

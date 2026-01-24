@@ -20,8 +20,31 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-    title: 'Admin Dashboard',
-    description: 'Admin Dashboard Overview',
+    title: 'Crizbe | Premium Crunch Sticks - Hazelnut, Pista & Almond',
+    description:
+        'Experience the ultimate luxury with Crizbe crunch sticks. Crafted with real hazelnut, pistachio, and almond, dipped in premium Belgian chocolate.',
+    keywords: [
+        'Crizbe',
+        'crunch sticks',
+        'premium chocolate',
+        'hazelnut chocolate',
+        'pista chocolate',
+        'luxury snacks',
+    ],
+    openGraph: {
+        title: 'Crizbe | Premium Crunch Sticks',
+        description: 'Taste the luxury with Crizbe’s perfectly layered crunch sticks.',
+        type: 'website',
+        url: 'https://crizbe.com',
+        images: [
+            {
+                url: '/images/user/og-image.png',
+                width: 1200,
+                height: 630,
+                alt: 'Crizbe Premium Crunch Sticks',
+            },
+        ],
+    },
 };
 
 export default function RootLayout({

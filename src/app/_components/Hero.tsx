@@ -10,14 +10,14 @@ export default function Hero() {
             <Header />
             <div className="wrapper pt-[210px] pb-[120px] relative z-1">
                 <div className="mb-[100px]">
-                    <h2 className="text-[#4E3325] text-[72px] font-bricolage font-bold mb-[38px]">
+                    <h1 className="text-[#4E3325] text-[72px] font-bricolage font-bold mb-[38px]">
                         Feel the{' '}
                         <span className="title-highlight after:bg-[#c2a065] text-[#f9f1df]">
                             Crunch.
                         </span>
                         <br />
                         Taste the Luxury.
-                    </h2>
+                    </h1>
                     <Button className="bg-linear-to-r from-[#caa45a] via-[#ddb56a] to-[#b08a43] h-[54px] w-[195px] font-medium">
                         Discover the Crunch
                     </Button>
@@ -30,7 +30,7 @@ export default function Hero() {
             </div>
             <Image
                 src="/images/user/almond-bottle.png"
-                alt="Crizbe"
+                alt="Crizbe Almond Premium Crunch Stick Bottle"
                 width={100}
                 height={100}
                 id="almond-bottle"
@@ -38,7 +38,7 @@ export default function Hero() {
             />
             <Image
                 src="/images/user/hazelnut-bottle.png"
-                alt="Crizbe"
+                alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
                 width={100}
                 height={100}
                 id="hazelnut-bottle"
@@ -46,7 +46,7 @@ export default function Hero() {
             />
             <Image
                 src="/images/user/pista-bottle.png"
-                alt="Crizbe"
+                alt="Crizbe Pista Premium Crunch Stick Bottle"
                 width={100}
                 height={100}
                 id="pista-bottle"

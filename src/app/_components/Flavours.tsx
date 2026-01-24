@@ -13,7 +13,7 @@ const ingredientsConfig = [
 
 export default function Flavours() {
     return (
-        <section className="flavours-section bg-[url(/images/user/flavours-bg.png)] bg-contain bg-no-repeat bg-left min-h-screen flex items-center overflow-visible">
+        <section className="flavours-section z-1 bg-[url(/images/user/flavours-bg.png)] bg-contain bg-no-repeat bg-left min-h-screen flex items-center overflow-visible">
             <div className="horizontal-scroll-wrapper flex gap-[100px] items-center px-[5vw] pr-[10vw]">
                 <div className="shrink-0">
                     <h2 className="text-[#4E3325] text-[64px] font-bricolage font-bold mb-[38px]">
@@ -30,14 +30,14 @@ export default function Flavours() {
 
                 <div className="flex gap-[40px] items-center">
                     {/* Almond Card */}
-                    <div className="group bg-[url(/images/user/almond-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end shrink-0 transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.02]">
+                    <article className="group bg-[url(/images/user/almond-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end shrink-0 transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.02]">
                         <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] almond-bottle-target-position z-10 flex items-center justify-center">
                             {/* Ingredient Orbits */}
                             {ingredientsConfig.map((config, i) => (
                                 <Image
                                     key={i}
                                     src={`/images/user/almond-${i + 1}.png`}
-                                    alt=""
+                                    alt="Almond piece for Crizbe Almond Crunch Stick"
                                     width={config.size}
                                     height={config.size}
                                     quality={100}
@@ -53,7 +53,7 @@ export default function Flavours() {
                             <Image
                                 id="almond-bottle-target"
                                 src="/images/user/almond-bottle.png"
-                                alt=""
+                                alt="Crizbe Almond Premium Crunch Stick Bottle"
                                 width={100}
                                 height={100}
                                 className="w-full h-full invisible opacity-0 relative z-10"
@@ -68,17 +68,17 @@ export default function Flavours() {
                                 crunch in every byte.
                             </p>
                         </div>
-                    </div>
+                    </article>
 
                     {/* Hazelnut Card */}
-                    <div className="group bg-[url(/images/user/hazelnut-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end shrink-0 transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.02]">
+                    <article className="group bg-[url(/images/user/hazelnut-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end shrink-0 transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.02]">
                         <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] hazelnut-bottle-target-position z-10 flex items-center justify-center">
                             {/* Ingredient Orbits */}
                             {ingredientsConfig.map((config, i) => (
                                 <Image
                                     key={i}
                                     src={`/images/user/hazelnut-${i + 1}.png`}
-                                    alt=""
+                                    alt="Hazelnut piece for Crizbe Hazelnut Crunch Stick"
                                     width={config.size}
                                     height={config.size}
                                     quality={100}
@@ -94,7 +94,7 @@ export default function Flavours() {
                             <Image
                                 id="hazelnut-bottle-target"
                                 src="/images/user/hazelnut-bottle.png"
-                                alt=""
+                                alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
                                 width={100}
                                 height={100}
                                 className="w-full h-full invisible opacity-0 relative z-10"
@@ -109,17 +109,17 @@ export default function Flavours() {
                                 hazelnut center.
                             </p>
                         </div>
-                    </div>
+                    </article>
 
                     {/* Pista Card */}
-                    <div className="group bg-[url(/images/user/pista-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end shrink-0 transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.02]">
+                    <article className="group bg-[url(/images/user/pista-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end shrink-0 transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.02]">
                         <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] pista-bottle-target-position z-10 flex items-center justify-center">
                             {/* Ingredient Orbits */}
                             {ingredientsConfig.map((config, i) => (
                                 <Image
                                     key={i}
                                     src={`/images/user/pista-${i + 1}.png`}
-                                    alt=""
+                                    alt="Pistachio piece for Crizbe Pista Crunch Stick"
                                     width={config.size}
                                     height={config.size}
                                     quality={100}
@@ -135,7 +135,7 @@ export default function Flavours() {
                             <Image
                                 id="pista-bottle-target"
                                 src="/images/user/pista-bottle.png"
-                                alt=""
+                                alt="Crizbe Pista Premium Crunch Stick Bottle"
                                 width={100}
                                 height={100}
                                 className="w-full h-full invisible opacity-0 relative z-10"
@@ -150,7 +150,7 @@ export default function Flavours() {
                                 pistachio perfection.
                             </p>
                         </div>
-                    </div>
+                    </article>
                 </div>
             </div>
             <div className="absolute bottom-[60px] left-1/2 -translate-x-1/2 z-10">
