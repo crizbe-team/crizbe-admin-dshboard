@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import Header from '@/components/user/Header';
+import { ImageParticles } from '@/components/user/ImageParticles';
 import Image from 'next/image';
 import React from 'react';
 
@@ -27,14 +28,15 @@ export default function Hero() {
                     meets indulgence in every bite.
                 </p>
             </div>
-            {/* <Image
+            <Image
                 src="/images/user/almond-bottle.png"
                 alt="Crizbe"
                 width={100}
                 height={100}
+                id="almond-bottle"
                 className="absolute z-1 w-[230px] bottom-0 -rotate-[28.55deg] left-[45%] top-[60%]"
             />
-            <Image
+            {/* <Image
                 src="/images/user/hazelnut-bottle.png"
                 alt="Crizbe"
                 width={100}
@@ -55,6 +57,32 @@ export default function Hero() {
                 height={100}
                 className="absolute w-full bottom-0"
             /> */}
+            <ImageParticles
+                className="absolute inset-0"
+                images={[
+                    '/images/user/almond-1.png',
+                    '/images/user/pista-1.png',
+                    '/images/user/hazelnut-1.png',
+                    '/images/user/almond-2.png',
+                    '/images/user/pista-2.png',
+                    '/images/user/hazelnut-2.png',
+                    '/images/user/almond-3.png',
+                    '/images/user/pista-3.png',
+                    '/images/user/hazelnut-3.png',
+                    '/images/user/almond-4.png',
+                    '/images/user/pista-4.png',
+                    '/images/user/hazelnut-4.png',
+                    '/images/user/almond-5.png',
+                    '/images/user/pista-5.png',
+                    '/images/user/hazelnut-5.png',
+                    '/images/user/almond-6.png',
+                    '/images/user/pista-6.png',
+                    '/images/user/hazelnut-6.png',
+                ]}
+                quantity={18}
+                size={30}
+                staticity={12}
+            />
         </div>
     );
 }

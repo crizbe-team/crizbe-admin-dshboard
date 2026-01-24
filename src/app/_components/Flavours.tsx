@@ -4,7 +4,7 @@ import React from 'react';
 
 export default function Flavours() {
     return (
-        <section className="py-[50px]">
+        <section className="py-[50px] flavours-section">
             <div className="bg-[url(/images/user/flavours-bg.png)] bg-contain bg-no-repeat bg-left py-[205px]">
                 <div className="wrapper flex justify-between items-center">
                     <div>
@@ -20,13 +20,13 @@ export default function Flavours() {
                         </Button>
                     </div>
                     <div className="bg-[url(/images/user/almond-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end">
-                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%]">
+                        <div className="w-[230px] bg-[#000] absolute right-[70px] top-[50%] translate-y-[-50%] almond-bottle-target-position">
                             <Image
                                 src="/images/user/almond-bottle.png"
                                 alt=""
                                 width={100}
                                 height={100}
-                                className="w-full h-full"
+                                className="w-full h-full invisible"
                             />
                         </div>
                         <h2 className="text-[#5C4114] text-[40px] font-bricolage font-semibold mb-[10px]">

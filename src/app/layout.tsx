@@ -35,13 +35,13 @@ export default function RootLayout({
                 className={`${interTight.variable} ${geistMono.variable} ${bricolage.variable} antialiased`}
             >
                 {children}
-                <Image
+                {/* <Image
                     src="/images/user/crizbe-bg.png"
                     alt="Crizbe"
                     width={100}
                     height={100}
                     className="fixed w-full bottom-0"
-                />
+                /> */}
             </body>
         </html>
     );
