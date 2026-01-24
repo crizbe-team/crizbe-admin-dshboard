@@ -285,6 +285,69 @@ export default function SmoothScroll() {
                         );
                     }
 
+                    const tlTransition = gsap.timeline({
+                        scrollTrigger: {
+                            trigger: '.next-flavour-section',
+                            start: 'top 80%',
+                            end: 'top top',
+                            scrub: true,
+                            invalidateOnRefresh: true,
+                            onToggle: (self) => {
+                                const isPastEnd = self.progress === 1;
+                                const oldBottle = document.querySelector('#pista-bottle-target');
+                                const newBottle = document.querySelector('#next-pista-bottle');
+
+                                if (isPastEnd) {
+                                    gsap.set(oldBottle, { opacity: 0, visibility: 'hidden' });
+                                    gsap.set(newBottle, { opacity: 1, visibility: 'visible' });
+                                } else {
+                                    gsap.set(oldBottle, { opacity: 1, visibility: 'visible' });
+                                    gsap.set(newBottle, { opacity: 0, visibility: 'hidden' });
+                                }
+                            },
+                        },
+                    });
+
+                    if (pistaBottleTarget) {
+                        tlTransition.to('#pista-bottle-target', {
+                            x: () => {
+                                const target = document.querySelector(
+                                    '#next-flavour-bottle-target'
+                                );
+                                const bottle = document.querySelector('#pista-bottle-target');
+                                if (!target || !bottle) return 0;
+                                const tRect = target.getBoundingClientRect();
+                                const bRect = bottle.getBoundingClientRect();
+                                const curX = gsap.getProperty(bottle, 'x');
+                                return (
+                                    tRect.left +
+                                    tRect.width / 2 -
+                                    (bRect.left + bRect.width / 2) +
+                                    curX
+                                );
+                            },
+                            y: () => {
+                                const target = document.querySelector(
+                                    '#next-flavour-bottle-target'
+                                );
+                                const bottle = document.querySelector('#pista-bottle-target');
+                                if (!target || !bottle) return 0;
+                                const tRect = target.getBoundingClientRect();
+                                const bRect = bottle.getBoundingClientRect();
+                                const curY = gsap.getProperty(bottle, 'y');
+                                return (
+                                    tRect.top +
+                                    tRect.height / 2 -
+                                    (bRect.top + bRect.height / 2) +
+                                    curY
+                                );
+                            },
+                            rotate: '0deg',
+                            width: '230px',
+                            ease: 'none',
+                        });
+                    }
+
                     const tl2 = gsap.timeline({
                         scrollTrigger: {
                             trigger: '.next-flavour-section',
@@ -293,106 +356,33 @@ export default function SmoothScroll() {
                             scrub: true,
                             pin: true,
                             invalidateOnRefresh: true,
-                            onEnter: () => {
-                                const oldBottle = document.querySelector('#pista-bottle-target');
-                                const newBottle = document.querySelector('#next-pista-bottle');
-                                if (oldBottle && newBottle) {
-                                    const oldRect = oldBottle.getBoundingClientRect();
-                                    const sectionRect = document
-                                        .querySelector('.next-flavour-section')
-                                        .getBoundingClientRect();
-
-                                    // Hide old, show new
-                                    gsap.set(oldBottle, { opacity: 0, visibility: 'hidden' });
-                                    gsap.set(newBottle, {
-                                        opacity: 1,
-                                        top: oldRect.top - sectionRect.top,
-                                        left: oldRect.left - sectionRect.left,
-                                        width: oldRect.width,
-                                        x: 0,
-                                        y: 0,
-                                        rotate: 0,
-                                    });
-                                }
-                            },
-                            onLeaveBack: () => {
-                                const oldBottle = document.querySelector('#pista-bottle-target');
-                                const newBottle = document.querySelector('#next-pista-bottle');
-                                if (oldBottle && newBottle) {
-                                    gsap.set(oldBottle, { opacity: 1, visibility: 'visible' });
-                                    gsap.set(newBottle, { opacity: 0 });
-                                }
-                            },
                         },
                     });
 
-                    const flavourBottle = document.querySelector('#pista-bottle-target');
-                    const flavourBottleTarget = document.querySelector(
-                        '#next-flavour-bottle-target'
+                    // Sequential Reveal (0 to 1.0 of tl2)
+                    tl2.from(
+                        '.next-flavour-line',
+                        {
+                            x: -100,
+                            opacity: 0,
+                            stagger: 0.1,
+                            ease: 'power2.out',
+                            duration: 0.3,
+                        },
+                        0.1
                     );
-                    if (flavourBottle && flavourBottleTarget) {
-                        // 1. Bottle transition (0 to 0.4)
-                        tl2.to(
-                            '#next-pista-bottle',
-                            {
-                                top: '50%',
-                                left: '50%',
-                                xPercent: -50,
-                                yPercent: -50,
-                                width: '230px',
-                                ease: 'power1.inOut',
-                                duration: 0.4,
-                            },
-                            0
-                        );
 
-                        // Rotation sequence
-                        tl2.to(
-                            '#next-pista-bottle',
-                            {
-                                rotate: 19,
-                                duration: 0.2,
-                                ease: 'sine.inOut',
-                            },
-                            0
-                        );
-                        tl2.to(
-                            '#next-pista-bottle',
-                            {
-                                rotate: 0,
-                                duration: 0.2,
-                                ease: 'sine.inOut',
-                            },
-                            0.2
-                        );
-
-                        // 2. Sequential Reveal (0.4 to 1.0)
-                        // Staggered title lines (0.4 to 0.7)
-                        tl2.from(
-                            '.next-flavour-line',
-                            {
-                                x: -100,
-                                opacity: 0,
-                                stagger: 0.1,
-                                ease: 'power2.out',
-                                duration: 0.3,
-                            },
-                            0.4
-                        );
-
-                        // Staggered feature cards (0.7 to 1.0)
-                        tl2.from(
-                            '.next-flavour-card',
-                            {
-                                x: 100,
-                                opacity: 0,
-                                stagger: 0.1,
-                                ease: 'power2.out',
-                                duration: 0.3,
-                            },
-                            0.7
-                        );
-                    }
+                    tl2.from(
+                        '.next-flavour-card',
+                        {
+                            x: 100,
+                            opacity: 0,
+                            stagger: 0.1,
+                            ease: 'power2.out',
+                            duration: 0.3,
+                        },
+                        0.4
+                    );
                 },
             });
             ScrollTrigger.refresh();
