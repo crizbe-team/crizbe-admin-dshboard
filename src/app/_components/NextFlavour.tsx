@@ -5,26 +5,29 @@ export default function NextFlavour() {
     return (
         <div className="h-screen flex justify-center next-flavour-section">
             <div className="wrapper flex gap-[20px] justify-between items-center">
-                <h2 className="text-[#4E3325] text-[64px] font-bricolage font-bold mb-[38px]">
-                    Find your <br />
-                    next{' '}
-                    <span className="title-highlight after:bg-[#c2a065] text-[#f9f1df]">
-                        favorite
-                    </span>
+                <h2 className="text-[#4E3325] text-[64px] font-bricolage font-bold mb-[38px] next-flavour-title">
+                    <div className="next-flavour-line inline-block">Find your</div> <br />
+                    <div className="next-flavour-line inline-block">
+                        next{' '}
+                        <span className="title-highlight after:bg-[#c2a065] text-[#f9f1df]">
+                            favorite
+                        </span>
+                    </div>
                     <br />
-                    flavor
+                    <div className="next-flavour-line inline-block">flavor</div>
                 </h2>
-                <div className="w-[230px]" id="next-flavour-bottle-target">
+                <div className="w-[230px] relative h-full" id="next-flavour-bottle-target">
                     <Image
+                        id="next-pista-bottle"
                         src="/images/user/pista-bottle.png"
                         alt=""
                         width={100}
                         height={100}
-                        className="w-full h-full invisible opacity-0"
+                        className="w-full h-auto opacity-0 absolute"
                     />
                 </div>
                 <div>
-                    <div className="flex items-center mb-[50px]">
+                    <div className="flex items-center mb-[50px] next-flavour-card">
                         <Image
                             src="/images/user/line.svg"
                             alt=""
@@ -37,7 +40,7 @@ export default function NextFlavour() {
                             cream inside
                         </p>
                     </div>
-                    <div className="flex items-center mb-[50px]">
+                    <div className="flex items-center mb-[50px] next-flavour-card">
                         <Image
                             src="/images/user/line.svg"
                             alt=""
@@ -49,7 +52,7 @@ export default function NextFlavour() {
                             Deliciously crispy exterior <br /> with rich pista filling.
                         </p>
                     </div>
-                    <div className="flex items-center mb-[50px]">
+                    <div className="flex items-center mb-[50px] next-flavour-card">
                         <Image
                             src="/images/user/line.svg"
                             alt=""
@@ -61,7 +64,7 @@ export default function NextFlavour() {
                             Golden crunch shell <br /> encasing velvety caramel.
                         </p>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center next-flavour-card">
                         <Image
                             src="/images/user/line.svg"
                             alt=""

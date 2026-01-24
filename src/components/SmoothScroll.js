@@ -288,15 +288,40 @@ export default function SmoothScroll() {
                     const tl2 = gsap.timeline({
                         scrollTrigger: {
                             trigger: '.next-flavour-section',
-                            start: 'top 80%',
-                            end: 'top top',
+                            start: 'top top',
+                            end: '+=150%',
                             scrub: true,
+                            pin: true,
                             invalidateOnRefresh: true,
                             onEnter: () => {
-                                gsap.set('#pista-bottle-target', { zIndex: 100 });
+                                const oldBottle = document.querySelector('#pista-bottle-target');
+                                const newBottle = document.querySelector('#next-pista-bottle');
+                                if (oldBottle && newBottle) {
+                                    const oldRect = oldBottle.getBoundingClientRect();
+                                    const sectionRect = document
+                                        .querySelector('.next-flavour-section')
+                                        .getBoundingClientRect();
+
+                                    // Hide old, show new
+                                    gsap.set(oldBottle, { opacity: 0, visibility: 'hidden' });
+                                    gsap.set(newBottle, {
+                                        opacity: 1,
+                                        top: oldRect.top - sectionRect.top,
+                                        left: oldRect.left - sectionRect.left,
+                                        width: oldRect.width,
+                                        x: 0,
+                                        y: 0,
+                                        rotate: 0,
+                                    });
+                                }
                             },
                             onLeaveBack: () => {
-                                gsap.set('#pista-bottle-target', { zIndex: 1 });
+                                const oldBottle = document.querySelector('#pista-bottle-target');
+                                const newBottle = document.querySelector('#next-pista-bottle');
+                                if (oldBottle && newBottle) {
+                                    gsap.set(oldBottle, { opacity: 1, visibility: 'visible' });
+                                    gsap.set(newBottle, { opacity: 0 });
+                                }
                             },
                         },
                     });
@@ -306,64 +331,67 @@ export default function SmoothScroll() {
                         '#next-flavour-bottle-target'
                     );
                     if (flavourBottle && flavourBottleTarget) {
-                        if (flavourBottle && flavourBottleTarget) {
-                            tl2.to('#pista-bottle-target', {
-                                x: () => {
-                                    const target = document.querySelector(
-                                        '#next-flavour-bottle-target'
-                                    );
-                                    const bottle = document.querySelector('#pista-bottle-target');
-                                    if (!target || !bottle) return 0;
-                                    const tRect = target.getBoundingClientRect();
-                                    const bRect = bottle.getBoundingClientRect();
-                                    const curX = gsap.getProperty(bottle, 'x');
-                                    return (
-                                        tRect.left +
-                                        tRect.width / 2 -
-                                        (bRect.left + bRect.width / 2) +
-                                        curX
-                                    );
-                                },
-                                y: () => {
-                                    const target = document.querySelector(
-                                        '#next-flavour-bottle-target'
-                                    );
-                                    const bottle = document.querySelector('#pista-bottle-target');
-                                    if (!target || !bottle) return 0;
-                                    const tRect = target.getBoundingClientRect();
-                                    const bRect = bottle.getBoundingClientRect();
-                                    const curY = gsap.getProperty(bottle, 'y');
-                                    return (
-                                        tRect.top +
-                                        tRect.height / 2 -
-                                        (bRect.top + bRect.height / 2) +
-                                        curY
-                                    );
-                                },
+                        // 1. Bottle transition (0 to 0.4)
+                        tl2.to(
+                            '#next-pista-bottle',
+                            {
+                                top: '50%',
+                                left: '50%',
+                                xPercent: -50,
+                                yPercent: -50,
                                 width: '230px',
-                                ease: 'none',
-                            });
+                                ease: 'power1.inOut',
+                                duration: 0.4,
+                            },
+                            0
+                        );
 
-                            // Add rotation sequence: 0 -> 19 -> 0
-                            tl2.to(
-                                '#pista-bottle-target',
-                                {
-                                    rotate: '19deg',
-                                    ease: 'power1.inOut',
-                                    duration: 0.5,
-                                },
-                                0
-                            );
-                            tl2.to(
-                                '#pista-bottle-target',
-                                {
-                                    rotate: '0deg',
-                                    ease: 'power1.inOut',
-                                    duration: 0.5,
-                                },
-                                0.5
-                            );
-                        }
+                        // Rotation sequence
+                        tl2.to(
+                            '#next-pista-bottle',
+                            {
+                                rotate: 19,
+                                duration: 0.2,
+                                ease: 'sine.inOut',
+                            },
+                            0
+                        );
+                        tl2.to(
+                            '#next-pista-bottle',
+                            {
+                                rotate: 0,
+                                duration: 0.2,
+                                ease: 'sine.inOut',
+                            },
+                            0.2
+                        );
+
+                        // 2. Sequential Reveal (0.4 to 1.0)
+                        // Staggered title lines (0.4 to 0.7)
+                        tl2.from(
+                            '.next-flavour-line',
+                            {
+                                x: -100,
+                                opacity: 0,
+                                stagger: 0.1,
+                                ease: 'power2.out',
+                                duration: 0.3,
+                            },
+                            0.4
+                        );
+
+                        // Staggered feature cards (0.7 to 1.0)
+                        tl2.from(
+                            '.next-flavour-card',
+                            {
+                                x: 100,
+                                opacity: 0,
+                                stagger: 0.1,
+                                ease: 'power2.out',
+                                duration: 0.3,
+                            },
+                            0.7
+                        );
                     }
                 },
             });
