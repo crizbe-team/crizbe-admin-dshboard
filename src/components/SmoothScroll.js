@@ -246,6 +246,60 @@ export default function SmoothScroll() {
                             'cookie'
                         );
                     }
+
+                    const tl2 = gsap.timeline({
+                        scrollTrigger: {
+                            trigger: '.next-flavour-section',
+                            start: 'top 80%',
+                            end: 'top top',
+                            scrub: true,
+                            invalidateOnRefresh: true,
+                        },
+                    });
+
+                    const flavourBottle = document.querySelector('#pista-bottle-target');
+                    const flavourBottleTarget = document.querySelector(
+                        '#next-flavour-bottle-target'
+                    );
+                    if (flavourBottle && flavourBottleTarget) {
+                        tl2.to('#pista-bottle-target', {
+                            x: () => {
+                                const target = document.querySelector(
+                                    '#next-flavour-bottle-target'
+                                );
+                                const bottle = document.querySelector('#pista-bottle-target');
+                                if (!target || !bottle) return 0;
+                                const tRect = target.getBoundingClientRect();
+                                const bRect = bottle.getBoundingClientRect();
+                                const curX = gsap.getProperty(bottle, 'x');
+                                return (
+                                    tRect.left +
+                                    tRect.width / 2 -
+                                    (bRect.left + bRect.width / 2) +
+                                    curX
+                                );
+                            },
+                            y: () => {
+                                const target = document.querySelector(
+                                    '#next-flavour-bottle-target'
+                                );
+                                const bottle = document.querySelector('#pista-bottle-target');
+                                if (!target || !bottle) return 0;
+                                const tRect = target.getBoundingClientRect();
+                                const bRect = bottle.getBoundingClientRect();
+                                const curY = gsap.getProperty(bottle, 'y');
+                                return (
+                                    tRect.top +
+                                    tRect.height / 2 -
+                                    (bRect.top + bRect.height / 2) +
+                                    curY
+                                );
+                            },
+                            rotate: '0deg',
+                            width: '230px',
+                            ease: 'none',
+                        });
+                    }
                 },
             });
             ScrollTrigger.refresh();

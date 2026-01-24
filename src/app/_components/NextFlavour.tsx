@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function NextFlavour() {
     return (
-        <div className="h-screen flex justify-center">
+        <div className="h-screen flex justify-center next-flavour-section">
             <div className="wrapper flex gap-[20px] justify-between items-center">
                 <h2 className="text-[#4E3325] text-[64px] font-bricolage font-bold mb-[38px]">
                     Find your <br />
@@ -14,7 +14,7 @@ export default function NextFlavour() {
                     <br />
                     flavor
                 </h2>
-                <div className="w-[230px] next-flavour-bottle-target">
+                <div className="w-[230px]" id="next-flavour-bottle-target">
                     <Image
                         src="/images/user/pista-bottle.png"
                         alt=""
