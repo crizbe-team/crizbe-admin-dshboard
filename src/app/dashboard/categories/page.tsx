@@ -1,60 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import {
-    Layers,
-    Search,
-    Edit,
-    Trash2,
-    Plus,
-    CheckCircle,
-    XCircle,
-    Package
-} from 'lucide-react';
-import CategoryAddEditModal, { Category, CategoryFormData } from '@/components/Modals/CategoryAddEditModal';
+import { Layers, Search, Edit, Trash2, Plus, CheckCircle, XCircle, Package } from 'lucide-react';
+import CategoryAddEditModal, {
+    Category,
+    CategoryFormData,
+} from '@/components/Modals/CategoryAddEditModal';
 import CategoryDeleteModal from '@/components/Modals/CategoryDeleteModal';
-
-const initialCategories: Category[] = [
-    {
-        id: '1',
-        name: 'Electronics',
-        description: 'Electronic devices and accessories',
-        is_active: true,
-        productCount: 156
-    },
-    {
-        id: '2',
-        name: 'Home & Living',
-        description: 'Furniture, decor, and home essentials',
-        is_active: true,
-        productCount: 89
-    },
-    {
-        id: '3',
-        name: 'Sports',
-        description: 'Sports equipment and activewear',
-        is_active: true,
-        productCount: 45
-    },
-    {
-        id: '4',
-        name: 'Fashion',
-        description: 'Clothing, shoes, and jewelry',
-        is_active: true,
-        productCount: 234
-    },
-    {
-        id: '5',
-        name: 'Books',
-        description: 'Fiction, non-fiction, and educational books',
-        is_active: false,
-        productCount: 12
-    }
-];
+import { useFetchCategories } from '@/queries/use-categories';
+import Loader from '@/components/ui/loader';
 
 export default function CategoriesPage() {
-    const [categories, setCategories] = useState<Category[]>(initialCategories);
     const [searchQuery, setSearchQuery] = useState('');
+    const { data, isLoading } = useFetchCategories({
+        q: searchQuery,
+    });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
@@ -62,42 +22,31 @@ export default function CategoriesPage() {
     const [formData, setFormData] = useState<CategoryFormData>({
         name: '',
         description: '',
-        is_active: true
+        is_active: true,
     });
-
-    // Filter categories based on search query
-    const filteredCategories = categories.filter(category =>
-        category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        category.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    // Calculate statistics
-    const totalCategories = categories.length;
-    const activeCategories = categories.filter(c => c.is_active).length;
-    const totalProducts = categories.reduce((sum, c) => sum + c.productCount, 0);
 
     const stats = [
         {
             title: 'Total Categories',
-            value: totalCategories.toString(),
+            value: data?.base_data?.total_categories ?? 0,
             icon: Layers,
             color: 'text-blue-400',
         },
         {
             title: 'Active Categories',
-            value: activeCategories.toString(),
+            value: data?.base_data?.active ?? 0,
             icon: CheckCircle,
             color: 'text-green-400',
         },
         {
             title: 'Inactive Categories',
-            value: (totalCategories - activeCategories).toString(),
+            value: data?.base_data?.inactive ?? 0,
             icon: XCircle,
             color: 'text-red-400',
         },
         {
             title: 'Total Products',
-            value: totalProducts.toLocaleString(),
+            value: data?.base_data?.total_products ?? 0,
             icon: Package,
             color: 'text-purple-400',
         },
@@ -109,7 +58,7 @@ export default function CategoriesPage() {
         setFormData({
             name: '',
             description: '',
-            is_active: true
+            is_active: true,
         });
         setIsModalOpen(true);
     };
@@ -120,32 +69,9 @@ export default function CategoriesPage() {
         setFormData({
             name: category.name,
             description: category.description,
-            is_active: category.is_active
+            is_active: category.is_active,
         });
         setIsModalOpen(true);
-    };
-
-    // Handle form submission
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const newCategory: Category = {
-            id: editingCategory?.id || Date.now().toString(),
-            name: formData.name,
-            description: formData.description,
-            is_active: formData.is_active,
-            productCount: editingCategory?.productCount || 0
-        };
-
-        if (editingCategory) {
-            // Update existing category
-            setCategories(categories.map(c => c.id === editingCategory.id ? newCategory : c));
-        } else {
-            // Add new category
-            setCategories([...categories, newCategory]);
-        }
-
-        handleCloseModal();
     };
 
     // Handle delete category - open confirmation modal
@@ -157,7 +83,6 @@ export default function CategoriesPage() {
     // Confirm delete category
     const confirmDeleteCategory = () => {
         if (categoryToDelete) {
-            setCategories(categories.filter(c => c.id !== categoryToDelete.id));
             setIsDeleteModalOpen(false);
             setCategoryToDelete(null);
         }
@@ -176,7 +101,7 @@ export default function CategoriesPage() {
         setFormData({
             name: '',
             description: '',
-            is_active: true
+            is_active: true,
         });
     };
 
@@ -228,19 +153,31 @@ export default function CategoriesPage() {
                 </div>
 
                 <div className="overflow-x-auto">
-                    {filteredCategories.length > 0 ? (
+                    {isLoading ? (
+                        <Loader />
+                    ) : data?.data?.length > 0 ? (
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-[#2a2a2a]">
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">NAME</th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">DESCRIPTION</th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">STATUS</th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">PRODUCTS</th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">ACTIONS</th>
+                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                        NAME
+                                    </th>
+                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                        DESCRIPTION
+                                    </th>
+                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                        STATUS
+                                    </th>
+                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                        PRODUCTS
+                                    </th>
+                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                        ACTIONS
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredCategories.map((category) => (
+                                {data?.data?.map((category: Category) => (
                                     <tr
                                         key={category.id}
                                         className="border-b border-[#2a2a2a] hover:bg-[#2a2a2a] transition-colors"
@@ -250,10 +187,15 @@ export default function CategoriesPage() {
                                                 <div className="w-8 h-8 rounded-lg bg-purple-900 bg-opacity-30 flex items-center justify-center text-purple-400">
                                                     <Layers className="w-4 h-4" />
                                                 </div>
-                                                <span className="text-gray-100 font-medium">{category.name}</span>
+                                                <span className="text-gray-100 font-medium">
+                                                    {category.name}
+                                                </span>
                                             </div>
                                         </td>
-                                        <td className="p-4 text-gray-300 max-w-xs truncate" title={category.description}>
+                                        <td
+                                            className="p-4 text-gray-300 max-w-xs truncate"
+                                            title={category.description}
+                                        >
                                             {category.description}
                                         </td>
                                         <td className="p-4">
@@ -292,7 +234,9 @@ export default function CategoriesPage() {
                         </table>
                     ) : (
                         <div className="p-8 text-center">
-                            <p className="text-gray-400">No categories found matching your search.</p>
+                            <p className="text-gray-400">
+                                No categories found matching your search.
+                            </p>
                         </div>
                     )}
                 </div>
@@ -303,7 +247,6 @@ export default function CategoriesPage() {
                 isModalOpen={isModalOpen}
                 editingCategory={editingCategory}
                 handleCloseModal={handleCloseModal}
-                handleSubmit={handleSubmit}
                 formData={formData}
                 setFormData={setFormData}
             />
