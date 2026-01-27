@@ -1,6 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { useCreateCategory } from '@/queries/use-categories';
+import { useCreateCategory, useUpdateCategory } from '@/queries/use-categories';
 
 export interface CategoryFormData {
     name: string;
@@ -32,14 +32,33 @@ function CategoryAddEditModal({
     setFormData,
 }: Props) {
     const { mutate } = useCreateCategory();
+    const { mutate: updateCategory } = useUpdateCategory();
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        mutate(formData, {
-            onSuccess: () => {
-                handleCloseModal();
-            },
-        });
+        if (editingCategory) {
+            updateCategory(
+                {
+                    id: editingCategory.id,
+                    data: {
+                        name: formData.name,
+                        description: formData.description,
+                        is_active: formData.is_active,
+                    },
+                },
+                {
+                    onSuccess: () => {
+                        handleCloseModal();
+                    },
+                }
+            );
+        } else {
+            mutate(formData, {
+                onSuccess: () => {
+                    handleCloseModal();
+                },
+            });
+        }
     };
 
     if (!isModalOpen) return null;

@@ -31,9 +31,13 @@ export const useCreateCategory = () => {
 };
 
 export const useUpdateCategory = () => {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, data }: { id: string | number; data: Partial<any> }) =>
             getCategory(id, 'put', data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [GET_CATEGORIES] });
+        },
     });
 };
 
