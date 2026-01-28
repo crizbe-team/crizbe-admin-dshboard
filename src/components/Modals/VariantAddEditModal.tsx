@@ -30,7 +30,7 @@ function VariantAddEditModal({
     handleSubmit,
     formData,
     setFormData,
-    availableProducts
+    availableProducts,
 }: Props) {
     if (!isModalOpen) return null;
 
@@ -42,11 +42,11 @@ function VariantAddEditModal({
 
     const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedProductId = e.target.value;
-        const selectedProduct = availableProducts.find(p => p.id === selectedProductId);
+        const selectedProduct = availableProducts.find((p) => p.id === selectedProductId);
         setFormData({
             ...formData,
             productId: selectedProductId,
-            productName: selectedProduct ? selectedProduct.name : ''
+            productName: selectedProduct ? selectedProduct.name : '',
         });
     };
 
@@ -71,9 +71,7 @@ function VariantAddEditModal({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-lg mx-4">
                 <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-100">
-                        Add New Variant
-                    </h2>
+                    <h2 className="text-xl font-semibold text-gray-100">Add New Variant</h2>
                     <button
                         onClick={handleCloseModal}
                         className="text-gray-400 hover:text-white transition-colors"
@@ -105,9 +103,7 @@ function VariantAddEditModal({
 
                     {/* Size Selection */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Size
-                        </label>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Size</label>
                         {!useCustomSize ? (
                             <select
                                 required
@@ -116,8 +112,10 @@ function VariantAddEditModal({
                                 className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
                             >
                                 <option value="">-- Select Size --</option>
-                                {commonSizes.map(size => (
-                                    <option key={size} value={size}>{size}</option>
+                                {commonSizes.map((size) => (
+                                    <option key={size} value={size}>
+                                        {size}
+                                    </option>
                                 ))}
                                 <option value="custom">Custom Size...</option>
                             </select>
@@ -140,39 +138,6 @@ function VariantAddEditModal({
                                 </button>
                             </div>
                         )}
-                    </div>
-
-                    {/* Price and Quantity */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Price (₹)
-                            </label>
-                            <input
-                                type="number"
-                                required
-                                min="0"
-                                step="0.01"
-                                value={formData.price}
-                                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                placeholder="0.00"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Quantity
-                            </label>
-                            <input
-                                type="number"
-                                required
-                                min="0"
-                                value={formData.quantity}
-                                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                placeholder="0"
-                            />
-                        </div>
                     </div>
 
                     <div className="flex justify-end space-x-3 pt-4">
