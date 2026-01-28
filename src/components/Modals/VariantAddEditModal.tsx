@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus } from 'lucide-react';
+import SearchableSelect from '@/components/ui/SearchableSelect';
 
 export interface VariantFormData {
     productId: string;
@@ -86,19 +87,24 @@ function VariantAddEditModal({
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                             Select Product
                         </label>
-                        <select
-                            required
+                        <SearchableSelect
+                            options={availableProducts.map((p) => ({
+                                label: `${p.name} (${p.product_id_code})`,
+                                value: p.id,
+                            }))}
                             value={formData.productId}
-                            onChange={handleProductChange}
-                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                        >
-                            <option value="">-- Select a Product --</option>
-                            {availableProducts.map((product) => (
-                                <option key={product.id} value={product.id}>
-                                    {product.name} ({product.product_id_code})
-                                </option>
-                            ))}
-                        </select>
+                            onChange={(value) => {
+                                const selectedProduct = availableProducts.find(
+                                    (p) => p.id === value
+                                );
+                                setFormData({
+                                    ...formData,
+                                    productId: value,
+                                    productName: selectedProduct ? selectedProduct.name : '',
+                                });
+                            }}
+                            placeholder="Select a Product"
+                        />
                     </div>
 
                     {/* Size Selection */}
@@ -138,6 +144,40 @@ function VariantAddEditModal({
                                 </button>
                             </div>
                         )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                                Price ($)
+                            </label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                required
+                                value={formData.price}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, price: e.target.value })
+                                }
+                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                                placeholder="0.00"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                                Initial Quantity
+                            </label>
+                            <input
+                                type="number"
+                                required
+                                value={formData.quantity}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, quantity: e.target.value })
+                                }
+                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                                placeholder="0"
+                            />
+                        </div>
                     </div>
 
                     <div className="flex justify-end space-x-3 pt-4">

@@ -6,7 +6,12 @@ import ProductAddEditModal, { SizeVariant, Product } from '@/components/Modals/P
 import DeleteModal from '@/components/Modals/DeleteModal';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
-import { useFetchProducts, useDeleteProduct } from '@/queries/use-products';
+import {
+    useFetchProducts,
+    useDeleteProduct,
+    useCreateProduct,
+    useUpdateProduct,
+} from '@/queries/use-products';
 import { useFetchCategories } from '@/queries/use-categories';
 import Loader from '@/components/ui/loader';
 
@@ -25,6 +30,8 @@ export default function ProductsPage() {
 
     // Delete Mutation
     const deleteMutation = useDeleteProduct();
+    const createMutation = useCreateProduct();
+    const updateMutation = useUpdateProduct();
 
     const categoryOptions = useMemo(() => {
         const cats =
@@ -158,9 +165,29 @@ export default function ProductsPage() {
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // This will be handled by the mutation in the future,
-        // for now just closing the modal to maintain UI flow.
-        setIsModalOpen(false);
+
+        const data = {
+            name: formData.name,
+            category: formData.category,
+            description: formData.description,
+            ingredients: formData.ingredients,
+            stock: parseInt(formData.stock) || 0,
+            price: formData.price,
+            icon: formData.icon,
+            images: formData.images,
+        };
+
+        try {
+            if (editingProduct) {
+                await updateMutation.mutateAsync({ id: editingProduct.id, data });
+            } else {
+                await createMutation.mutateAsync(data);
+            }
+            setIsModalOpen(false);
+            setEditingProduct(null);
+        } catch (error) {
+            console.error('Failed to save product:', error);
+        }
     };
 
     // Handle delete product - open confirmation modal

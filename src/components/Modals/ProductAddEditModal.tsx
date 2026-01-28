@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Trash2 } from 'lucide-react';
+import SearchableSelect from '@/components/ui/SearchableSelect';
 
 export interface SizeVariant {
     size: string;
@@ -173,21 +174,17 @@ function ProductAddEditModal({
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Category
                                     </label>
-                                    <select
-                                        required
+                                    <SearchableSelect
+                                        options={categories.map((cat) => ({
+                                            label: cat.name,
+                                            value: cat.id,
+                                        }))}
                                         value={formData.category}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, category: e.target.value })
+                                        onChange={(value) =>
+                                            setFormData({ ...formData, category: value })
                                         }
-                                        className="w-full  bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                    >
-                                        <option value="">Select Category</option>
-                                        {categories.map((cat) => (
-                                            <option key={cat.id} value={cat.id}>
-                                                {cat.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        placeholder="Select Category"
+                                    />
                                 </div>
                             </div>
                             <div>

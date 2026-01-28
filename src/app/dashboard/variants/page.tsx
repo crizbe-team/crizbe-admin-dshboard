@@ -3,7 +3,12 @@
 import { useState } from 'react';
 import { Tags, Search, Edit, Trash2, Plus, Package, Box, ShoppingCart } from 'lucide-react';
 import VariantAddEditModal, { VariantFormData } from '@/components/Modals/VariantAddEditModal';
-import { useFetchVariants, useDeleteVariant } from '@/queries/use-variants';
+import {
+    useFetchVariants,
+    useDeleteVariant,
+    useCreateVariant,
+    useUpdateVariant,
+} from '@/queries/use-variants';
 import { useFetchProducts } from '@/queries/use-products';
 import Loader from '@/components/ui/loader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
@@ -21,8 +26,11 @@ export default function VariantsPage() {
 
     // Delete Mutation
     const deleteMutation = useDeleteVariant();
+    const createMutation = useCreateVariant();
+    const updateMutation = useUpdateVariant();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingVariant, setEditingVariant] = useState<any | null>(null);
     const [formData, setFormData] = useState<VariantFormData>({
         productId: '',
         productName: '',
@@ -62,6 +70,7 @@ export default function VariantsPage() {
     ];
 
     const handleAddVariant = () => {
+        setEditingVariant(null);
         setFormData({
             productId: '',
             productName: '',
@@ -72,10 +81,39 @@ export default function VariantsPage() {
         setIsModalOpen(true);
     };
 
+    const handleEditVariant = (variant: any) => {
+        setEditingVariant(variant);
+        setFormData({
+            productId: variant.product?.id || '',
+            productName: variant.product?.name || '',
+            size: variant.size,
+            price: variant.price.toString(),
+            quantity: variant.quantity.toString(),
+        });
+        setIsModalOpen(true);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mutation logic will be added later
-        setIsModalOpen(false);
+
+        const data = {
+            product: formData.productId,
+            size: formData.size,
+            price: parseFloat(formData.price) || 0,
+            quantity: parseInt(formData.quantity) || 0,
+        };
+
+        try {
+            if (editingVariant) {
+                await updateMutation.mutateAsync({ id: editingVariant.id, data });
+            } else {
+                await createMutation.mutateAsync(data);
+            }
+            setIsModalOpen(false);
+            setEditingVariant(null);
+        } catch (error) {
+            console.error('Failed to save variant:', error);
+        }
     };
 
     const handleDeleteVariant = async (id: string) => {
@@ -180,12 +218,20 @@ export default function VariantsPage() {
                                         </td>
                                         <td className="p-4 text-gray-300">{variant.quantity}</td>
                                         <td className="p-4">
-                                            <button
-                                                onClick={() => handleDeleteVariant(variant.id)}
-                                                className="p-2 bg-red-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
-                                            >
-                                                <Trash2 className="w-4 h-4 text-red-400" />
-                                            </button>
+                                            <div className="flex items-center space-x-2">
+                                                <button
+                                                    onClick={() => handleEditVariant(variant)}
+                                                    className="p-2 bg-blue-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                                                >
+                                                    <Edit className="w-4 h-4 text-blue-400" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteVariant(variant.id)}
+                                                    className="p-2 bg-red-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                                                >
+                                                    <Trash2 className="w-4 h-4 text-red-400" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
