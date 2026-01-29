@@ -28,23 +28,7 @@ import {
 import { useFetchProducts } from '@/queries/use-products';
 import { API_ENDPOINTS } from '@/utils/api-endpoints';
 import Loader from '@/components/ui/loader';
-
-const formatDateTime = (dateString: string) => {
-    if (!dateString) return 'N/A';
-    try {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('en-US', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-        }).format(date);
-    } catch (e) {
-        return dateString;
-    }
-};
+import { formatDateTime } from '@/utils/date-utils';
 
 export default function ProductStockPage() {
     const params = useParams();
@@ -76,25 +60,19 @@ export default function ProductStockPage() {
     const stats = [
         {
             title: 'Total Stock',
-            value: (product.total_stock || 0).toLocaleString() + ' kg',
+            value: (historyResponse?.base_data?.total_stock || 0).toLocaleString() + ' kg',
             icon: Package,
             color: 'text-blue-400',
         },
         {
             title: 'Available',
-            value: (product.available_stock || 0).toLocaleString() + ' kg',
+            value: (historyResponse?.base_data?.available_stock || 0).toLocaleString() + ' kg',
             icon: CheckCircle,
             color: 'text-green-400',
         },
         {
-            title: 'Sold',
-            value: (product.sold || 0).toLocaleString() + ' kg',
-            icon: ShoppingCart,
-            color: 'text-purple-400',
-        },
-        {
             title: 'Packed',
-            value: (product.packed || 0).toLocaleString() + ' kg',
+            value: (historyResponse?.base_data?.total_deducted || 0).toLocaleString() + ' kg',
             icon: Archive,
             color: 'text-orange-400',
         },
@@ -212,7 +190,7 @@ export default function ProductStockPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     return (

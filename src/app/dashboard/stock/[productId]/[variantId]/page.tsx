@@ -2,12 +2,22 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, History, Boxes, Trash2 } from 'lucide-react';
+import {
+    ArrowLeft,
+    Plus,
+    History,
+    Boxes,
+    Trash2,
+    CheckCircle,
+    ShoppingCart,
+    IndianRupee,
+} from 'lucide-react';
 import VariantStockAddModal from '@/components/Modals/VariantStockAddModal';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFetchVariantStock, useCreateStock, useDeleteStockHistory } from '@/queries/use-stock';
 import { API_ENDPOINTS } from '@/utils/api-endpoints';
 import Loader from '@/components/ui/loader';
+import { formatDateTime } from '@/utils/date-utils';
 
 export default function VariantStockDetailPage() {
     const params = useParams();
@@ -27,6 +37,7 @@ export default function VariantStockDetailPage() {
     const variant = variantStockData?.variant || {};
     const history = variantStockData?.history || [];
     const productName = variantStockData?.product_name || '';
+    const baseData = variantStockData?.base_data || {};
 
     const handleAddStock = async (data: any) => {
         try {
@@ -95,21 +106,62 @@ export default function VariantStockDetailPage() {
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a]">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-gray-400 text-sm mb-1">Current Stock (kg)</p>
+                            <p className="text-gray-400 text-sm mb-1">Total Stock (kg)</p>
                             <p className="text-3xl font-bold text-gray-100">
-                                {variant.quantity || 0}
+                                {baseData.total_stock || 0}
                             </p>
                         </div>
-                        <div className="text-purple-400 bg-purple-500 bg-opacity-10 p-3 rounded-lg">
+                        <div className="text-blue-400 bg-blue-500 bg-opacity-10 p-3 rounded-lg">
                             <Boxes className="w-6 h-6" />
                         </div>
                     </div>
                 </div>
-                {/* Could add more stats here */}
+
+                <div className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a]">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-gray-400 text-sm mb-1">Available Stock (kg)</p>
+                            <p className="text-3xl font-bold text-gray-100">
+                                {baseData.available_stock || 0}
+                            </p>
+                        </div>
+                        <div className="text-green-400 bg-green-500 bg-opacity-10 p-3 rounded-lg">
+                            <CheckCircle className="w-6 h-6" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a]">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-gray-400 text-sm mb-1">Total Sold (kg)</p>
+                            <p className="text-3xl font-bold text-gray-100">
+                                {baseData.total_sold || 0}
+                            </p>
+                        </div>
+                        <div className="text-purple-400 bg-purple-500 bg-opacity-10 p-3 rounded-lg">
+                            <ShoppingCart className="w-6 h-6" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a]">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-gray-400 text-sm mb-1">Price</p>
+                            <p className="text-3xl font-bold text-gray-100">
+                                ${parseFloat(variant.price || '0').toFixed(2)}
+                            </p>
+                        </div>
+                        <div className="text-yellow-400 bg-yellow-500 bg-opacity-10 p-3 rounded-lg">
+                            <IndianRupee className="w-6 h-6" />
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a]">
@@ -125,9 +177,7 @@ export default function VariantStockDetailPage() {
                                     <th className="text-left p-4 text-gray-400 font-medium text-sm">
                                         QUANTITY (kg)
                                     </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        PRICE
-                                    </th>
+
                                     <th className="text-left p-4 text-gray-400 font-medium text-sm">
                                         TYPE
                                     </th>
@@ -136,9 +186,6 @@ export default function VariantStockDetailPage() {
                                     </th>
                                     <th className="text-left p-4 text-gray-400 font-medium text-sm">
                                         NOTES
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        ACTIONS
                                     </th>
                                 </tr>
                             </thead>
@@ -151,9 +198,7 @@ export default function VariantStockDetailPage() {
                                         <td className="p-4 text-gray-100 font-medium">
                                             {(item.type === 'Addition' ? '+' : '-') + item.quantity}
                                         </td>
-                                        <td className="p-4 text-purple-400">
-                                            ${parseFloat(item.price || '0').toFixed(2)}
-                                        </td>
+
                                         <td className="p-4">
                                             <span
                                                 className={`px-2 py-0.5 rounded-full bg-opacity-10 text-xs ${
@@ -165,17 +210,10 @@ export default function VariantStockDetailPage() {
                                                 {item.type}
                                             </span>
                                         </td>
-                                        <td className="p-4 text-gray-400 text-sm">{item.date}</td>
-                                        <td className="p-4 text-gray-400 text-sm">{item.notes}</td>
-                                        <td className="p-4">
-                                            <button
-                                                onClick={() => handleDeleteHistory(item.id)}
-                                                className="p-2 bg-red-500 bg-opacity-10 hover:bg-opacity-20 rounded-lg transition-colors text-red-500"
-                                                title="Delete History Record"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
+                                        <td className="p-4 text-gray-400 text-sm">
+                                            {formatDateTime(item.created_at)}
                                         </td>
+                                        <td className="p-4 text-gray-400 text-sm">{item.notes}</td>
                                     </tr>
                                 ))}
                             </tbody>
