@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 
+import SearchableSelect from '@/components/ui/SearchableSelect';
+
 interface Product {
     id: string;
     name: string;
@@ -12,6 +14,7 @@ interface Props {
     handleCloseModal: () => void;
     handleSubmit: (data: any) => void;
     availableProducts: Product[];
+    defaultProductId?: string;
 }
 
 export default function StockAddModal({
@@ -19,13 +22,24 @@ export default function StockAddModal({
     handleCloseModal,
     handleSubmit,
     availableProducts,
+    defaultProductId,
 }: Props) {
     const [formData, setFormData] = useState({
         productId: '',
         quantity: '',
+        purchasePrice: '',
         type: 'add',
         notes: '',
     });
+
+    React.useEffect(() => {
+        if (isModalOpen) {
+            setFormData((prev) => ({
+                ...prev,
+                productId: defaultProductId || '',
+            }));
+        }
+    }, [isModalOpen, defaultProductId]);
 
     if (!isModalOpen) return null;
 
@@ -33,10 +47,11 @@ export default function StockAddModal({
         e.preventDefault();
         handleSubmit({
             ...formData,
-            quantity: parseInt(formData.quantity) || 0,
+            quantity: parseFloat(formData.quantity) || 0,
+            purchase_price: parseFloat(formData.purchasePrice) || 0,
             date: new Date().toISOString(),
         });
-        setFormData({ productId: '', quantity: '', type: 'add', notes: '' });
+        setFormData({ productId: '', quantity: '', purchasePrice: '', type: 'add', notes: '' });
     };
 
     return (
@@ -57,36 +72,52 @@ export default function StockAddModal({
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                             Select Product
                         </label>
-                        <select
-                            required
+                        <SearchableSelect
+                            options={availableProducts.map((p) => ({
+                                label: `${p.name} (${p.product_id_code})`,
+                                value: p.id,
+                            }))}
                             value={formData.productId}
-                            onChange={(e) =>
-                                setFormData({ ...formData, productId: e.target.value })
-                            }
-                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                        >
-                            <option value="">-- Select a Product --</option>
-                            {availableProducts.map((product) => (
-                                <option key={product.id} value={product.id}>
-                                    {product.name} ({product.product_id_code})
-                                </option>
-                            ))}
-                        </select>
+                            onChange={(value) => setFormData({ ...formData, productId: value })}
+                            placeholder="Select a Product"
+                        />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Quantity
-                        </label>
-                        <input
-                            type="number"
-                            required
-                            min="1"
-                            value={formData.quantity}
-                            onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                            placeholder="Enter quantity"
-                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                        />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                                Quantity (kg)
+                            </label>
+                            <input
+                                type="number"
+                                required
+                                step="0.01"
+                                min="0.01"
+                                value={formData.quantity}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, quantity: e.target.value })
+                                }
+                                placeholder="e.g. 1.5"
+                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                                Purchase Price
+                            </label>
+                            <input
+                                type="number"
+                                required
+                                step="0.01"
+                                min="0"
+                                value={formData.purchasePrice}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, purchasePrice: e.target.value })
+                                }
+                                placeholder="0.00"
+                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                            />
+                        </div>
                     </div>
 
                     <div>

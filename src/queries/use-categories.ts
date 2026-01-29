@@ -42,7 +42,11 @@ export const useUpdateCategory = () => {
 };
 
 export const useDeleteCategory = () => {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (id: string | number) => getCategory(id, 'delete'),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [GET_CATEGORIES] });
+        },
     });
 };

@@ -24,7 +24,7 @@ export default function VariantStockAddModal({
     const [formData, setFormData] = useState({
         variantId: '',
         quantity: '',
-        price: '',
+        purchasePrice: '',
         notes: '',
     });
 
@@ -34,11 +34,11 @@ export default function VariantStockAddModal({
         e.preventDefault();
         handleSubmit({
             ...formData,
-            quantity: parseInt(formData.quantity) || 0,
-            price: formData.price,
+            quantity: parseFloat(formData.quantity) || 0,
+            purchase_price: parseFloat(formData.purchasePrice) || 0,
             date: new Date().toISOString(),
         });
-        setFormData({ variantId: '', quantity: '', price: '', notes: '' });
+        setFormData({ variantId: '', quantity: '', purchasePrice: '', notes: '' });
     };
 
     return (
@@ -82,32 +82,35 @@ export default function VariantStockAddModal({
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Quantity
+                                Quantity (kg)
                             </label>
                             <input
                                 type="number"
                                 required
-                                min="1"
+                                step="0.01"
+                                min="0.01"
                                 value={formData.quantity}
                                 onChange={(e) =>
                                     setFormData({ ...formData, quantity: e.target.value })
                                 }
-                                placeholder="Quantity"
+                                placeholder="e.g. 1.5"
                                 className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
                             />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Price
+                                Purchase Price
                             </label>
                             <input
-                                type="text"
+                                type="number"
+                                step="0.01"
+                                min="0"
                                 required
-                                value={formData.price}
+                                value={formData.purchasePrice}
                                 onChange={(e) =>
-                                    setFormData({ ...formData, price: e.target.value })
+                                    setFormData({ ...formData, purchasePrice: e.target.value })
                                 }
-                                placeholder="Price"
+                                placeholder="0.00"
                                 className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
                             />
                         </div>

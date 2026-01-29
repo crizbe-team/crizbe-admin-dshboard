@@ -17,7 +17,7 @@ import CategoryAddEditModal, {
     CategoryFormData,
 } from '@/components/Modals/CategoryAddEditModal';
 import CategoryDeleteModal from '@/components/Modals/CategoryDeleteModal';
-import { useFetchCategories } from '@/queries/use-categories';
+import { useFetchCategories, useDeleteCategory } from '@/queries/use-categories';
 import Loader from '@/components/ui/loader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 
@@ -29,6 +29,9 @@ export default function CategoriesPage() {
         q: searchQuery,
         is_active: statusFilter === 'all' ? undefined : statusFilter === 'active',
     });
+
+    const deleteMutation = useDeleteCategory();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
@@ -95,10 +98,15 @@ export default function CategoriesPage() {
     };
 
     // Confirm delete category
-    const confirmDeleteCategory = () => {
+    const confirmDeleteCategory = async () => {
         if (categoryToDelete) {
-            setIsDeleteModalOpen(false);
-            setCategoryToDelete(null);
+            try {
+                await deleteMutation.mutateAsync(categoryToDelete.id);
+                setIsDeleteModalOpen(false);
+                setCategoryToDelete(null);
+            } catch (error) {
+                console.error('Failed to delete category:', error);
+            }
         }
     };
 
