@@ -25,7 +25,9 @@ export const getProducts = async (params: any = {}, method: 'get' | 'post' = 'ge
     } else {
         const data = params as any;
         const url = new ApiBuilder(GET_PRODUCTS).build();
-        const response = await api.post(url, data);
+        const config =
+            data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
+        const response = await api.post(url, data, config);
         const { status_code, message, data: responseData } = response?.data;
 
         if (status_code === 6001) {
@@ -44,7 +46,9 @@ export const getProduct = async (
     const url = new ApiBuilder(GET_PRODUCT).path('id', id).build();
 
     if (method === 'put') {
-        const response = await api.put(url, data);
+        const config =
+            data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
+        const response = await api.put(url, data, config);
         return response.data;
     }
 

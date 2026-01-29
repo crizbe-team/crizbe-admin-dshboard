@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Package, Box, Layers, Search, Edit, Trash2, Plus, IndianRupee } from 'lucide-react';
+import { Package, Box, Layers, Search, Edit, Trash2, Plus, IndianRupee, Eye } from 'lucide-react';
+import Link from 'next/link';
 import ProductAddEditModal, { SizeVariant, Product } from '@/components/Modals/ProductAddEditModal';
 import DeleteModal from '@/components/Modals/DeleteModal';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
@@ -54,6 +55,7 @@ export default function ProductsPage() {
         stock: '',
         icon: '',
         images: [] as string[],
+        imageFiles: [] as File[],
         description: '',
         ingredients: '',
     });
@@ -98,6 +100,7 @@ export default function ProductsPage() {
             stock: '',
             icon: '📦',
             images: [],
+            imageFiles: [],
             description: '',
             ingredients: '',
         });
@@ -108,20 +111,21 @@ export default function ProductsPage() {
     const handleImageFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
         if (files.length > 0) {
-            const newImages: string[] = [];
+            const newPreviews: string[] = [];
             let processedCount = 0;
 
             files.forEach((file) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     const result = reader.result as string;
-                    newImages.push(result);
+                    newPreviews.push(result);
                     processedCount++;
 
                     if (processedCount === files.length) {
                         setFormData((prevFormData) => ({
                             ...prevFormData,
-                            images: [...prevFormData.images, ...newImages],
+                            images: [...prevFormData.images, ...newPreviews],
+                            imageFiles: [...prevFormData.imageFiles, ...files],
                         }));
                     }
                 };
@@ -140,10 +144,22 @@ export default function ProductsPage() {
 
     // Handle removing an image
     const handleImageRemove = (index: number) => {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            images: prevFormData.images.filter((_, i) => i !== index),
-        }));
+        setFormData((prevFormData) => {
+            const isExistingImage =
+                index < prevFormData.images.length - prevFormData.imageFiles.length;
+
+            return {
+                ...prevFormData,
+                images: prevFormData.images.filter((_, i) => i !== index),
+                imageFiles: isExistingImage
+                    ? prevFormData.imageFiles
+                    : prevFormData.imageFiles.filter(
+                          (_, i) =>
+                              i !==
+                              index - (prevFormData.images.length - prevFormData.imageFiles.length)
+                      ),
+            };
+        });
     };
 
     // Open modal for editing product
@@ -155,7 +171,8 @@ export default function ProductsPage() {
             price: (product.price || '').replace('$', ''),
             stock: (product.stock || 0).toString(),
             icon: product.icon,
-            images: product.images || [],
+            images: product.images?.map((img) => img.image) || [],
+            imageFiles: [],
             description: product.description || '',
             ingredients: product.ingredients || '',
         });
@@ -166,16 +183,25 @@ export default function ProductsPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const data = {
-            name: formData.name,
-            category: formData.category,
-            description: formData.description,
-            ingredients: formData.ingredients,
-            stock: parseInt(formData.stock) || 0,
-            price: formData.price,
-            icon: formData.icon,
-            images: formData.images,
-        };
+        const data = new FormData();
+        data.append('name', formData.name);
+        data.append('category', formData.category);
+        data.append('description', formData.description);
+        data.append('ingredients', formData.ingredients);
+        data.append('stock', formData.stock);
+        data.append('price', formData.price);
+        data.append('icon', formData.icon);
+
+        // Append existing images as strings if any
+        const existingImages = formData.images.filter((img) => !img.startsWith('data:'));
+        existingImages.forEach((img) => {
+            data.append('existing_images', img);
+        });
+
+        // Append new image files
+        formData.imageFiles.forEach((file) => {
+            data.append('images', file);
+        });
 
         try {
             if (editingProduct) {
@@ -280,17 +306,12 @@ export default function ProductsPage() {
                             <thead>
                                 <tr className="border-b border-[#2a2a2a]">
                                     <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        PRODUCT ID
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
                                         NAME
                                     </th>
                                     <th className="text-left p-4 text-gray-400 font-medium text-sm">
                                         CATEGORY
                                     </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        SIZE VARIANTS
-                                    </th>
+
                                     <th className="text-left p-4 text-gray-400 font-medium text-sm">
                                         STOCK
                                     </th>
@@ -305,15 +326,12 @@ export default function ProductsPage() {
                                         key={product.id}
                                         className="border-b border-[#2a2a2a] hover:bg-[#2a2a2a] transition-colors"
                                     >
-                                        <td className="p-4 text-gray-300 font-medium">
-                                            {product.productId}
-                                        </td>
                                         <td className="p-4">
                                             <div className="flex items-center space-x-3">
                                                 {product.images && product.images.length > 0 ? (
                                                     <div className="flex items-center space-x-1">
                                                         <img
-                                                            src={product.images[0]}
+                                                            src={product.images[0]?.image}
                                                             alt={product.name}
                                                             className="w-10 h-10 object-cover rounded-lg border border-[#3a3a3a]"
                                                             onError={(e) => {
@@ -349,35 +367,19 @@ export default function ProductsPage() {
                                         <td className="p-4 text-gray-300">
                                             {product?.category?.name}
                                         </td>
-                                        <td className="p-4">
-                                            {product.variants && product.variants.length > 0 ? (
-                                                <div className="space-y-1">
-                                                    {product.variants.map((variant, idx) => (
-                                                        <div
-                                                            key={idx}
-                                                            className="text-xs bg-[#2a2a2a] px-2 py-1 rounded border border-[#3a3a3a]"
-                                                        >
-                                                            <span className="text-gray-300 font-medium">
-                                                                {variant.size}:
-                                                            </span>
-                                                            <span className="text-purple-400 font-semibold ml-1">
-                                                                $
-                                                                {parseFloat(
-                                                                    variant.price || '0'
-                                                                ).toFixed(2)}
-                                                            </span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <span className="text-gray-500 text-sm">
-                                                    No variants
-                                                </span>
-                                            )}
+
+                                        <td className="p-4 text-gray-300">
+                                            {product.available_stock}
                                         </td>
-                                        <td className="p-4 text-gray-300">{product.stock}</td>
                                         <td className="p-4">
                                             <div className="flex items-center space-x-2">
+                                                <Link
+                                                    href={`/dashboard/products/${product.id}`}
+                                                    className="p-2 bg-purple-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                                                    title="View Details"
+                                                >
+                                                    <Eye className="w-4 h-4 text-purple-400" />
+                                                </Link>
                                                 <button
                                                     onClick={() => handleEditProduct(product)}
                                                     className="p-2 bg-blue-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"

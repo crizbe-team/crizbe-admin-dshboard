@@ -13,6 +13,7 @@ interface ProductFormData {
     category: string;
     icon: string;
     images: string[];
+    imageFiles: File[];
     // price: string;
     // Wait, in original code price was removed from form?
     // In step 52:
@@ -55,9 +56,10 @@ export type Product = {
     };
     price: string;
     stock: number;
+    available_stock?: number;
     sales: number;
     icon: string;
-    images?: string[];
+    images?: { image: string }[];
     description?: string;
     ingredients?: string;
     variants?: SizeVariant[];

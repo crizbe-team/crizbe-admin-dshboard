@@ -50,7 +50,7 @@ function DeleteModal({
                                     <div className="flex items-center space-x-3 mb-2">
                                         {productToDelete.images[0] && (
                                             <img
-                                                src={productToDelete.images[0]}
+                                                src={productToDelete.images[0]?.image}
                                                 alt={productToDelete.name}
                                                 className="w-12 h-12 object-cover rounded-lg"
                                                 onError={(e) => {
@@ -60,7 +60,7 @@ function DeleteModal({
                                         )}
                                         <div>
                                             <p className="text-sm text-gray-300">
-                                                Product ID: {productToDelete.productId}
+                                                Product Stock: {productToDelete.available_stock}
                                             </p>
                                             <p className="text-sm text-gray-400">
                                                 Category: {productToDelete.category?.name}
@@ -79,7 +79,7 @@ function DeleteModal({
                                                 .map((image, index) => (
                                                     <img
                                                         key={index}
-                                                        src={image}
+                                                        src={image.image}
                                                         alt={`${productToDelete.name} ${index + 2}`}
                                                         className="w-8 h-8 object-cover rounded border border-[#3a3a3a]"
                                                         onError={(e) => {
