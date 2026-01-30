@@ -369,7 +369,7 @@ export default function ProductsPage() {
                                         </td>
 
                                         <td className="p-4 text-gray-300">
-                                            {product.available_stock}
+                                            {product.available_stock} kg
                                         </td>
                                         <td className="p-4">
                                             <div className="flex items-center space-x-2">

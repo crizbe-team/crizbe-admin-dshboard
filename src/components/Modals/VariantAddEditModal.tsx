@@ -7,7 +7,6 @@ export interface VariantFormData {
     productName: string;
     size: string;
     price: string;
-    quantity: string;
     weight_per_unit: string;
 }
 
@@ -41,16 +40,6 @@ function VariantAddEditModal({
 
     // Default sizes, but user can add custom
     const commonSizes = ['100gm', '200gm', '250gm', '400gm', '500gm', '1kg'];
-
-    const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedProductId = e.target.value;
-        const selectedProduct = availableProducts.find((p) => p.id === selectedProductId);
-        setFormData({
-            ...formData,
-            productId: selectedProductId,
-            productName: selectedProduct ? selectedProduct.name : '',
-        });
-    };
 
     const handleSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const val = e.target.value;
@@ -105,7 +94,7 @@ function VariantAddEditModal({
                         </label>
                         <SearchableSelect
                             options={availableProducts.map((p) => ({
-                                label: `${p.name} (${p.product_id_code})`,
+                                label: `${p.name}`,
                                 value: p.id,
                             }))}
                             value={formData.productId}
@@ -162,7 +151,7 @@ function VariantAddEditModal({
                         )}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="">
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                                 Price ($)
@@ -177,21 +166,6 @@ function VariantAddEditModal({
                                 }
                                 className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
                                 placeholder="0.00"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Initial Quantity
-                            </label>
-                            <input
-                                type="number"
-                                required
-                                value={formData.quantity}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, quantity: e.target.value })
-                                }
-                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                placeholder="0"
                             />
                         </div>
                     </div>

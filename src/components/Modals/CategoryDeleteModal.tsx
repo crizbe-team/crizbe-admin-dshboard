@@ -13,7 +13,7 @@ function CategoryDeleteModal({
     isDeleteModalOpen,
     categoryToDelete,
     cancelDelete,
-    confirmDeleteCategory
+    confirmDeleteCategory,
 }: Props) {
     if (!isDeleteModalOpen || !categoryToDelete) return null;
 
@@ -34,12 +34,11 @@ function CategoryDeleteModal({
 
                 <div className="p-6">
                     <p className="text-gray-300 mb-4">
-                        Are you sure you want to delete <span className="font-semibold text-white">{categoryToDelete.name}</span>?
+                        Are you sure you want to delete{' '}
+                        <span className="font-semibold text-white">{categoryToDelete.name}</span>?
                     </p>
                     <div className="p-3 bg-[#2a2a2a] rounded-lg">
-                        <p className="text-sm text-gray-400">
-                            This category contains {categoryToDelete.productCount} products.
-                        </p>
+                        <p className="text-sm text-gray-400">This category contains products.</p>
                     </div>
                 </div>
 
