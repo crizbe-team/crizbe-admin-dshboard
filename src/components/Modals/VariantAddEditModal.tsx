@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus } from 'lucide-react';
+import SearchableSelect from '@/components/ui/SearchableSelect';
 
 export interface VariantFormData {
     productId: string;
@@ -7,6 +8,7 @@ export interface VariantFormData {
     size: string;
     price: string;
     quantity: string;
+    weight_per_unit: string;
 }
 
 interface Product {
@@ -30,7 +32,7 @@ function VariantAddEditModal({
     handleSubmit,
     formData,
     setFormData,
-    availableProducts
+    availableProducts,
 }: Props) {
     if (!isModalOpen) return null;
 
@@ -42,11 +44,11 @@ function VariantAddEditModal({
 
     const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedProductId = e.target.value;
-        const selectedProduct = availableProducts.find(p => p.id === selectedProductId);
+        const selectedProduct = availableProducts.find((p) => p.id === selectedProductId);
         setFormData({
             ...formData,
             productId: selectedProductId,
-            productName: selectedProduct ? selectedProduct.name : ''
+            productName: selectedProduct ? selectedProduct.name : '',
         });
     };
 
@@ -57,7 +59,22 @@ function VariantAddEditModal({
             setFormData({ ...formData, size: '' });
         } else {
             setUseCustomSize(false);
-            setFormData({ ...formData, size: val });
+
+            // Auto-calculate weight_per_unit based on size
+            let weight = '';
+            if (val.endsWith('gm')) {
+                const num = parseFloat(val.replace('gm', ''));
+                if (!isNaN(num)) weight = (num / 1000).toString();
+            } else if (val.endsWith('kg')) {
+                const num = parseFloat(val.replace('kg', ''));
+                if (!isNaN(num)) weight = num.toString();
+            }
+
+            setFormData({
+                ...formData,
+                size: val,
+                weight_per_unit: weight || formData.weight_per_unit,
+            });
         }
     };
 
@@ -71,9 +88,7 @@ function VariantAddEditModal({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-lg mx-4">
                 <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-100">
-                        Add New Variant
-                    </h2>
+                    <h2 className="text-xl font-semibold text-gray-100">Add New Variant</h2>
                     <button
                         onClick={handleCloseModal}
                         className="text-gray-400 hover:text-white transition-colors"
@@ -88,26 +103,29 @@ function VariantAddEditModal({
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                             Select Product
                         </label>
-                        <select
-                            required
+                        <SearchableSelect
+                            options={availableProducts.map((p) => ({
+                                label: `${p.name} (${p.product_id_code})`,
+                                value: p.id,
+                            }))}
                             value={formData.productId}
-                            onChange={handleProductChange}
-                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                        >
-                            <option value="">-- Select a Product --</option>
-                            {availableProducts.map((product) => (
-                                <option key={product.id} value={product.id}>
-                                    {product.name} ({product.product_id_code})
-                                </option>
-                            ))}
-                        </select>
+                            onChange={(value) => {
+                                const selectedProduct = availableProducts.find(
+                                    (p) => p.id === value
+                                );
+                                setFormData({
+                                    ...formData,
+                                    productId: value,
+                                    productName: selectedProduct ? selectedProduct.name : '',
+                                });
+                            }}
+                            placeholder="Select a Product"
+                        />
                     </div>
 
                     {/* Size Selection */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Size
-                        </label>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Size</label>
                         {!useCustomSize ? (
                             <select
                                 required
@@ -116,8 +134,10 @@ function VariantAddEditModal({
                                 className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
                             >
                                 <option value="">-- Select Size --</option>
-                                {commonSizes.map(size => (
-                                    <option key={size} value={size}>{size}</option>
+                                {commonSizes.map((size) => (
+                                    <option key={size} value={size}>
+                                        {size}
+                                    </option>
                                 ))}
                                 <option value="custom">Custom Size...</option>
                             </select>
@@ -142,37 +162,58 @@ function VariantAddEditModal({
                         )}
                     </div>
 
-                    {/* Price and Quantity */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Price (₹)
+                                Price ($)
                             </label>
                             <input
                                 type="number"
-                                required
-                                min="0"
                                 step="0.01"
+                                required
                                 value={formData.price}
-                                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, price: e.target.value })
+                                }
                                 className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
                                 placeholder="0.00"
                             />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Quantity
+                                Initial Quantity
                             </label>
                             <input
                                 type="number"
                                 required
-                                min="0"
                                 value={formData.quantity}
-                                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, quantity: e.target.value })
+                                }
                                 className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
                                 placeholder="0"
                             />
                         </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Weight Per Unit (kg)
+                        </label>
+                        <input
+                            type="number"
+                            step="0.001"
+                            required
+                            value={formData.weight_per_unit}
+                            onChange={(e) =>
+                                setFormData({ ...formData, weight_per_unit: e.target.value })
+                            }
+                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                            placeholder="e.g. 0.1 for 100gm"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                            Enter the weight in kg. Example: 100gm = 0.1, 500gm = 0.5, 1kg = 1.0
+                        </p>
                     </div>
 
                     <div className="flex justify-end space-x-3 pt-4">

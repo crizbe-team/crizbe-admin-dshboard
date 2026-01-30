@@ -2,17 +2,17 @@ import api from '../lib/axios';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { ApiBuilder } from '../utils/api-builder';
 
-export const getCategories = async (params: any = {}, method: 'get' | 'post' = 'get') => {
-    const { GET_CATEGORIES } = API_ENDPOINTS;
+export const getVariants = async (params: any = {}, method: 'get' | 'post' = 'get') => {
+    const { GET_VARIANTS } = API_ENDPOINTS;
 
     if (method === 'get') {
         const filters = params as any;
-        const url = new ApiBuilder(GET_CATEGORIES)
+        const url = new ApiBuilder(GET_VARIANTS)
             .query('page', filters.page)
             .query('q', filters.q)
+            .query('productId', filters.productId)
             .query('sortBy', filters.sortBy)
             .query('sortOrder', filters.sortOrder)
-            .query('is_active', filters.is_active)
             .build();
 
         const response = await api.get(url);
@@ -24,7 +24,7 @@ export const getCategories = async (params: any = {}, method: 'get' | 'post' = '
         return response.data;
     } else {
         const data = params as any;
-        const url = new ApiBuilder(GET_CATEGORIES).build();
+        const url = new ApiBuilder(GET_VARIANTS).build();
         const response = await api.post(url, data);
         const { status_code, message, data: responseData } = response?.data;
 
@@ -35,13 +35,13 @@ export const getCategories = async (params: any = {}, method: 'get' | 'post' = '
     }
 };
 
-export const getCategory = async (
+export const getVariant = async (
     id: string | number,
     method: 'get' | 'delete' | 'put' = 'get',
     data?: Partial<any>
 ) => {
-    const { GET_CATEGORY } = API_ENDPOINTS;
-    const url = new ApiBuilder(GET_CATEGORY).path('id', id).build();
+    const { GET_VARIANT } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_VARIANT).path('id', id).build();
 
     if (method === 'put') {
         const response = await api.put(url, data);

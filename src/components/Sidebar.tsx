@@ -7,6 +7,7 @@ import { useSidebar } from '@/contexts/SidebarContext';
 import {
     LayoutDashboard,
     Package,
+    Box,
     Users,
     DollarSign,
     ShoppingCart,
@@ -18,7 +19,7 @@ import {
     X,
     ChevronLeft,
     Layers,
-    Tags
+    Tags,
 } from 'lucide-react';
 
 const menuItems = [
@@ -26,6 +27,7 @@ const menuItems = [
     { icon: Layers, label: 'Categories', path: '/dashboard/categories' },
     { icon: Package, label: 'Products', path: '/dashboard/products' },
     { icon: Tags, label: 'Variants', path: '/dashboard/variants' },
+    { icon: Box, label: 'Stock', path: '/dashboard/stock' },
     { icon: Users, label: 'Clients', path: '/dashboard/clients' },
     { icon: DollarSign, label: 'Sales', path: '/dashboard/sales' },
     { icon: ShoppingCart, label: 'Orders', path: '/dashboard/orders' },
@@ -106,9 +108,10 @@ export default function Sidebar() {
                                 className={`
                                     flex items-center space-x-3 px-4 py-3 mb-2 rounded-lg
                                     transition-all duration-200 ease-in-out
-                                    ${isActive
-                                        ? 'bg-[#2a2a2a] text-white'
-                                        : 'text-gray-400 hover:bg-[#2a2a2a] hover:text-white'
+                                    ${
+                                        isActive
+                                            ? 'bg-[#2a2a2a] text-white'
+                                            : 'text-gray-400 hover:bg-[#2a2a2a] hover:text-white'
                                     }
                                     ${isCollapsed ? 'justify-center' : ''}
                                 `}
@@ -126,11 +129,9 @@ export default function Sidebar() {
                                 </span>
                             </Link>
                         );
-                        
                     })}
                 </nav>
             </aside>
         </>
     );
 }
-

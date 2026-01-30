@@ -1,20 +1,37 @@
 'use client';
 
 import { useState } from 'react';
-import { Layers, Search, Edit, Trash2, Plus, CheckCircle, XCircle, Package } from 'lucide-react';
+import {
+    Layers,
+    Search,
+    Edit,
+    Trash2,
+    Plus,
+    CheckCircle,
+    XCircle,
+    Package,
+    Filter,
+} from 'lucide-react';
 import CategoryAddEditModal, {
     Category,
     CategoryFormData,
 } from '@/components/Modals/CategoryAddEditModal';
 import CategoryDeleteModal from '@/components/Modals/CategoryDeleteModal';
-import { useFetchCategories } from '@/queries/use-categories';
+import { useFetchCategories, useDeleteCategory } from '@/queries/use-categories';
 import Loader from '@/components/ui/loader';
+import DebouncedSearch from '@/components/ui/DebouncedSearch';
 
 export default function CategoriesPage() {
     const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+
     const { data, isLoading } = useFetchCategories({
         q: searchQuery,
+        is_active: statusFilter === 'all' ? undefined : statusFilter === 'active',
     });
+
+    const deleteMutation = useDeleteCategory();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
@@ -81,10 +98,15 @@ export default function CategoriesPage() {
     };
 
     // Confirm delete category
-    const confirmDeleteCategory = () => {
+    const confirmDeleteCategory = async () => {
         if (categoryToDelete) {
-            setIsDeleteModalOpen(false);
-            setCategoryToDelete(null);
+            try {
+                await deleteMutation.mutateAsync(categoryToDelete.id);
+                setIsDeleteModalOpen(false);
+                setCategoryToDelete(null);
+            } catch (error) {
+                console.error('Failed to delete category:', error);
+            }
         }
     };
 
@@ -132,20 +154,29 @@ export default function CategoriesPage() {
 
             {/* Categories List */}
             <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a]">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
+                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center space-x-4 flex-1 min-w-[300px]">
+                        <DebouncedSearch
+                            onSearch={setSearchQuery}
                             placeholder="Search Categories..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="bg-[#2a2a2a] text-gray-100 pl-10 pr-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 w-64"
+                            className="max-w-xs"
                         />
+                        <div className="relative">
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value as any)}
+                                className="bg-[#2a2a2a] text-gray-100 pl-4 pr-10 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 appearance-none cursor-pointer"
+                            >
+                                <option value="all">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
                     </div>
                     <button
                         onClick={handleAddCategory}
-                        className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                        className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors whitespace-nowrap"
                     >
                         <Plus className="w-4 h-4" />
                         <span>Add Category</span>
