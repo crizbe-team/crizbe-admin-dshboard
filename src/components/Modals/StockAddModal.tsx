@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 
 import SearchableSelect from '@/components/ui/SearchableSelect';
 
@@ -15,6 +15,7 @@ interface Props {
     handleSubmit: (data: any) => void;
     availableProducts: Product[];
     defaultProductId?: string;
+    isLoading?: boolean;
 }
 
 export default function StockAddModal({
@@ -23,6 +24,7 @@ export default function StockAddModal({
     handleSubmit,
     availableProducts,
     defaultProductId,
+    isLoading = false,
 }: Props) {
     const [formData, setFormData] = useState({
         productId: '',
@@ -123,9 +125,14 @@ export default function StockAddModal({
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                            disabled={isLoading}
+                            className="px-4 py-2  min-h-[40px] w-[160px]  bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 "
                         >
-                            Update Stock
+                            {isLoading ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : ('Add Stock')}
+
+
                         </button>
                     </div>
                 </form>

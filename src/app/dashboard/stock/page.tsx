@@ -262,6 +262,7 @@ export default function StockPage() {
                 handleSubmit={handleAddStock}
                 availableProducts={availableProducts}
                 defaultProductId={selectedProductForAdd}
+                isLoading={createMutation.isPending}
             />
         </div>
     );

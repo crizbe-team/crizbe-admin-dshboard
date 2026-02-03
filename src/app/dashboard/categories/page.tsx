@@ -231,11 +231,10 @@ export default function CategoriesPage() {
                                         </td>
                                         <td className="p-4">
                                             <span
-                                                className={`px-2 py-1 rounded text-xs font-medium border ${
-                                                    category.is_active
-                                                        ? 'bg-green-900 bg-opacity-20 text-green-400 border-green-900'
-                                                        : 'bg-red-900 bg-opacity-20 text-red-400 border-red-900'
-                                                }`}
+                                                className={`px-2 py-1 rounded text-xs font-medium border ${category.is_active
+                                                    ? 'bg-green-900 bg-opacity-20 text-green-400 border-green-900'
+                                                    : 'bg-red-900 bg-opacity-20 text-red-400 border-red-900'
+                                                    }`}
                                             >
                                                 {category.is_active ? 'Active' : 'Inactive'}
                                             </span>
@@ -288,6 +287,7 @@ export default function CategoriesPage() {
                 categoryToDelete={categoryToDelete}
                 cancelDelete={cancelDelete}
                 confirmDeleteCategory={confirmDeleteCategory}
+                isDeleting={deleteMutation.isPending}
             />
         </div>
     );

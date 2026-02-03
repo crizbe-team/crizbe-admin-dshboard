@@ -176,11 +176,10 @@ export default function ProductDetailPage() {
                                     <button
                                         key={idx}
                                         onClick={() => setActiveImage(img.image)}
-                                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                                            activeImage === img.image || (!activeImage && idx === 0)
+                                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${activeImage === img.image || (!activeImage && idx === 0)
                                                 ? 'border-purple-600 scale-95 shadow-lg shadow-purple-600/20'
                                                 : 'border-transparent opacity-50 hover:opacity-100'
-                                        }`}
+                                            }`}
                                     >
                                         <img
                                             src={img.image}
@@ -203,11 +202,10 @@ export default function ProductDetailPage() {
                             <div className="flex justify-between items-center py-2 border-b border-[#2a2a2a]">
                                 <span className="text-gray-400">Inventory Status</span>
                                 <span
-                                    className={`px-2 py-0.5 rounded text-xs font-bold ${
-                                        (product.available_stock || 0) > 10
+                                    className={`px-2 py-0.5 rounded text-xs font-bold ${(product.available_stock || 0) > 10
                                             ? 'text-green-400 bg-green-400/10'
                                             : 'text-red-400 bg-red-400/10'
-                                    }`}
+                                        }`}
                                 >
                                     {(product.available_stock || 0) > 10 ? 'Healthy' : 'Low Stock'}
                                 </span>
@@ -305,11 +303,10 @@ export default function ProductDetailPage() {
                                                 </td>
                                                 <td className="p-4">
                                                     <span
-                                                        className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
-                                                            (variant.stock || 0) > 0
+                                                        className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${(variant.stock || 0) > 0
                                                                 ? 'bg-green-500/20 text-green-500'
                                                                 : 'bg-red-500/20 text-red-500'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {(variant.stock || 0) > 0
                                                             ? 'Available'

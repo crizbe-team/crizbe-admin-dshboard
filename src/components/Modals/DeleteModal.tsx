@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Loader2 } from 'lucide-react';
 import { Product } from './ProductAddEditModal';
 
 interface props {
@@ -7,6 +7,7 @@ interface props {
     productToDelete: Product | null;
     cancelDelete: () => void;
     confirmDeleteProduct: () => void;
+    isDeleting?: boolean;
 }
 
 function DeleteModal({
@@ -14,6 +15,7 @@ function DeleteModal({
     productToDelete,
     cancelDelete,
     confirmDeleteProduct,
+    isDeleting = false,
 }: props) {
     console.log(productToDelete, 'productToDeleteproductToDelete');
     return (
@@ -109,9 +111,10 @@ function DeleteModal({
                             </button>
                             <button
                                 onClick={confirmDeleteProduct}
-                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                                disabled={isDeleting}
+                                className="px-4 py-2  min-h-[40px] w-[160px]  bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 "
                             >
-                                Delete Product
+                                {isDeleting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Delete Product'}
                             </button>
                         </div>
                     </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Tags, Search, Edit, Trash2, Plus, Package, Box, ShoppingCart } from 'lucide-react';
 import VariantAddEditModal, { VariantFormData } from '@/components/Modals/VariantAddEditModal';
+import VariantDeleteModal from '@/components/Modals/VariantDeleteModal';
 import {
     useFetchVariants,
     useDeleteVariant,
@@ -30,6 +31,8 @@ export default function VariantsPage() {
     const updateMutation = useUpdateVariant();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [variantToDelete, setVariantToDelete] = useState<any | null>(null);
     const [editingVariant, setEditingVariant] = useState<any | null>(null);
     const [formData, setFormData] = useState<VariantFormData>({
         productId: '',
@@ -116,10 +119,25 @@ export default function VariantsPage() {
         }
     };
 
-    const handleDeleteVariant = async (id: string) => {
-        if (confirm('Are you sure you want to delete this variant?')) {
-            await deleteMutation.mutateAsync(id);
+    const handleDeleteVariant = (variant: any) => {
+        setVariantToDelete(variant);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDeleteVariant = async () => {
+        if (!variantToDelete) return;
+        try {
+            await deleteMutation.mutateAsync(variantToDelete.id);
+            setIsDeleteModalOpen(false);
+            setVariantToDelete(null);
+        } catch (error) {
+            console.error('Failed to delete variant:', error);
         }
+    };
+
+    const cancelDelete = () => {
+        setIsDeleteModalOpen(false);
+        setVariantToDelete(null);
     };
 
     const availableProducts =
@@ -226,7 +244,7 @@ export default function VariantsPage() {
                                                     <Edit className="w-4 h-4 text-blue-400" />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeleteVariant(variant.id)}
+                                                    onClick={() => handleDeleteVariant(variant)}
                                                     className="p-2 bg-red-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
                                                 >
                                                     <Trash2 className="w-4 h-4 text-red-400" />
@@ -252,6 +270,16 @@ export default function VariantsPage() {
                 formData={formData}
                 setFormData={setFormData}
                 availableProducts={availableProducts}
+                isSubmitting={createMutation.isPending || updateMutation.isPending}
+                isEditMode={!!editingVariant}
+            />
+
+            <VariantDeleteModal
+                isDeleteModalOpen={isDeleteModalOpen}
+                variantToDelete={variantToDelete}
+                cancelDelete={cancelDelete}
+                confirmDeleteVariant={confirmDeleteVariant}
+                isDeleting={deleteMutation.isPending}
             />
         </div>
     );

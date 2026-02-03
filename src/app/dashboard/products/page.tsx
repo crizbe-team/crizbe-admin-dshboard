@@ -418,6 +418,7 @@ export default function ProductsPage() {
                 handleImageUrlAdd={handleImageUrlAdd}
                 handleImageRemove={handleImageRemove}
                 categories={categoriesData?.data}
+                isSubmitting={createMutation.isPending || updateMutation.isPending}
             />
 
             {/* Delete Confirmation Modal */}
@@ -426,6 +427,7 @@ export default function ProductsPage() {
                 productToDelete={productToDelete}
                 cancelDelete={cancelDelete}
                 confirmDeleteProduct={confirmDeleteProduct}
+                isDeleting={deleteMutation.isPending}
             />
         </div>
     );

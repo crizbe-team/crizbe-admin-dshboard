@@ -1,23 +1,32 @@
 import React from 'react';
 import { Trash2, Loader2 } from 'lucide-react';
-import { Category } from './CategoryAddEditModal';
+
+interface VariantToDelete {
+    id: string;
+    size: string;
+    product_detail?: { name: string };
+}
 
 interface Props {
     isDeleteModalOpen: boolean;
-    categoryToDelete: Category | null;
+    variantToDelete: VariantToDelete | null;
     cancelDelete: () => void;
-    confirmDeleteCategory: () => void;
+    confirmDeleteVariant: () => void;
     isDeleting?: boolean;
 }
 
-function CategoryDeleteModal({
+function VariantDeleteModal({
     isDeleteModalOpen,
-    categoryToDelete,
+    variantToDelete,
     cancelDelete,
-    confirmDeleteCategory,
+    confirmDeleteVariant,
     isDeleting = false,
 }: Props) {
-    if (!isDeleteModalOpen || !categoryToDelete) return null;
+    if (!isDeleteModalOpen || !variantToDelete) return null;
+
+    const displayName = variantToDelete.product_detail?.name
+        ? `${variantToDelete.product_detail.name} - ${variantToDelete.size}`
+        : variantToDelete.size;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -28,8 +37,12 @@ function CategoryDeleteModal({
                             <Trash2 className="w-6 h-6 text-red-400" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-100">Delete Category</h3>
-                            <p className="text-sm text-gray-400">This action cannot be undone.</p>
+                            <h3 className="text-lg font-semibold text-gray-100">
+                                Delete Variant
+                            </h3>
+                            <p className="text-sm text-gray-400">
+                                This action cannot be undone.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -37,11 +50,8 @@ function CategoryDeleteModal({
                 <div className="p-6">
                     <p className="text-gray-300 mb-4">
                         Are you sure you want to delete{' '}
-                        <span className="font-semibold text-white">{categoryToDelete.name}</span>?
+                        <span className="font-semibold text-white">{displayName}</span>?
                     </p>
-                    <div className="p-3 bg-[#2a2a2a] rounded-lg">
-                        <p className="text-sm text-gray-400">This category contains products.</p>
-                    </div>
                 </div>
 
                 <div className="p-6 border-t border-[#2a2a2a] flex justify-end space-x-3">
@@ -52,17 +62,14 @@ function CategoryDeleteModal({
                         Cancel
                     </button>
                     <button
-                        onClick={confirmDeleteCategory}
+                        onClick={confirmDeleteVariant}
                         disabled={isDeleting}
-                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-[160px]"
+                        className="px-4 py-2 min-h-[40px] w-[160px] bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         {isDeleting ? (
-                            <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-
-                            </>
+                            <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
-                            'Delete Category'
+                            'Delete Variant'
                         )}
                     </button>
                 </div>
@@ -71,4 +78,4 @@ function CategoryDeleteModal({
     );
 }
 
-export default CategoryDeleteModal;
+export default VariantDeleteModal;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 
 export interface VariantFormData {
@@ -23,7 +23,11 @@ interface Props {
     formData: VariantFormData;
     setFormData: React.Dispatch<React.SetStateAction<VariantFormData>>;
     availableProducts: Product[];
+    isSubmitting?: boolean;
+    isEditMode?: boolean;
 }
+
+const commonSizes = ['100gm', '200gm', '250gm', '400gm', '500gm', '1kg'];
 
 function VariantAddEditModal({
     isModalOpen,
@@ -32,14 +36,26 @@ function VariantAddEditModal({
     formData,
     setFormData,
     availableProducts,
+    isSubmitting = false,
+    isEditMode = false,
 }: Props) {
     if (!isModalOpen) return null;
 
     const [customSize, setCustomSize] = useState('');
     const [useCustomSize, setUseCustomSize] = useState(false);
 
-    // Default sizes, but user can add custom
-    const commonSizes = ['100gm', '200gm', '250gm', '400gm', '500gm', '1kg'];
+    // When opening in edit mode, sync custom size state if size is not in common list
+    useEffect(() => {
+        if (!isModalOpen) return;
+        if (!formData.size) {
+            setUseCustomSize(false);
+            setCustomSize('');
+            return;
+        }
+        const isCommon = commonSizes.includes(formData.size);
+        setUseCustomSize(!isCommon);
+        if (!isCommon) setCustomSize(formData.size);
+    }, [isModalOpen, formData.size]);
 
     const handleSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const val = e.target.value;
@@ -77,7 +93,9 @@ function VariantAddEditModal({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-lg mx-4">
                 <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-100">Add New Variant</h2>
+                    <h2 className="text-xl font-semibold text-gray-100">
+                        {isEditMode ? 'Edit Variant' : 'Add New Variant'}
+                    </h2>
                     <button
                         onClick={handleCloseModal}
                         className="text-gray-400 hover:text-white transition-colors"
@@ -200,9 +218,16 @@ function VariantAddEditModal({
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                            disabled={isSubmitting}
+                            className="px-4 py-2  min-h-[40px] w-[160px]  bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 "
                         >
-                            Add Variant
+                            {isSubmitting ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : isEditMode ? (
+                                'Update Variant'
+                            ) : (
+                                'Add Variant'
+                            )}
                         </button>
                     </div>
                 </form>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { useCreateCategory, useUpdateCategory } from '@/queries/use-categories';
 
 export interface CategoryFormData {
@@ -31,8 +31,9 @@ function CategoryAddEditModal({
     formData,
     setFormData,
 }: Props) {
-    const { mutate } = useCreateCategory();
-    const { mutate: updateCategory } = useUpdateCategory();
+    const { mutate, isPending: isCreating } = useCreateCategory();
+    const { mutate: updateCategory, isPending: isUpdating } = useUpdateCategory();
+    const isSubmitting = isCreating || isUpdating;
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -133,9 +134,14 @@ function CategoryAddEditModal({
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                            disabled={isSubmitting}
+                            className="px-4 py-2  min-h-[40px] w-[160px]  bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center "
                         >
-                            {editingCategory ? 'Update Category' : 'Add Category'}
+                            {isSubmitting ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                editingCategory ? 'Update Category' : 'Add Category'
+                            )}
                         </button>
                     </div>
                 </form>

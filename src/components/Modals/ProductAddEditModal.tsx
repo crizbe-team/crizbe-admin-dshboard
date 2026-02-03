@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Trash2 } from 'lucide-react';
+import { X, Trash2, Loader2 } from 'lucide-react';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 
 export interface SizeVariant {
@@ -76,6 +76,7 @@ interface Props {
     handleImageUrlAdd: (url: string) => void;
     handleImageRemove: (index: number) => void;
     categories?: any[];
+    isSubmitting?: boolean;
 }
 
 function ProductAddEditModal({
@@ -89,6 +90,7 @@ function ProductAddEditModal({
     handleImageUrlAdd,
     handleImageRemove,
     categories = [],
+    isSubmitting = false,
 }: Props) {
     return (
         <>
@@ -229,9 +231,12 @@ function ProductAddEditModal({
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                                    disabled={isSubmitting}
+                                    className="px-4 py-2  min-h-[40px] w-[160px]  bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center "
                                 >
-                                    {editingProduct ? 'Update Product' : 'Add Product'}
+                                    {isSubmitting ? (
+                                        <Loader2 className="h-5 w-5 animate-spin " />
+                                    ) : (editingProduct ? 'Update Product' : 'Add Product')}
                                 </button>
                             </div>
                         </form>
