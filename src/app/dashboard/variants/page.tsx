@@ -36,7 +36,6 @@ export default function VariantsPage() {
         productName: '',
         size: '',
         price: '',
-        quantity: '',
         weight_per_unit: '',
     });
 
@@ -77,7 +76,6 @@ export default function VariantsPage() {
             productName: '',
             size: '',
             price: '',
-            quantity: '',
             weight_per_unit: '',
         });
         setIsModalOpen(true);
@@ -86,11 +84,10 @@ export default function VariantsPage() {
     const handleEditVariant = (variant: any) => {
         setEditingVariant(variant);
         setFormData({
-            productId: variant.product?.id || '',
-            productName: variant.product?.name || '',
+            productId: variant.product_detail?.id || '',
+            productName: variant.product_detail?.name || '',
             size: variant.size,
             price: variant.price.toString(),
-            quantity: variant.quantity.toString(),
             weight_per_unit: (variant.weight_per_unit || '').toString(),
         });
         setIsModalOpen(true);
@@ -103,7 +100,6 @@ export default function VariantsPage() {
             product: formData.productId,
             size: formData.size,
             price: parseFloat(formData.price) || 0,
-            quantity: parseInt(formData.quantity) || 0,
             weight_per_unit: parseFloat(formData.weight_per_unit) || 0,
         };
 
@@ -220,7 +216,7 @@ export default function VariantsPage() {
                                         <td className="p-4 text-purple-400 font-medium">
                                             ${parseFloat(variant.price || '0').toFixed(2)}
                                         </td>
-                                        <td className="p-4 text-gray-300">{variant.stock}</td>
+                                        <td className="p-4 text-gray-300">{variant.stock} units</td>
                                         <td className="p-4">
                                             <div className="flex items-center space-x-2">
                                                 <button

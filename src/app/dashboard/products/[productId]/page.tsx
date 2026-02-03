@@ -294,24 +294,24 @@ export default function ProductDetailPage() {
                                                 </td>
                                                 <td className="p-4">
                                                     <span className="text-purple-400 font-bold">
-                                                        $
+                                                        ₹
                                                         {parseFloat(variant.price || '0').toFixed(
                                                             2
                                                         )}
                                                     </span>
                                                 </td>
                                                 <td className="p-4 text-gray-300">
-                                                    {variant.quantity || 0} units
+                                                    {variant.stock || 0} units
                                                 </td>
                                                 <td className="p-4">
                                                     <span
                                                         className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
-                                                            (variant.quantity || 0) > 0
+                                                            (variant.stock || 0) > 0
                                                                 ? 'bg-green-500/20 text-green-500'
                                                                 : 'bg-red-500/20 text-red-500'
                                                         }`}
                                                     >
-                                                        {(variant.quantity || 0) > 0
+                                                        {(variant.stock || 0) > 0
                                                             ? 'Available'
                                                             : 'Sold Out'}
                                                     </span>
