@@ -3,6 +3,7 @@ import Header from '@/components/user/Header';
 import { ImageParticles } from '@/components/user/ImageParticles';
 import Image from 'next/image';
 import React from 'react';
+import pistaBottle from '../../../public/images/user/pista-bottle.png';
 
 export default function Hero() {
     return (
@@ -31,26 +32,32 @@ export default function Hero() {
             <Image
                 src="/images/user/almond-bottle.png"
                 alt="Crizbe Almond Premium Crunch Stick Bottle"
-                width={100}
+                width={230}
                 height={100}
+                priority
+                quality={100}
                 id="almond-bottle"
-                className="absolute z-1 w-[230px] bottom-0 -rotate-[28.55deg] left-[45%] top-[60%]"
+                className="absolute z-1  bottom-0 -rotate-[28.55deg] left-[45%] top-[60%]"
             />
             <Image
                 src="/images/user/hazelnut-bottle.png"
                 alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
-                width={100}
+                width={230}
                 height={100}
+                priority
+                quality={100}
                 id="hazelnut-bottle"
-                className="absolute z-1 w-[230px] bottom-0 -rotate-[17.64deg] left-[65%] top-[50%]"
+                className="absolute z-1  bottom-0 -rotate-[17.64deg] left-[65%] top-[50%]"
             />
             <Image
-                src="/images/user/pista-bottle.png"
+                src={pistaBottle}
                 alt="Crizbe Pista Premium Crunch Stick Bottle"
-                width={100}
+                width={230}
                 height={100}
+                priority
+                quality={100}
                 id="pista-bottle"
-                className="absolute z-1 w-[230px] bottom-0 -rotate-[7.5deg] left-[83%] top-[25%]"
+                className="absolute z-1  bottom-0 -rotate-[7.5deg] left-[83%] top-[25%]"
             />
             {/* <Image
                 src="/images/user/crizbe-bg.png"

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import React from 'react';
+import pistaBottle from '../../../public/images/user/pista-bottle.png';
 
 export default function NextFlavour() {
     return (
@@ -19,10 +20,12 @@ export default function NextFlavour() {
                 <div className="w-[230px] relative h-full" id="next-flavour-bottle-target">
                     <Image
                         id="next-pista-bottle"
-                        src="/images/user/pista-bottle.png"
+                        src={pistaBottle}
                         alt="Crizbe Pista Premium Crunch Stick Bottle - Next Flavor Discovery"
-                        width={100}
+                        width={230}
                         height={100}
+                        priority
+                        quality={100}
                         className="w-full h-auto opacity-0"
                     />
                 </div>

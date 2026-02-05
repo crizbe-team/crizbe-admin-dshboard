@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React from 'react';
+import pistaBottle from '../../../public/images/user/pista-bottle.png';
 
 const ingredientsConfig = [
     { size: 50, blur: 'blur-[4px]', z: 'z-1', delay: '0.1s' }, // Back far
@@ -54,8 +55,10 @@ export default function Flavours() {
                                 id="almond-bottle-target"
                                 src="/images/user/almond-bottle.png"
                                 alt="Crizbe Almond Premium Crunch Stick Bottle"
-                                width={100}
+                                width={230}
                                 height={100}
+                                priority
+                                quality={100}
                                 className="w-full h-full invisible opacity-0 relative z-10"
                             />
                         </div>
@@ -95,8 +98,10 @@ export default function Flavours() {
                                 id="hazelnut-bottle-target"
                                 src="/images/user/hazelnut-bottle.png"
                                 alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
-                                width={100}
+                                width={230}
                                 height={100}
+                                priority
+                                quality={100}
                                 className="w-full h-full invisible opacity-0 relative z-10"
                             />
                         </div>
@@ -134,10 +139,12 @@ export default function Flavours() {
 
                             <Image
                                 id="pista-bottle-target"
-                                src="/images/user/pista-bottle.png"
+                                src={pistaBottle}
                                 alt="Crizbe Pista Premium Crunch Stick Bottle"
-                                width={100}
+                                width={230}
                                 height={100}
+                                priority
+                                quality={100}
                                 className="w-full h-full invisible opacity-0 relative z-10"
                             />
                         </div>
