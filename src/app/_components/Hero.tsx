@@ -8,7 +8,7 @@ import pistaBottle from '../../../public/images/user/pista-bottle.png';
 export default function Hero() {
     return (
         <div className=" min-h-screen relative">
-            <Header />
+            {/* <Header /> */}
             <div className="wrapper pt-[210px] pb-[120px] relative z-1">
                 <div className="mb-[100px]">
                     <h1 className="text-[#4E3325] text-[72px] font-bricolage font-bold mb-[38px]">
