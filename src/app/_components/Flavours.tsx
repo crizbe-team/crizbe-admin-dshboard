@@ -14,7 +14,7 @@ const ingredientsConfig = [
 
 export default function Flavours() {
     return (
-        <section className="flavours-section bg-[url(/images/user/flavours-bg.png)] bg-contain bg-no-repeat bg-left min-h-screen flex items-center overflow-visible">
+        <section className="flavours-section bg-[url(/images/user/flavours-bg.png)] bg-cover bg-no-repeat min-h-screen flex items-center overflow-visible">
             <div className="horizontal-scroll-wrapper flex gap-[100px] items-center px-[5vw] pr-[10vw]">
                 <div className="shrink-0">
                     <h2 className="text-[#4E3325] text-[64px] font-bricolage font-bold mb-[38px]">
