@@ -5,6 +5,8 @@ import Flavours from '../_components/Flavours';
 import NextFlavour from '../_components/NextFlavour';
 import SmoothScroll from '@/components/SmoothScroll';
 import StructuredData from '../_components/StructuredData';
+import FeedbacSection from '../_components/FeedbacSection';
+import Footer from '../_components/Footer';
 
 export default function Home() {
     return (
@@ -15,6 +17,8 @@ export default function Home() {
             <Flavours />
             <NextFlavour />
             <QuoteSection />
+            <FeedbacSection />
+            <Footer />
         </main>
     );
 }

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Lulu Meyers",
+        "feedback": "Crizbe Crunch Sticks are ideal for those who enjoy snacks quietly. Each bite is truly satisfying.",
+        "designation": "PM, Hourglass . Web Design Agency",
+        "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150&h=150",
+        "rating": 5,
+        "location": "New York"
+    },
+    {
+        "name": "Marcus Chen",
+        "feedback": "The texture is unmatched. It’s rare to find a snack that balances crunch and flavor so perfectly without being messy.",
+        "designation": "Creative Director, PixelFlow",
+        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150&h=150",
+        "rating": 3,
+        "location": "San Francisco"
+    },
+    {
+        "name": "Sarah Jenkins",
+        "feedback": "Crizbe has become our go-to office snack. It’s light enough for a mid-day break but satisfying enough to keep you going.",
+        "designation": "HR Manager, BrightScale",
+        "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=150&h=150",
+        "rating": 2,
+        "location": "Chicago"
+    }
+]

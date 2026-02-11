@@ -6,7 +6,7 @@ export default function HomedLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return <>
+    return <div>
         <Header />
         {children}
         <Image
@@ -15,7 +15,7 @@ export default function HomedLayout({
             width={100}
             height={100}
             sizes="100vw"
-            className="fixed w-full bottom-0 pointer-events-none z-10 "
+            className="fixed w-full bottom-0 pointer-events-none z-5 "
         />
-    </>;
+    </div>;
 }
