@@ -7,11 +7,11 @@ export default function QuoteSection() {
             {/* Scattered nuts overlay */}
 
             <div className="wrapper relative z-10 text-center px-4">
-                <h2 className="text-white text-[clamp(2.5rem,6vw,4.5rem)] font-bricolage font-bold leading-tight">
+                <h2 className="text-[#F9F2E0] text-[120px] font-bricolage font-bold leading-tight">
                     &ldquo;We won&apos;t say much.&rdquo;
                     <br />
                     The{' '}
-                    <span className="title-highlight after:bg-[#c2a065] text-[#f9f1df]">
+                    <span className="title-qoutes-highlights  text-[#CDAB78]">
                         Crunch.
                     </span>
                     will.

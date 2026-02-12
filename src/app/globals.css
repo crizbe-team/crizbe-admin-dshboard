@@ -50,6 +50,7 @@
 body {
     overflow-x: hidden;
 }
+
 .wrapper {
     max-width: 1440px;
     width: 90%;
@@ -68,6 +69,7 @@ body {
     border-radius: 2rem;
     color: #552c10;
 }
+
 .cta-btn:hover {
     background-color: #552c10;
     color: #fff;
@@ -76,34 +78,42 @@ body {
 .hero-section {
     height: 100vh;
 }
+
 .hero-section .container {
     height: 100%;
 }
+
 .hero-section .container nav {
     padding: 1.5vh 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 .hero-section .container nav .logo a {
     font-size: 2rem;
     font-weight: 800;
     color: #552c10;
 }
+
 .hero-section .container nav .menu ul {
     display: flex;
 }
+
 .hero-section .container nav .menu ul li {
     margin: 0 1vw;
 }
+
 .hero-section .container nav .menu ul li a {
     color: #000;
     transform: 2s;
 }
+
 .hero-section .container nav .menu ul li a:hover {
     color: #552c10;
     font-weight: 600;
 }
+
 .hero-section .container .hero-content {
     display: flex;
     align-items: center;
@@ -111,20 +121,24 @@ body {
     height: calc(100% - 90px);
     position: relative;
 }
+
 .hero-section .container .hero-content h1 {
     font-size: 20.5vw;
     color: #552c10;
 }
+
 .hero-section .container .hero-content img {
     position: absolute;
     filter: drop-shadow(0 10px 5px rgba(37, 37, 37, 0.0745098039));
 }
+
 .hero-section .container .hero-content .cookie {
     width: 22vw;
     transform: rotate(-60deg);
     z-index: 1;
     transition: all 0.1s;
 }
+
 .hero-section .container .hero-content .choco-chips {
     z-index: 0;
     width: 12vw;
@@ -132,6 +146,7 @@ body {
     left: 35%;
     transition: all 0.1s;
 }
+
 .hero-section .container .hero-content .peanut {
     left: 90%;
     top: 45%;
@@ -139,6 +154,7 @@ body {
     width: 12vw;
     z-index: -1;
 }
+
 .hero-section .container .hero-content .gem {
     left: 4%;
     top: 60%;
@@ -149,31 +165,38 @@ body {
     height: 100vh;
     background-color: rgba(85, 44, 16, 0.2);
 }
+
 .second-section .container {
     height: 100%;
 }
+
 .second-section .container .content-wrapper {
     height: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 .second-section .container .content-wrapper .img-section {
     flex-basis: 50%;
 }
+
 .second-section .container .content-wrapper .content-section {
     flex-basis: 50%;
 }
+
 .second-section .container .content-wrapper .content-section h2 {
     font-size: 5vw;
     line-height: 1;
     color: #552c10;
 }
+
 .second-section .container .content-wrapper .content-section .sub-heading {
     font-size: 1.5vw;
     margin: 1vh 0 2vh;
     color: #552c10;
 }
+
 .second-section .container .content-wrapper .content-section p {
     line-height: 30px;
 }
@@ -182,15 +205,18 @@ body {
     height: 100vh;
     background-color: #fff;
 }
+
 .third-section .container {
     height: 100%;
 }
+
 .third-section .content-wrapper {
     height: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 .third-section .product-card {
     background-color: #552c10;
     color: #fff;
@@ -205,17 +231,21 @@ body {
     border-radius: 30px;
     position: relative;
 }
+
 .third-section .product-card h4 {
     font-size: 2vw;
 }
+
 .third-section .product-card .cta-btn {
     color: #fff;
     margin-top: 1.5rem;
 }
+
 .third-section .product-card .cta-btn:hover {
     background-color: #fff;
     color: #552c10;
 }
+
 .third-section .product-card .cooki-sm {
     width: 13vw;
     position: absolute;
@@ -297,10 +327,12 @@ body {
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
         @apply bg-background text-foreground;
     }
 }
+
 @layer utilities {
     .title-highlight {
         position: relative;
@@ -312,35 +344,103 @@ body {
     .title-highlight::after {
         content: '';
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 100%;
-        height: 85%;
-        transform: translate(-50%, -50%) rotate(-2deg);
+        inset: 0;
+        background: #c49a63;
         z-index: -1;
+
+        clip-path: polygon(2% 0%,
+                95% 13%,
+                98% 90%,
+                5% 100%);
     }
+
+    .title-highlighter {
+        position: relative;
+        z-index: 1;
+        display: inline-block;
+        padding: 0 32px;
+    }
+
+    .title-highlighter::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: #F9F2E0;
+        z-index: -1;
+
+        clip-path: polygon(98% 0%,
+                5% 13%,
+                2% 90%,
+                95% 100%);
+    }
+
+    .title-highlights {
+        position: relative;
+        z-index: 1;
+        display: inline-block;
+        padding: 0 32px;
+    }
+
+    .title-highlights::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: #c49a63;
+        z-index: -1;
+
+        clip-path: polygon(98% 0%,
+                5% 13%,
+                2% 90%,
+                95% 100%);
+    }
+
+    .title-qoutes-highlights {
+        position: relative;
+        z-index: 1;
+        display: inline-block;
+        padding: 0 32px;
+    }
+
+    .title-qoutes-highlights::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: #F9F2E0;
+        z-index: -1;
+
+        clip-path: polygon(98% 0%,
+                5% 13%,
+                2% 90%,
+                95% 100%);
+    }
+
 
     /* Ingredient Orbits */
     .ingredient-orbit-1 {
         transition-delay: 0.1s;
         transform: translate(0, 0) rotate(0deg);
     }
+
     .ingredient-orbit-2 {
         transition-delay: 0.15s;
         transform: translate(0, 0) rotate(0deg);
     }
+
     .ingredient-orbit-3 {
         transition-delay: 0.05s;
         transform: translate(0, 0) rotate(0deg);
     }
+
     .ingredient-orbit-4 {
         transition-delay: 0.2s;
         transform: translate(0, 0) rotate(0deg);
     }
+
     .ingredient-orbit-5 {
         transition-delay: 0.12s;
         transform: translate(0, 0) rotate(0deg);
     }
+
     .ingredient-orbit-6 {
         transition-delay: 0.18s;
         transform: translate(0, 0) rotate(0deg);
@@ -349,18 +449,23 @@ body {
     .group:hover .ingredient-orbit-1 {
         transform: translate(-170px, -150px) rotate(-15deg);
     }
+
     .group:hover .ingredient-orbit-2 {
         transform: translate(160px, -160px) rotate(20deg);
     }
+
     .group:hover .ingredient-orbit-3 {
         transform: translate(-190px, 0px) rotate(-10deg);
     }
+
     .group:hover .ingredient-orbit-4 {
         transform: translate(185px, 40px) rotate(15deg);
     }
+
     .group:hover .ingredient-orbit-5 {
         transform: translate(-140px, 160px) rotate(5deg);
     }
+
     .group:hover .ingredient-orbit-6 {
         transform: translate(170px, 150px) rotate(-5deg);
     }

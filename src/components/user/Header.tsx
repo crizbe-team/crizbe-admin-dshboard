@@ -4,8 +4,8 @@ import React from 'react';
 
 export default function Header() {
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 w-full h-[80px] backdrop-blur-md bg-white/10 border-b border-white/20">
-            <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6">
+        <header className="fixed  top-0 left-0 right-0 z-50 w-full h-[80px] backdrop-blur-md bg-white/10 border-b border-white/20">
+            <div className="mx-auto wrapper flex h-full max-w-7xl items-center justify-between ">
                 <h1 className="text-lg font-semibold text-white w-[150px]">
                     <Link href="/">
                         <Image

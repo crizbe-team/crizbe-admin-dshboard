@@ -14,18 +14,21 @@ const ingredientsConfig = [
 
 export default function Flavours() {
     return (
-        <section className="flavours-section bg-[url(/images/user/flavours-bg.png)] bg-cover bg-no-repeat min-h-screen flex items-center overflow-visible">
-            <div className="horizontal-scroll-wrapper flex gap-[100px] items-center px-[5vw] pr-[10vw]">
-                <div className="shrink-0">
+        <section className=" flavours-section bg-[url(/images/user/flavours-bg.png)] bg-cover bg-no-repeat min-h-screen flex items-center overflow-visible">
+            <div className="horizontal-scroll-wrapper flex gap-[100px] items-center">
+                <div className="shrink-0 mr-[130px]">
                     <h2 className="text-[#4E3325] text-[64px] font-bricolage font-bold mb-[38px]">
                         3 Flavours. One <br />
                         Perfect{' '}
-                        <span className="title-highlight after:bg-[#c2a065] text-[#f9f1df]">
+                        <span className="title-highlighter after:bg-[#c2a065] text-[#CDAB78] relative">
                             Crunch.
                         </span>
                     </h2>
-                    <Button className="bg-linear-to-r from-[#caa45a] via-[#ddb56a] to-[#b08a43] h-[54px] w-[195px] font-medium">
-                        Discover the Crunch
+                    <Button className="bg-[#FAF3E2] h-[54px] w-[193px] ">
+                        <span className=' font-medium bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent'>
+                            Get it Now
+                        </span>
+
                     </Button>
                 </div>
 
@@ -172,6 +175,6 @@ export default function Flavours() {
                     />
                 </Button>
             </div>
-        </section>
+        </section >
     );
 }

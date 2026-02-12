@@ -10,7 +10,7 @@ export default function NextFlavour() {
                     <div className="next-flavour-line inline-block">Find your</div> <br />
                     <div className="next-flavour-line inline-block">
                         next{' '}
-                        <span className="title-highlight after:bg-[#c2a065] text-[#f9f1df]">
+                        <span className="title-highlights relative text-[#f9f1df]">
                             favorite
                         </span>
                     </div>

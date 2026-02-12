@@ -39,7 +39,7 @@ const FeedbacSection = () => {
                                 ))}
                             </div>
 
-                            <blockquote className='text-3xl lg:text-4xl font-medium text-[#4A3B2C] leading-tight mb-12 font-serif'>
+                            <blockquote className='text-3xl lg:text-4xl font-medium text-[#4E3325] leading-tight mb-12 font-bricolage'>
                                 "{currentFeedback.feedback}"
                             </blockquote>
 
@@ -49,14 +49,14 @@ const FeedbacSection = () => {
                                     className='w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#4A3B2C] hover:bg-[#E3D1A5] transition-colors duration-300'
                                     aria-label="Previous testimonial"
                                 >
-                                    <ArrowLeft className='w-5 h-5' />
+                                    <ArrowLeft className='w-5 h-5 text-[#CDAB78]' />
                                 </button>
                                 <button
                                     onClick={handleNext}
                                     className='w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#4A3B2C] hover:bg-[#E3D1A5] transition-colors duration-300'
                                     aria-label="Next testimonial"
                                 >
-                                    <ArrowRight className='w-5 h-5' />
+                                    <ArrowRight className='w-5 h-5 text-[#CDAB78]' />
                                 </button>
                             </div>
                         </motion.div>
