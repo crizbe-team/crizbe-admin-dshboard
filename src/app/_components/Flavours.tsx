@@ -1,7 +1,11 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React from 'react';
 import pistaBottle from '../../../public/images/user/pista-bottle.png';
+import { useRouter } from 'next/navigation';
+
 
 const ingredientsConfig = [
     { size: 50, blur: 'blur-[4px]', z: 'z-1', delay: '0.1s' }, // Back far
@@ -13,6 +17,7 @@ const ingredientsConfig = [
 ];
 
 export default function Flavours() {
+    const router = useRouter();
     return (
         <section className="flavours-section bg-[url(/images/user/flavours-bg.png)] bg-cover bg-no-repeat min-h-screen flex items-center overflow-visible">
             <div className="horizontal-scroll-wrapper flex gap-[100px] items-center px-[5vw] pr-[10vw]">
@@ -24,7 +29,7 @@ export default function Flavours() {
                             Crunch.
                         </span>
                     </h2>
-                    <Button className="bg-linear-to-r from-[#caa45a] via-[#ddb56a] to-[#b08a43] h-[54px] w-[195px] font-medium">
+                    <Button className="bg-linear-to-r from-[#caa45a] via-[#ddb56a] to-[#b08a43] h-[54px] w-[195px] font-medium" onClick={() => router.push('/products')}>
                         Discover the Crunch
                     </Button>
                 </div>
