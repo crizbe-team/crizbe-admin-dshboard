@@ -1,7 +1,11 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React from 'react';
 import pistaBottle from '../../../public/images/user/pista-bottle.png';
+import { useRouter } from 'next/navigation';
+
 
 const ingredientsConfig = [
     { size: 50, blur: 'blur-[4px]', z: 'z-1', delay: '0.1s' }, // Back far
@@ -13,6 +17,7 @@ const ingredientsConfig = [
 ];
 
 export default function Flavours() {
+    const router = useRouter();
     return (
         <section className=" flavours-section bg-[url(/images/user/flavours-bg.png)] bg-cover bg-no-repeat min-h-screen flex items-center overflow-visible">
             <div className="horizontal-scroll-wrapper flex gap-[100px] items-center">
@@ -25,7 +30,7 @@ export default function Flavours() {
                         </span>
                     </h2>
                     <Button className="bg-[#FAF3E2] h-[54px] w-[193px] ">
-                        <span className=' font-medium bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent'>
+                        <span className=' font-medium bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent' onClick={() => router.push('/products')}>
                             Get it Now
                         </span>
 
