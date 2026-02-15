@@ -3,7 +3,8 @@
 import React from 'react';
 import ProductCard from '@/app/_components/ui/ProductCard';
 import { useFetchProducts } from '@/queries/use-products';
-import Loader from '@/components/ui/loader';
+import UserLoaders from '@/components/ui/UserLoader';
+
 
 const ProductsPage = () => {
     // Fetch products
@@ -16,7 +17,7 @@ const ProductsPage = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
-                <Loader />
+                <UserLoaders />
             </div>
         );
     }
