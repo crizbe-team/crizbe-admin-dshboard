@@ -38,7 +38,12 @@ export default function SmoothScroll() {
                 pinType: scrollContainer.style.transform ? 'transform' : 'fixed',
             });
 
-            ScrollTrigger.addEventListener('refresh', () => locoScroll.update());
+            ScrollTrigger.addEventListener('refresh', () => {
+                if (locoScroll) {
+                    locoScroll.update();
+                }
+            });
+
             ScrollTrigger.defaults({ scroller: '.smooth-scroll' });
 
             ScrollTrigger.matchMedia({
