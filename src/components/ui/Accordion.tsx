@@ -28,7 +28,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, defaultO
                 )}
             </button>
             <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? ' opacity-100 mt-4' : 'max-h-0 opacity-0'
                     }`}
             >
                 <div className="text-[#5A5A5A] leading-relaxed pb-2">

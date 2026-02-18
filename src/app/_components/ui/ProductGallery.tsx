@@ -24,12 +24,12 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName, pr
     return (
         <div className="flex flex-col gap-6">
             {/* Main Image */}
-            <div className="relative w-full aspect-square bg-[#F5F2EA] rounded-3xl overflow-hidden shadow-sm">
+            <div className="relative w-full aspect-square bg-[#F5F2EA] rounded-[32px] overflow-hidden shadow-sm group">
                 {displayImage ? (
                     <img
                         src={displayImage}
                         alt={productName}
-                        className="object-cover w-full h-full"
+                        className="object-cover w-full h-full transform transition-transform duration-700 group-hover:scale-105"
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-6xl text-gray-300">
@@ -40,13 +40,14 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName, pr
 
             {/* Thumbnails */}
             {images && images.length > 0 && (
-                <div className="grid grid-cols-5 gap-3">
+                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
+                    {/* Add the main image as the first thumbnail option if not explicitly in list, or just map existing */}
                     {images.map((img, index) => (
-                        <div
+                        <button
                             key={index}
-                            className={`relative aspect-square rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${selectedImage === img.image
-                                    ? 'border-[#C19A5B] opacity-100'
-                                    : 'border-transparent opacity-70 hover:opacity-100'
+                            className={`relative w-20 h-20 flex-shrink-0 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-300 ${selectedImage === img.image
+                                ? 'border-[#552C10] opacity-100'
+                                : 'border-transparent opacity-80 hover:opacity-100'
                                 }`}
                             onClick={() => setSelectedImage(img.image)}
                         >
@@ -55,7 +56,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName, pr
                                 alt={`${productName} thumbnail ${index + 1}`}
                                 className="object-cover w-full h-full"
                             />
-                        </div>
+                        </button>
                     ))}
                 </div>
             )}
