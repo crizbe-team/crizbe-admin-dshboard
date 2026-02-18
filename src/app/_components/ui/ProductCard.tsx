@@ -36,7 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     return (
         <div
-            className="bg-[#FAF9F6] rounded-3xl p-4 flex flex-col h-full shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer mt-10"
+            className="rounded-3xl p-4 flex flex-col h-full transition-shadow duration-300 cursor-pointer mt-10"
             onClick={handleClick}
         >
             {/* Image Container */}
@@ -73,7 +73,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
                 {/* Add to Cart Button */}
                 <button
-                    className="mt-auto w-full py-2.5 px-4 rounded-xl border border-[#3E3E3E] text-[#3E3E3E] font-medium hover:bg-[#3E3E3E] hover:text-[#FAF9F6] transition-colors duration-300"
+                    className="w-full py-2.5 px-4 rounded-xl border border-[#3E3E3E] text-[#3E3E3E] font-medium hover:bg-[#3E3E3E] hover:text-[#FAF9F6] transition-colors duration-300"
                     onClick={(e) => {
                         e.stopPropagation();
                         // Add to cart logic here
