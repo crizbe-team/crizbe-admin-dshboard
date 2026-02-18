@@ -427,6 +427,26 @@ export default function SmoothScroll() {
                         },
                         0.4
                     );
+
+                    tl2.set(
+                        '.flavor-selection-btns',
+                        {
+                            visibility: 'visible',
+                            pointerEvents: 'auto',
+                        },
+                        0.75
+                    );
+
+                    tl2.fromTo(
+                        '.flavor-selection-btns',
+                        { y: 600 },
+                        {
+                            y: 0,
+                            ease: 'power2.out',
+                            duration: 0.25,
+                        },
+                        0.75
+                    );
                 },
             });
             ScrollTrigger.refresh();
