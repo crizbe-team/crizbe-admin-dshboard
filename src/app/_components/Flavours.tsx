@@ -39,8 +39,18 @@ export default function Flavours() {
 
                 <div className="flex gap-[40px] items-center">
                     {/* Almond Card */}
-                    <article className="group bg-[url(/images/user/almond-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end shrink-0 transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.02]">
-                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] almond-bottle-target-position z-10 flex items-center justify-center">
+                    <article className="group relative w-[600px] h-[360px] shrink-0">
+                        <div className="bg-[url(/images/user/almond-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
+                        <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
+                            <h2 className="text-[#5C4114] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                Almond
+                            </h2>
+                            <p className="text-[#4E3325CC] text-[16px] font-normal">
+                                Feel the premium almond <br />
+                                crunch in every byte.
+                            </p>
+                        </div>
+                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] almond-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
                             {/* Ingredient Orbits */}
                             {ingredientsConfig.map((config, i) => (
                                 <Image
@@ -70,20 +80,21 @@ export default function Flavours() {
                                 className="w-full h-full invisible opacity-0 relative z-10"
                             />
                         </div>
-                        <div className="parallax-content">
-                            <h2 className="text-[#5C4114] text-[40px] font-bricolage font-semibold mb-[10px]">
-                                Almond
-                            </h2>
-                            <p className="text-[#4E3325CC] text-[16px] font-normal">
-                                Feel the premium almond <br />
-                                crunch in every byte.
-                            </p>
-                        </div>
                     </article>
 
                     {/* Hazelnut Card */}
-                    <article className="group bg-[url(/images/user/hazelnut-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end shrink-0 transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.02]">
-                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] hazelnut-bottle-target-position z-10 flex items-center justify-center">
+                    <article className="group relative w-[600px] h-[360px] shrink-0">
+                        <div className="bg-[url(/images/user/hazelnut-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
+                        <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
+                            <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                Hazelnut
+                            </h2>
+                            <p className="text-[#FFFFFF] text-[16px] font-normal">
+                                Indulge in the rich <br />
+                                hazelnut center.
+                            </p>
+                        </div>
+                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] hazelnut-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
                             {/* Ingredient Orbits */}
                             {ingredientsConfig.map((config, i) => (
                                 <Image
@@ -113,20 +124,21 @@ export default function Flavours() {
                                 className="w-full h-full invisible opacity-0 relative z-10"
                             />
                         </div>
-                        <div className="parallax-content">
-                            <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
-                                Hazelnut
-                            </h2>
-                            <p className="text-[#FFFFFF] text-[16px] font-normal">
-                                Indulge in the rich <br />
-                                hazelnut center.
-                            </p>
-                        </div>
                     </article>
 
                     {/* Pista Card */}
-                    <article className="group bg-[url(/images/user/pista-card.png)] relative bg-contain bg-no-repeat w-[600px] h-[360px] p-[42px] flex flex-col justify-end shrink-0 transition-transform duration-500 hover:-translate-y-2 hover:scale-[1.02]">
-                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] pista-bottle-target-position z-10 flex items-center justify-center">
+                    <article className="group relative w-[600px] h-[360px] shrink-0">
+                        <div className="bg-[url(/images/user/pista-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
+                        <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
+                            <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                Pista
+                            </h2>
+                            <p className="text-[#FFFFFF] text-[16px] font-normal">
+                                Savor the roasted <br />
+                                pistachio perfection.
+                            </p>
+                        </div>
+                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] pista-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
                             {/* Ingredient Orbits */}
                             {ingredientsConfig.map((config, i) => (
                                 <Image
@@ -155,15 +167,6 @@ export default function Flavours() {
                                 quality={100}
                                 className="w-full h-full invisible opacity-0 relative z-10"
                             />
-                        </div>
-                        <div className="parallax-content">
-                            <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
-                                Pista
-                            </h2>
-                            <p className="text-[#FFFFFF] text-[16px] font-normal">
-                                Savor the roasted <br />
-                                pistachio perfection.
-                            </p>
                         </div>
                     </article>
                 </div>
