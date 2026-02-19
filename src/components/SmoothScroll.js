@@ -427,6 +427,40 @@ export default function SmoothScroll() {
                         },
                         0.4
                     );
+
+                    tl2.set(
+                        '.flavor-selection-btns',
+                        {
+                            visibility: 'visible',
+                            pointerEvents: 'auto',
+                        },
+                        0.75
+                    );
+
+                    tl2.fromTo(
+                        '.flavor-selection-btns',
+                        { y: 600 },
+                        {
+                            y: 0,
+                            ease: 'power2.out',
+                            duration: 0.25,
+                        },
+                        0.75
+                    );
+
+                    // Quote Section Parallax
+                    gsap.from('.quote-section-content', {
+                        scrollTrigger: {
+                            trigger: '.quote-section',
+                            start: 'top bottom',
+                            end: 'bottom top',
+                            scrub: true,
+                        },
+                        y: 150,
+                        opacity: 0.5,
+                        scale: 0.9,
+                        ease: 'none',
+                    });
                 },
             });
             ScrollTrigger.refresh();
