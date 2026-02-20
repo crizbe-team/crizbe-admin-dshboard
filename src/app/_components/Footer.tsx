@@ -66,7 +66,7 @@ const Footer = () => {
                                 <li key={link.name}>
                                     <Link
                                         href={link.href}
-                                        className="text-[#4E3325] hover:text-[#C2A065] text-base transition-colors duration-300 font-medium"
+                                        className="text-[#797573] hover:bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] hover:bg-clip-text hover:text-transparent text-base transition-colors duration-300 font-medium"
                                     >
                                         {link.name}
                                     </Link>
