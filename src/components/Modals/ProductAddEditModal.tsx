@@ -123,6 +123,7 @@ function ProductAddEditModal({
                                             type="file"
                                             accept="image/*"
                                             multiple
+                                            required
                                             onChange={handleImageFilesChange}
                                             className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700"
                                         />
