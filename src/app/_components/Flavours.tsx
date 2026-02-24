@@ -19,7 +19,7 @@ const ingredientsConfig = [
 export default function Flavours() {
     const router = useRouter();
     return (
-        <section className=" flavours-section bg-[url(/images/user/flavours-bg.png)] bg-cover bg-no-repeat min-h-screen flex items-center overflow-visible">
+        <section className=" flavours-section bg-[url(/images/user/flavours-bg.png)] bg-[length:100%_100%] bg-no-repeat h-screen flex items-center overflow-visible relative">
             <div className="horizontal-scroll-wrapper flex gap-[100px] items-center">
                 <div className="shrink-0 mr-[130px]">
                     <h2 className="text-[#4E3325] text-[64px] font-bricolage font-bold mb-[38px]">
@@ -171,7 +171,7 @@ export default function Flavours() {
                     </article>
                 </div>
             </div>
-            <div className="absolute bottom-[60px] left-1/2 -translate-x-1/2 z-10">
+            <div className="absolute bottom-[80px] left-1/2 -translate-x-1/2 z-10">
                 <Button className="view-all-btn bg-[#4E3325] hover:bg-[#3d281d] text-white rounded-full text-[16px] font-medium flex items-center gap-[10px] translate-y-[600px] invisible">
                     View all products{' '}
                     <Image

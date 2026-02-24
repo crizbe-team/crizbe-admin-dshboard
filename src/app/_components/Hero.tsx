@@ -7,9 +7,9 @@ import pistaBottle from '../../../public/images/user/pista-bottle.png';
 
 export default function Hero() {
     return (
-        <div className=" min-h-screen relative">
+        <div className="min-h-screen relative bg-transparent">
             {/* <Header /> */}
-            <div className="wrapper pt-[210px] pb-[120px] relative z-1">
+            <div className="wrapper pt-[210px] pb-[120px] relative">
                 <div className="mb-[100px]">
                     <h1 className="text-[#4E3325] text-[72px] font-bricolage font-bold mb-[38px]">
                         Feel the{' '}
@@ -37,7 +37,7 @@ export default function Hero() {
                 priority
                 quality={100}
                 id="almond-bottle"
-                className="absolute z-1  bottom-0 -rotate-[28.55deg] left-[45%] top-[60%]"
+                className="absolute z-[9999]  bottom-0 -rotate-[28.55deg] left-[45%] top-[60%]"
             />
             <Image
                 src="/images/user/hazelnut-bottle.png"
@@ -47,7 +47,7 @@ export default function Hero() {
                 priority
                 quality={100}
                 id="hazelnut-bottle"
-                className="absolute z-1  bottom-0 -rotate-[17.64deg] left-[65%] top-[50%]"
+                className="absolute z-[9999]  bottom-0 -rotate-[17.64deg] left-[65%] top-[50%]"
             />
             <Image
                 src={pistaBottle}
@@ -57,7 +57,7 @@ export default function Hero() {
                 priority
                 quality={100}
                 id="pista-bottle"
-                className="absolute z-1  bottom-0 -rotate-[7.5deg] left-[83%] top-[25%]"
+                className="absolute z-[999]  bottom-0 -rotate-[7.5deg] left-[83%] top-[25%]"
             />
             {/* <Image
                 src="/images/user/crizbe-bg.png"

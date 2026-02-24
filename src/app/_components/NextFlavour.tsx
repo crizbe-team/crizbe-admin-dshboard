@@ -34,7 +34,7 @@ export default function NextFlavour() {
     const [selectedFlavor, setSelectedFlavor] = useState(flavors[1]); // Default to Pistachio
 
     return (
-        <section className="min-h-screen flex justify-center next-flavour-section relative overflow-hidden py-20 md:py-0">
+        <section className="min-h-screen flex justify-center next-flavour-section relative overflow-visible py-20 md:py-0 bg-transparent">
             <div className="wrapper flex flex-col md:flex-row gap-[60px] md:gap-[20px] justify-between items-center relative z-10">
                 <div className="flex flex-col items-center md:items-start text-center md:text-left">
                     <h2 className="text-[#4E3325] text-[48px] md:text-[64px] font-bricolage font-bold mb-[38px] next-flavour-title leading-tight">
@@ -73,11 +73,10 @@ export default function NextFlavour() {
                             <button
                                 key={flavor.id}
                                 onClick={() => setSelectedFlavor(flavor)}
-                                className={`w-[48px] md:w-[48px] h-[48px] md:h-[48px] rounded-full bg-white flex items-center justify-center p-2 pb-0 transition-all duration-300 shadow-xl cursor-pointer ${
-                                    selectedFlavor.id === flavor.id
-                                        ? 'ring-2 ring-[#C2A065] scale-110 shadow-[0_0_20px_rgba(194,160,101,0.4)] w-[64px] h-[64px]'
-                                        : 'hover:ring-2 hover:ring-[#C2A065]/50 grayscale-[0.3] hover:grayscale-0'
-                                }`}
+                                className={`w-[48px] md:w-[48px] h-[48px] md:h-[48px] rounded-full bg-white flex items-center justify-center p-2 pb-0 transition-all duration-300 shadow-xl cursor-pointer ${selectedFlavor.id === flavor.id
+                                    ? 'ring-2 ring-[#C2A065] scale-110 shadow-[0_0_20px_rgba(194,160,101,0.4)] w-[64px] h-[64px]'
+                                    : 'hover:ring-2 hover:ring-[#C2A065]/50 grayscale-[0.3] hover:grayscale-0'
+                                    }`}
                             >
                                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
                                     <Image
