@@ -22,4 +22,11 @@ export const API_ENDPOINTS = {
     GET_VARIANT_STOCK: 'stocks/variant/:id/',
     GET_STOCK_HISTORY: 'stocks/history/:id/',
     GET_STOCK_HISTORY_LIST: 'stocks/history/',
+
+    // Cart endpoints
+    GET_CART: 'orders/cart/',
+    ADD_TO_CART: 'orders/cart/add/',
+    UPDATE_CART_ITEM: 'orders/cart/update/',
+    REMOVE_FROM_CART: 'orders/cart/remove/:id/',
+    CLEAR_CART: 'orders/cart/clear/',
 } as const;
