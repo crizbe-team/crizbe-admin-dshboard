@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Minus, Plus, Trash2, Loader2, ShoppingBag } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
@@ -26,7 +26,7 @@ export default function CartPage() {
     const [bill, setBill] = useState<Record<string, boolean>>({});
 
     // Sync local quantities with server data when it changes
-    React.useEffect(() => {
+    useEffect(() => {
         if (items.length > 0) {
             const newQuantities: Record<string, number> = {};
             items.forEach((it: any) => {
