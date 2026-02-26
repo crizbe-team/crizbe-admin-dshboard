@@ -5,8 +5,9 @@ import Image from 'next/image';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
 import CheckoutSteps from '@/app/(user)/_components/checkout/CheckoutSteps';
-import CartSummaryCard from '@/app/(user)/_components/checkout/CartSummaryCard';
+
 import { useRouter } from 'next/navigation';
+import CartSummaryCard from '../_components/checkout/CartSummaryCard';
 
 type CartItem = {
     id: string;
