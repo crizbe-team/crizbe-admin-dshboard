@@ -36,11 +36,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     return (
         <div
-            className="rounded-3xl p-4 flex flex-col h-full transition-shadow duration-300 cursor-pointer mt-10"
+            className="rounded-[32px] flex flex-col h-full transition-shadow duration-300 cursor-pointer"
             onClick={handleClick}
         >
             {/* Image Container */}
-            <div className="relative w-full aspect-square mb-4 rounded-2xl overflow-hidden bg-[#EAEAEA]">
+            <div className="relative w-full aspect-square mb-6 rounded-[24px] overflow-hidden bg-[#EAEAEA]">
                 {product.images && product.images.length > 0 ? (
                     <img
                         src={imageUrl}
@@ -57,23 +57,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {/* Content */}
             <div className="flex flex-col flex-grow">
                 {/* Category */}
-                <p className="text-xs text-[#8E8E8E] font-medium mb-1 uppercase tracking-wide">
+                <p className="font-[var(--font-bricolage)] font-normal text-[12px] leading-[16px] text-[#AFAFAF] mb-2 uppercase align-middle">
                     {product.category?.name || 'Uncategorized'}
                 </p>
 
                 {/* Title */}
-                <h3 className="text-lg font-bold text-[#1A1A1A] mb-1 line-clamp-2 leading-tight">
+                <h3 className="font-[var(--font-inter-tight)] font-semibold text-[16px] leading-[150%] mb-2 line-clamp-2 align-middle">
                     {product.name}
                 </h3>
 
                 {/* Price */}
-                <p className="text-lg font-bold text-[#1A1A1A] mb-4">
+                <p className="font-[var(--font-inter-tight)] font-semibold text-[16px] leading-[150%] mb-6 align-middle">
                     {formattedPrice}
                 </p>
 
                 {/* Add to Cart Button */}
                 <button
-                    className="w-full py-2.5 px-4 rounded-xl border border-[#3E3E3E] text-[#3E3E3E] font-medium hover:bg-[#3E3E3E] hover:text-[#FAF9F6] transition-colors duration-300"
+                    className="w-full py-[12px] px-[24px] rounded-[12px] border border-[#000] font-medium text-[14px] hover:bg-white hover:text-[#373737] transition-all duration-300 flex items-center justify-center gap-[8px]"
                     onClick={(e) => {
                         e.stopPropagation();
                         // Add to cart logic here

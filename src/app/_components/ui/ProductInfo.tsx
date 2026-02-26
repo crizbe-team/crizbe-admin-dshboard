@@ -9,6 +9,7 @@ interface ProductInfoProps {
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     const [quantity, setQuantity] = useState(1);
+    const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null);
 
     const handleQuantityChange = (type: 'inc' | 'dec') => {
         if (type === 'dec' && quantity > 1) {
@@ -18,10 +19,12 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         }
     };
 
+    const currentPrice = selectedVariant ? selectedVariant.price : product.price;
+
     const formattedPrice = new Intl.NumberFormat('en-IN', {
         style: 'currency',
         currency: 'INR',
-    }).format(Number(product.price) || 0);
+    }).format(Number(currentPrice) || 0);
 
     return (
         <div className="flex flex-col font-sans">
@@ -35,17 +38,19 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 {product.name}
             </h1>
 
-            {/* Reviews (Mock) */}
+            {/* Reviews */}
             <div className="flex items-center gap-2 mb-6">
                 <div className="flex text-[#FFB800] gap-0.5">
-                    {[...Array(4)].map((_, i) => (
-                        <Star key={i} className="w-5 h-5 fill-current" />
+                    {[...Array(5)].map((_, i) => (
+                        <Star
+                            key={i}
+                            className={`w-5 h-5 fill-current ${i < Math.floor(product.average_rating || 0) ? 'text-[#FFB800]' : 'text-gray-300'}`}
+                        />
                     ))}
-                    <Star className="w-5 h-5 fill-current text-gray-300" />
                 </div>
                 <div className="flex items-center gap-2 text-sm text-[#5A5A5A] ml-2">
-                    <span className="font-semibold">4.5</span>
-                    <span>(14 reviews)</span>
+                    <span className="font-semibold">{Number(product.average_rating || 0).toFixed(1)}</span>
+                    <span>({product.total_reviews || 0} reviews)</span>
                 </div>
             </div>
 
@@ -55,10 +60,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             </div>
 
             {/* Flavour Mock */}
-            <div className="mb-8">
+            {/* <div className="mb-8">
                 <h3 className="text-sm font-medium text-[#1A1A1A] mb-3">Flavour</h3>
                 <div className="flex gap-4">
-                    {/* Try to use product images as flavour thumbnails if available, else placeholders */}
                     {['Almond', 'Pistachio', 'Dark Choco'].map((flavour, i) => (
                         <button
                             key={i}
@@ -71,11 +75,31 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                 alt={flavour}
                                 onError={(e) => (e.currentTarget.style.display = 'none')}
                             />
-                            {/* Overlay for unselected? Maybe not needed based on screenshot which just shows selection ring */}
                         </button>
                     ))}
                 </div>
-            </div>
+            </div> */}
+
+            {/* Variant Selection */}
+            {product.variants && product.variants.length > 0 && (
+                <div className="mb-8">
+                    <h3 className="text-sm font-medium text-[#1A1A1A] mb-3">Select Size</h3>
+                    <div className="flex flex-wrap gap-4">
+                        {product.variants.map((v: any) => (
+                            <button
+                                key={v.id}
+                                onClick={() => setSelectedVariant(v)}
+                                className={`px-5 py-3 rounded-2xl border text-sm font-semibold transition-all duration-300 ${selectedVariant?.id === v.id
+                                    ? 'border-[#552C10] bg-[#552C10] text-white shadow-md transform scale-105'
+                                    : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
+                                    }`}
+                            >
+                                {v.size}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Quantity */}
             <div className="mb-10">
@@ -100,10 +124,20 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             </div>
 
             {/* Add to Cart */}
-            <button className="w-full bg-[#C19A5B] hover:bg-[#A6854E] text-white text-base font-medium py-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-300 shadow-sm active:scale-[0.99] mb-8">
-                <ShoppingCart className="w-5 h-5" />
-                <span>Add to Cart</span>
-            </button>
+            <div className="relative group mb-8">
+                <button
+                    style={{
+                        background: 'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)'
+                    }}
+                    className="w-full relative overflow-hidden text-white text-base font-bold py-4 rounded-md flex items-center justify-center gap-3 transition-all duration-500 shadow-[0_4px_20px_rgba(154,114,54,0.2)] active:scale-[0.98] cursor-pointer"
+                >
+                    {/* Shine Effect */}
+                    <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
+
+                    <ShoppingCart className="w-5 h-5" />
+                    <span>Add to Cart</span>
+                </button>
+            </div>
 
             <hr className="border-t border-dashed border-[#EAEAEA] mb-8" />
         </div>

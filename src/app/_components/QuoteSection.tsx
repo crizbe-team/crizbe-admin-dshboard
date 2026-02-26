@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function QuoteSection() {
     return (
-        <section className="quote-section relative bg-[url(/images/user/Vector.png)] bg-cover bg-no-repeat min-h-screen flex items-center overflow-hidden">
+        <section className="quote-section relative bg-[url(/images/user/Vector.png)] bg-cover bg-no-repeat min-h-screen flex items-center overflow-visible">
             {/* Scattered nuts overlay */}
 
             <div className="wrapper relative z-10 text-center px-4 quote-section-content">

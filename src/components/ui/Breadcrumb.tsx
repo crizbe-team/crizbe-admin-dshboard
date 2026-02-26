@@ -13,16 +13,16 @@ interface BreadcrumbProps {
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
     return (
-        <nav className="flex items-center text-sm text-[#8E8E8E] mb-6">
+        <nav className="flex items-center text-sm text-[#8E8E8E] mb-8">
             {items.map((item, index) => (
                 <div key={index} className="flex items-center">
-                    {index > 0 && <ChevronRight className="w-4 h-4 mx-2" />}
+                    {index > 0 && <span className="mx-2 text-xs">/</span>}
                     {item.href ? (
-                        <Link href={item.href} className="hover:text-[#1A1A1A] transition-colors">
+                        <Link href={item.href} className="hover:text-[#1A1A1A] transition-all duration-200">
                             {item.label}
                         </Link>
                     ) : (
-                        <span className="font-semibold text-[#1A1A1A]">{item.label}</span>
+                        <span className="font-bold text-[#1A1A1A]">{item.label}</span>
                     )}
                 </div>
             ))}
