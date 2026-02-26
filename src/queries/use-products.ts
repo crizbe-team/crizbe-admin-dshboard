@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProducts, getProduct } from '../services/products';
+import { getProducts, getProduct, getRelatedProducts } from '../services/products';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
 const { GET_PRODUCTS, GET_PRODUCT } = API_ENDPOINTS;
@@ -47,5 +47,13 @@ export const useDeleteProduct = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_PRODUCTS] });
         },
+    });
+};
+
+export const useFetchRelatedProducts = (id: string | number) => {
+    return useQuery({
+        queryKey: [API_ENDPOINTS.GET_RELATED_PRODUCTS, id],
+        queryFn: () => getRelatedProducts(id),
+        enabled: !!id,
     });
 };

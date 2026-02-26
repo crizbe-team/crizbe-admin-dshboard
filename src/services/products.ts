@@ -55,3 +55,10 @@ export const getProduct = async (
     const response = await api[method](url);
     return response.data;
 };
+
+export const getRelatedProducts = async (id: string | number) => {
+    const { GET_RELATED_PRODUCTS } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_RELATED_PRODUCTS).path('id', id).build();
+    const response = await api.get(url);
+    return response.data;
+};

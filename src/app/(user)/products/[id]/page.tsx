@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useFetchSingleProduct, useFetchProducts } from '@/queries/use-products';
+import { useFetchSingleProduct, useFetchRelatedProducts } from '@/queries/use-products';
 import Loader from '@/components/ui/loader';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ProductGallery from '@/app/_components/ui/ProductGallery';
@@ -17,10 +17,10 @@ const ProductDetailsPage = () => {
     const productId = Array.isArray(id) ? id[0] : id;
 
     const { data: productData, isLoading, isError } = useFetchSingleProduct(productId || '');
-    const { data: relatedProductsData } = useFetchProducts({ limit: 4 }); // Mock limit, adjust if API supports
+    const { data: relatedProductsData } = useFetchRelatedProducts(productId || '');
     console.log(productData, 'productData');
     const product = productData;
-    const relatedProducts = relatedProductsData?.data?.slice(0, 4) || [];
+    const relatedProducts = relatedProductsData?.data || [];
 
     if (isLoading) {
         return (

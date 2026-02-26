@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
     // Product endpoints
     GET_PRODUCTS: 'products/products/',
     GET_PRODUCT: 'products/products/:id/',
+    GET_RELATED_PRODUCTS: 'products/products/:id/related/',
 
     // Variant endpoints
     GET_VARIANTS: 'products/variants/',
