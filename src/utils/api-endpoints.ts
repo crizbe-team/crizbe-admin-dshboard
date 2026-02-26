@@ -1,8 +1,9 @@
 export const API_ENDPOINTS = {
     // Auth endpoints
-    SIGN_IN: '/users/admin-login/',
-    REFRESH_TOKEN: '/auth/refresh',
-    LOGOUT: '/auth/logout',
+    SIGN_UP: 'accounts/signup/',
+    LOGIN: 'accounts/login/',
+    REFRESH_TOKEN: 'accounts/token/refresh/',
+    LOGOUT: 'accounts/logout/',
 
     // Category endpoints
     GET_CATEGORIES: 'products/category/',
