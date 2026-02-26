@@ -24,10 +24,10 @@ export const API_ENDPOINTS = {
     GET_STOCK_HISTORY: 'stocks/history/:id/',
     GET_STOCK_HISTORY_LIST: 'stocks/history/',
 
-    // Cart endpoints
-    GET_CART: 'orders/cart/',
-    ADD_TO_CART: 'orders/cart/add/',
-    UPDATE_CART_ITEM: 'orders/cart/update/',
-    REMOVE_FROM_CART: 'orders/cart/remove/:id/',
-    CLEAR_CART: 'orders/cart/clear/',
+    // Order endpoints
+    CREATE_ORDER: 'orders/checkout/',
+    ORDER_LIST: 'orders/list/',
+    ORDER_DETAIL: 'orders/orders/:id/',
+    ADMIN_ORDER_LIST: 'orders/admin/list/',
+    UPDATE_ORDER_STATUS: 'orders/admin/:id/status/',
 } as const;
