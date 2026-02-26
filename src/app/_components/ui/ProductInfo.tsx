@@ -1,14 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Minus, Plus, ShoppingCart, Star, Loader2 } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, Star, Loader2, ArrowRight } from 'lucide-react';
 import { useAddToCart } from '@/queries/use-cart';
+import { useRouter } from 'next/navigation';
 
 interface ProductInfoProps {
     product: any; // Using any for now to match flexible backend data
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
+    const router = useRouter();
     const [quantity, setQuantity] = useState(1);
     const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null);
     const { mutate: addToCart, isPending } = useAddToCart();
@@ -24,6 +26,11 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     const handleAddToCart = () => {
         if (!selectedVariant && product.variants?.length > 0) {
             alert('Please select a size');
+            return;
+        }
+
+        if (selectedVariant?.is_in_cart) {
+            router.push('/cart');
             return;
         }
 
@@ -116,7 +123,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             )}
 
             {/* Quantity */}
-            <div className="mb-10">
+            <div
+                className={`mb-10 transition-opacity duration-300 ${selectedVariant && !selectedVariant.in_stock ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}
+            >
                 <h3 className="text-sm font-medium text-[#1A1A1A] mb-3">Quantity</h3>
                 <div className="flex items-center border border-[#8E8E8E] rounded-lg w-fit h-12">
                     <button
@@ -137,26 +146,59 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 </div>
             </div>
 
+            {/* Status Messages */}
+            {selectedVariant && !selectedVariant.in_stock && (
+                <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3">
+                    <div className="w-2 h-2 bg-red-500 rounded-full mt-1.5 shrink-0"></div>
+                    <div className="flex flex-col gap-1">
+                        <p className="text-sm font-semibold text-red-900">Restocking Soon!</p>
+                        <p className="text-xs text-red-700 leading-relaxed">
+                            We're sorry! This size is temporarily unavailable. We're working hard to
+                            restock — check back in a few days or explore our other available sizes.
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* Add to Cart */}
             <div className="relative group mb-8">
                 <button
                     onClick={handleAddToCart}
-                    disabled={isPending}
+                    disabled={isPending || (selectedVariant && !selectedVariant.in_stock)}
                     style={{
                         background:
-                            'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
+                            selectedVariant && !selectedVariant.in_stock
+                                ? '#AFAFAF'
+                                : 'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
                     }}
-                    className="w-full relative overflow-hidden text-white text-base font-bold py-4 rounded-md flex items-center justify-center gap-3 transition-all duration-500 shadow-[0_4px_20px_rgba(154,114,54,0.2)] active:scale-[0.98] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                    className={`w-full relative overflow-hidden text-white text-base font-bold py-4 rounded-md flex items-center justify-center gap-3 transition-all duration-500 shadow-[0_4px_20px_rgba(154,114,54,0.2)] active:scale-[0.98] ${
+                        selectedVariant && !selectedVariant.in_stock
+                            ? 'cursor-not-allowed'
+                            : 'cursor-pointer'
+                    } disabled:opacity-70`}
                 >
                     {/* Shine Effect */}
-                    <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
+                    {(!selectedVariant || selectedVariant.in_stock) && (
+                        <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
+                    )}
 
                     {isPending ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : selectedVariant &&
+                      !selectedVariant.in_stock ? null : selectedVariant?.is_in_cart ? (
+                        <ArrowRight className="w-5 h-5" />
                     ) : (
                         <ShoppingCart className="w-5 h-5" />
                     )}
-                    <span>{isPending ? 'Adding...' : 'Add to Cart'}</span>
+                    <span>
+                        {isPending
+                            ? 'Adding...'
+                            : selectedVariant && !selectedVariant.in_stock
+                              ? 'Out of Stock'
+                              : selectedVariant?.is_in_cart
+                                ? 'Go to Cart'
+                                : 'Add to Cart'}
+                    </span>
                 </button>
             </div>
 
