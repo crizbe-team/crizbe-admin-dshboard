@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import { X, Loader2, Plus, Trash2 } from 'lucide-react';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 
-export interface VariantFormData {
-    productId: string;
-    productName: string;
+export interface VariantItem {
+    id?: string;
     size: string;
     price: string;
     weight_per_unit: string;
 }
 
+export interface VariantFormData {
+    productId: string;
+    productName: string;
+    variants: VariantItem[];
+}
+
 interface Product {
     id: string;
     name: string;
-    product_id_code: string; // Renamed to avoid confusion with internal ID
+    product_id_code: string;
 }
 
 interface Props {
@@ -39,62 +44,95 @@ function VariantAddEditModal({
     isSubmitting = false,
     isEditMode = false,
 }: Props) {
-    if (!isModalOpen) return null;
+    const [customSizeStates, setCustomSizeStates] = useState<Record<string, boolean>>({});
 
-    const [customSize, setCustomSize] = useState('');
-    const [useCustomSize, setUseCustomSize] = useState(false);
-
-    // When opening in edit mode, sync custom size state if size is not in common list
-    useEffect(() => {
-        if (!isModalOpen) return;
-        if (!formData.size) {
-            setUseCustomSize(false);
-            setCustomSize('');
-            return;
+    const generateId = () => {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
         }
-        const isCommon = commonSizes.includes(formData.size);
-        setUseCustomSize(!isCommon);
-        if (!isCommon) setCustomSize(formData.size);
-    }, [isModalOpen, formData.size]);
+        return Math.random().toString(36).substring(2, 11);
+    };
 
-    const handleSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const val = e.target.value;
-        if (val === 'custom') {
-            setUseCustomSize(true);
-            setFormData({ ...formData, size: '' });
+    const handleAddRow = () => {
+        setFormData({
+            ...formData,
+            variants: [
+                ...formData.variants,
+                { id: generateId(), size: '', price: '', weight_per_unit: '' },
+            ],
+        });
+    };
+
+    const handleRemoveRow = (id: string) => {
+        const updatedVariants = formData.variants.filter((v) => v.id !== id);
+        setFormData({ ...formData, variants: updatedVariants });
+
+        // Cleanup custom state for removed row
+        const newStates = { ...customSizeStates };
+        delete newStates[id];
+        setCustomSizeStates(newStates);
+    };
+
+    const handleVariantChange = (id: string, field: keyof VariantItem, value: string) => {
+        const updatedVariants = formData.variants.map((v) =>
+            v.id === id ? { ...v, [field]: value } : v
+        );
+        setFormData({ ...formData, variants: updatedVariants });
+    };
+
+    const handleSizeChange = (item: VariantItem, value: string) => {
+        const itemId = item.id!;
+        if (value === 'custom') {
+            setCustomSizeStates({ ...customSizeStates, [itemId]: true });
+            handleVariantChange(itemId, 'size', '');
         } else {
-            setUseCustomSize(false);
+            setCustomSizeStates({ ...customSizeStates, [itemId]: false });
 
             // Auto-calculate weight_per_unit based on size
             let weight = '';
-            if (val.endsWith('gm')) {
-                const num = parseFloat(val.replace('gm', ''));
+            if (value.endsWith('gm')) {
+                const num = parseFloat(value.replace('gm', ''));
                 if (!isNaN(num)) weight = (num / 1000).toString();
-            } else if (val.endsWith('kg')) {
-                const num = parseFloat(val.replace('kg', ''));
+            } else if (value.endsWith('kg')) {
+                const num = parseFloat(value.replace('kg', ''));
                 if (!isNaN(num)) weight = num.toString();
             }
 
-            setFormData({
-                ...formData,
-                size: val,
-                weight_per_unit: weight || formData.weight_per_unit,
-            });
+            const updatedVariants = formData.variants.map((v) =>
+                v.id === itemId
+                    ? {
+                          ...v,
+                          size: value,
+                          weight_per_unit: weight || v.weight_per_unit,
+                      }
+                    : v
+            );
+            setFormData({ ...formData, variants: updatedVariants });
         }
     };
 
-    const handleCustomSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value;
-        setCustomSize(val);
-        setFormData({ ...formData, size: val });
-    };
+    // Initialize custom states when modal opens
+    useEffect(() => {
+        if (isModalOpen && formData.variants.length > 0) {
+            const initialStates: Record<string, boolean> = {};
+            formData.variants.forEach((v) => {
+                const id = v.id || generateId();
+                if (v.size && !commonSizes.includes(v.size)) {
+                    initialStates[id] = true;
+                }
+            });
+            setCustomSizeStates(initialStates);
+        }
+    }, [isModalOpen, formData.variants]);
+
+    if (!isModalOpen) return null;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-lg mx-4">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
+            <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col">
+                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between shrink-0">
                     <h2 className="text-xl font-semibold text-gray-100">
-                        {isEditMode ? 'Edit Variant' : 'Add New Variant'}
+                        {isEditMode ? 'Edit Variant' : 'Add New Variants'}
                     </h2>
                     <button
                         onClick={handleCloseModal}
@@ -104,133 +142,213 @@ function VariantAddEditModal({
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    {/* Product Selection */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Select Product
-                        </label>
-                        <SearchableSelect
-                            options={availableProducts.map((p) => ({
-                                label: `${p.name}`,
-                                value: p.id,
-                            }))}
-                            value={formData.productId}
-                            onChange={(value) => {
-                                const selectedProduct = availableProducts.find(
-                                    (p) => p.id === value
-                                );
-                                setFormData({
-                                    ...formData,
-                                    productId: value,
-                                    productName: selectedProduct ? selectedProduct.name : '',
-                                });
-                            }}
-                            placeholder="Select a Product"
-                        />
-                    </div>
-
-                    {/* Size Selection */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Size</label>
-                        {!useCustomSize ? (
-                            <select
-                                required
-                                value={formData.size}
-                                onChange={handleSizeChange}
-                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                            >
-                                <option value="">-- Select Size --</option>
-                                {commonSizes.map((size) => (
-                                    <option key={size} value={size}>
-                                        {size}
-                                    </option>
-                                ))}
-                                <option value="custom">Custom Size...</option>
-                            </select>
-                        ) : (
-                            <div className="flex items-center space-x-2">
-                                <input
-                                    type="text"
-                                    required
-                                    value={customSize}
-                                    onChange={handleCustomSizeChange}
-                                    placeholder="e.g. 750gm"
-                                    className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setUseCustomSize(false)}
-                                    className="px-3 py-2 bg-[#2a2a2a] border border-[#3a3a3a] rounded-lg text-gray-400 hover:text-white"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="">
-                        <div>
+                <div className="p-6 overflow-y-auto">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Product Selection */}
+                        <div className="max-w-md">
                             <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Price ($)
+                                Select Product
                             </label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                required
-                                value={formData.price}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, price: e.target.value })
-                                }
-                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                placeholder="0.00"
+                            <SearchableSelect
+                                options={availableProducts.map((p) => ({
+                                    label: `${p.name}`,
+                                    value: p.id,
+                                }))}
+                                value={formData.productId}
+                                onChange={(value) => {
+                                    const selectedProduct = availableProducts.find(
+                                        (p) => p.id === value
+                                    );
+                                    setFormData({
+                                        ...formData,
+                                        productId: value,
+                                        productName: selectedProduct ? selectedProduct.name : '',
+                                    });
+                                }}
+                                placeholder="Select a Product"
+                                isDisabled={isEditMode}
                             />
                         </div>
-                    </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Weight Per Unit (kg)
-                        </label>
-                        <input
-                            type="number"
-                            step="0.001"
-                            required
-                            value={formData.weight_per_unit}
-                            onChange={(e) =>
-                                setFormData({ ...formData, weight_per_unit: e.target.value })
-                            }
-                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                            placeholder="e.g. 0.1 for 100gm"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                            Enter the weight in kg. Example: 100gm = 0.1, 500gm = 0.5, 1kg = 1.0
-                        </p>
-                    </div>
+                        {/* Variants List */}
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider">
+                                    Variant Details
+                                </h3>
+                                {!isEditMode && (
+                                    <button
+                                        type="button"
+                                        onClick={handleAddRow}
+                                        className="flex items-center gap-1 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Add Row
+                                    </button>
+                                )}
+                            </div>
 
-                    <div className="flex justify-end space-x-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={handleCloseModal}
-                            className="px-4 py-2 bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a] rounded-lg transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="px-4 py-2  min-h-[40px] w-[160px]  bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 "
-                        >
-                            {isSubmitting ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                            ) : isEditMode ? (
-                                'Update Variant'
-                            ) : (
-                                'Add Variant'
-                            )}
-                        </button>
-                    </div>
-                </form>
+                            <div className="space-y-4">
+                                {formData.variants.map((variant) => {
+                                    const itemId = variant.id!;
+                                    return (
+                                        <div
+                                            key={itemId}
+                                            className="p-4 bg-[#212121] rounded-xl border border-[#2a2a2a] relative group"
+                                        >
+                                            {!isEditMode && formData.variants.length > 1 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveRow(itemId)}
+                                                    className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            )}
+
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                {/* Size */}
+                                                <div>
+                                                    <label className="block text-xs font-medium text-gray-400 mb-1">
+                                                        Size
+                                                    </label>
+                                                    {customSizeStates[itemId] ? (
+                                                        <div className="flex items-center space-x-2">
+                                                            <input
+                                                                type="text"
+                                                                required
+                                                                autoFocus
+                                                                value={variant.size}
+                                                                onChange={(e) =>
+                                                                    handleVariantChange(
+                                                                        itemId,
+                                                                        'size',
+                                                                        e.target.value
+                                                                    )
+                                                                }
+                                                                placeholder="e.g. 750gm"
+                                                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const newStates = {
+                                                                        ...customSizeStates,
+                                                                    };
+                                                                    delete newStates[itemId];
+                                                                    setCustomSizeStates(newStates);
+                                                                    handleVariantChange(
+                                                                        itemId,
+                                                                        'size',
+                                                                        ''
+                                                                    );
+                                                                }}
+                                                                className="text-xs text-gray-400 hover:text-white"
+                                                            >
+                                                                Reset
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <select
+                                                            required
+                                                            value={variant.size}
+                                                            onChange={(e) =>
+                                                                handleSizeChange(
+                                                                    variant,
+                                                                    e.target.value
+                                                                )
+                                                            }
+                                                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                                                        >
+                                                            <option value="">
+                                                                -- Select Size --
+                                                            </option>
+                                                            {commonSizes.map((size) => (
+                                                                <option key={size} value={size}>
+                                                                    {size}
+                                                                </option>
+                                                            ))}
+                                                            <option value="custom">
+                                                                Custom Size...
+                                                            </option>
+                                                        </select>
+                                                    )}
+                                                </div>
+
+                                                {/* Price */}
+                                                <div>
+                                                    <label className="block text-xs font-medium text-gray-400 mb-1">
+                                                        Price ($)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        step="0.01"
+                                                        required
+                                                        value={variant.price}
+                                                        onChange={(e) =>
+                                                            handleVariantChange(
+                                                                itemId,
+                                                                'price',
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                                                        placeholder="0.00"
+                                                    />
+                                                </div>
+
+                                                {/* Weight */}
+                                                <div>
+                                                    <label className="block text-xs font-medium text-gray-400 mb-1">
+                                                        Weight (kg)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        step="0.001"
+                                                        required
+                                                        value={variant.weight_per_unit}
+                                                        onChange={(e) =>
+                                                            handleVariantChange(
+                                                                itemId,
+                                                                'weight_per_unit',
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                                                        placeholder="0.1"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end space-x-3 pt-4 border-t border-[#2a2a2a]">
+                            <button
+                                type="button"
+                                onClick={handleCloseModal}
+                                className="px-4 py-2 bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a] rounded-lg transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="px-6 py-2 min-h-[40px] bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {isSubmitting ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : isEditMode ? (
+                                    'Update Variant'
+                                ) : (
+                                    `Create ${formData.variants.length} Variant${formData.variants.length > 1 ? 's' : ''}`
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );
