@@ -50,8 +50,8 @@ export default function CartPage() {
         );
     }, 500);
 
-    const handleUpdateQuantity = (id: string, currentQty: number, delta: number) => {
-        const newQty = Math.max(1, currentQty + delta);
+    const handleUpdateQuantity = (id: string, currentQty: number, delta: number, stock: number) => {
+        const newQty = Math.max(1, Math.min(stock, currentQty + delta));
         if (newQty !== currentQty) {
             setLocalQuantities((prev) => ({ ...prev, [id]: newQty }));
             debouncedUpdate(id, newQty);
@@ -154,52 +154,103 @@ export default function CartPage() {
                                                     <div className="text-[12px] text-[#191919] mb-2">
                                                         Quantity
                                                     </div>
-                                                    <div className="inline-flex items-center rounded-lg border border-[#474747] bg-white overflow-hidden">
-                                                        <button
-                                                            type="button"
-                                                            aria-label="Decrease"
-                                                            disabled={updatingId === it.id}
-                                                            onClick={() =>
-                                                                handleUpdateQuantity(
-                                                                    it.id,
-                                                                    localQuantities[it.id] ??
-                                                                        it.quantity,
-                                                                    -1
-                                                                )
-                                                            }
-                                                            className="h-9 border-r border-[#474747] w-9 grid place-items-center text-[#6B635A] hover:bg-black/5 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                                        >
-                                                            <Minus className="w-4 h-4 text-[#0A0A0A]" />
-                                                        </button>
-                                                        <div className="h-9 w-10 grid place-items-center text-sm text-[#0A0A0A] relative">
-                                                            {updatingId === it.id ? (
-                                                                <Loader2 className="w-4 h-4 animate-spin text-[#4E3325]" />
-                                                            ) : (
-                                                                (
-                                                                    localQuantities[it.id] ??
-                                                                    it.quantity
-                                                                )
-                                                                    .toString()
-                                                                    .padStart(2, '0')
-                                                            )}
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="inline-flex items-center rounded-lg border border-[#474747] bg-white overflow-hidden">
+                                                            <button
+                                                                type="button"
+                                                                aria-label="Decrease"
+                                                                disabled={updatingId === it.id}
+                                                                onClick={() =>
+                                                                    handleUpdateQuantity(
+                                                                        it.id,
+                                                                        localQuantities[it.id] ??
+                                                                            it.quantity,
+                                                                        -1,
+                                                                        it.available_stock ?? 999
+                                                                    )
+                                                                }
+                                                                className="h-9 border-r border-[#474747] w-9 grid place-items-center text-[#6B635A] hover:bg-black/5 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            >
+                                                                <Minus className="w-4 h-4 text-[#0A0A0A]" />
+                                                            </button>
+                                                            <div className="h-9 w-10 grid place-items-center text-sm text-[#0A0A0A] relative">
+                                                                {updatingId === it.id ? (
+                                                                    <Loader2 className="w-4 h-4 animate-spin text-[#4E3325]" />
+                                                                ) : (
+                                                                    (
+                                                                        localQuantities[it.id] ??
+                                                                        it.quantity
+                                                                    )
+                                                                        .toString()
+                                                                        .padStart(2, '0')
+                                                                )}
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                aria-label="Increase"
+                                                                disabled={
+                                                                    updatingId === it.id ||
+                                                                    (localQuantities[it.id] ??
+                                                                        it.quantity) >=
+                                                                        (it.available_stock ?? 999)
+                                                                }
+                                                                onClick={() =>
+                                                                    handleUpdateQuantity(
+                                                                        it.id,
+                                                                        localQuantities[it.id] ??
+                                                                            it.quantity,
+                                                                        1,
+                                                                        it.available_stock ?? 999
+                                                                    )
+                                                                }
+                                                                className="h-9 border-l border-[#474747] w-9 grid place-items-center text-[#6B635A] hover:bg-black/5 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            >
+                                                                <Plus className="w-4 h-4 text-[#0A0A0A]" />
+                                                            </button>
                                                         </div>
-                                                        <button
-                                                            type="button"
-                                                            aria-label="Increase"
-                                                            disabled={updatingId === it.id}
-                                                            onClick={() =>
-                                                                handleUpdateQuantity(
-                                                                    it.id,
-                                                                    localQuantities[it.id] ??
-                                                                        it.quantity,
-                                                                    1
-                                                                )
-                                                            }
-                                                            className="h-9 border-l border-[#474747] w-9 grid place-items-center text-[#6B635A] hover:bg-black/5 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                                        >
-                                                            <Plus className="w-4 h-4 text-[#0A0A0A]" />
-                                                        </button>
+                                                        {it.available_stock > 0 &&
+                                                            it.available_stock < 10 &&
+                                                            (localQuantities[it.id] ??
+                                                                it.quantity) <=
+                                                                it.available_stock && (
+                                                                <span className="text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
+                                                                    🔥 Only {it.available_stock}{' '}
+                                                                    left!
+                                                                </span>
+                                                            )}
                                                     </div>
+                                                    {(localQuantities[it.id] ?? it.quantity) >
+                                                    (it.available_stock ?? 0) ? (
+                                                        <p className="mt-2 text-[11px] font-medium text-red-600">
+                                                            <span className="font-bold">
+                                                                Reduce quantity!
+                                                            </span>{' '}
+                                                            Only{' '}
+                                                            <span className="font-bold">
+                                                                {it.available_stock} item
+                                                                {it.available_stock !== 1
+                                                                    ? 's'
+                                                                    : ''}
+                                                            </span>{' '}
+                                                            available — please lower your quantity.
+                                                        </p>
+                                                    ) : it.available_stock > 0 &&
+                                                      it.available_stock < 10 ? (
+                                                        <p className="mt-2 text-[11px] font-medium text-orange-700">
+                                                            <span className="font-bold">
+                                                                Hurry!
+                                                            </span>{' '}
+                                                            Only{' '}
+                                                            <span className="font-bold">
+                                                                {it.available_stock} item
+                                                                {it.available_stock !== 1
+                                                                    ? 's'
+                                                                    : ''}
+                                                            </span>{' '}
+                                                            left in stock — grab it before it's
+                                                            gone.
+                                                        </p>
+                                                    ) : null}
                                                 </div>
                                                 <hr className="border-t border-[#E7E4DD] my-4" />
                                                 <div className="flex justify-between items-center gap-6 text-xs">
@@ -247,7 +298,20 @@ export default function CartPage() {
                             shippingLabel="Calculated at next step"
                             discountLabel="--"
                             totalTax={totalTax}
-                            onContinue={() => router.push('/shipping')}
+                            onContinue={() => {
+                                const hasInventoryIssue = items.some(
+                                    (it: any) =>
+                                        (localQuantities[it.id] ?? it.quantity) >
+                                        (it.available_stock ?? 0)
+                                );
+                                if (hasInventoryIssue) {
+                                    alert(
+                                        'Some items in your cart exceed available stock. Please adjust quantities before proceeding.'
+                                    );
+                                    return;
+                                }
+                                router.push('/shipping');
+                            }}
                         />
                     </div>
                 </div>
