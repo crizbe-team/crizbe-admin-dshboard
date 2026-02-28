@@ -53,6 +53,21 @@ function VariantAddEditModal({
         return Math.random().toString(36).substring(2, 11);
     };
 
+    const calculateWeight = (size: string): string | null => {
+        const lowerSize = size.toLowerCase().trim();
+        // Handle gm and ml (1:1 conversion for weight approximation)
+        if (lowerSize.endsWith('gm') || lowerSize.endsWith('ml')) {
+            const num = parseFloat(lowerSize.replace(/gm|ml/g, ''));
+            if (!isNaN(num)) return (num / 1000).toString();
+        }
+        // Handle kg and l
+        if (lowerSize.endsWith('kg') || lowerSize.endsWith('l')) {
+            const num = parseFloat(lowerSize.replace(/kg|l/g, ''));
+            if (!isNaN(num)) return num.toString();
+        }
+        return null;
+    };
+
     const handleAddRow = () => {
         setFormData({
             ...formData,
@@ -74,9 +89,18 @@ function VariantAddEditModal({
     };
 
     const handleVariantChange = (id: string, field: keyof VariantItem, value: string) => {
-        const updatedVariants = formData.variants.map((v) =>
-            v.id === id ? { ...v, [field]: value } : v
-        );
+        const updatedVariants = formData.variants.map((v) => {
+            if (v.id === id) {
+                const updated = { ...v, [field]: value };
+                // Auto-calculate weight while typing custom size
+                if (field === 'size' && customSizeStates[id]) {
+                    const weight = calculateWeight(value);
+                    if (weight) updated.weight_per_unit = weight;
+                }
+                return updated;
+            }
+            return v;
+        });
         setFormData({ ...formData, variants: updatedVariants });
     };
 
@@ -88,16 +112,7 @@ function VariantAddEditModal({
         } else {
             setCustomSizeStates({ ...customSizeStates, [itemId]: false });
 
-            // Auto-calculate weight_per_unit based on size
-            let weight = '';
-            if (value.endsWith('gm')) {
-                const num = parseFloat(value.replace('gm', ''));
-                if (!isNaN(num)) weight = (num / 1000).toString();
-            } else if (value.endsWith('kg')) {
-                const num = parseFloat(value.replace('kg', ''));
-                if (!isNaN(num)) weight = num.toString();
-            }
-
+            const weight = calculateWeight(value);
             const updatedVariants = formData.variants.map((v) =>
                 v.id === itemId
                     ? {
@@ -111,19 +126,18 @@ function VariantAddEditModal({
         }
     };
 
-    // Initialize custom states when modal opens
+    // Initialize custom states ONLY when modal opens to avoid resets during typing
     useEffect(() => {
-        if (isModalOpen && formData.variants.length > 0) {
+        if (isModalOpen) {
             const initialStates: Record<string, boolean> = {};
             formData.variants.forEach((v) => {
-                const id = v.id || generateId();
                 if (v.size && !commonSizes.includes(v.size)) {
-                    initialStates[id] = true;
+                    initialStates[v.id || ''] = true;
                 }
             });
             setCustomSizeStates(initialStates);
         }
-    }, [isModalOpen, formData.variants]);
+    }, [isModalOpen]);
 
     if (!isModalOpen) return null;
 
