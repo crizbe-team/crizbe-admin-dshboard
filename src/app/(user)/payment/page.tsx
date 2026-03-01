@@ -4,8 +4,8 @@ import React, { useMemo, useState } from 'react';
 import { Building2, CreditCard, Smartphone, Wallet } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
 import CheckoutSteps from '@/app/(user)/_components/checkout/CheckoutSteps';
-import CartSummaryCard from '@/app/(user)/_components/checkout/CartSummaryCard';
 import { useRouter } from 'next/navigation';
+import CartSummaryCard from '../_components/checkout/CartSummaryCard';
 
 type PayMethod = 'bank' | 'phonepe' | 'upi' | 'card' | 'cod';
 
