@@ -63,7 +63,7 @@ export default function AddAddressModal({
     if (!open) return null;
 
     return (
-        <div className="fixed inset-0 z-999 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-999 flex items-start sm:items-center justify-center p-4">
             <button
                 type="button"
                 aria-label="Close overlay"
@@ -75,9 +75,9 @@ export default function AddAddressModal({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={titleId}
-                className="relative w-full max-w-[860px] rounded-2xl bg-white shadow-xl border border-[#EEE7DB]"
+                className="relative w-full max-w-[860px] rounded-[24px] bg-white shadow-xl border border-[#EEE7DB] max-h-[90vh] overflow-y-auto"
             >
-                <div className="flex items-start justify-between px-[24px] pt-[24px] pb-[20px]">
+                <div className="sticky top-0 z-10 flex items-start justify-between px-[24px] pt-[24px] pb-[20px] bg-white">
                     <div>
                         <h2 id={titleId} className="text-base font-semibold text-[#191919]">
                             Add address
@@ -184,7 +184,7 @@ export default function AddAddressModal({
                     </div>
 
                     <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-wrap items-center gap-4">
                             <span className="text-xs text-[#474747] font-medium">Save address as:</span>
                             <div className="flex items-center gap-4 text-sm text-[#4E3325]">
                                 {(['Home', 'Office', 'Other'] as SaveAs[]).map((v) => (
@@ -203,18 +203,16 @@ export default function AddAddressModal({
                         </div>
                     </div>
                 </div>
-                <hr className="border-t border-[#E7E4DD]" />
-
-                <div className="mt-7 flex items-center justify-between gap-3 px-[24px] pb-[20px]">
+                <div className="sticky bottom-0 z-10 mt-7 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 px-[24px] pt-[16px] pb-[20px] bg-white border-t border-[#E7E4DD]">
                     <label className="flex items-center gap-2 text-xs text-[#6B635A] cursor-pointe ">
                         <input type="checkbox" className="accent-[#C4994A] rounded-[6px] focus-visible:ring-2 focus-visible:ring-[#C4994A] focus-visible:ring-offset-1  outline-none" />
                         <span>Set as default shipping address</span>
                     </label>
-                    <div>
+                    <div className="flex flex-row  xs:flex-row justify-end gap-2 w-full sm:w-auto">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="rounded-[12px] mr-[12px] px-6 py-2 text-sm border border-[#D9D1C6] text-[#4E3325] hover:bg-black/5 focus-visible:border-[#C4994A] outline-none transition"
+                            className="rounded-[12px] w-full  xs:w-auto px-6 py-2 text-sm border border-[#D9D1C6] text-[#4E3325] hover:bg-black/5 focus-visible:border-[#C4994A] outline-none transition"
                         >
                             Cancel
                         </button>
@@ -222,9 +220,9 @@ export default function AddAddressModal({
                             type="button"
                             onClick={handleSave}
                             disabled={isSaving}
-                            className="rounded-[12px] px-7 py-2 text-sm font-semibold text-white
-              bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)]
-              hover:opacity-95 active:opacity-90 focus-visible:ring-2 focus-visible:ring-[#C4994A] focus-visible:ring-offset-2 outline-none transition disabled:opacity-90 disabled:pointer-events-none inline-flex items-center justify-center gap-2 min-w-[80px]"
+                            className="rounded-[12px] w-full  xs:w-auto px-7 py-2 text-sm font-semibold text-white
+                            bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)]
+                            hover:opacity-95 active:opacity-90 focus-visible:ring-2 focus-visible:ring-[#C4994A] focus-visible:ring-offset-2 outline-none transition disabled:opacity-90 disabled:pointer-events-none inline-flex items-center justify-center gap-2 min-w-[80px]"
                         >
                             {isSaving ? (
                                 <Loader2 className="w-4 h-4 animate-spin text-white" aria-hidden />
@@ -236,7 +234,7 @@ export default function AddAddressModal({
 
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
