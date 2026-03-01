@@ -27,7 +27,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     // Fetch exchange rates from API
     const fetchExchangeRates = async () => {
         try {
-            const response = await api.get('/api/v1/currency/rates/');
+            const response = await api.get('/api/v1/core/currency-rates/');
             setRates(response.data.rates);
         } catch (error) {
             console.error('Failed to fetch exchange rates:', error);

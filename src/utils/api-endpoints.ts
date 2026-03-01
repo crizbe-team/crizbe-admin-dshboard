@@ -40,10 +40,10 @@ export const API_ENDPOINTS = {
     CLEAR_CART: 'orders/cart/clear/',
 
     // Core endpoints
-    GET_COUNTRIES: 'api/v1/core/countries/',
-    GET_STATES: 'api/v1/core/states/',
+    GET_COUNTRIES: 'core/countries/',
+    GET_STATES: 'core/states/',
 
     // Account/Profile endpoints
-    GET_ADDRESSES: 'api/v1/accounts/addresses/',
-    GET_ADDRESS: 'api/v1/accounts/addresses/:id/',
+    GET_ADDRESSES: 'accounts/addresses/',
+    GET_ADDRESS: 'accounts/addresses/:id/',
 } as const;
