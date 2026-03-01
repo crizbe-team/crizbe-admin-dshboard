@@ -6,11 +6,16 @@ import Footer from '@/app/_components/Footer';
 import CheckoutSteps from '@/app/(user)/_components/checkout/CheckoutSteps';
 import { useRouter } from 'next/navigation';
 import CartSummaryCard from '../_components/checkout/CartSummaryCard';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { createOrder } from '@/services/orders';
 
 type PayMethod = 'bank' | 'phonepe' | 'upi' | 'card' | 'cod';
 
 export default function PaymentPage() {
     const router = useRouter();
+    const { currency } = useCurrency();
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const methods = useMemo(
         () => [
             {
@@ -44,6 +49,26 @@ export default function PaymentPage() {
 
     const [selected, setSelected] = useState<PayMethod>('bank');
 
+    const handleCheckout = async () => {
+        setIsProcessing(true);
+        try {
+            // Create order with selected currency
+            await createOrder({
+                payment_method: selected,
+                currency: currency, // Pass selected currency to API
+                // Add other required order data here
+            });
+
+            // Redirect to success page or order confirmation
+            router.push('/order-success');
+        } catch (error) {
+            console.error('Checkout failed:', error);
+            // Handle error (show error message to user)
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
     return (
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
             <div className="wrapper mx-auto pt-[110px] pb-16">
@@ -51,7 +76,9 @@ export default function PaymentPage() {
 
                 <div className="mt-3 flex items-start justify-between gap-10 flex-col lg:flex-row">
                     <section className="w-full flex-1">
-                        <h1 className="text-2xl font-semibold text-[#4E3325]">Choose payment method</h1>
+                        <h1 className="text-2xl font-semibold text-[#4E3325]">
+                            Choose payment method
+                        </h1>
 
                         <div className="mt-6 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm overflow-hidden">
                             {methods.map((m, idx) => {
@@ -62,7 +89,9 @@ export default function PaymentPage() {
                                         key={m.id}
                                         className={[
                                             'flex items-center justify-between gap-4 px-5 py-4 cursor-pointer',
-                                            idx !== methods.length - 1 ? 'border-b border-[#EFE7DA]' : '',
+                                            idx !== methods.length - 1
+                                                ? 'border-b border-[#EFE7DA]'
+                                                : '',
                                             active ? 'bg-white/70' : '',
                                         ].join(' ')}
                                     >
@@ -70,7 +99,9 @@ export default function PaymentPage() {
                                             <div className="w-8 h-8 rounded-full bg-[#F6F0E6] grid place-items-center">
                                                 <Icon className="w-4 h-4 text-[#4E3325]" />
                                             </div>
-                                            <span className="text-sm text-[#4E3325]">{m.label}</span>
+                                            <span className="text-sm text-[#4E3325]">
+                                                {m.label}
+                                            </span>
                                         </div>
 
                                         <input
@@ -94,7 +125,8 @@ export default function PaymentPage() {
                             shippingLabel="Free"
                             discountLabel="--"
                             totalTax={24}
-                            onContinue={() => router.push('/')}
+                            onContinue={handleCheckout}
+                            isProcessing={isProcessing}
                         />
                     </div>
                 </div>

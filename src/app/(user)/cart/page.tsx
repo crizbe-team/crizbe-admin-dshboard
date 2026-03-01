@@ -10,11 +10,13 @@ import { useRouter } from 'next/navigation';
 import CartSummaryCard from '../_components/checkout/CartSummaryCard';
 import { useFetchCart, useUpdateCartItem, useRemoveFromCart } from '@/queries/use-cart';
 import { useDebouncedCallback } from '@/hooks/use-debounce';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 export default function CartPage() {
     const router = useRouter();
+    const { convertPrice, isLoading } = useCurrency();
 
-    const { data: cartResponse, isLoading } = useFetchCart();
+    const { data: cartResponse, isLoading: cartLoading } = useFetchCart();
     const { mutate: updateCartItem, isPending: isUpdating } = useUpdateCartItem();
     const { mutate: removeFromCart } = useRemoveFromCart();
 
@@ -62,7 +64,7 @@ export default function CartPage() {
         removeFromCart(id);
     };
 
-    if (isLoading) {
+    if (cartLoading) {
         return (
             <div className="min-h-screen bg-[#FFFAEF] flex items-center justify-center">
                 <Loader2 className="w-10 h-10 animate-spin text-[#4E3325]" />
@@ -142,10 +144,11 @@ export default function CartPage() {
                                                     )}
                                                 </div>
                                                 <span className="text-sm  md:text-base  lg:text-lg font-medium text-[#191919]">
-                                                    ₹
-                                                    {Number(it.variant_details?.price || 0).toFixed(
-                                                        2
-                                                    )}
+                                                    {isLoading
+                                                        ? 'Loading...'
+                                                        : convertPrice(
+                                                              it.variant_details?.price || 0
+                                                          )}
                                                 </span>
                                             </div>
 

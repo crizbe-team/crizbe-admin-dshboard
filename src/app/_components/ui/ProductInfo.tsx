@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Minus, Plus, ShoppingCart, Star, Loader2, ArrowRight, Flame, Clock } from 'lucide-react';
 import { useAddToCart } from '@/queries/use-cart';
 import { useRouter } from 'next/navigation';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface ProductInfoProps {
     product: any; // Using any for now to match flexible backend data
@@ -11,6 +12,7 @@ interface ProductInfoProps {
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     const router = useRouter();
+    const { convertPrice, isLoading } = useCurrency();
     const [quantity, setQuantity] = useState(1);
     const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null);
     const { mutate: addToCart, isPending } = useAddToCart();
@@ -51,11 +53,6 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     };
 
     const currentPrice = selectedVariant ? selectedVariant.price : product.price;
-
-    const formattedPrice = new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-    }).format(Number(currentPrice) || 0);
 
     const isInStock = selectedVariant
         ? selectedVariant.stock > 0 && selectedVariant.in_stock !== false
@@ -114,7 +111,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             </div>
 
             {/* Price */}
-            <div className="text-3xl font-medium text-[#1A1A1A] mb-5">{formattedPrice}</div>
+            <div className="text-3xl font-medium text-[#1A1A1A] mb-5">
+                {isLoading ? 'Loading...' : convertPrice(currentPrice)}
+            </div>
 
             {/* Low Stock Urgency Banner */}
             {isLowStock && (

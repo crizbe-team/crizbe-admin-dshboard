@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface Product {
     id: string;
@@ -21,12 +22,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const router = useRouter();
-
-    // Format price
-    const formattedPrice = new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-    }).format(Number(product.price) || 0);
+    const { convertPrice, isLoading } = useCurrency();
 
     const imageUrl = product.images?.[0]?.image || '/placeholder-image.png';
 
@@ -68,7 +64,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
                 {/* Price */}
                 <p className="font-[var(--font-inter-tight)] font-semibold text-[16px] leading-[150%] mb-6 align-middle">
-                    {formattedPrice}
+                    {isLoading ? 'Loading...' : convertPrice(product.price)}
                 </p>
 
                 {/* Add to Cart Button */}
