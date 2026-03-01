@@ -42,4 +42,8 @@ export const API_ENDPOINTS = {
     // Core endpoints
     GET_COUNTRIES: 'api/v1/core/countries/',
     GET_STATES: 'api/v1/core/states/',
+
+    // Account/Profile endpoints
+    GET_ADDRESSES: 'api/v1/accounts/addresses/',
+    GET_ADDRESS: 'api/v1/accounts/addresses/:id/',
 } as const;
