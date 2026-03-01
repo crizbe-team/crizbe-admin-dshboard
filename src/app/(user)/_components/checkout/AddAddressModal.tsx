@@ -2,7 +2,12 @@
 
 import React, { useId, useState, useRef, useEffect } from 'react';
 import { ChevronDown, Loader2, X } from 'lucide-react';
-import { useFetchCountriesInfinite, useFetchStatesInfinite } from '@/queries/use-core';
+import {
+    useFetchCountries,
+    useFetchCountriesInfinite,
+    useFetchStates,
+    useFetchStatesInfinite,
+} from '@/queries/use-core';
 import SearchableDropdown from '@/components/ui/SearchableDropdown';
 
 type SaveAs = 'home' | 'work' | 'other';
@@ -48,28 +53,18 @@ export default function AddAddressModal({
     const [stateSearchQuery, setStateSearchQuery] = useState('');
 
     // Infinite scroll queries with search
-    const {
-        data: countriesData,
-        isLoading: countriesLoading,
-        hasNextPage: hasCountriesNextPage,
-        fetchNextPage: fetchCountriesNextPage,
-    } = useFetchCountriesInfinite({
-        search: countrySearchQuery,
+    const { data: countriesData, isLoading: countriesLoading } = useFetchCountries({
+        q: countrySearchQuery,
     });
 
-    const {
-        data: statesData,
-        isLoading: statesLoading,
-        hasNextPage: hasStatesNextPage,
-        fetchNextPage: fetchStatesNextPage,
-    } = useFetchStatesInfinite({
+    const { data: statesData, isLoading: statesLoading } = useFetchStates({
         country: selectedCountryId,
-        search: stateSearchQuery,
+        q: stateSearchQuery,
     });
 
     // Flatten infinite query data
-    const countries = countriesData?.pages.flatMap((page) => page.data) || [];
-    const states = statesData?.pages.flatMap((page) => page.data) || [];
+    const countries = countriesData?.data || [];
+    const states = statesData?.data || [];
 
     // Form state
     const [firstName, setFirstName] = useState('');
@@ -152,7 +147,7 @@ export default function AddAddressModal({
             city: city,
             landmark: landmark || undefined,
             country: selectedCountryId,
-            state: states.find((s) => s.name === selectedState)?.id || '',
+            state: states.find((s: any) => s.name === selectedState)?.id || '',
             address_type: addressType,
             is_default: isDefault,
         };
@@ -286,8 +281,6 @@ export default function AddAddressModal({
                             label="Country*"
                             disabled={countriesLoading}
                             isLoading={countriesLoading}
-                            hasNextPage={hasCountriesNextPage}
-                            fetchNextPage={fetchCountriesNextPage}
                             onSearch={setCountrySearchQuery}
                             searchPlaceholder="Search countries..."
                             required
@@ -301,8 +294,6 @@ export default function AddAddressModal({
                             label="State*"
                             disabled={!selectedCountry || statesLoading}
                             isLoading={statesLoading}
-                            hasNextPage={hasStatesNextPage}
-                            fetchNextPage={fetchStatesNextPage}
                             onSearch={setStateSearchQuery}
                             searchPlaceholder="Search states..."
                             required

@@ -8,8 +8,8 @@ export const getCountries = async (params: any = {}) => {
     const builder = new ApiBuilder(GET_COUNTRIES);
 
     // Add query parameters if provided
-    if (params.search) {
-        builder.query('search', params.search);
+    if (params.q) {
+        builder.query('q', params.q);
     }
     if (params.page) {
         builder.query('page', params.page);
@@ -36,8 +36,8 @@ export const getStates = async (params: any = {}) => {
     const builder = new ApiBuilder(GET_STATES);
 
     // Add query parameters if provided
-    if (params.search) {
-        builder.query('search', params.search);
+    if (params.q) {
+        builder.query('q', params.q);
     }
     if (params.page) {
         builder.query('page', params.page);
