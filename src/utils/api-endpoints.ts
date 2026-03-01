@@ -38,4 +38,8 @@ export const API_ENDPOINTS = {
     UPDATE_CART_ITEM: 'orders/cart/update/',
     REMOVE_FROM_CART: 'orders/cart/remove/:id/',
     CLEAR_CART: 'orders/cart/clear/',
+
+    // Core endpoints
+    GET_COUNTRIES: 'api/v1/core/countries/',
+    GET_STATES: 'api/v1/core/states/',
 } as const;
