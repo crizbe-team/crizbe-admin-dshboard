@@ -76,12 +76,14 @@ export default function ShippingPage() {
 
     const handleAddressSubmit = (addressData: any) => {
         if (editingAddress) {
-            updateAddress({ id: editingAddress.id, data: addressData });
+            updateAddress({ id: editingAddress.id, data: addressData }, { onSuccess: () =>{ setOpen(false)
+                setEditingAddress(null)
+            } });
         } else {
-            createAddress(addressData);
+            createAddress(addressData, { onSuccess: () => {setOpen(false) 
+                setEditingAddress(null);}
+            });
         }
-        setOpen(false);
-        setEditingAddress(null);
     };
 
     const formatAddress = (address: Address) => {

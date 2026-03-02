@@ -19,6 +19,7 @@ type Address = {
     id: string;
     first_name: string;
     last_name: string;
+    full_name?: string;
     phone_number: string;
     phone_country_code: string;
     zip_code: string;
@@ -26,16 +27,18 @@ type Address = {
     street?: string;
     city: string;
     landmark?: string;
-    country: {
-        id: string;
-        name: string;
-    };
-    state: {
-        id: string;
-        name: string;
-    };
+    country: string | { id: string; name: string }; // Can be either UUID string or object
+    country_code?: string;
+    country_name?: string;
+    state: string | { id: string; name: string }; // Can be either UUID string or object
+    state_name?: string;
     address_type: "home" | "work" | "other";
     is_default: boolean;
+    is_active?: boolean;
+    is_deleted?: boolean;
+    created_at?: string;
+    updated_at?: string;
+    user?: string;
 };
 
 type AddressFormErrors = Partial<Record<keyof AddressFormValues, string>>;
@@ -65,7 +68,7 @@ export default function AddAddressModal({
 }: {
     open: boolean;
     onClose: () => void;
-    onSubmit: (data: any) => void;
+    onSubmit: (data: any) => Promise<void> | void;
     editingAddress: Address | null;
     isLoading: boolean;
 }) {
@@ -95,6 +98,16 @@ export default function AddAddressModal({
     // Initialize form with editing address data
     useEffect(() => {
         if (editingAddress) {
+            // Extract country ID from either string or object format
+            const countryId = typeof editingAddress.country === 'string' 
+                ? editingAddress.country 
+                : editingAddress.country?.id || "";
+            
+            // Extract state ID from either string or object format
+            const stateId = typeof editingAddress.state === 'string' 
+                ? editingAddress.state 
+                : editingAddress.state?.id || "";
+
             setForm({
                 firstName: editingAddress.first_name,
                 lastName: editingAddress.last_name,
@@ -102,11 +115,11 @@ export default function AddAddressModal({
                 phoneCountryCode: editingAddress.phone_country_code,
                 zipCode: editingAddress.zip_code,
                 addressLine1: editingAddress.address_line1,
-                street: editingAddress.street || "",
+                street: editingAddress.street || editingAddress.city || "", // fallback to city if street is empty
                 city: editingAddress.city,
                 landmark: editingAddress.landmark || "",
-                countryId: editingAddress.country?.id || "",
-                stateId: editingAddress.state?.id || "",
+                countryId: countryId,
+                stateId: stateId,
                 addressType: editingAddress.address_type,
                 isDefault: editingAddress.is_default,
             });
@@ -121,7 +134,7 @@ export default function AddAddressModal({
         }
     }, [editingAddress, open]);
 
-    const handleSave = () => {
+    const handleSave = async () => {
         const result = addressFormSchema.safeParse(form);
 
         if (!result.success) {
@@ -155,7 +168,14 @@ export default function AddAddressModal({
             is_default: values.isDefault,
         };
 
-        onSubmit(addressData);
+        try {
+            await onSubmit(addressData);
+           
+        } catch (error) {
+            // Optionally handle submission errors here
+            console.error("Submission error:", error);
+        } finally {
+        }
     };
 
     if (!open) return null;
