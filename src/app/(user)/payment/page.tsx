@@ -48,12 +48,10 @@ export default function PaymentPage() {
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
             <div className="wrapper mx-auto pt-[110px] pb-16">
                 <CheckoutSteps active="Payment" />
-
-                <div className="mt-3 flex items-start justify-between gap-10 flex-col lg:flex-row">
-                    <section className="w-full flex-1">
-                        <h1 className="text-2xl font-semibold text-[#4E3325]">Choose payment method</h1>
-
-                        <div className="mt-6 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm overflow-hidden">
+                <h1 className="text-2xl font-medium py-[32px] text-[#191919]">Choose payment method</h1>
+                <div className=" flex items-start justify-between gap-10 flex-col lg:flex-row">
+                    <section className="w-full flex-1 ">
+                        <div className=" rounded-[16px]  ">
                             {methods.map((m, idx) => {
                                 const Icon = m.icon;
                                 const active = selected === m.id;
@@ -61,16 +59,16 @@ export default function PaymentPage() {
                                     <label
                                         key={m.id}
                                         className={[
-                                            'flex items-center justify-between gap-4 px-5 py-4 cursor-pointer',
-                                            idx !== methods.length - 1 ? 'border-b border-[#EFE7DA]' : '',
-                                            active ? 'bg-white/70' : '',
+                                            'flex bg-[#FFFEFC] rounded-[16px]  items-center justify-between mb-[10px] last:mb-0 px-[20px] py-[16px] cursor-pointer',
+                                            idx !== methods.length - 1 ? '' : '',
+                                            active ? 'rounded-[16px] border border-[#4E3325]' : 'border border-[#E7E4DD]',
                                         ].join(' ')}
                                     >
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-[#F6F0E6] grid place-items-center">
+                                        <div className="flex items-center gap-3 ">
+                                            <div className="w-8 h-8 rounded-full bg-[#F6F0E6]  grid place-items-center">
                                                 <Icon className="w-4 h-4 text-[#4E3325]" />
                                             </div>
-                                            <span className="text-sm text-[#4E3325]">{m.label}</span>
+                                            <span className="text-sm text-[#000000]">{m.label}</span>
                                         </div>
 
                                         <input
@@ -78,7 +76,7 @@ export default function PaymentPage() {
                                             name="pay"
                                             checked={active}
                                             onChange={() => setSelected(m.id)}
-                                            className="accent-[#C4994A]"
+                                            className="accent-[#4E3325] w-4 h-4"
                                         />
                                     </label>
                                 );

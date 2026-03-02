@@ -15,7 +15,7 @@ export default function Header() {
                             height={100}
                             priority
                             quality={100}
-
+                            className="w-[120px] sm:w-[150px] md:w-[180px] lg:w-[200px] h-auto"
                         />
                     </Link>
                 </h1>
