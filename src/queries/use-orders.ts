@@ -5,10 +5,11 @@ import {
     getOrderDetail,
     getAdminOrderList,
     updateOrderStatus,
+    getAdminOrderDetail,
 } from '../services/orders';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
-const { ORDER_LIST, ADMIN_ORDER_LIST, ORDER_DETAIL } = API_ENDPOINTS;
+const { ORDER_LIST, ADMIN_ORDER_LIST, ORDER_DETAIL, ADMIN_ORDER_DETAIL } = API_ENDPOINTS;
 
 export const useCreateOrder = () => {
     const queryClient = useQueryClient();
@@ -42,6 +43,14 @@ export const useFetchAdminOrders = (params?: any) => {
     });
 };
 
+export const useFetchAdminOrderDetail = (id: string) => {
+    return useQuery({
+        queryKey: [ADMIN_ORDER_DETAIL, id],
+        queryFn: () => getAdminOrderDetail(id),
+        enabled: !!id,
+    });
+};
+
 export const useUpdateOrderStatus = () => {
     const queryClient = useQueryClient();
     return useMutation({
@@ -50,6 +59,7 @@ export const useUpdateOrderStatus = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [ADMIN_ORDER_LIST] });
             queryClient.invalidateQueries({ queryKey: [ORDER_DETAIL] });
+            queryClient.invalidateQueries({ queryKey: [ADMIN_ORDER_DETAIL] });
         },
     });
 };

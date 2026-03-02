@@ -26,6 +26,23 @@ export const getOrderDetail = async (id: string) => {
     const { ORDER_DETAIL } = API_ENDPOINTS;
     const url = new ApiBuilder(ORDER_DETAIL).path('id', id).build();
     const response = await api.get(url);
+    const { status_code, message, data } = response?.data;
+
+    if (status_code !== 200) {
+        throw { message, errors: data };
+    }
+    return response.data;
+};
+
+export const getAdminOrderDetail = async (id: string) => {
+    const { ADMIN_ORDER_DETAIL } = API_ENDPOINTS;
+    const url = new ApiBuilder(ADMIN_ORDER_DETAIL).path('pk', id).build();
+    const response = await api.get(url);
+    const { status_code, message, data } = response?.data;
+
+    if (status_code !== 200) {
+        throw { message, errors: data };
+    }
     return response.data;
 };
 
@@ -44,7 +61,12 @@ export const getAdminOrderList = async (params?: any) => {
 
 export const updateOrderStatus = async (id: string, status: string) => {
     const { UPDATE_ORDER_STATUS } = API_ENDPOINTS;
-    const url = new ApiBuilder(UPDATE_ORDER_STATUS).path('id', id).build();
+    const url = new ApiBuilder(UPDATE_ORDER_STATUS).path('pk', id).build();
     const response = await api.patch(url, { status });
+    const { status_code, message, data } = response?.data;
+
+    if (status_code !== 200) {
+        throw { message, errors: data };
+    }
     return response.data;
 };
