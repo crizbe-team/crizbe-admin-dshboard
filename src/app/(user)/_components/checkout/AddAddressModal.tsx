@@ -11,8 +11,9 @@ import {
 import FormSelect from "@/components/ui/FormSelect";
 import FormInput from "@/components/ui/FormInput";
 import PhoneInput from "@/components/ui/PhoneInput";
+import { addressFormSchema, type AddressFormValues } from "./addressSchema";
 
-type SaveAs = 'home' | 'work' | 'other';
+type SaveAs = "home" | "work" | "other";
 
 type Address = {
     id: string;
@@ -33,9 +34,27 @@ type Address = {
         id: string;
         name: string;
     };
-    address_type: 'home' | 'work' | 'other';
+    address_type: "home" | "work" | "other";
     is_default: boolean;
 };
+
+type AddressFormErrors = Partial<Record<keyof AddressFormValues, string>>;
+
+const createEmptyForm = (): AddressFormValues => ({
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    phoneCountryCode: "+91",
+    zipCode: "",
+    addressLine1: "",
+    street: "",
+    city: "",
+    landmark: "",
+    countryId: "",
+    stateId: "",
+    addressType: "home",
+    isDefault: false,
+});
 
 export default function AddAddressModal({
     open,
@@ -50,105 +69,90 @@ export default function AddAddressModal({
     editingAddress: Address | null;
     isLoading: boolean;
 }) {
-    const [selectedCountryId, setSelectedCountryId] = useState<string>('');
-    const [countrySearchQuery, setCountrySearchQuery] = useState('');
-    const [stateSearchQuery, setStateSearchQuery] = useState('');
+    const [countrySearchQuery, setCountrySearchQuery] = useState("");
+    const [stateSearchQuery, setStateSearchQuery] = useState("");
 
-    // Infinite scroll queries with search
+    // Form state as a single object
+    const [form, setForm] = useState<AddressFormValues>(createEmptyForm);
+    const [errors, setErrors] = useState<AddressFormErrors>({});
+
+    // Queries
     const { data: countriesData, isLoading: countriesLoading } = useFetchCountries({
         q: countrySearchQuery,
     });
 
     const { data: statesData, isLoading: statesLoading } = useFetchStates({
-        country: selectedCountryId,
+        country: form.countryId,
         q: stateSearchQuery,
     });
 
-    // Flatten infinite query data
+    // Flatten data
     const countries = countriesData?.data || [];
     const states = statesData?.data || [];
 
-    // Form state
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
-    const [zipCode, setZipCode] = useState('');
-    const [addressLine1, setAddressLine1] = useState('');
-    const [street, setStreet] = useState('');
-    const [city, setCity] = useState('');
-    const [landmark, setLandmark] = useState('');
-    const [addressType, setAddressType] = useState<SaveAs>('home');
-    const [isDefault, setIsDefault] = useState(false);
-
-    // Dropdown display state
-    const [selectedState, setSelectedState] = useState<string>('');
     const titleId = useId();
 
     // Initialize form with editing address data
     useEffect(() => {
         if (editingAddress) {
-            setFirstName(editingAddress.first_name);
-            setLastName(editingAddress.last_name);
-            setPhoneNumber(editingAddress.phone_number);
-            setPhoneCountryCode(editingAddress.phone_country_code);
-            setZipCode(editingAddress.zip_code);
-            setAddressLine1(editingAddress.address_line1);
-            setStreet(editingAddress.street || '');
-            setCity(editingAddress.city);
-            setLandmark(editingAddress.landmark || '');
-            setAddressType(editingAddress.address_type);
-            setIsDefault(editingAddress.is_default);
-            setSelectedCountryId(editingAddress.country?.id || "");
-            setSelectedState(editingAddress.state?.id || "");
+            setForm({
+                firstName: editingAddress.first_name,
+                lastName: editingAddress.last_name,
+                phoneNumber: editingAddress.phone_number,
+                phoneCountryCode: editingAddress.phone_country_code,
+                zipCode: editingAddress.zip_code,
+                addressLine1: editingAddress.address_line1,
+                street: editingAddress.street || "",
+                city: editingAddress.city,
+                landmark: editingAddress.landmark || "",
+                countryId: editingAddress.country?.id || "",
+                stateId: editingAddress.state?.id || "",
+                addressType: editingAddress.address_type,
+                isDefault: editingAddress.is_default,
+            });
+            setCountrySearchQuery("");
+            setStateSearchQuery("");
+            setErrors({});
         } else {
-            // Reset form for new address
-            setFirstName('');
-            setLastName('');
-            setPhoneNumber('');
-            setPhoneCountryCode('+91');
-            setZipCode('');
-            setAddressLine1('');
-            setStreet('');
-            setCity('');
-            setLandmark('');
-            setAddressType('home');
-            setIsDefault(false);
-            setSelectedCountryId("");
-            setSelectedState("");
+            setForm(createEmptyForm());
+            setCountrySearchQuery("");
+            setStateSearchQuery("");
+            setErrors({});
         }
     }, [editingAddress, open]);
 
     const handleSave = () => {
-        // Validate required fields
-        if (
-            !firstName ||
-            !lastName ||
-            !phoneNumber ||
-            !zipCode ||
-            !addressLine1 ||
-            !city ||
-            !selectedCountryId ||
-            !selectedState
-        ) {
-            alert('Please fill all required fields');
+        const result = addressFormSchema.safeParse(form);
+
+        if (!result.success) {
+            const fieldErrors: AddressFormErrors = {};
+            for (const issue of result.error.issues) {
+                const field = issue.path[0] as keyof AddressFormValues | undefined;
+                if (field && !fieldErrors[field]) {
+                    fieldErrors[field] = issue.message;
+                }
+            }
+            setErrors(fieldErrors);
             return;
         }
 
+        setErrors({});
+        const values = result.data;
+
         const addressData = {
-            first_name: firstName,
-            last_name: lastName,
-            phone_number: phoneNumber,
-            phone_country_code: phoneCountryCode,
-            zip_code: zipCode,
-            address_line1: addressLine1,
-            street: street || undefined,
-            city: city,
-            landmark: landmark || undefined,
-            country: selectedCountryId,
-            state: selectedState || "",
-            address_type: addressType,
-            is_default: isDefault,
+            first_name: values.firstName,
+            last_name: values.lastName,
+            phone_number: values.phoneNumber,
+            phone_country_code: values.phoneCountryCode,
+            zip_code: values.zipCode,
+            address_line1: values.addressLine1,
+            street: values.street || undefined,
+            city: values.city,
+            landmark: values.landmark || undefined,
+            country: values.countryId,
+            state: values.stateId || "",
+            address_type: values.addressType,
+            is_default: values.isDefault,
         };
 
         onSubmit(addressData);
@@ -196,26 +200,36 @@ export default function AddAddressModal({
                             label="First name"
                             required
                             placeholder="Enter your name"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
+                            value={form.firstName}
+                            onChange={(e) =>
+                                setForm((prev) => ({ ...prev, firstName: e.target.value }))
+                            }
+                            error={errors.firstName}
                         />
                         <FormInput
                             label="Last name"
                             required
                             placeholder="Enter your name"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
+                            value={form.lastName}
+                            onChange={(e) =>
+                                setForm((prev) => ({ ...prev, lastName: e.target.value }))
+                            }
+                            error={errors.lastName}
                         />
 
                         <PhoneInput
                             label="Phone number"
                             required
-                            value={phoneNumber}
-                            onChange={setPhoneNumber}
+                            value={form.phoneNumber}
+                            onChange={(val) =>
+                                setForm((prev) => ({ ...prev, phoneNumber: val }))
+                            }
                             enableCodeSelect
                             codes={countries as any}
-                            selectedCode={phoneCountryCode}
-                            onCodeChange={setPhoneCountryCode}
+                            selectedCode={form.phoneCountryCode}
+                            onCodeChange={(code) =>
+                                setForm((prev) => ({ ...prev, phoneCountryCode: code }))
+                            }
                             enableCodeSearch
                             codeSearchPlaceholder="Search country code..."
                             onCodeSearchChange={setCountrySearchQuery}
@@ -226,62 +240,82 @@ export default function AddAddressModal({
                             label="Pincode"
                             required
                             placeholder="Enter pincode"
-                            value={zipCode}
-                            onChange={(e) => setZipCode(e.target.value)}
+                            value={form.zipCode}
+                            onChange={(e) =>
+                                setForm((prev) => ({ ...prev, zipCode: e.target.value }))
+                            }
+                            error={errors.zipCode}
                         />
                         <FormInput
                             label="Address"
                             required
                             placeholder="Enter your address"
-                            value={addressLine1}
-                            onChange={(e) => setAddressLine1(e.target.value)}
+                            value={form.addressLine1}
+                            onChange={(e) =>
+                                setForm((prev) => ({
+                                    ...prev,
+                                    addressLine1: e.target.value,
+                                }))
+                            }
+                            error={errors.addressLine1}
                         />
                         <FormInput
                             label="Street / Locality"
                             required
                             placeholder="Enter your street name or locality"
-                            value={street}
-                            onChange={(e) => setStreet(e.target.value)}
+                            value={form.street}
+                            onChange={(e) =>
+                                setForm((prev) => ({ ...prev, street: e.target.value }))
+                            }
+                            error={errors.street}
                         />
                         <FormInput
                             label="City"
                             required
                             placeholder="Enter your city"
-                            value={city}
-                            onChange={(e) => setCity(e.target.value)}
+                            value={form.city}
+                            onChange={(e) =>
+                                setForm((prev) => ({ ...prev, city: e.target.value }))
+                            }
+                            error={errors.city}
                         />
                         <FormInput
                             label="Landmark (Optional)"
                             placeholder="eg: opposite municipal office"
-                            value={landmark}
-                            onChange={(e) => setLandmark(e.target.value)}
+                            value={form.landmark ?? ""}
+                            onChange={(e) =>
+                                setForm((prev) => ({ ...prev, landmark: e.target.value }))
+                            }
                         />
 
                         <FormSelect
                             label="Country"
                             required
                             options={countries}
-                            value={selectedCountryId}
+                            value={form.countryId}
                             onChange={(id) => {
-                                setSelectedCountryId(id);
-                                setSelectedState("");
+                                setForm((prev) => ({ ...prev, countryId: id, stateId: "" }));
                                 setStateSearchQuery("");
                             }}
                             enableSearch
                             searchPlaceholder="Search countries..."
                             onSearchChange={setCountrySearchQuery}
+                            error={errors.countryId}
                         />
 
                         <FormSelect
                             label="State"
                             required
                             options={states}
-                            value={selectedState}
-                            onChange={(id) => setSelectedState(id)}
+                            value={form.stateId}
+                            onChange={(id) =>
+                                setForm((prev) => ({ ...prev, stateId: id }))
+                            }
                             enableSearch
                             searchPlaceholder="Search states..."
                             onSearchChange={setStateSearchQuery}
-                            disabled={!selectedCountryId || statesLoading}
+                            disabled={statesLoading}
+                            error={errors.stateId}
                         />
                     </div>
 
@@ -291,7 +325,7 @@ export default function AddAddressModal({
                                 Save address as:
                             </span>
                             <div className="flex items-center gap-4 text-sm text-[#4E3325]">
-                                {(['home', 'work', 'other'] as SaveAs[]).map((v) => (
+                                {(["home", "work", "other"] as SaveAs[]).map((v) => (
                                     <label
                                         key={v}
                                         className="flex items-center gap-2 cursor-pointer"
@@ -299,8 +333,13 @@ export default function AddAddressModal({
                                         <input
                                             type="radio"
                                             name="saveAs"
-                                            checked={addressType === v}
-                                            onChange={() => setAddressType(v)}
+                                            checked={form.addressType === v}
+                                            onChange={() =>
+                                                setForm((prev) => ({
+                                                    ...prev,
+                                                    addressType: v,
+                                                }))
+                                            }
                                             className="focus-visible:ring-2 focus-visible:ring-[#C4994A] focus-visible:ring-offset-1 rounded-full outline-none"
                                         />
                                         <span className="text-xs capitalize">{v}</span>
@@ -314,8 +353,10 @@ export default function AddAddressModal({
                     <label className="flex items-center gap-2 text-xs text-[#6B635A] cursor-pointer">
                         <input
                             type="checkbox"
-                            checked={isDefault}
-                            onChange={(e) => setIsDefault(e.target.checked)}
+                            checked={form.isDefault}
+                            onChange={(e) =>
+                                setForm((prev) => ({ ...prev, isDefault: e.target.checked }))
+                            }
                             className="accent-[#C4994A] rounded-[6px] focus-visible:ring-2 focus-visible:ring-[#C4994A] focus-visible:ring-offset-1 outline-none"
                         />
                         <span>Set as default shipping address</span>
