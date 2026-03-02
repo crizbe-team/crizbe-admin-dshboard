@@ -1,14 +1,16 @@
-'use client';
+"use client";
 
-import React, { useId, useState, useRef, useEffect } from 'react';
-import { ChevronDown, Loader2, X } from 'lucide-react';
+import React, { useId, useState, useEffect } from "react";
+import { Loader2, X } from "lucide-react";
 import {
     useFetchCountries,
     useFetchCountriesInfinite,
     useFetchStates,
     useFetchStatesInfinite,
-} from '@/queries/use-core';
-import SearchableDropdown from '@/components/ui/SearchableDropdown';
+} from "@/queries/use-core";
+import FormSelect from "@/components/ui/FormSelect";
+import FormInput from "@/components/ui/FormInput";
+import PhoneInput from "@/components/ui/PhoneInput";
 
 type SaveAs = 'home' | 'work' | 'other';
 
@@ -80,7 +82,6 @@ export default function AddAddressModal({
     const [isDefault, setIsDefault] = useState(false);
 
     // Dropdown display state
-    const [selectedCountry, setSelectedCountry] = useState<string>('');
     const [selectedState, setSelectedState] = useState<string>('');
     const titleId = useId();
 
@@ -98,9 +99,8 @@ export default function AddAddressModal({
             setLandmark(editingAddress.landmark || '');
             setAddressType(editingAddress.address_type);
             setIsDefault(editingAddress.is_default);
-            setSelectedCountry(editingAddress.country?.name || '');
-            setSelectedCountryId(editingAddress.country?.id || '');
-            setSelectedState(editingAddress.state?.name || '');
+            setSelectedCountryId(editingAddress.country?.id || "");
+            setSelectedState(editingAddress.state?.id || "");
         } else {
             // Reset form for new address
             setFirstName('');
@@ -114,9 +114,8 @@ export default function AddAddressModal({
             setLandmark('');
             setAddressType('home');
             setIsDefault(false);
-            setSelectedCountry('');
-            setSelectedCountryId('');
-            setSelectedState('');
+            setSelectedCountryId("");
+            setSelectedState("");
         }
     }, [editingAddress, open]);
 
@@ -129,7 +128,7 @@ export default function AddAddressModal({
             !zipCode ||
             !addressLine1 ||
             !city ||
-            !selectedCountry ||
+            !selectedCountryId ||
             !selectedState
         ) {
             alert('Please fill all required fields');
@@ -147,24 +146,12 @@ export default function AddAddressModal({
             city: city,
             landmark: landmark || undefined,
             country: selectedCountryId,
-            state: states.find((s: any) => s.name === selectedState)?.id || '',
+            state: selectedState || "",
             address_type: addressType,
             is_default: isDefault,
         };
 
         onSubmit(addressData);
-    };
-
-    const handleCountrySelect = (country: any) => {
-        setSelectedCountry(country.name);
-        setSelectedCountryId(country.id);
-        // Reset state when country changes
-        setSelectedState('');
-        setStateSearchQuery('');
-    };
-
-    const handleStateSelect = (state: any) => {
-        setSelectedState(state.name);
     };
 
     if (!open) return null;
@@ -205,98 +192,96 @@ export default function AddAddressModal({
                 <hr className="border-t border-[#E7E4DD]" />
                 <div className="px-[24px] pt-[30px] pb-[24px]">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                        <Field
-                            label="First name*"
+                        <FormInput
+                            label="First name"
+                            required
                             placeholder="Enter your name"
                             value={firstName}
-                            onChange={setFirstName}
+                            onChange={(e) => setFirstName(e.target.value)}
                         />
-                        <Field
-                            label="Last name*"
+                        <FormInput
+                            label="Last name"
+                            required
                             placeholder="Enter your name"
                             value={lastName}
-                            onChange={setLastName}
+                            onChange={(e) => setLastName(e.target.value)}
                         />
 
-                        <div>
-                            <label className="text-xs text-[#404040] font-medium">
-                                Phone number*
-                            </label>
-                            <div className="mt-1 flex items-center gap-2 rounded-lg border border-[#E7E4DD] bg-white px-3 py-2 hover:border-[#C4994A] focus-within:border-[#C4994A] transition-colors">
-                                <select
-                                    value={phoneCountryCode}
-                                    onChange={(e) => setPhoneCountryCode(e.target.value)}
-                                    className="text-xs text-[#4E3325] bg-transparent outline-none"
-                                >
-                                    <option value="+91">+91</option>
-                                    <option value="+1">+1</option>
-                                    <option value="+44">+44</option>
-                                    <option value="+971">+971</option>
-                                </select>
-                                <input
-                                    className="w-full bg-transparent text-sm outline-none placeholder:text-[#B7AFA5]"
-                                    placeholder="000 0000 000"
-                                    value={phoneNumber}
-                                    onChange={(e) => setPhoneNumber(e.target.value)}
-                                />
-                            </div>
-                        </div>
+                        <PhoneInput
+                            label="Phone number"
+                            required
+                            value={phoneNumber}
+                            onChange={setPhoneNumber}
+                            enableCodeSelect
+                            codes={countries as any}
+                            selectedCode={phoneCountryCode}
+                            onCodeChange={setPhoneCountryCode}
+                            enableCodeSearch
+                            codeSearchPlaceholder="Search country code..."
+                            onCodeSearchChange={setCountrySearchQuery}
+                            placeholder="000 0000 000"
+                        />
 
-                        <Field
-                            label="Pincode*"
+                        <FormInput
+                            label="Pincode"
+                            required
                             placeholder="Enter pincode"
                             value={zipCode}
-                            onChange={setZipCode}
+                            onChange={(e) => setZipCode(e.target.value)}
                         />
-                        <Field
-                            label="Address*"
+                        <FormInput
+                            label="Address"
+                            required
                             placeholder="Enter your address"
                             value={addressLine1}
-                            onChange={setAddressLine1}
+                            onChange={(e) => setAddressLine1(e.target.value)}
                         />
-                        <Field
-                            label="Street / Locality*"
+                        <FormInput
+                            label="Street / Locality"
+                            required
                             placeholder="Enter your street name or locality"
                             value={street}
-                            onChange={setStreet}
+                            onChange={(e) => setStreet(e.target.value)}
                         />
-                        <Field
-                            label="City*"
+                        <FormInput
+                            label="City"
+                            required
                             placeholder="Enter your city"
                             value={city}
-                            onChange={setCity}
+                            onChange={(e) => setCity(e.target.value)}
                         />
-                        <Field
+                        <FormInput
                             label="Landmark (Optional)"
                             placeholder="eg: opposite municipal office"
                             value={landmark}
-                            onChange={setLandmark}
+                            onChange={(e) => setLandmark(e.target.value)}
                         />
 
-                        <SearchableDropdown
-                            items={countries}
-                            value={selectedCountry}
-                            onChange={handleCountrySelect}
-                            placeholder="Select country"
-                            label="Country*"
-                            disabled={countriesLoading}
-                            isLoading={countriesLoading}
-                            onSearch={setCountrySearchQuery}
+                        <FormSelect
+                            label="Country"
+                            required
+                            options={countries}
+                            value={selectedCountryId}
+                            onChange={(id) => {
+                                setSelectedCountryId(id);
+                                setSelectedState("");
+                                setStateSearchQuery("");
+                            }}
+                            enableSearch
                             searchPlaceholder="Search countries..."
-                            required
+                            onSearchChange={setCountrySearchQuery}
                         />
 
-                        <SearchableDropdown
-                            items={states}
-                            value={selectedState}
-                            onChange={handleStateSelect}
-                            placeholder="Select your state"
-                            label="State*"
-                            disabled={!selectedCountry || statesLoading}
-                            isLoading={statesLoading}
-                            onSearch={setStateSearchQuery}
-                            searchPlaceholder="Search states..."
+                        <FormSelect
+                            label="State"
                             required
+                            options={states}
+                            value={selectedState}
+                            onChange={(id) => setSelectedState(id)}
+                            enableSearch
+                            searchPlaceholder="Search states..."
+                            onSearchChange={setStateSearchQuery}
+                            disabled={!selectedCountryId || statesLoading}
                         />
                     </div>
 
@@ -361,30 +346,6 @@ export default function AddAddressModal({
                     </div>
                 </div>
             </div>
-        </div>
-    );
-}
-
-function Field({
-    label,
-    placeholder,
-    value,
-    onChange,
-}: {
-    label: string;
-    placeholder: string;
-    value: string;
-    onChange: (value: string) => void;
-}) {
-    return (
-        <div>
-            <label className="text-xs font-medium text-[#404040]">{label}</label>
-            <input
-                className="mt-1 w-full rounded-lg border border-[#E7E4DD] bg-white px-3 py-2 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors"
-                placeholder={placeholder}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-            />
         </div>
     );
 }
