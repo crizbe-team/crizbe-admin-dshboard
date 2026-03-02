@@ -18,6 +18,7 @@ export const createPaymentOrder = async (orderId: string) => {
     const { CREATE_PAYMENT_ORDER } = API_ENDPOINTS;
     const url = new ApiBuilder(CREATE_PAYMENT_ORDER).build();
     const response = await api.post(url, { order_id: orderId });
+    console.log('response', response);
     const { status_code, message, data } = response?.data;
 
     if (status_code !== 200) {
