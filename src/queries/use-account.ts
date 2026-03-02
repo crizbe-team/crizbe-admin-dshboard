@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAddresses, getAddress, createAddress } from '../services/account';
+import { getAddresses, getAddress, createAddress, getClients, getClient, createClient } from '../services/account';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
-const { GET_ADDRESSES } = API_ENDPOINTS;
+const { GET_ADDRESSES, GET_CLIENTS } = API_ENDPOINTS;
 
 export const useFetchAddresses = () => {
     return useQuery({
@@ -46,6 +46,53 @@ export const useDeleteAddress = () => {
         mutationFn: (id: string) => getAddress(id, 'delete'),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_ADDRESSES] });
+        },
+    });
+};
+
+// Client queries
+export const useFetchClients = (filters: any = {}) => {
+    return useQuery({
+        queryKey: [GET_CLIENTS, filters],
+        queryFn: () => getClients(filters, 'get'),
+    });
+};
+
+export const useFetchClient = (id: string) => {
+    return useQuery({
+        queryKey: [API_ENDPOINTS.GET_CLIENTS, id],
+        queryFn: () => getClient(id),
+        enabled: !!id, // Only run query if id is provided
+    });
+};
+
+export const useCreateClient = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: any) => getClients(data, 'post'),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [GET_CLIENTS] });
+        },
+    });
+};
+
+export const useUpdateClient = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: any }) => getClient(id, 'put', data),
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: [GET_CLIENTS] });
+            queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.GET_CLIENTS, variables.id] });
+        },
+    });
+};
+
+export const useDeleteClient = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => getClient(id, 'delete'),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [GET_CLIENTS] });
         },
     });
 };

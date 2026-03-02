@@ -46,4 +46,7 @@ export const API_ENDPOINTS = {
     // Account/Profile endpoints
     GET_ADDRESSES: 'accounts/addresses/',
     GET_ADDRESS: 'accounts/addresses/:id/',
+    
+    // Client endpoints
+    GET_CLIENTS: 'accounts/clients/',
 } as const;

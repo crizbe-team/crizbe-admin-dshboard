@@ -34,17 +34,7 @@ export const getAddress = async (
         return response.data;
     }
 
-    if (method === 'delete') {
-        const response = await api.delete(url);
-        const { status_code, message, responseData } = response?.data;
-
-        if (status_code === 6001) {
-            throw { message, errors: responseData };
-        }
-        return response.data;
-    }
-
-    const response = await api.get(url);
+    const response = await api[method](url);
     const { status_code, message, responseData } = response?.data;
 
     if (status_code === 6001) {
@@ -64,3 +54,78 @@ export const createAddress = async (data: any) => {
     }
     return response.data;
 };
+
+// Client services
+export const getClients = async (params: any = {}, method: 'get' | 'post' = 'get') => {
+    const { GET_CLIENTS } = API_ENDPOINTS;
+
+    if (method === 'get') {
+        const filters = params as any;
+        const url = new ApiBuilder(GET_CLIENTS)
+            .query('page', filters.page)
+            .query('q', filters.q)
+            .query('sortBy', filters.sortBy)
+            .query('sortOrder', filters.sortOrder)
+            .build();
+
+        const response = await api.get(url);
+        const { status_code, message, data } = response?.data;
+
+        if (status_code === 6001) {
+            throw { message, errors: data };
+        }
+        return response.data;
+    } else {
+        const data = params as any;
+        const url = new ApiBuilder(GET_CLIENTS).build();
+        const response = await api.post(url, data);
+        const { status_code, message, responseData } = response?.data;
+
+        if (status_code === 6001) {
+            throw { message, errors: responseData };
+        }
+        return response.data;
+    }
+};
+
+export const getClient = async (
+    id: string,
+    method: 'get' | 'delete' | 'put' = 'get',
+    data?: any
+) => {
+    const { GET_CLIENTS } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_CLIENTS).path('id', id).build();
+
+    if (method === 'put') {
+        const config =
+            data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
+        const response = await api.put(url, data, config);
+        const { status_code, message, responseData } = response?.data;
+
+        if (status_code === 6001) {
+            throw { message, errors: responseData };
+        }
+        return response.data;
+    }
+
+    const response = await api[method](url);
+    const { status_code, message, responseData } = response?.data;
+
+    if (status_code === 6001) {
+        throw { message, errors: responseData };
+    }
+    return response.data;
+};
+
+export const createClient = async (data: any) => {
+    const { GET_CLIENTS } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_CLIENTS).build();
+    const response = await api.post(url, data);
+    const { status_code, message, responseData } = response?.data;
+
+    if (status_code === 6001) {
+        throw { message, errors: responseData };
+    }
+    return response.data;
+};
+
