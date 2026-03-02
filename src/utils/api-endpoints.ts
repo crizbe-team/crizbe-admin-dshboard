@@ -49,4 +49,10 @@ export const API_ENDPOINTS = {
     
     // Client endpoints
     GET_CLIENTS: 'accounts/clients/',
+    
+    // Payment endpoints
+    GET_RAZORPAY_KEY_ID: 'payments/key-id/',
+    CREATE_PAYMENT_ORDER: 'payments/create/',
+    VERIFY_PAYMENT: 'payments/verify/',
+    GET_PAYMENT_DETAILS: 'payments/:id/',
 } as const;
