@@ -2,50 +2,72 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { FormInput } from '@/components/ui/FormInput';
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isPending, setIsPending] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle forgot password logic here
-        console.log('Forgot Password:', { email });
-        setIsSubmitted(true);
+        setIsPending(true);
+        // Simulate API call
+        setTimeout(() => {
+            setIsPending(false);
+            setIsSubmitted(true);
+        }, 1000);
     };
 
     if (isSubmitted) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f] px-4">
-                <div className="w-full max-w-md">
-                    <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] p-8 shadow-2xl text-center">
-                        <div className="mb-6 flex justify-center">
-                            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
-                                <CheckCircle className="w-10 h-10 text-green-500" />
-                            </div>
+            <div className="w-full max-w-md">
+                {/* Logo */}
+                <div className="flex justify-center mb-8">
+                    <Image
+                        src="/images/user/crizbe-logo.svg"
+                        alt="Crizbe"
+                        width={150}
+                        height={60}
+                        priority
+                    />
+                </div>
+
+                <div className="text-center">
+                    <div className="mb-6 flex justify-center">
+                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                            <CheckCircle className="w-10 h-10 text-green-500" />
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-100 mb-3">Check Your Email</h1>
-                        <p className="text-gray-400 text-sm mb-6">
-                            We've sent a password reset link to <span className="text-gray-300 font-medium">{email}</span>
-                        </p>
-                        <p className="text-gray-500 text-xs mb-6">
-                            Please check your inbox and click on the link to reset your password. If you don't see the email, check your spam folder.
-                        </p>
-                        <div className="space-y-3">
-                            <button
-                                onClick={() => setIsSubmitted(false)}
-                                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-colors"
-                            >
-                                Resend Email
-                            </button>
-                            <Link
-                                href="/login"
-                                className="block text-center text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
-                            >
-                                Back to Sign In
-                            </Link>
-                        </div>
+                    </div>
+                    <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">
+                        Check Your Email
+                    </h1>
+                    <p className="text-sm text-[#7A7A7A] mb-2">
+                        We&apos;ve sent a password reset link to
+                    </p>
+                    <p className="text-sm text-[#4E3325] font-medium mb-6">
+                        {email}
+                    </p>
+                    <p className="text-xs text-[#7A7A7A] mb-8">
+                        Please check your inbox and click on the link to reset your password. 
+                        If you don&apos;t see the email, check your spam folder.
+                    </p>
+                    <div className="space-y-4">
+                        <Button
+                            onClick={() => setIsSubmitted(false)}
+                            className="w-full bg-[#C4994A] hover:bg-[#B38840] text-white font-medium py-3 rounded-full"
+                        >
+                            Resend Email
+                        </Button>
+                        <Link
+                            href="/login"
+                            className="block text-center text-[#C4994A] hover:text-[#B38840] text-sm font-medium transition-colors"
+                        >
+                            Back to Sign In
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -53,59 +75,67 @@ export default function ForgotPasswordPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f] px-4">
-            <div className="w-full max-w-md">
-                <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] p-8 shadow-2xl">
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-100 mb-2">Forgot Password?</h1>
-                        <p className="text-gray-400 text-sm">
-                            No worries, we'll send you reset instructions.
-                        </p>
-                    </div>
+        <div className="w-full max-w-md">
+            {/* Logo */}
+            <div className="flex justify-center mb-8">
+                <Image
+                    src="/images/user/crizbe-logo.svg"
+                    alt="Crizbe"
+                    width={150}
+                    height={60}
+                    priority
+                />
+            </div>
 
-                    {/* Forgot Password Form */}
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Email Field */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Email Address
-                            </label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="w-full bg-[#2a2a2a] text-gray-100 pl-10 pr-4 py-3 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 transition-colors"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                        </div>
+            {/* Header */}
+            <div className="text-center mb-8">
+                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">
+                    Forgot Password?
+                </h1>
+                <p className="text-sm text-[#7A7A7A] leading-relaxed">
+                    No worries, we&apos;ll send you reset instructions.
+                </p>
+            </div>
 
-                        {/* Submit Button */}
-                        <button
-                            type="submit"
-                            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-colors"
-                        >
-                            Reset Password
-                        </button>
-                    </form>
+            {/* Forgot Password Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Email Field */}
+                <FormInput
+                    label="Email Address"
+                    required
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                />
 
-                    {/* Back to Login Link */}
-                    <div className="mt-6 text-center">
-                        <Link
-                            href="/login"
-                            className="inline-flex items-center text-sm text-gray-400 hover:text-purple-400 transition-colors"
-                        >
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Sign In
-                        </Link>
-                    </div>
-                </div>
+                {/* Submit Button */}
+                <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="w-full bg-[#C4994A] hover:bg-[#B38840] text-white font-medium py-3 rounded-full"
+                >
+                    {isPending ? (
+                        <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <span>Please wait...</span>
+                        </>
+                    ) : (
+                        'Reset Password'
+                    )}
+                </Button>
+            </form>
+
+            {/* Back to Login Link */}
+            <div className="mt-8 text-center">
+                <Link
+                    href="/login"
+                    className="inline-flex items-center text-sm text-[#7A7A7A] hover:text-[#C4994A] transition-colors"
+                >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Sign In
+                </Link>
             </div>
         </div>
     );
 }
-
