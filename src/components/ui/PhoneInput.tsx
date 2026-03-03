@@ -26,6 +26,8 @@ interface PhoneInputProps
   enableCodeSearch?: boolean;
   codeSearchPlaceholder?: string;
   onCodeSearchChange?: (query: string) => void;
+  
+  error?: string;
 }
 
 export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
@@ -43,6 +45,7 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       codeSearchPlaceholder = "Search country code...",
       onCodeSearchChange,
       className,
+      error,
       ...inputProps
     },
     ref
@@ -93,7 +96,10 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             {required && <span className="text-red-500 ml-1">*</span>}
           </label>
         )}
-        <div className="mt-1 relative flex items-center gap-2 rounded-lg border border-[#E7E4DD] bg-white px-3 py-2 hover:border-[#C4994A] focus-within:border-[#C4994A] transition-colors">
+        <div className={cn(
+          "mt-1 relative flex items-center gap-2 rounded-lg border bg-white px-3 py-2 hover:border-[#C4994A] focus-within:border-[#C4994A] transition-colors",
+          error ? "border-red-500" : "border-[#E7E4DD]"
+        )}>
           {enableCodeSelect ? (
             <div className="" ref={dropdownRef}>
               <button
@@ -169,6 +175,7 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             {...inputProps}
           />
         </div>
+        {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
       </div>
     );
   }

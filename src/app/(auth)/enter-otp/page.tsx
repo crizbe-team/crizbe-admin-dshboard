@@ -5,6 +5,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import GoldenButton from '@/components/ui/GoldenButton';
+import { useSignupVerifyOtp } from '@/queries/use-auth';
+import { otpSchema, type OtpFormData } from '@/validations/auth';
+import { ZodError } from 'zod';
+import { signupSessionUtils } from '@/utils/signup-session';
+import Cookies from 'js-cookie';
 
 export default function EnterOtpPage() {
     const router = useRouter();
@@ -12,8 +17,11 @@ export default function EnterOtpPage() {
     const [isPending, setIsPending] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const [resendTimer, setResendTimer] = useState(0);
+    const [validationError, setValidationError] = useState('');
     
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    const { mutate: verifyOtp } = useSignupVerifyOtp();
 
     // Auto-focus first input on mount
     useEffect(() => {
@@ -90,28 +98,57 @@ export default function EnterOtpPage() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setErrorMsg('');
+        setValidationError('');
 
         const otpValue = otp.join('');
         
-        if (otpValue.length !== 4) {
-            setErrorMsg('Please enter the complete OTP');
-            return;
-        }
-
-        setIsPending(true);
-        
-        // TODO: Implement OTP verification API call
+        // Validate with Zod
         try {
-            // Simulating API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            otpSchema.parse({ otp: otpValue });
             
-            // On success, redirect to next step
-            router.push('/');
+            setIsPending(true);
+            
+            // Get stored signup data from cookies
+            const signupData = signupSessionUtils.getSignupData();
+            
+            // Prepare payload - username is already formatted (phone with country code or email)
+            let apiPayload: any = {
+                otp: otpValue,
+                username: signupData.username,  // Use username directly
+            };
+            
+            // Call API to verify OTP
+            verifyOtp(apiPayload, {
+                onSuccess: (data) => {
+                    if (data.status_code === 200 || data.status_code === 6000) {
+                        // Store signup_token from API response
+                        const signupToken = data.data?.signup_token || data.signup_token;
+                        if (signupToken) {
+                            Cookies.set('signup_token', signupToken, {
+                                expires: 1 / 24, // 1 hour
+                                secure: process.env.NEXT_PUBLIC_SERVER === 'PRODUCTION',
+                                sameSite: 'strict',
+                                path: '/',
+                            });
+                        }
+                        
+                        // Redirect to password setup page
+                        router.push('/setup-password');
+                    } else {
+                        setErrorMsg('OTP verification failed. Please try again.');
+                    }
+                },
+                onError: (err: any) => {
+                    setErrorMsg(err.message || 'Invalid OTP. Please try again.');
+                },
+            });
         } catch (error) {
-            setErrorMsg('Invalid OTP. Please try again.');
+            if (error instanceof ZodError) {
+                setValidationError((error as any).issues[0]?.message || 'Please enter a valid OTP');
+            }
         } finally {
             setIsPending(false);
         }
@@ -120,8 +157,17 @@ export default function EnterOtpPage() {
     const handleResendCode = () => {
         if (resendTimer > 0) return;
         
+        // Get stored signup data from cookies
+        const signupData = signupSessionUtils.getSignupData();
+        
+        // Username is already formatted (phone with country code or email)
+        const username = signupData.username;
+        
         // TODO: Implement resend OTP API call
-        console.log('Resending OTP...');
+        console.log('Resending OTP...', {
+            username: username,
+        });
+        
         setResendTimer(30); // 30 second cooldown
         setOtp(['', '', '', '']);
         inputRefs.current[0]?.focus();
@@ -154,9 +200,9 @@ export default function EnterOtpPage() {
 
             {/* OTP Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-                {errorMsg && (
+                {(errorMsg || validationError) && (
                     <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg text-center">
-                        {errorMsg}
+                        {errorMsg || validationError}
                     </div>
                 )}
 

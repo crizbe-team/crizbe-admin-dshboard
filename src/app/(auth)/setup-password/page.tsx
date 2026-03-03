@@ -6,6 +6,11 @@ import Image from 'next/image';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import GoldenButton from '@/components/ui/GoldenButton';
+import { useSignupSetPassword } from '@/queries/use-auth';
+import { passwordSchema, type PasswordFormData } from '@/validations/auth';
+import { ZodError } from 'zod';
+import { signupSessionUtils } from '@/utils/signup-session';
+import Cookies from 'js-cookie';
 
 export default function SetupPasswordPage() {
     const router = useRouter();
@@ -16,6 +21,8 @@ export default function SetupPasswordPage() {
     const [isPending, setIsPending] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const [errors, setErrors] = useState<{ password?: string; confirmPassword?: string }>({});
+
+    const { mutate: setPasswordApi } = useSignupSetPassword();
 
     const validateForm = () => {
         const newErrors: { password?: string; confirmPassword?: string } = {};
@@ -36,25 +43,66 @@ export default function SetupPasswordPage() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setErrorMsg('');
+        setErrors({});
 
-        if (!validateForm()) {
-            return;
-        }
-
-        setIsPending(true);
-        
-        // TODO: Implement password setup API call
+        // Validate with Zod
         try {
-            // Simulating API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            passwordSchema.parse({ password, confirmPassword });
             
-            // On success, redirect to login or dashboard
-            router.push('/login');
+            setIsPending(true);
+            
+            // Get stored signup data from cookies
+            const signupData = signupSessionUtils.getSignupData();
+            const signupToken = Cookies.get('signup_token');
+            
+            // Prepare payload - username is already formatted (phone with country code or email)
+            let apiPayload: any = {
+                password,
+                password_confirm: confirmPassword,  // Add password confirmation
+            };
+            
+            // Add signup_token if available
+            if (signupToken) {
+                apiPayload.signup_token = signupToken;
+            }
+            
+            // Use username directly (already formatted as phone with country code or email)
+            if (signupData.username) {
+                apiPayload.username = signupData.username;
+            }
+            
+            // Call API to set password
+            setPasswordApi(apiPayload, {
+                onSuccess: (data) => {
+                    if (data.status_code === 200 || data.status_code === 6000) {
+                        // Clear stored signup data from cookies
+                        signupSessionUtils.clearSignupData();
+                        Cookies.remove('signup_token');
+                        
+                        // Redirect to login or dashboard
+                        router.push('/login');
+                    } else {
+                        setErrorMsg('Failed to set password. Please try again.');
+                    }
+                },
+                onError: (err: any) => {
+                    setErrorMsg(err.message || 'Failed to set password. Please try again.');
+                },
+            });
         } catch (error) {
-            setErrorMsg('Failed to set password. Please try again.');
+            if (error instanceof ZodError) {
+                const fieldErrors: { password?: string; confirmPassword?: string } = {};
+                (error as any).issues.forEach((issue: any) => {
+                    const field = issue.path[0] as 'password' | 'confirmPassword';
+                    if (field && !fieldErrors[field]) {
+                        fieldErrors[field] = issue.message;
+                    }
+                });
+                setErrors(fieldErrors);
+            }
         } finally {
             setIsPending(false);
         }

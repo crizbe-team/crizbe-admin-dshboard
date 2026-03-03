@@ -20,12 +20,34 @@ export const login = async (userData: any): Promise<AuthApiResponse> => {
     return response?.data;
 };
 
-export const signup = async (userData: any): Promise<AuthApiResponse> => {
-    const { SIGN_UP } = API_ENDPOINTS;
-    const response = await axios.post(SIGN_UP, userData);
+export const signupInitiate = async (userData: any): Promise<AuthApiResponse> => {
+    const { SIGNUP_INITIATE } = API_ENDPOINTS;
+    const response = await axios.post(SIGNUP_INITIATE, userData);
     const { status_code, message, data } = response?.data;
     if (status_code !== 200 && status_code !== 6000) {
-        const errorText = typeof message === 'string' ? message : message?.body || 'Signup failed';
+        const errorText = typeof message === 'string' ? message : message?.body || 'Signup initiation failed';
+        throw { message: errorText, errors: data };
+    }
+    return response?.data;
+};
+
+export const signupVerifyOtp = async (otpData: any): Promise<AuthApiResponse> => {
+    const { SIGNUP_VERIFY_OTP } = API_ENDPOINTS;
+    const response = await axios.post(SIGNUP_VERIFY_OTP, otpData);
+    const { status_code, message, data } = response?.data;
+    if (status_code !== 200 && status_code !== 6000) {
+        const errorText = typeof message === 'string' ? message : message?.body || 'OTP verification failed';
+        throw { message: errorText, errors: data };
+    }
+    return response?.data;
+};
+
+export const signupSetPassword = async (passwordData: any): Promise<AuthApiResponse> => {
+    const { SIGNUP_SET_PASSWORD } = API_ENDPOINTS;
+    const response = await axios.post(SIGNUP_SET_PASSWORD, passwordData);
+    const { status_code, message, data } = response?.data;
+    if (status_code !== 200 && status_code !== 6000) {
+        const errorText = typeof message === 'string' ? message : message?.body || 'Password setup failed';
         throw { message: errorText, errors: data };
     }
     return response?.data;

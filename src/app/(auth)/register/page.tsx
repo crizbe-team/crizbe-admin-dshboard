@@ -3,25 +3,30 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSignup } from '@/queries/use-auth';
+import { useSignupInitiate } from '@/queries/use-auth';
 import { useRouter } from 'next/navigation';
 import { FormInput } from '@/components/ui/FormInput';
 import PhoneInput from '@/components/ui/PhoneInput';
 import GoldenButton from '@/components/ui/GoldenButton';
 import { useFetchCountries } from '@/queries/use-core';
+import { signupSchema, type SignupFormData } from '@/validations/auth';
+import { ProtectedRoute } from '@/hooks/use-protected-route';
+import { ZodError } from 'zod';
+import { signupSessionUtils } from '@/utils/signup-session';
 
 export default function RegisterPage() {
     const router = useRouter();
     const [emailOrPhone, setEmailOrPhone] = useState('');
     const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
     const [errorMsg, setErrorMsg] = useState('');
+    const [validationErrors, setValidationErrors] = useState<{ email?: string; phone?: string }>({});
     
     // Refs for maintaining focus
     const emailInputRef = useRef<HTMLInputElement>(null);
     const phoneInputRef = useRef<HTMLInputElement>(null);
     const prevIsPhoneInput = useRef<boolean | null>(null);
 
-    const { mutate: signup, isPending } = useSignup();
+    const { mutate: signupInitiate, isPending } = useSignupInitiate();
     const { data: countriesData } = useFetchCountries();
 
     // Format countries for phone code selector
@@ -65,24 +70,60 @@ export default function RegisterPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setErrorMsg('');
+        setValidationErrors({});
 
-        // Determine if input is email or phone
-        const payload = isPhoneInput 
-            ? { phone: emailOrPhone, phone_country_code: phoneCountryCode } 
-            : { email: emailOrPhone };
+        // Determine if input is email or phone and create username field
+        let payload: any;
+        
+        if (isPhoneInput) {
+            // Format phone number with country code as username
+            const formattedPhone = `${phoneCountryCode}${emailOrPhone}`;
+            payload = { username: formattedPhone };
+        } else {
+            // Use email as username
+            payload = { username: emailOrPhone };
+        }
 
-        signup(payload, {
-            onSuccess: (data) => {
-                if (data.status_code === 200) {
-                    router.push('/');
-                } else {
-                    setErrorMsg('Signup failed. Please try again.');
-                }
-            },
-            onError: (err: any) => {
-                setErrorMsg(err.message || 'Something went wrong. Please try again.');
-            },
-        });
+        // Validate with Zod - create temp object for validation
+        const validationPayload = isPhoneInput 
+            ? { phone: payload.username }
+            : { email: payload.username };
+
+        try {
+            signupSchema.parse(validationPayload);
+            
+            // If validation passes, call API
+            signupInitiate(payload, {
+                onSuccess: (data) => {
+                    if (data.status_code === 200 || data.status_code === 6000) {
+                        // Store user info for next step using cookies - always as username
+                        signupSessionUtils.setSignupData({
+                            username: payload.username,  // Already formatted (phone with country code or email)
+                            countryCode: phoneCountryCode,
+                        });
+                        
+                        // Redirect to OTP verification page
+                        router.push('/enter-otp');
+                    } else {
+                        setErrorMsg('Signup failed. Please try again.');
+                    }
+                },
+                onError: (err: any) => {
+                    setErrorMsg(err.message || 'Something went wrong. Please try again.');
+                },
+            });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                const fieldErrors: { email?: string; phone?: string } = {};
+                (error as any).issues.forEach((issue: any) => {
+                    const field = issue.path[0] as 'email' | 'phone';
+                    if (field && !fieldErrors[field]) {
+                        fieldErrors[field] = issue.message;
+                    }
+                });
+                setValidationErrors(fieldErrors);
+            }
+        }
     };
 
     const handleGoogleSignup = () => {
@@ -130,13 +171,20 @@ export default function RegisterPage() {
                         label="Email / Mobile number"
                         required
                         value={emailOrPhone}
-                        onChange={setEmailOrPhone}
+                        onChange={(value) => {
+                            setEmailOrPhone(value);
+                            if (validationErrors.phone) setValidationErrors({ ...validationErrors, phone: undefined });
+                        }}
                         enableCodeSelect
                         codes={phoneCodes}
                         selectedCode={phoneCountryCode}
-                        onCodeChange={setPhoneCountryCode}
+                        onCodeChange={(code) => {
+                            setPhoneCountryCode(code);
+                            if (validationErrors.phone) setValidationErrors({ ...validationErrors, phone: undefined });
+                        }}
                         enableCodeSearch
                         placeholder="Enter your mobile number"
+                        error={validationErrors.phone}
                     />
                 ) : (
                     <FormInput
@@ -145,8 +193,12 @@ export default function RegisterPage() {
                         required
                         type="text"
                         value={emailOrPhone}
-                        onChange={(e) => setEmailOrPhone(e.target.value)}
+                        onChange={(e) => {
+                            setEmailOrPhone(e.target.value);
+                            if (validationErrors.email) setValidationErrors({ ...validationErrors, email: undefined });
+                        }}
                         placeholder="Enter your email id / mobile number"
+                        error={validationErrors.email}
                     />
                 )}
 

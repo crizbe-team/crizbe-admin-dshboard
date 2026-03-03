@@ -1,6 +1,8 @@
 export const API_ENDPOINTS = {
     // Auth endpoints
-    SIGN_UP: 'accounts/signup/',
+    SIGNUP_INITIATE: 'accounts/signup/initiate/',
+    SIGNUP_VERIFY_OTP: 'accounts/signup/verify-otp/',
+    SIGNUP_SET_PASSWORD: 'accounts/signup/set-password/',
     LOGIN: 'accounts/login/',
     REFRESH_TOKEN: 'accounts/token/refresh/',
     LOGOUT: 'accounts/logout/',
