@@ -1,6 +1,7 @@
 import api from '../lib/axios';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { ApiBuilder } from '../utils/api-builder';
+import { handleApiResponse } from '../utils/api-handler';
 
 export const getCountries = async (params: any = {}) => {
     const { GET_COUNTRIES } = API_ENDPOINTS;
@@ -21,13 +22,7 @@ export const getCountries = async (params: any = {}) => {
     const url = builder.build();
     const response = await api.get(url);
 
-    const { status_code, message, data } = response?.data;
-
-    if (status_code === 6001) {
-        throw { message, errors: data };
-    }
-
-    return response.data;
+    return handleApiResponse(response, { errorCodes: [6001] });
 };
 
 export const getStates = async (params: any = {}) => {
@@ -49,11 +44,5 @@ export const getStates = async (params: any = {}) => {
     const url = builder.build();
     const response = await api.get(url);
 
-    const { status_code, message, data } = response?.data;
-
-    if (status_code === 6001) {
-        throw { message, errors: data };
-    }
-
-    return response.data;
+    return handleApiResponse(response, { errorCodes: [6001] });
 };

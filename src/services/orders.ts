@@ -1,12 +1,13 @@
 import api from '../lib/axios';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { ApiBuilder } from '../utils/api-builder';
+import { handleApiResponse } from '../utils/api-handler';
 
 export const createOrder = async (data: any) => {
     const { CREATE_ORDER } = API_ENDPOINTS;
     const url = new ApiBuilder(CREATE_ORDER).build();
     const response = await api.post(url, data);
-    return response.data;
+    return handleApiResponse(response);
 };
 
 export const getOrderList = async (params?: any) => {
@@ -19,31 +20,21 @@ export const getOrderList = async (params?: any) => {
     }
     const url = builder.build();
     const response = await api.get(url);
-    return response.data;
+    return handleApiResponse(response);
 };
 
 export const getOrderDetail = async (id: string) => {
     const { ORDER_DETAIL } = API_ENDPOINTS;
     const url = new ApiBuilder(ORDER_DETAIL).path('id', id).build();
     const response = await api.get(url);
-    const { status_code, message, data } = response?.data;
-
-    if (status_code !== 200) {
-        throw { message, errors: data };
-    }
-    return response.data;
+    return handleApiResponse(response);
 };
 
 export const getAdminOrderDetail = async (id: string) => {
     const { ADMIN_ORDER_DETAIL } = API_ENDPOINTS;
     const url = new ApiBuilder(ADMIN_ORDER_DETAIL).path('pk', id).build();
     const response = await api.get(url);
-    const { status_code, message, data } = response?.data;
-
-    if (status_code !== 200) {
-        throw { message, errors: data };
-    }
-    return response.data;
+    return handleApiResponse(response);
 };
 
 export const getAdminOrderList = async (params?: any) => {
@@ -56,17 +47,12 @@ export const getAdminOrderList = async (params?: any) => {
     }
     const url = builder.build();
     const response = await api.get(url);
-    return response.data;
+    return handleApiResponse(response);
 };
 
 export const updateOrderStatus = async (id: string, status: string) => {
     const { UPDATE_ORDER_STATUS } = API_ENDPOINTS;
     const url = new ApiBuilder(UPDATE_ORDER_STATUS).path('pk', id).build();
     const response = await api.patch(url, { status });
-    const { status_code, message, data } = response?.data;
-
-    if (status_code !== 200) {
-        throw { message, errors: data };
-    }
-    return response.data;
+    return handleApiResponse(response);
 };

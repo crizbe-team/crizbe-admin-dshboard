@@ -1,6 +1,7 @@
 import api from '../lib/axios';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { ApiBuilder } from '../utils/api-builder';
+import { handleApiResponse } from '../utils/api-handler';
 
 export const getProducts = async (params: any = {}, method: 'get' | 'post' = 'get') => {
     const { GET_PRODUCTS } = API_ENDPOINTS;
@@ -16,24 +17,14 @@ export const getProducts = async (params: any = {}, method: 'get' | 'post' = 'ge
             .build();
 
         const response = await api.get(url);
-        const { status_code, message, data } = response?.data;
-
-        if (status_code === 6001) {
-            throw { message, errors: data };
-        }
-        return response.data;
+        return handleApiResponse(response, { errorCodes: [6001] });
     } else {
         const data = params as any;
         const url = new ApiBuilder(GET_PRODUCTS).build();
         const config =
             data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
         const response = await api.post(url, data, config);
-        const { status_code, message, data: responseData } = response?.data;
-
-        if (status_code === 6001) {
-            throw { message, errors: responseData };
-        }
-        return response.data;
+        return handleApiResponse(response, { errorCodes: [6001] });
     }
 };
 
@@ -49,16 +40,16 @@ export const getProduct = async (
         const config =
             data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
         const response = await api.put(url, data, config);
-        return response.data;
+        return handleApiResponse(response);
     }
 
     const response = await api[method](url);
-    return response.data;
+    return handleApiResponse(response);
 };
 
 export const getRelatedProducts = async (id: string | number) => {
     const { GET_RELATED_PRODUCTS } = API_ENDPOINTS;
     const url = new ApiBuilder(GET_RELATED_PRODUCTS).path('id', id).build();
     const response = await api.get(url);
-    return response.data;
+    return handleApiResponse(response);
 };

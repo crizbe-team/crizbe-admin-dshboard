@@ -1,17 +1,13 @@
 import api from '../lib/axios';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { ApiBuilder } from '../utils/api-builder';
+import { handleApiResponse } from '../utils/api-handler';
 
 export const getAddresses = async () => {
     const { GET_ADDRESSES } = API_ENDPOINTS;
     const url = new ApiBuilder(GET_ADDRESSES).build();
     const response = await api.get(url);
-    const { status_code, message, data } = response?.data;
-
-    if (status_code === 6001) {
-        throw { message, errors: data };
-    }
-    return response.data;
+    return handleApiResponse(response, { errorCodes: [6001] });
 };
 
 export const getAddress = async (
@@ -26,33 +22,18 @@ export const getAddress = async (
         const config =
             data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
         const response = await api.put(url, data, config);
-        const { status_code, message, responseData } = response?.data;
-
-        if (status_code === 6001) {
-            throw { message, errors: responseData };
-        }
-        return response.data;
+        return handleApiResponse(response, { errorCodes: [6001] });
     }
 
     const response = await api[method](url);
-    const { status_code, message, responseData } = response?.data;
-
-    if (status_code === 6001) {
-        throw { message, errors: responseData };
-    }
-    return response.data;
+    return handleApiResponse(response, { errorCodes: [6001] });
 };
 
 export const createAddress = async (data: any) => {
     const { GET_ADDRESSES } = API_ENDPOINTS;
     const url = new ApiBuilder(GET_ADDRESSES).build();
     const response = await api.post(url, data);
-    const { status_code, message, responseData } = response?.data;
-
-    if (status_code === 6001) {
-        throw { message, errors: responseData };
-    }
-    return response.data;
+    return handleApiResponse(response, { errorCodes: [6001] });
 };
 
 // Client services
@@ -69,22 +50,12 @@ export const getClients = async (params: any = {}, method: 'get' | 'post' = 'get
             .build();
 
         const response = await api.get(url);
-        const { status_code, message, data } = response?.data;
-
-        if (status_code === 6001) {
-            throw { message, errors: data };
-        }
-        return response.data;
+        return handleApiResponse(response, { errorCodes: [6001] });
     } else {
         const data = params as any;
         const url = new ApiBuilder(GET_CLIENTS).build();
         const response = await api.post(url, data);
-        const { status_code, message, responseData } = response?.data;
-
-        if (status_code === 6001) {
-            throw { message, errors: responseData };
-        }
-        return response.data;
+        return handleApiResponse(response, { errorCodes: [6001] });
     }
 };
 
@@ -100,32 +71,17 @@ export const getClient = async (
         const config =
             data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
         const response = await api.put(url, data, config);
-        const { status_code, message, responseData } = response?.data;
-
-        if (status_code === 6001) {
-            throw { message, errors: responseData };
-        }
-        return response.data;
+        return handleApiResponse(response, { errorCodes: [6001] });
     }
 
     const response = await api[method](url);
-    const { status_code, message, responseData } = response?.data;
-
-    if (status_code === 6001) {
-        throw { message, errors: responseData };
-    }
-    return response.data;
+    return handleApiResponse(response, { errorCodes: [6001] });
 };
 
 export const createClient = async (data: any) => {
     const { GET_CLIENTS } = API_ENDPOINTS;
     const url = new ApiBuilder(GET_CLIENTS).build();
     const response = await api.post(url, data);
-    const { status_code, message, responseData } = response?.data;
-
-    if (status_code === 6001) {
-        throw { message, errors: responseData };
-    }
-    return response.data;
+    return handleApiResponse(response, { errorCodes: [6001] });
 };
 
