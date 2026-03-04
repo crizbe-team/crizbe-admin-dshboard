@@ -27,17 +27,6 @@ export default function RegisterPage() {
     const prevIsPhoneInput = useRef<boolean | null>(null);
 
     const { mutate: signupInitiate, isPending } = useSignupInitiate();
-    const { data: countriesData } = useFetchCountries();
-
-    // Format countries for phone code selector
-    const phoneCodes = useMemo(() => {
-        if (!countriesData?.data) return [];
-        return countriesData.data.map((country: any) => ({
-            id: country.id,
-            name: country.name,
-            phone_code: country.phone_code || '+91',
-        }));
-    }, [countriesData]);
 
     // Detect if input looks like a phone number (starts with digit)
     const isPhoneInput = useMemo(() => {
@@ -176,7 +165,6 @@ export default function RegisterPage() {
                             if (validationErrors.phone) setValidationErrors({ ...validationErrors, phone: undefined });
                         }}
                         enableCodeSelect
-                        codes={phoneCodes}
                         selectedCode={phoneCountryCode}
                         onCodeChange={(code) => {
                             setPhoneCountryCode(code);

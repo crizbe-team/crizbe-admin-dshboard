@@ -7,7 +7,7 @@ export const getAddresses = async () => {
     const { GET_ADDRESSES } = API_ENDPOINTS;
     const url = new ApiBuilder(GET_ADDRESSES).build();
     const response = await api.get(url);
-    return handleApiResponse(response, { errorCodes: [6001] });
+    return handleApiResponse(response);
 };
 
 export const getAddress = async (
@@ -22,18 +22,18 @@ export const getAddress = async (
         const config =
             data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
         const response = await api.put(url, data, config);
-        return handleApiResponse(response, { errorCodes: [6001] });
+        return handleApiResponse(response);
     }
 
     const response = await api[method](url);
-    return handleApiResponse(response, { errorCodes: [6001] });
+    return handleApiResponse(response);
 };
 
 export const createAddress = async (data: any) => {
     const { GET_ADDRESSES } = API_ENDPOINTS;
     const url = new ApiBuilder(GET_ADDRESSES).build();
     const response = await api.post(url, data);
-    return handleApiResponse(response, { errorCodes: [6001] });
+    return handleApiResponse(response);
 };
 
 // Client services
@@ -50,12 +50,12 @@ export const getClients = async (params: any = {}, method: 'get' | 'post' = 'get
             .build();
 
         const response = await api.get(url);
-        return handleApiResponse(response, { errorCodes: [6001] });
+        return handleApiResponse(response);
     } else {
         const data = params as any;
         const url = new ApiBuilder(GET_CLIENTS).build();
         const response = await api.post(url, data);
-        return handleApiResponse(response, { errorCodes: [6001] });
+        return handleApiResponse(response);
     }
 };
 
@@ -71,17 +71,16 @@ export const getClient = async (
         const config =
             data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
         const response = await api.put(url, data, config);
-        return handleApiResponse(response, { errorCodes: [6001] });
+        return handleApiResponse(response);
     }
 
     const response = await api[method](url);
-    return handleApiResponse(response, { errorCodes: [6001] });
+    return handleApiResponse(response);
 };
 
 export const createClient = async (data: any) => {
     const { GET_CLIENTS } = API_ENDPOINTS;
     const url = new ApiBuilder(GET_CLIENTS).build();
     const response = await api.post(url, data);
-    return handleApiResponse(response, { errorCodes: [6001] });
+    return handleApiResponse(response);
 };
-

@@ -17,14 +17,14 @@ export const getProducts = async (params: any = {}, method: 'get' | 'post' = 'ge
             .build();
 
         const response = await api.get(url);
-        return handleApiResponse(response, { errorCodes: [6001] });
+        return handleApiResponse(response);
     } else {
         const data = params as any;
         const url = new ApiBuilder(GET_PRODUCTS).build();
         const config =
             data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
         const response = await api.post(url, data, config);
-        return handleApiResponse(response, { errorCodes: [6001] });
+        return handleApiResponse(response);
     }
 };
 

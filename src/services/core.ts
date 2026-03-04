@@ -22,7 +22,7 @@ export const getCountries = async (params: any = {}) => {
     const url = builder.build();
     const response = await api.get(url);
 
-    return handleApiResponse(response, { errorCodes: [6001] });
+    return handleApiResponse(response);
 };
 
 export const getStates = async (params: any = {}) => {
@@ -44,5 +44,5 @@ export const getStates = async (params: any = {}) => {
     const url = builder.build();
     const response = await api.get(url);
 
-    return handleApiResponse(response, { errorCodes: [6001] });
+    return handleApiResponse(response);
 };

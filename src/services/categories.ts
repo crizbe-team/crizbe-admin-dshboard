@@ -17,12 +17,12 @@ export const getCategories = async (params: any = {}, method: 'get' | 'post' = '
             .build();
 
         const response = await api.get(url);
-        return handleApiResponse(response, { errorCodes: [6001] });
+        return handleApiResponse(response);
     } else {
         const data = params as any;
         const url = new ApiBuilder(GET_CATEGORIES).build();
         const response = await api.post(url, data);
-        return handleApiResponse(response, { errorCodes: [6001] });
+        return handleApiResponse(response);
     }
 };
 
