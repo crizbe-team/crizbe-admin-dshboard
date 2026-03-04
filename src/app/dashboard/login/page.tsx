@@ -11,7 +11,7 @@ import { FormInput } from '@/components/ui/FormInput';
 import PhoneInput from '@/components/ui/PhoneInput';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginFormData } from '@/validations/auth';
+import { dashboardLoginSchema, type DashboardLoginFormData } from '@/validations/auth';
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
     const { mutate: login, isPending } = useLogin();
 
     // Refs for maintaining focus during input switches
-    const emailInputRef = useRef<HTMLInputElement>(null);
+    const usernameInputRef = useRef<HTMLInputElement>(null);
     const phoneInputRef = useRef<HTMLInputElement>(null);
     const prevIsPhoneInput = useRef<boolean | null>(null);
 
@@ -33,36 +33,25 @@ export default function AdminLoginPage() {
         watch,
         clearErrors,
         formState: { errors },
-    } = useForm<LoginFormData>({
-        resolver: zodResolver(loginSchema),
+    } = useForm<DashboardLoginFormData>({
+        resolver: zodResolver(dashboardLoginSchema),
         defaultValues: {
-            email: '',
-            phone: '',
+            username: '',
             password: '',
         },
     });
 
-    const emailValue = watch('email');
-    const phoneValue = watch('phone');
-    const emailOrPhone = emailValue || phoneValue;
+    const usernameValue = watch('username');
 
-    // Detect if input looks like a phone number (starts with digit)
-    const isPhoneInput = emailOrPhone ? /^\d/.test(emailOrPhone.trim()) : false;
+    // Detect if input looks like a phone number (starts with digit and is only digits so far)
+    // We only switch to PhoneInput if it's strictly digits to allow usernames like "9admin" to stay in FormInput
+    const isPhoneInput = usernameValue ? /^\d+$/.test(usernameValue.trim()) : false;
 
-    // Handle input change for both email and phone
+    // Handle input change
     const handleInputChange = (value: string) => {
-        clearErrors('username' as keyof LoginFormData);
+        clearErrors('username');
         clearErrors('root.serverError');
-
-        if (/^\d/.test(value.trim())) {
-            setValue('phone', value, { shouldValidate: true });
-            setValue('email', '', { shouldValidate: false });
-            clearErrors('email');
-        } else {
-            setValue('email', value, { shouldValidate: true });
-            setValue('phone', '', { shouldValidate: false });
-            clearErrors('phone');
-        }
+        setValue('username', value, { shouldValidate: true });
     };
 
     // Maintain focus when switching between input types
@@ -71,20 +60,20 @@ export default function AdminLoginPage() {
             requestAnimationFrame(() => {
                 if (isPhoneInput && phoneInputRef.current) {
                     phoneInputRef.current.focus();
-                    const len = (phoneValue || '').length;
+                    const len = (usernameValue || '').length;
                     phoneInputRef.current.setSelectionRange(len, len);
-                } else if (!isPhoneInput && emailInputRef.current) {
-                    emailInputRef.current.focus();
-                    const len = (emailValue || '').length;
-                    emailInputRef.current.setSelectionRange(len, len);
+                } else if (!isPhoneInput && usernameInputRef.current) {
+                    usernameInputRef.current.focus();
+                    const len = (usernameValue || '').length;
+                    usernameInputRef.current.setSelectionRange(len, len);
                 }
             });
         }
         prevIsPhoneInput.current = isPhoneInput;
-    }, [isPhoneInput, emailValue, phoneValue]);
+    }, [isPhoneInput, usernameValue]);
 
-    const onSubmit = (data: LoginFormData) => {
-        const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email || '';
+    const onSubmit = (data: DashboardLoginFormData) => {
+        const username = isPhoneInput ? `${phoneCountryCode}${data.username}` : data.username;
 
         login(
             { username, password: data.password, role: 'admin' },
@@ -95,7 +84,7 @@ export default function AdminLoginPage() {
                 onError: (error: any) => {
                     if (error?.errors && Object.keys(error.errors).length > 0) {
                         Object.keys(error.errors).forEach((field) => {
-                            setError(field as keyof LoginFormData, {
+                            setError(field as keyof DashboardLoginFormData, {
                                 type: 'server',
                                 message: error.errors[field][0],
                             });
@@ -144,35 +133,35 @@ export default function AdminLoginPage() {
                         </div>
                     )}
 
-                    {/* Email / Mobile Field */}
+                    {/* Username / Email / Mobile Field */}
                     <div className="admin-input">
                         {isPhoneInput ? (
                             <PhoneInput
                                 ref={phoneInputRef}
-                                label="Admin Email / Mobile number"
+                                label="Username / Email / Mobile"
                                 labelClassName="text-gray-400"
                                 required
-                                value={phoneValue || ''}
+                                value={usernameValue || ''}
                                 onChange={(value) => handleInputChange(value)}
                                 enableCodeSelect
                                 selectedCode={phoneCountryCode}
                                 onCodeChange={(code) => setPhoneCountryCode(code)}
                                 enableCodeSearch
                                 placeholder="Enter admin mobile number"
-                                error={errors.phone?.message || errors.username?.message}
+                                error={errors.username?.message}
                                 className="bg-[#1f1f1f]! border-[#262626]! text-white!"
                             />
                         ) : (
                             <FormInput
-                                ref={emailInputRef}
-                                label="Admin Email / Mobile number"
+                                ref={usernameInputRef}
+                                label="Username / Email / Mobile"
                                 labelClassName="text-gray-400"
                                 required
                                 type="text"
-                                value={emailValue || ''}
+                                value={usernameValue || ''}
                                 onChange={(e) => handleInputChange(e.target.value)}
-                                placeholder="Enter your admin email / ID"
-                                error={errors.email?.message || errors.username?.message || ''}
+                                placeholder="Enter your admin ID or email"
+                                error={errors.username?.message}
                                 className="bg-[#1f1f1f]! border-[#262626]! text-white! placeholder:text-gray-500!"
                             />
                         )}

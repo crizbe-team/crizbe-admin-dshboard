@@ -71,8 +71,15 @@ export const loginSchema = z
         }
     );
 
+// dashboard login validation schema
+export const dashboardLoginSchema = z.object({
+    username: z.string().min(1, 'Username is required'),
+    password: z.string().min(1, 'Password is required'),
+});
+
 // Type exports
 export type SignupFormData = z.infer<typeof signupSchema>;
 export type OtpFormData = z.infer<typeof otpSchema>;
 export type PasswordFormData = z.infer<typeof passwordSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
+export type DashboardLoginFormData = z.infer<typeof dashboardLoginSchema>;
