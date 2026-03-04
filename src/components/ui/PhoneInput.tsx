@@ -28,6 +28,8 @@ interface PhoneInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElemen
     onCodeSearchChange?: (query: string) => void;
 
     error?: string;
+    labelClassName?: string;
+    wrapperClassName?: string;
 }
 
 export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
@@ -45,6 +47,8 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             onCodeSearchChange,
             className,
             error,
+            labelClassName,
+            wrapperClassName,
             ...inputProps
         },
         ref
@@ -79,9 +83,9 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         }, [isDropdownOpen]);
 
         return (
-            <div>
+            <div className={wrapperClassName}>
                 {label && (
-                    <label className="text-xs text-[#404040] font-medium">
+                    <label className={cn('text-xs text-[#404040] font-medium', labelClassName)}>
                         {label}
                         {required && <span className="text-red-500 ml-1">*</span>}
                     </label>
@@ -109,7 +113,7 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
                             </button>
 
                             {isDropdownOpen && (
-                                <div className="absolute z-[1000] left-0 mt-2 w-40 bg-white border border-[#E7E4DD] rounded-lg shadow-lg">
+                                <div className="absolute z-1000 left-0 mt-2 w-40 bg-white border border-[#E7E4DD] rounded-lg shadow-lg">
                                     {enableCodeSearch && (
                                         <div className="px-2 pt-2 pb-1 border-b border-[#E7E4DD]">
                                             <div className="relative">
