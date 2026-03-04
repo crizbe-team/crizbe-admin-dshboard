@@ -8,32 +8,53 @@ import { useLogin } from '@/queries/use-auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/FormInput';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, type LoginFormData } from '@/validations/auth';
 
 export default function LoginPage() {
     const router = useRouter();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [errorMsg, setErrorMsg] = useState('');
 
     const { mutate: login, isPending } = useLogin();
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setErrorMsg('');
+    const {
+        register,
+        handleSubmit,
+        setError,
+        clearErrors,
+        formState: { errors },
+    } = useForm<LoginFormData>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            username: '',
+            password: '',
+        },
+    });
 
+    const onSubmit = (data: LoginFormData) => {
         login(
-            { username, password, role: 'admin' },
+            { username: data.username, password: data.password, role: 'user' },
             {
-                onSuccess: (data) => {
-                    if (data.status_code === 200) {
-                        router.push('/dashboard');
-                    } else {
-                        setErrorMsg('Login failed. Please check your credentials.');
-                    }
+                onSuccess: (response: any) => {
+                    router.push('/');
                 },
-                onError: (err: any) => {
-                    setErrorMsg(err.message || 'Something went wrong. Please try again.');
+                onError: (error: any) => {
+                    if (error?.errors && Object.keys(error.errors).length > 0) {
+                        // Map field-specific errors
+                        Object.keys(error.errors).forEach((field) => {
+                            setError(field as keyof LoginFormData, {
+                                type: 'server',
+                                message: error.errors[field][0],
+                            });
+                        });
+                    } else {
+                        // Fallback to global error
+                        setError('root.serverError', {
+                            type: 'server',
+                            message: error?.message || 'Something went wrong. Please try again.',
+                        });
+                    }
                 },
             }
         );
@@ -43,6 +64,10 @@ export default function LoginPage() {
         // TODO: Implement Google OAuth
         console.log('Google login clicked');
     };
+
+    // Account for global non-field API errors
+    const globalError =
+        errors.root?.serverError?.message || (errors as any).non_field_errors?.message;
 
     return (
         <div className="w-full max-w-md">
@@ -59,31 +84,43 @@ export default function LoginPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">
-                    Welcome Back
-                </h1>
+                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Welcome Back</h1>
                 <p className="text-sm text-[#7A7A7A] leading-relaxed">
                     Sign in to your account to continue
                 </p>
             </div>
 
             {/* Login Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-                {errorMsg && (
-                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg">
-                        {errorMsg}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {globalError && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg text-center">
+                        {globalError}
                     </div>
                 )}
 
                 {/* Username Field */}
-                <FormInput
-                    label="Username"
-                    required
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter your username"
-                />
+                <div className="flex flex-col gap-1">
+                    <label className="text-xs font-medium text-[#404040]">
+                        Username
+                        <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        {...register('username', {
+                            onChange: () => {
+                                clearErrors('root.serverError');
+                                clearErrors('username');
+                            },
+                        })}
+                        placeholder="Enter your username"
+                        className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${
+                            errors.username ? 'border-red-500' : 'border-[#E7E4DD]'
+                        }`}
+                    />
+                    {errors.username && (
+                        <p className="text-xs text-red-500">{errors.username.message}</p>
+                    )}
+                </div>
 
                 {/* Password Field */}
                 <div className="flex flex-col gap-1">
@@ -94,11 +131,16 @@ export default function LoginPage() {
                     <div className="relative">
                         <input
                             type={showPassword ? 'text' : 'password'}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="mt-1 w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors border-[#E7E4DD]"
+                            {...register('password', {
+                                onChange: () => {
+                                    clearErrors('root.serverError');
+                                    clearErrors('password');
+                                },
+                            })}
                             placeholder="Enter your password"
+                            className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${
+                                errors.password ? 'border-red-500' : 'border-[#E7E4DD]'
+                            }`}
                         />
                         <button
                             type="button"
@@ -112,6 +154,9 @@ export default function LoginPage() {
                             )}
                         </button>
                     </div>
+                    {errors.password && (
+                        <p className="text-xs text-red-500">{errors.password.message}</p>
+                    )}
                 </div>
 
                 {/* Forgot Password */}

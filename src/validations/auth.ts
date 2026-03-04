@@ -48,7 +48,14 @@ export const passwordSchema = z
         path: ['confirmPassword'],
     });
 
+// Login validation schema
+export const loginSchema = z.object({
+    username: z.string().min(1, 'Username is required'),
+    password: z.string().min(1, 'Password is required'),
+});
+
 // Type exports
 export type SignupFormData = z.infer<typeof signupSchema>;
 export type OtpFormData = z.infer<typeof otpSchema>;
 export type PasswordFormData = z.infer<typeof passwordSchema>;
+export type LoginFormData = z.infer<typeof loginSchema>;
