@@ -1,17 +1,14 @@
 import Image from 'next/image';
 import { ProtectedRoute } from '@/hooks/use-protected-route';
+import AuthTransition from './auth-transition';
 
-export default function AuthLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (
         <ProtectedRoute requireAuth={false}>
             <div className="min-h-screen flex">
                 {/* Left Side - Form Content */}
-                <div className="flex-1 flex items-center justify-center bg-white px-6 py-12">
-                    {children}
+                <div className="flex-1 flex bg-white relative overflow-hidden">
+                    <AuthTransition>{children}</AuthTransition>
                 </div>
 
                 {/* Right Side - Product Image */}
