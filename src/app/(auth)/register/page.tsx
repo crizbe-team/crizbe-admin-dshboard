@@ -48,6 +48,9 @@ export default function RegisterPage() {
 
     // Handle input change for both email and phone
     const handleInputChange = (value: string) => {
+        // Clear any API errors when the user starts typing
+        clearErrors('username' as keyof SignupFormData);
+
         if (/^\d/.test(value.trim())) {
             // User is typing a phone number
             setValue('phone', value, { shouldValidate: true });
