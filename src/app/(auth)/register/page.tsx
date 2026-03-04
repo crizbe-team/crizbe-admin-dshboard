@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSignupInitiate } from '@/queries/use-auth';
@@ -8,111 +7,104 @@ import { useRouter } from 'next/navigation';
 import { FormInput } from '@/components/ui/FormInput';
 import PhoneInput from '@/components/ui/PhoneInput';
 import GoldenButton from '@/components/ui/GoldenButton';
-import { useFetchCountries } from '@/queries/use-core';
 import { signupSchema, type SignupFormData } from '@/validations/auth';
-import { ProtectedRoute } from '@/hooks/use-protected-route';
-import { ZodError } from 'zod';
-import { signupSessionUtils } from '@/utils/signup-session';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { useState, useRef, useEffect, useMemo } from 'react';
 
 export default function RegisterPage() {
     const router = useRouter();
-    const [emailOrPhone, setEmailOrPhone] = useState('');
+    const { mutate: signupInitiate, isPending } = useSignupInitiate();
     const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
-    const [errorMsg, setErrorMsg] = useState('');
-    const [validationErrors, setValidationErrors] = useState<{ email?: string; phone?: string }>({});
-    
-    // Refs for maintaining focus
+
+    // Refs for maintaining focus during input switches
     const emailInputRef = useRef<HTMLInputElement>(null);
     const phoneInputRef = useRef<HTMLInputElement>(null);
     const prevIsPhoneInput = useRef<boolean | null>(null);
 
-    const { mutate: signupInitiate, isPending } = useSignupInitiate();
+    const {
+        handleSubmit,
+        setError,
+        setValue,
+        watch,
+        clearErrors,
+        formState: { errors },
+    } = useForm<SignupFormData>({
+        resolver: zodResolver(signupSchema),
+        defaultValues: {
+            email: '',
+            phone: '',
+        },
+    });
+
+    console.log('Signup Form errors', errors);
+
+    const emailValue = watch('email');
+    const phoneValue = watch('phone');
+    const emailOrPhone = emailValue || phoneValue;
 
     // Detect if input looks like a phone number (starts with digit)
-    const isPhoneInput = useMemo(() => {
-        const trimmed = emailOrPhone.trim();
-        // If starts with a digit, treat as phone number
-        return /^\d/.test(trimmed);
-    }, [emailOrPhone]);
+    const isPhoneInput = emailOrPhone ? /^\d/.test(emailOrPhone.trim()) : false;
+
+    // Handle input change for both email and phone
+    const handleInputChange = (value: string) => {
+        if (/^\d/.test(value.trim())) {
+            // User is typing a phone number
+            setValue('phone', value, { shouldValidate: true });
+            setValue('email', '', { shouldValidate: false });
+            clearErrors('email');
+        } else {
+            // User is typing an email
+            setValue('email', value, { shouldValidate: true });
+            setValue('phone', '', { shouldValidate: false });
+            clearErrors('phone');
+        }
+    };
 
     // Maintain focus when switching between input types
     useEffect(() => {
         if (prevIsPhoneInput.current !== null && prevIsPhoneInput.current !== isPhoneInput) {
-            // Input type changed, restore focus
+            // Input type changed, restore focus on next render
             requestAnimationFrame(() => {
                 if (isPhoneInput && phoneInputRef.current) {
                     phoneInputRef.current.focus();
                     // Move cursor to end
-                    const len = emailOrPhone.length;
+                    const len = (phoneValue || '').length;
                     phoneInputRef.current.setSelectionRange(len, len);
                 } else if (!isPhoneInput && emailInputRef.current) {
                     emailInputRef.current.focus();
                     // Move cursor to end
-                    const len = emailOrPhone.length;
+                    const len = (emailValue || '').length;
                     emailInputRef.current.setSelectionRange(len, len);
                 }
             });
         }
         prevIsPhoneInput.current = isPhoneInput;
-    }, [isPhoneInput, emailOrPhone]);
+    }, [isPhoneInput, emailValue, phoneValue]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setErrorMsg('');
-        setValidationErrors({});
+    const onSubmit = async (data: SignupFormData) => {
+        const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email;
 
-        // Determine if input is email or phone and create username field
-        let payload: any;
-        
-        if (isPhoneInput) {
-            // Format phone number with country code as username
-            const formattedPhone = `${phoneCountryCode}${emailOrPhone}`;
-            payload = { username: formattedPhone };
-        } else {
-            // Use email as username
-            payload = { username: emailOrPhone };
-        }
-
-        // Validate with Zod - create temp object for validation
-        const validationPayload = isPhoneInput 
-            ? { phone: payload.username }
-            : { email: payload.username };
-
-        try {
-            signupSchema.parse(validationPayload);
-            
-            // If validation passes, call API
-            signupInitiate(payload, {
-                onSuccess: (data) => {
-                    if (data.status_code === 200 || data.status_code === 6000) {
-                        // Store user info for next step using cookies - always as username
-                        signupSessionUtils.setSignupData({
-                            username: payload.username,  // Already formatted (phone with country code or email)
-                            countryCode: phoneCountryCode,
+        signupInitiate(
+            { username },
+            {
+                onError: (error: any) => {
+                    if (error.errors) {
+                        const apiErrors = error.errors;
+                        Object.keys(apiErrors).forEach((field) => {
+                            setError(field as keyof SignupFormData, {
+                                type: 'server',
+                                message: apiErrors[field][0],
+                            });
                         });
-                        
-                        // Redirect to OTP verification page
-                        router.push('/enter-otp');
-                    } else {
-                        setErrorMsg('Signup failed. Please try again.');
                     }
                 },
-                onError: (err: any) => {
-                    setErrorMsg(err.message || 'Something went wrong. Please try again.');
+                onSuccess: (response) => {
+                    console.log('Signup successful:', response);
+                    router.push('/enter-otp');
                 },
-            });
-        } catch (error) {
-            if (error instanceof ZodError) {
-                const fieldErrors: { email?: string; phone?: string } = {};
-                (error as any).issues.forEach((issue: any) => {
-                    const field = issue.path[0] as 'email' | 'phone';
-                    if (field && !fieldErrors[field]) {
-                        fieldErrors[field] = issue.message;
-                    }
-                });
-                setValidationErrors(fieldErrors);
             }
-        }
+        );
     };
 
     const handleGoogleSignup = () => {
@@ -135,9 +127,7 @@ export default function RegisterPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">
-                    Welcome
-                </h1>
+                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Welcome</h1>
                 <p className="text-sm text-[#7A7A7A] leading-relaxed">
                     Welcome to Crizbe, Please enter your details and
                     <br />
@@ -146,33 +136,21 @@ export default function RegisterPage() {
             </div>
 
             {/* Signup Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-                {errorMsg && (
-                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg">
-                        {errorMsg}
-                    </div>
-                )}
-
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Email / Mobile Field */}
                 {isPhoneInput ? (
                     <PhoneInput
                         ref={phoneInputRef}
                         label="Email / Mobile number"
                         required
-                        value={emailOrPhone}
-                        onChange={(value) => {
-                            setEmailOrPhone(value);
-                            if (validationErrors.phone) setValidationErrors({ ...validationErrors, phone: undefined });
-                        }}
+                        value={phoneValue || ''}
+                        onChange={(value) => handleInputChange(value)}
                         enableCodeSelect
                         selectedCode={phoneCountryCode}
-                        onCodeChange={(code) => {
-                            setPhoneCountryCode(code);
-                            if (validationErrors.phone) setValidationErrors({ ...validationErrors, phone: undefined });
-                        }}
+                        onCodeChange={(code) => setPhoneCountryCode(code)}
                         enableCodeSearch
                         placeholder="Enter your mobile number"
-                        error={validationErrors.phone}
+                        error={errors.phone?.message || errors.username?.message}
                     />
                 ) : (
                     <FormInput
@@ -180,18 +158,14 @@ export default function RegisterPage() {
                         label="Email / Mobile number"
                         required
                         type="text"
-                        value={emailOrPhone}
-                        onChange={(e) => {
-                            setEmailOrPhone(e.target.value);
-                            if (validationErrors.email) setValidationErrors({ ...validationErrors, email: undefined });
-                        }}
+                        value={emailValue || ''}
+                        onChange={(e) => handleInputChange(e.target.value)}
                         placeholder="Enter your email id / mobile number"
-                        error={validationErrors.email}
+                        error={errors.email?.message || errors.username?.message || ''}
                     />
                 )}
 
                 {/* Continue Button */}
-                
                 <GoldenButton
                     type="submit"
                     isLoading={isPending}
