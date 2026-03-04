@@ -49,10 +49,27 @@ export const passwordSchema = z
     });
 
 // Login validation schema
-export const loginSchema = z.object({
-    username: z.string().min(1, 'Username is required'),
-    password: z.string().min(1, 'Password is required'),
-});
+export const loginSchema = z
+    .object({
+        email: z.string().email('Invalid email address').optional().or(z.literal('')),
+        phone: z
+            .string()
+            .regex(/^\+?\d+$/, 'Phone number must contain only digits')
+            .optional()
+            .or(z.literal('')),
+        username: z.string().optional(),
+        password: z.string().min(1, 'Password is required'),
+    })
+    .refine(
+        (data) => {
+            // Either email or phone must be provided
+            return (data.email && data.email.length > 0) || (data.phone && data.phone.length > 0);
+        },
+        {
+            message: 'Please provide either email or phone number',
+            path: ['email'],
+        }
+    );
 
 // Type exports
 export type SignupFormData = z.infer<typeof signupSchema>;

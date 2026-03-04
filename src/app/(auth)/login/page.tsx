@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -8,6 +8,7 @@ import { useLogin } from '@/queries/use-auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/FormInput';
+import PhoneInput from '@/components/ui/PhoneInput';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '@/validations/auth';
@@ -15,26 +16,84 @@ import { loginSchema, type LoginFormData } from '@/validations/auth';
 export default function LoginPage() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
+    const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
 
     const { mutate: login, isPending } = useLogin();
+
+    // Refs for maintaining focus during input switches
+    const emailInputRef = useRef<HTMLInputElement>(null);
+    const phoneInputRef = useRef<HTMLInputElement>(null);
+    const prevIsPhoneInput = useRef<boolean | null>(null);
 
     const {
         register,
         handleSubmit,
         setError,
+        setValue,
+        watch,
         clearErrors,
         formState: { errors },
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            username: '',
+            email: '',
+            phone: '',
             password: '',
         },
     });
 
+    const emailValue = watch('email');
+    const phoneValue = watch('phone');
+    const emailOrPhone = emailValue || phoneValue;
+
+    // Detect if input looks like a phone number (starts with digit)
+    const isPhoneInput = emailOrPhone ? /^\d/.test(emailOrPhone.trim()) : false;
+
+    // Handle input change for both email and phone
+    const handleInputChange = (value: string) => {
+        // Clear any API errors when the user starts typing
+        clearErrors('username' as keyof LoginFormData);
+        clearErrors('root.serverError');
+
+        if (/^\d/.test(value.trim())) {
+            // User is typing a phone number
+            setValue('phone', value, { shouldValidate: true });
+            setValue('email', '', { shouldValidate: false });
+            clearErrors('email');
+        } else {
+            // User is typing an email
+            setValue('email', value, { shouldValidate: true });
+            setValue('phone', '', { shouldValidate: false });
+            clearErrors('phone');
+        }
+    };
+
+    // Maintain focus when switching between input types
+    useEffect(() => {
+        if (prevIsPhoneInput.current !== null && prevIsPhoneInput.current !== isPhoneInput) {
+            // Input type changed, restore focus on next render
+            requestAnimationFrame(() => {
+                if (isPhoneInput && phoneInputRef.current) {
+                    phoneInputRef.current.focus();
+                    // Move cursor to end
+                    const len = (phoneValue || '').length;
+                    phoneInputRef.current.setSelectionRange(len, len);
+                } else if (!isPhoneInput && emailInputRef.current) {
+                    emailInputRef.current.focus();
+                    // Move cursor to end
+                    const len = (emailValue || '').length;
+                    emailInputRef.current.setSelectionRange(len, len);
+                }
+            });
+        }
+        prevIsPhoneInput.current = isPhoneInput;
+    }, [isPhoneInput, emailValue, phoneValue]);
+
     const onSubmit = (data: LoginFormData) => {
+        const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email || '';
+
         login(
-            { username: data.username, password: data.password, role: 'user' },
+            { username, password: data.password, role: 'user' },
             {
                 onSuccess: (response: any) => {
                     router.push('/');
@@ -98,29 +157,33 @@ export default function LoginPage() {
                     </div>
                 )}
 
-                {/* Username Field */}
-                <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-[#404040]">
-                        Username
-                        <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        {...register('username', {
-                            onChange: () => {
-                                clearErrors('root.serverError');
-                                clearErrors('username');
-                            },
-                        })}
-                        placeholder="Enter your username"
-                        className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${
-                            errors.username ? 'border-red-500' : 'border-[#E7E4DD]'
-                        }`}
+                {/* Email / Mobile Field */}
+                {isPhoneInput ? (
+                    <PhoneInput
+                        ref={phoneInputRef}
+                        label="Email / Mobile number"
+                        required
+                        value={phoneValue || ''}
+                        onChange={(value) => handleInputChange(value)}
+                        enableCodeSelect
+                        selectedCode={phoneCountryCode}
+                        onCodeChange={(code) => setPhoneCountryCode(code)}
+                        enableCodeSearch
+                        placeholder="Enter your mobile number"
+                        error={errors.phone?.message || errors.username?.message}
                     />
-                    {errors.username && (
-                        <p className="text-xs text-red-500">{errors.username.message}</p>
-                    )}
-                </div>
+                ) : (
+                    <FormInput
+                        ref={emailInputRef}
+                        label="Email / Mobile number"
+                        required
+                        type="text"
+                        value={emailValue || ''}
+                        onChange={(e) => handleInputChange(e.target.value)}
+                        placeholder="Enter your email id / mobile number"
+                        error={errors.email?.message || errors.username?.message || ''}
+                    />
+                )}
 
                 {/* Password Field */}
                 <div className="flex flex-col gap-1">
