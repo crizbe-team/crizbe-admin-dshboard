@@ -8,6 +8,7 @@ import { FormInput } from '@/components/ui/FormInput';
 import PhoneInput from '@/components/ui/PhoneInput';
 import GoldenButton from '@/components/ui/GoldenButton';
 import { signupSchema, type SignupFormData } from '@/validations/auth';
+import { signupSessionUtils } from '@/utils/signup-session';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState, useRef, useEffect, useMemo } from 'react';
@@ -86,7 +87,7 @@ export default function RegisterPage() {
     }, [isPhoneInput, emailValue, phoneValue]);
 
     const onSubmit = async (data: SignupFormData) => {
-        const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email;
+        const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email || '';
 
         signupInitiate(
             { username },
@@ -104,6 +105,14 @@ export default function RegisterPage() {
                 },
                 onSuccess: (response) => {
                     console.log('Signup successful:', response);
+
+                    // Store the username in session for the OTP page
+                    const sessionData: { username: string; countryCode?: string } = { username };
+                    if (isPhoneInput) {
+                        sessionData.countryCode = phoneCountryCode;
+                    }
+                    signupSessionUtils.setSignupData(sessionData);
+
                     router.push('/enter-otp');
                 },
             }
