@@ -28,6 +28,12 @@ export const signupVerifyOtp = async (otpData: any): Promise<AuthApiResponse> =>
     return handleApiResponse(response);
 };
 
+export const signupResendOtp = async (resendData: any): Promise<AuthApiResponse> => {
+    const { RESEND_OTP } = API_ENDPOINTS;
+    const response = await axios.post(RESEND_OTP, resendData);
+    return handleApiResponse(response);
+};
+
 export const signupSetPassword = async (passwordData: any): Promise<AuthApiResponse> => {
     const { SIGNUP_SET_PASSWORD } = API_ENDPOINTS;
     const response = await axios.post(SIGNUP_SET_PASSWORD, passwordData);

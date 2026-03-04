@@ -2,6 +2,7 @@ export const API_ENDPOINTS = {
     // Auth endpoints
     SIGNUP_INITIATE: 'accounts/signup/initiate/',
     SIGNUP_VERIFY_OTP: 'accounts/signup/verify-otp/',
+    RESEND_OTP: 'accounts/resend-otp/',
     SIGNUP_SET_PASSWORD: 'accounts/signup/set-password/',
     LOGIN: 'accounts/login/',
     REFRESH_TOKEN: 'accounts/token/refresh/',
@@ -49,10 +50,10 @@ export const API_ENDPOINTS = {
     // Account/Profile endpoints
     GET_ADDRESSES: 'accounts/addresses/',
     GET_ADDRESS: 'accounts/addresses/:id/',
-    
+
     // Client endpoints
     GET_CLIENTS: 'accounts/clients/',
-    
+
     // Payment endpoints
     GET_RAZORPAY_KEY_ID: 'payments/key-id/',
     CREATE_PAYMENT_ORDER: 'payments/create/',

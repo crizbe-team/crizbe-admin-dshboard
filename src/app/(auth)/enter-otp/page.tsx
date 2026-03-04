@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import GoldenButton from '@/components/ui/GoldenButton';
-import { useSignupVerifyOtp } from '@/queries/use-auth';
+import { useSignupVerifyOtp, useSignupResendOtp } from '@/queries/use-auth';
 import { otpSchema, type OtpFormData } from '@/validations/auth';
 import { signupSessionUtils } from '@/utils/signup-session';
 import Cookies from 'js-cookie';
@@ -20,6 +20,7 @@ export default function EnterOtpPage() {
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     const { mutate: verifyOtp, isPending } = useSignupVerifyOtp();
+    const { mutate: resendOtp, isPending: isResendPending } = useSignupResendOtp();
 
     const {
         handleSubmit,
@@ -148,7 +149,7 @@ export default function EnterOtpPage() {
     };
 
     const handleResendCode = () => {
-        if (resendTimer > 0) return;
+        if (resendTimer > 0 || isResendPending) return;
 
         // Get stored signup data from cookies
         const signupData = signupSessionUtils.getSignupData();
@@ -156,15 +157,23 @@ export default function EnterOtpPage() {
         // Username is already formatted (phone with country code or email)
         const username = signupData.username;
 
-        // TODO: Implement resend OTP API call
-        console.log('Resending OTP...', {
-            username: username,
-        });
-
-        setResendTimer(30); // 30 second cooldown
-        setOtp(['', '', '', '']);
-        clearErrors('otp');
-        inputRefs.current[0]?.focus();
+        resendOtp(
+            { username },
+            {
+                onSuccess: () => {
+                    setResendTimer(30); // 30 second cooldown
+                    setOtp(['', '', '', '']);
+                    clearErrors('otp');
+                    inputRefs.current[0]?.focus();
+                },
+                onError: (error: any) => {
+                    setError('otp', {
+                        type: 'server',
+                        message: error?.message || 'Failed to resend OTP. Please try again.',
+                    });
+                },
+            }
+        );
     };
 
     // To handle global / root errors without breaking if field isn't explicitly otp
@@ -227,14 +236,18 @@ export default function EnterOtpPage() {
                     <button
                         type="button"
                         onClick={handleResendCode}
-                        disabled={resendTimer > 0}
+                        disabled={resendTimer > 0 || isResendPending}
                         className={`font-medium transition-colors ${
-                            resendTimer > 0
+                            resendTimer > 0 || isResendPending
                                 ? 'text-[#B7AFA5] cursor-not-allowed'
-                                : 'text-[#C4994A] hover:text-[#B38840]'
+                                : 'text-[#C4994A] hover:text-[#B38840] cursor-pointer'
                         }`}
                     >
-                        {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend code'}
+                        {isResendPending
+                            ? 'Resending...'
+                            : resendTimer > 0
+                              ? `Resend in ${resendTimer}s`
+                              : 'Resend code'}
                     </button>
                 </div>
 

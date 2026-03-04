@@ -1,5 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { login, signupInitiate, signupVerifyOtp, signupSetPassword, logout } from '../services/auth';
+import {
+    login,
+    signupInitiate,
+    signupVerifyOtp,
+    signupResendOtp,
+    signupSetPassword,
+    logout,
+} from '../services/auth';
 import { authUtils } from '../utils/auth';
 
 export const useLogin = () => {
@@ -24,6 +31,12 @@ export const useLogin = () => {
 export const useSignupInitiate = () => {
     return useMutation({
         mutationFn: (userData: any) => signupInitiate(userData),
+    });
+};
+
+export const useSignupResendOtp = () => {
+    return useMutation({
+        mutationFn: (resendData: any) => signupResendOtp(resendData),
     });
 };
 
