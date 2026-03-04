@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import GoldenButton from '@/components/ui/GoldenButton';
-import { useSignupSetPassword } from '@/queries/use-auth';
+import { useSetPassword } from '@/queries/use-auth';
 import { passwordSchema, type PasswordFormData } from '@/validations/auth';
 import { signupSessionUtils } from '@/utils/signup-session';
 import Cookies from 'js-cookie';
@@ -18,7 +18,7 @@ export default function SetupPasswordPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const { mutate: setPasswordApi, isPending } = useSignupSetPassword();
+    const { mutate: setPasswordApi, isPending } = useSetPassword();
 
     const {
         register,
@@ -59,15 +59,15 @@ export default function SetupPasswordPage() {
 
     const onSubmit = (data: PasswordFormData) => {
         const signupData = signupSessionUtils.getSignupData();
-        const signupToken = Cookies.get('signup_token');
+        const token = Cookies.get('reset_token');
 
         const apiPayload: any = {
             password: data.password,
             password_confirm: data.confirmPassword,
         };
 
-        if (signupToken) {
-            apiPayload.signup_token = signupToken;
+        if (token) {
+            apiPayload.token = token;
         }
 
         if (signupData.username) {
@@ -78,7 +78,7 @@ export default function SetupPasswordPage() {
             onSuccess: (response: any) => {
                 if (response.status_code === 200 || response.status_code === 6000) {
                     signupSessionUtils.clearSignupData();
-                    Cookies.remove('signup_token');
+                    Cookies.remove('reset_token');
                     router.push('/login');
                 } else {
                     setError('root.serverError', {
@@ -122,9 +122,15 @@ export default function SetupPasswordPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Just a step away</h1>
+                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">
+                    {signupSessionUtils.getSignupData().purpose === 'reset_password'
+                        ? 'Reset Password'
+                        : 'Just a step away'}
+                </h1>
                 <p className="text-sm text-[#7A7A7A] leading-relaxed">
-                    Enter the following details & complete the signup.
+                    {signupSessionUtils.getSignupData().purpose === 'reset_password'
+                        ? 'Enter your new password below.'
+                        : 'Enter the following details & complete the signup.'}
                 </p>
             </div>
 

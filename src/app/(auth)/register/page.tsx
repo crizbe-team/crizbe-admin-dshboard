@@ -107,7 +107,14 @@ export default function RegisterPage() {
                     console.log('Signup successful:', response);
 
                     // Store the username in session for the OTP page
-                    const sessionData: { username: string; countryCode?: string } = { username };
+                    const sessionData: {
+                        username: string;
+                        countryCode?: string;
+                        purpose: 'signup';
+                    } = {
+                        username,
+                        purpose: 'signup',
+                    };
                     if (isPhoneInput) {
                         sessionData.countryCode = phoneCountryCode;
                     }

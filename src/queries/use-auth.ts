@@ -2,9 +2,10 @@ import { useMutation } from '@tanstack/react-query';
 import {
     login,
     signupInitiate,
-    signupVerifyOtp,
+    forgotPassword,
+    verifyOtp,
     signupResendOtp,
-    signupSetPassword,
+    setPassword,
     logout,
 } from '../services/auth';
 import { authUtils } from '../utils/auth';
@@ -34,15 +35,21 @@ export const useSignupInitiate = () => {
     });
 };
 
+export const useForgotPassword = () => {
+    return useMutation({
+        mutationFn: (userData: any) => forgotPassword(userData),
+    });
+};
+
 export const useSignupResendOtp = () => {
     return useMutation({
         mutationFn: (resendData: any) => signupResendOtp(resendData),
     });
 };
 
-export const useSignupVerifyOtp = () => {
+export const useVerifyOtp = () => {
     return useMutation({
-        mutationFn: (otpData: any) => signupVerifyOtp(otpData),
+        mutationFn: (otpData: any) => verifyOtp(otpData),
         onSuccess: (data: any) => {
             if (data.access && data.refresh) {
                 authUtils.setTokens({
@@ -59,9 +66,9 @@ export const useSignupVerifyOtp = () => {
     });
 };
 
-export const useSignupSetPassword = () => {
+export const useSetPassword = () => {
     return useMutation({
-        mutationFn: (passwordData: any) => signupSetPassword(passwordData),
+        mutationFn: (passwordData: any) => setPassword(passwordData),
         onSuccess: (data: any) => {
             if (data.access && data.refresh) {
                 authUtils.setTokens({

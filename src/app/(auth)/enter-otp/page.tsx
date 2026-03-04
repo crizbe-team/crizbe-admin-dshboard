@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import GoldenButton from '@/components/ui/GoldenButton';
-import { useSignupVerifyOtp, useSignupResendOtp } from '@/queries/use-auth';
+import { useVerifyOtp, useSignupResendOtp } from '@/queries/use-auth';
 import { otpSchema, type OtpFormData } from '@/validations/auth';
 import { signupSessionUtils } from '@/utils/signup-session';
 import Cookies from 'js-cookie';
@@ -19,7 +19,7 @@ export default function EnterOtpPage() {
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-    const { mutate: verifyOtp, isPending } = useSignupVerifyOtp();
+    const { mutate: verifyOtp, isPending } = useVerifyOtp();
     const { mutate: resendOtp, isPending: isResendPending } = useSignupResendOtp();
 
     const {
@@ -124,13 +124,14 @@ export default function EnterOtpPage() {
         const apiPayload = {
             otp: data.otp,
             username: signupData.username,
+            purpose: signupData.purpose,
         };
         verifyOtp(apiPayload, {
             onSuccess: (response: any) => {
                 console.log('verifyOtp', response);
-                const signupToken = response.data?.signup_token || response.signup_token;
-                if (signupToken) {
-                    Cookies.set('signup_token', signupToken, {
+                const token = response.data?.token || response.token;
+                if (token) {
+                    Cookies.set('reset_token', token, {
                         expires: 1 / 24, // 1 hour
                         secure: process.env.NEXT_PUBLIC_SERVER === 'PRODUCTION',
                         sameSite: 'strict',
@@ -266,7 +267,11 @@ export default function EnterOtpPage() {
             {/* Change Email/Phone Link */}
             <p className="mt-8 text-center">
                 <Link
-                    href="/register"
+                    href={
+                        signupSessionUtils.getSignupData().purpose === 'reset_password'
+                            ? '/forgot-password'
+                            : '/register'
+                    }
                     className="text-sm text-[#C4994A] hover:text-[#B38840] font-medium transition-colors"
                 >
                     Change email / phone number

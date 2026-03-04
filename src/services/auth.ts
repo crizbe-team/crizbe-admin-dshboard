@@ -22,9 +22,15 @@ export const signupInitiate = async (userData: any): Promise<AuthApiResponse> =>
     return handleApiResponse(response);
 };
 
-export const signupVerifyOtp = async (otpData: any): Promise<AuthApiResponse> => {
-    const { SIGNUP_VERIFY_OTP } = API_ENDPOINTS;
-    const response = await axios.post(SIGNUP_VERIFY_OTP, otpData);
+export const forgotPassword = async (userData: any): Promise<AuthApiResponse> => {
+    const { FORGOT_PASSWORD } = API_ENDPOINTS;
+    const response = await axios.post(FORGOT_PASSWORD, userData);
+    return handleApiResponse(response);
+};
+
+export const verifyOtp = async (otpData: any): Promise<AuthApiResponse> => {
+    const { VERIFY_OTP } = API_ENDPOINTS;
+    const response = await axios.post(VERIFY_OTP, otpData);
     return handleApiResponse(response);
 };
 
@@ -34,9 +40,9 @@ export const signupResendOtp = async (resendData: any): Promise<AuthApiResponse>
     return handleApiResponse(response);
 };
 
-export const signupSetPassword = async (passwordData: any): Promise<AuthApiResponse> => {
-    const { SIGNUP_SET_PASSWORD } = API_ENDPOINTS;
-    const response = await axios.post(SIGNUP_SET_PASSWORD, passwordData);
+export const setPassword = async (passwordData: any): Promise<AuthApiResponse> => {
+    const { SET_PASSWORD } = API_ENDPOINTS;
+    const response = await axios.post(SET_PASSWORD, passwordData);
     return handleApiResponse(response);
 };
 

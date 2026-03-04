@@ -1,9 +1,10 @@
 export const API_ENDPOINTS = {
     // Auth endpoints
     SIGNUP_INITIATE: 'accounts/signup/initiate/',
-    SIGNUP_VERIFY_OTP: 'accounts/signup/verify-otp/',
+    VERIFY_OTP: 'accounts/verify-otp/',
     RESEND_OTP: 'accounts/resend-otp/',
-    SIGNUP_SET_PASSWORD: 'accounts/signup/set-password/',
+    SET_PASSWORD: 'accounts/set-password/',
+    FORGOT_PASSWORD: 'accounts/forgot-password/',
     LOGIN: 'accounts/login/',
     REFRESH_TOKEN: 'accounts/token/refresh/',
     LOGOUT: 'accounts/logout/',

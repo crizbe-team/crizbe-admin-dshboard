@@ -1,78 +1,133 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useForgotPassword } from '@/queries/use-auth';
 import { FormInput } from '@/components/ui/FormInput';
+import PhoneInput from '@/components/ui/PhoneInput';
+import GoldenButton from '@/components/ui/GoldenButton';
+import { signupSessionUtils } from '@/utils/signup-session';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signupSchema, type SignupFormData } from '@/validations/auth';
 
 export default function ForgotPasswordPage() {
-    const [email, setEmail] = useState('');
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [isPending, setIsPending] = useState(false);
+    const router = useRouter();
+    const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsPending(true);
-        // Simulate API call
-        setTimeout(() => {
-            setIsPending(false);
-            setIsSubmitted(true);
-        }, 1000);
+    const { mutate: forgotPassword, isPending } = useForgotPassword();
+
+    // Refs for maintaining focus during input switches
+    const emailInputRef = useRef<HTMLInputElement>(null);
+    const phoneInputRef = useRef<HTMLInputElement>(null);
+    const prevIsPhoneInput = useRef<boolean | null>(null);
+
+    const {
+        handleSubmit,
+        setError,
+        setValue,
+        watch,
+        clearErrors,
+        formState: { errors },
+    } = useForm<SignupFormData>({
+        resolver: zodResolver(signupSchema),
+        defaultValues: {
+            email: '',
+            phone: '',
+        },
+    });
+
+    const emailValue = watch('email');
+    const phoneValue = watch('phone');
+    const emailOrPhone = emailValue || phoneValue;
+
+    // Detect if input looks like a phone number (starts with digit)
+    const isPhoneInput = emailOrPhone ? /^\d/.test(emailOrPhone.trim()) : false;
+
+    // Handle input change for both email and phone
+    const handleInputChange = (value: string) => {
+        // Clear any API errors when the user starts typing
+        clearErrors('username' as keyof SignupFormData);
+
+        if (/^\d/.test(value.trim())) {
+            // User is typing a phone number
+            setValue('phone', value, { shouldValidate: true });
+            setValue('email', '', { shouldValidate: false });
+            clearErrors('email');
+        } else {
+            // User is typing an email
+            setValue('email', value, { shouldValidate: true });
+            setValue('phone', '', { shouldValidate: false });
+            clearErrors('phone');
+        }
     };
 
-    if (isSubmitted) {
-        return (
-            <div className="w-full max-w-md">
-                {/* Logo */}
-                <div className="flex justify-center mb-8">
-                    <Image
-                        src="/images/user/crizbe-logo.svg"
-                        alt="Crizbe"
-                        width={150}
-                        height={60}
-                        priority
-                    />
-                </div>
+    // Maintain focus when switching between input types
+    useEffect(() => {
+        if (prevIsPhoneInput.current !== null && prevIsPhoneInput.current !== isPhoneInput) {
+            // Input type changed, restore focus on next render
+            requestAnimationFrame(() => {
+                if (isPhoneInput && phoneInputRef.current) {
+                    phoneInputRef.current.focus();
+                    const len = (phoneValue || '').length;
+                    phoneInputRef.current.setSelectionRange(len, len);
+                } else if (!isPhoneInput && emailInputRef.current) {
+                    emailInputRef.current.focus();
+                    const len = (emailValue || '').length;
+                    emailInputRef.current.setSelectionRange(len, len);
+                }
+            });
+        }
+        prevIsPhoneInput.current = isPhoneInput;
+    }, [isPhoneInput, emailValue, phoneValue]);
 
-                <div className="text-center">
-                    <div className="mb-6 flex justify-center">
-                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                            <CheckCircle className="w-10 h-10 text-green-500" />
-                        </div>
-                    </div>
-                    <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">
-                        Check Your Email
-                    </h1>
-                    <p className="text-sm text-[#7A7A7A] mb-2">
-                        We&apos;ve sent a password reset link to
-                    </p>
-                    <p className="text-sm text-[#4E3325] font-medium mb-6">
-                        {email}
-                    </p>
-                    <p className="text-xs text-[#7A7A7A] mb-8">
-                        Please check your inbox and click on the link to reset your password. 
-                        If you don&apos;t see the email, check your spam folder.
-                    </p>
-                    <div className="space-y-4">
-                        <Button
-                            onClick={() => setIsSubmitted(false)}
-                            className="w-full bg-[#C4994A] hover:bg-[#B38840] text-white font-medium py-3 rounded-full"
-                        >
-                            Resend Email
-                        </Button>
-                        <Link
-                            href="/login"
-                            className="block text-center text-[#C4994A] hover:text-[#B38840] text-sm font-medium transition-colors"
-                        >
-                            Back to Sign In
-                        </Link>
-                    </div>
-                </div>
-            </div>
+    const onSubmit = async (data: SignupFormData) => {
+        const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email || '';
+
+        forgotPassword(
+            { username },
+            {
+                onError: (error: any) => {
+                    if (error.errors) {
+                        const apiErrors = error.errors;
+                        Object.keys(apiErrors).forEach((field) => {
+                            setError(field as keyof SignupFormData, {
+                                type: 'server',
+                                message: apiErrors[field][0],
+                            });
+                        });
+                    } else {
+                        setError('email', {
+                            type: 'server',
+                            message: error?.message || 'Something went wrong. Please try again.',
+                        });
+                    }
+                },
+                onSuccess: (response) => {
+                    console.log('Forgot password request successful:', response);
+
+                    // Store the username and purpose in session for the OTP page
+                    const sessionData: {
+                        username: string;
+                        countryCode?: string;
+                        purpose: 'reset_password';
+                    } = {
+                        username,
+                        purpose: 'reset_password',
+                    };
+                    if (isPhoneInput) {
+                        sessionData.countryCode = phoneCountryCode;
+                    }
+                    signupSessionUtils.setSignupData(sessionData);
+
+                    router.push('/enter-otp');
+                },
+            }
         );
-    }
+    };
 
     return (
         <div className="w-full max-w-md">
@@ -89,41 +144,54 @@ export default function ForgotPasswordPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">
-                    Forgot Password?
-                </h1>
+                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Forgot Password?</h1>
                 <p className="text-sm text-[#7A7A7A] leading-relaxed">
-                    No worries, we&apos;ll send you reset instructions.
+                    No worries, enter your details and we&apos;ll
+                    <br />
+                    send you reset instructions.
                 </p>
             </div>
 
             {/* Forgot Password Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Email Field */}
-                <FormInput
-                    label="Email Address"
-                    required
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                />
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Email / Mobile Field */}
+                {isPhoneInput ? (
+                    <PhoneInput
+                        ref={phoneInputRef}
+                        label="Email / Mobile number"
+                        required
+                        value={phoneValue || ''}
+                        onChange={(value) => handleInputChange(value)}
+                        enableCodeSelect
+                        selectedCode={phoneCountryCode}
+                        onCodeChange={(code) => setPhoneCountryCode(code)}
+                        enableCodeSearch
+                        placeholder="Enter your mobile number"
+                        error={errors.phone?.message || errors.username?.message}
+                    />
+                ) : (
+                    <FormInput
+                        ref={emailInputRef}
+                        label="Email / Mobile number"
+                        required
+                        type="text"
+                        value={emailValue || ''}
+                        onChange={(e) => handleInputChange(e.target.value)}
+                        placeholder="Enter your email id / mobile number"
+                        error={errors.email?.message || errors.username?.message || ''}
+                    />
+                )}
 
                 {/* Submit Button */}
-                <Button
+                <GoldenButton
                     type="submit"
-                    disabled={isPending}
-                    className="w-full bg-[#C4994A] hover:bg-[#B38840] text-white font-medium py-3 rounded-full"
+                    isLoading={isPending}
+                    loadingText="Please wait..."
+                    fullWidth
+                    className="rounded-full py-3"
                 >
-                    {isPending ? (
-                        <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            <span>Please wait...</span>
-                        </>
-                    ) : (
-                        'Reset Password'
-                    )}
-                </Button>
+                    Reset Password
+                </GoldenButton>
             </form>
 
             {/* Back to Login Link */}
