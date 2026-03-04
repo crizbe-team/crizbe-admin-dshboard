@@ -3,7 +3,21 @@ import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { ApiBuilder } from '../utils/api-builder';
 import { handleApiResponse } from '../utils/api-handler';
 
-export const getCountries = async (params: any = {}) => {
+type Country = {
+    id: string;
+    name: string;
+    phone_code: string;
+};
+
+export const getCountries = async (
+    params: any = {}
+): Promise<{
+    status_code: number;
+    status: string;
+    message: string;
+    data: Country[];
+    errors: Record<string, any> | null;
+}> => {
     const { GET_COUNTRIES } = API_ENDPOINTS;
 
     const builder = new ApiBuilder(GET_COUNTRIES);

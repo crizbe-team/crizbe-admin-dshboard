@@ -2,10 +2,24 @@ import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { getCountries, getStates } from '../services/core';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
+type Country = {
+    id: string;
+    name: string;
+    phone_code: string;
+};
+
+type ApiResponse<T> = {
+    status_code: number;
+    status: string;
+    message: string;
+    data: T;
+    errors: Record<string, any> | null;
+};
+
 const { GET_COUNTRIES, GET_STATES } = API_ENDPOINTS;
 
 export const useFetchCountries = (filters: any = {}) => {
-    return useQuery({
+    return useQuery<ApiResponse<Country[]>>({
         queryKey: [GET_COUNTRIES, filters],
         queryFn: () => getCountries(filters),
         staleTime: 1000 * 60 * 60, // Cache for 1 hour as countries rarely change
