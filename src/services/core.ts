@@ -9,6 +9,11 @@ type Country = {
     phone_code: string;
 };
 
+type State = {
+    id: string;
+    name: string;
+};
+
 export const getCountries = async (
     params: any = {}
 ): Promise<{
@@ -39,7 +44,15 @@ export const getCountries = async (
     return handleApiResponse(response);
 };
 
-export const getStates = async (params: any = {}) => {
+export const getStates = async (
+    params: any = {}
+): Promise<{
+    status_code: number;
+    status: string;
+    message: string;
+    data: State[];
+    errors: Record<string, any> | null;
+}> => {
     const { GET_STATES } = API_ENDPOINTS;
 
     const builder = new ApiBuilder(GET_STATES);

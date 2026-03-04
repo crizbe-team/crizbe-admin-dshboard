@@ -5,7 +5,7 @@ import { API_ENDPOINTS } from '../utils/api-endpoints';
 const { GET_CART } = API_ENDPOINTS;
 
 export const useFetchCart = () => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [GET_CART],
         queryFn: () => getCart(),
     });

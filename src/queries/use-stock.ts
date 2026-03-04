@@ -19,14 +19,14 @@ const {
 } = API_ENDPOINTS;
 
 export const useFetchStockList = (filters: any = {}) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [GET_STOCK_LIST, filters],
         queryFn: () => getStockList(filters),
     });
 };
 
 export const useFetchStockHistoryList = (filters: any = {}) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [GET_STOCK_HISTORY_LIST, filters],
         queryFn: () => getStockHistoryList(filters),
     });
@@ -34,7 +34,7 @@ export const useFetchStockHistoryList = (filters: any = {}) => {
 
 export const useDeleteStockHistory = () => {
     const queryClient = useQueryClient();
-    return useMutation({
+    return useMutation<any, any, any>({
         mutationFn: (id: string | number) => deleteStockHistory(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_STOCK_LIST] });
@@ -48,7 +48,7 @@ export const useDeleteStockHistory = () => {
 
 export const useCreateStock = () => {
     const queryClient = useQueryClient();
-    return useMutation({
+    return useMutation<any, any, any>({
         mutationFn: (data: any) => createStock(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_STOCK_LIST] });
@@ -57,7 +57,7 @@ export const useCreateStock = () => {
 };
 
 export const useFetchProductStock = (id: string) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [GET_PRODUCT_STOCK, id],
         queryFn: () => getProductStock(id),
         enabled: !!id,
@@ -65,7 +65,7 @@ export const useFetchProductStock = (id: string) => {
 };
 
 export const useFetchVariantStock = (id: string) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [GET_VARIANT_STOCK, id],
         queryFn: () => getVariantStock(id),
         enabled: !!id,
@@ -73,7 +73,7 @@ export const useFetchVariantStock = (id: string) => {
 };
 
 export const useFetchStockHistory = (id: string) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [GET_STOCK_HISTORY, id],
         queryFn: () => getStockHistory(id),
         enabled: !!id,

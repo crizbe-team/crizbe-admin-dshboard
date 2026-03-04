@@ -8,6 +8,11 @@ type Country = {
     phone_code: string;
 };
 
+type State = {
+    id: string;
+    name: string;
+};
+
 type ApiResponse<T> = {
     status_code: number;
     status: string;
@@ -27,7 +32,7 @@ export const useFetchCountries = (filters: any = {}) => {
 };
 
 export const useFetchStates = (filters: any = {}) => {
-    return useQuery({
+    return useQuery<ApiResponse<State[]>>({
         queryKey: [GET_STATES, filters],
         queryFn: () => getStates(filters),
         staleTime: 1000 * 60 * 30, // Cache for 30 minutes

@@ -13,7 +13,7 @@ const { ORDER_LIST, ADMIN_ORDER_LIST, ORDER_DETAIL, ADMIN_ORDER_DETAIL } = API_E
 
 export const useCreateOrder = () => {
     const queryClient = useQueryClient();
-    return useMutation({
+    return useMutation<any, any, any>({
         mutationFn: (data: any) => createOrder(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [ORDER_LIST] });
@@ -22,14 +22,14 @@ export const useCreateOrder = () => {
 };
 
 export const useFetchOrders = (params?: any) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [ORDER_LIST, params],
         queryFn: () => getOrderList(params),
     });
 };
 
 export const useFetchOrderDetail = (id: string) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [ORDER_DETAIL, id],
         queryFn: () => getOrderDetail(id),
         enabled: !!id,
@@ -37,14 +37,14 @@ export const useFetchOrderDetail = (id: string) => {
 };
 
 export const useFetchAdminOrders = (params?: any) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [ADMIN_ORDER_LIST, params],
         queryFn: () => getAdminOrderList(params),
     });
 };
 
 export const useFetchAdminOrderDetail = (id: string) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [ADMIN_ORDER_DETAIL, id],
         queryFn: () => getAdminOrderDetail(id),
         enabled: !!id,
@@ -53,7 +53,7 @@ export const useFetchAdminOrderDetail = (id: string) => {
 
 export const useUpdateOrderStatus = () => {
     const queryClient = useQueryClient();
-    return useMutation({
+    return useMutation<any, any, any>({
         mutationFn: ({ id, status }: { id: string; status: string }) =>
             updateOrderStatus(id, status),
         onSuccess: () => {
