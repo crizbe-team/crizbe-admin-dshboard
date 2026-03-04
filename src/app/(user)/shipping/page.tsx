@@ -76,12 +76,21 @@ export default function ShippingPage() {
 
     const handleAddressSubmit = (addressData: any) => {
         if (editingAddress) {
-            updateAddress({ id: editingAddress.id, data: addressData }, { onSuccess: () =>{ setOpen(false)
-                setEditingAddress(null)
-            } });
+            updateAddress(
+                { id: editingAddress.id, data: addressData },
+                {
+                    onSuccess: () => {
+                        setOpen(false);
+                        setEditingAddress(null);
+                    },
+                }
+            );
         } else {
-            createAddress(addressData, { onSuccess: () => {setOpen(false) 
-                setEditingAddress(null);}
+            createAddress(addressData, {
+                onSuccess: () => {
+                    setOpen(false);
+                    setEditingAddress(null);
+                },
             });
         }
     };
@@ -123,8 +132,21 @@ export default function ShippingPage() {
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
             <div className="wrapper mx-auto pt-[110px] pb-16">
                 <CheckoutSteps active="Shipping" />
-
-                <div className="mt-3 flex items-start justify-between gap-10 flex-col lg:flex-row">
+                <div className="flex justify-between py-[32px]">
+                    <h1 className=" text-[22px] sm:text-[28px] font-medium text-[#191919]">
+                        Shipping address
+                    </h1>
+                    <div className="flex items-center justify-between gap-4">
+                        <button
+                            type="button"
+                            onClick={() => setOpen(true)}
+                            className="text-xs font-medium text-[#4E3325] hover:opacity-80 transition"
+                        >
+                            <span className="mr-2 text-sm">+</span> Add new address
+                        </button>
+                    </div>
+                </div>
+                <div className="flex items-start justify-between gap-10 flex-col lg:flex-row">
                     <section className="w-full flex-1">
                         <div className="flex items-center justify-between gap-4">
                             <h1 className=" text-[22px] sm:text-[28px] font-medium text-[#191919]">

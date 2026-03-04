@@ -58,7 +58,9 @@ export default function Header() {
                             <span className="font-medium">{currentCurrency.symbol}</span>
                             <span className="text-sm">{currentCurrency.code}</span>
                             <ChevronDown
-                                className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                                className={`w-4 h-4 transition-transform duration-200 ${
+                                    isOpen ? 'rotate-180' : ''
+                                }`}
                             />
                         </button>
 

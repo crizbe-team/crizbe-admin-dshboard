@@ -10,11 +10,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { useFetchAddresses } from '@/queries/use-account';
 import { useFetchCart } from '@/queries/use-cart';
 import { useRazorpay } from '@/hooks/useRazorpay';
-import { 
-    useCreatePaymentOrder, 
-    useVerifyPayment, 
-    useRazorpayKeyId 
-} from '@/queries/use-payment';
+import { useCreatePaymentOrder, useVerifyPayment, useRazorpayKeyId } from '@/queries/use-payment';
 import { createOrder } from '@/services/orders';
 
 type PayMethod = 'bank' | 'phonepe' | 'upi' | 'card' | 'cod' | 'razorpay';
@@ -24,20 +20,20 @@ export default function PaymentPage() {
     const { currency } = useCurrency();
     const [isProcessing, setIsProcessing] = useState(false);
     const [selected, setSelected] = useState<PayMethod>('razorpay'); // Default to Razorpay
-    
+
     // Fetch cart and addresses
     const { data: cartData } = useFetchCart();
     const { data: addressesData } = useFetchAddresses();
-    
+
     // Payment hooks
     const { isLoaded: isRazorpayLoaded, openCheckout } = useRazorpay();
     const { data: keyIdData } = useRazorpayKeyId();
     const createPaymentOrderMutation = useCreatePaymentOrder();
     const verifyPaymentMutation = useVerifyPayment();
-    
+
     // Find default or first address
-    const defaultAddress = addressesData?.data?.find((addr: any) => addr.is_default) || 
-                           addressesData?.data?.[0];
+    const defaultAddress =
+        addressesData?.data?.find((addr: any) => addr.is_default) || addressesData?.data?.[0];
 
     const methods = useMemo(
         () => [
@@ -60,7 +56,7 @@ export default function PaymentPage() {
             alert('Please add an address first');
             return;
         }
-        
+
         setIsProcessing(true);
         try {
             // Step 1: Create order
@@ -69,36 +65,36 @@ export default function PaymentPage() {
                 payment_method: 'Razorpay',
                 currency: currency || 'INR',
             });
-            
+
             if (orderResponse.status_code !== 201) {
                 throw new Error(orderResponse.message || 'Failed to create order');
             }
-            
+
             const orderId = orderResponse.data.id;
-            
+
             // Step 2: Create payment order
             const paymentOrderResponse = await createPaymentOrderMutation.mutateAsync(orderId);
-            
+
             if (paymentOrderResponse.status_code !== 200) {
                 throw new Error(paymentOrderResponse.message || 'Failed to create payment order');
             }
-            
+
             const paymentData = paymentOrderResponse.data;
-            
+
             // Step 3: Open Razorpay checkout
             const options = {
                 key: paymentData.key_id,
                 amount: paymentData.amount * 100, // Convert to paisa
                 currency: paymentData.currency,
-                name: "Crizbe",
-                description: "Order Payment",
+                name: 'Crizbe',
+                description: 'Order Payment',
                 order_id: paymentData.razorpay_order_id,
-                prefill: { 
+                prefill: {
                     name: defaultAddress.first_name + ' ' + defaultAddress.last_name,
                     email: '', // Get from user profile if available
                     contact: defaultAddress.phone_number,
                 },
-                theme: { color: "#C4994A" },
+                theme: { color: '#C4994A' },
                 handler: async (razorpayResponse: any) => {
                     // Step 4: Verify payment
                     try {
@@ -107,12 +103,14 @@ export default function PaymentPage() {
                             razorpayPaymentId: razorpayResponse.razorpay_payment_id,
                             razorpaySignature: razorpayResponse.razorpay_signature,
                         });
-                        
+
                         if (verifyResponse.status_code === 200) {
                             // Step 5: Redirect to success page
                             router.push(`/order-success?orderId=${verifyResponse.data.order_id}`);
                         } else {
-                            throw new Error(verifyResponse.message || 'Payment verification failed');
+                            throw new Error(
+                                verifyResponse.message || 'Payment verification failed'
+                            );
                         }
                     } catch (error) {
                         console.error('Payment verification failed:', error);
@@ -123,10 +121,10 @@ export default function PaymentPage() {
                     ondismiss: () => {
                         console.log('Payment cancelled by user');
                         setIsProcessing(false);
-                    }
-                }
+                    },
+                },
             };
-            
+
             openCheckout(options);
         } catch (error) {
             console.error('Razorpay payment failed:', error);
@@ -141,7 +139,7 @@ export default function PaymentPage() {
             alert('Please add an address first');
             return;
         }
-        
+
         setIsProcessing(true);
         try {
             // Create order with COD method
@@ -222,8 +220,8 @@ export default function PaymentPage() {
                                             active ? 'bg-white/70' : '',
                                         ].join(' ')}
                                     >
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-[#F6F0E6] grid place-items-center">
+                                        <div className="flex items-center gap-3 ">
+                                            <div className="w-8 h-8 rounded-full bg-[#F6F0E6]  grid place-items-center">
                                                 <Icon className="w-4 h-4 text-[#4E3325]" />
                                             </div>
                                             <span className="text-sm text-[#4E3325]">
@@ -236,7 +234,7 @@ export default function PaymentPage() {
                                             name="pay"
                                             checked={active}
                                             onChange={() => setSelected(m.id)}
-                                            className="accent-[#C4994A]"
+                                            className="accent-[#4E3325] w-4 h-4"
                                         />
                                     </label>
                                 );
