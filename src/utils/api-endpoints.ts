@@ -1,8 +1,13 @@
 export const API_ENDPOINTS = {
     // Auth endpoints
-    SIGN_IN: '/users/admin-login/',
-    REFRESH_TOKEN: '/auth/refresh',
-    LOGOUT: '/auth/logout',
+    SIGNUP_INITIATE: 'accounts/signup/initiate/',
+    VERIFY_OTP: 'accounts/verify-otp/',
+    RESEND_OTP: 'accounts/resend-otp/',
+    SET_PASSWORD: 'accounts/set-password/',
+    FORGOT_PASSWORD: 'accounts/forgot-password/',
+    LOGIN: 'accounts/login/',
+    REFRESH_TOKEN: 'accounts/token/refresh/',
+    LOGOUT: 'accounts/logout/',
 
     // Category endpoints
     GET_CATEGORIES: 'products/category/',
@@ -11,6 +16,7 @@ export const API_ENDPOINTS = {
     // Product endpoints
     GET_PRODUCTS: 'products/products/',
     GET_PRODUCT: 'products/products/:id/',
+    GET_RELATED_PRODUCTS: 'products/products/:id/related/',
 
     // Variant endpoints
     GET_VARIANTS: 'products/variants/',
@@ -22,4 +28,36 @@ export const API_ENDPOINTS = {
     GET_VARIANT_STOCK: 'stocks/variant/:id/',
     GET_STOCK_HISTORY: 'stocks/history/:id/',
     GET_STOCK_HISTORY_LIST: 'stocks/history/',
+
+    // Order endpoints
+    CREATE_ORDER: 'orders/checkout/',
+    ORDER_LIST: 'orders/list/',
+    ORDER_DETAIL: 'orders/orders/:id/',
+    ADMIN_ORDER_LIST: 'orders/admin/list/',
+    ADMIN_ORDER_DETAIL: 'orders/admin/:pk/',
+    UPDATE_ORDER_STATUS: 'orders/admin/:pk/status/',
+
+    // Cart endpoints
+    GET_CART: 'orders/cart/',
+    ADD_TO_CART: 'orders/cart/add/',
+    UPDATE_CART_ITEM: 'orders/cart/update/',
+    REMOVE_FROM_CART: 'orders/cart/remove/:id/',
+    CLEAR_CART: 'orders/cart/clear/',
+
+    // Core endpoints
+    GET_COUNTRIES: 'core/countries/',
+    GET_STATES: 'core/states/',
+
+    // Account/Profile endpoints
+    GET_ADDRESSES: 'accounts/addresses/',
+    GET_ADDRESS: 'accounts/addresses/:id/',
+
+    // Client endpoints
+    GET_CLIENTS: 'accounts/clients/',
+
+    // Payment endpoints
+    GET_RAZORPAY_KEY_ID: 'payments/key-id/',
+    CREATE_PAYMENT_ORDER: 'payments/create/',
+    VERIFY_PAYMENT: 'payments/verify/',
+    GET_PAYMENT_DETAILS: 'payments/:id/',
 } as const;

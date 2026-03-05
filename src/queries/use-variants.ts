@@ -5,14 +5,14 @@ import { API_ENDPOINTS } from '../utils/api-endpoints';
 const { GET_VARIANTS, GET_VARIANT } = API_ENDPOINTS;
 
 export const useFetchVariants = (filters: any = {}) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [GET_VARIANTS, filters],
         queryFn: () => getVariants(filters, 'get'),
     });
 };
 
 export const useFetchSingleVariant = (id: string) => {
-    return useQuery({
+    return useQuery<any>({
         queryKey: [GET_VARIANT, id],
         queryFn: () => getVariant(id, 'get'),
     });
@@ -21,7 +21,7 @@ export const useFetchSingleVariant = (id: string) => {
 export const useCreateVariant = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    return useMutation<any, any, any>({
         mutationFn: (data: any) => getVariants(data, 'post'),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_VARIANTS] });
@@ -31,7 +31,7 @@ export const useCreateVariant = () => {
 
 export const useUpdateVariant = () => {
     const queryClient = useQueryClient();
-    return useMutation({
+    return useMutation<any, any, any>({
         mutationFn: ({ id, data }: { id: string | number; data: Partial<any> }) =>
             getVariant(id, 'put', data),
         onSuccess: () => {
@@ -42,7 +42,7 @@ export const useUpdateVariant = () => {
 
 export const useDeleteVariant = () => {
     const queryClient = useQueryClient();
-    return useMutation({
+    return useMutation<any, any, any>({
         mutationFn: (id: string | number) => getVariant(id, 'delete'),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_VARIANTS] });

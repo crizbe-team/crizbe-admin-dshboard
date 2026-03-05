@@ -14,6 +14,7 @@ interface SearchableSelectProps {
     onChange: (value: string) => void;
     placeholder?: string;
     className?: string;
+    isDisabled?: boolean;
 }
 
 export default function SearchableSelect({
@@ -22,6 +23,7 @@ export default function SearchableSelect({
     onChange,
     placeholder = 'Select option...',
     className = '',
+    isDisabled = false,
 }: SearchableSelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -47,16 +49,20 @@ export default function SearchableSelect({
     }, []);
 
     const handleSelect = (optionValue: string) => {
+        if (isDisabled) return;
         onChange(optionValue);
         setIsOpen(false);
         setSearchQuery('');
     };
 
     return (
-        <div className={`relative ${className}`} ref={containerRef}>
+        <div
+            className={`relative ${className} ${isDisabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
+            ref={containerRef}
+        >
             <div
-                onClick={() => setIsOpen(!isOpen)}
-                className="bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] flex items-center justify-between cursor-pointer hover:border-purple-500 transition-colors"
+                onClick={() => !isDisabled && setIsOpen(!isOpen)}
+                className={`bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] flex items-center justify-between ${isDisabled ? '' : 'cursor-pointer hover:border-purple-500'} transition-colors`}
             >
                 <span className={selectedOption ? 'text-gray-100' : 'text-gray-400'}>
                     {selectedOption ? selectedOption.label : placeholder}

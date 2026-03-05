@@ -17,6 +17,13 @@ import DebouncedSearch from '@/components/ui/DebouncedSearch';
 export default function VariantsPage() {
     const [searchQuery, setSearchQuery] = useState('');
 
+    const generateId = () => {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
+        }
+        return Math.random().toString(36).substring(2, 11);
+    };
+
     // Fetch Variants
     const { data: variantsData, isLoading: isVariantsLoading } = useFetchVariants({
         q: searchQuery,
@@ -25,7 +32,7 @@ export default function VariantsPage() {
     // Fetch Products for the modal
     const { data: productsData } = useFetchProducts();
 
-    // Delete Mutation
+    // Mutations
     const deleteMutation = useDeleteVariant();
     const createMutation = useCreateVariant();
     const updateMutation = useUpdateVariant();
@@ -37,9 +44,7 @@ export default function VariantsPage() {
     const [formData, setFormData] = useState<VariantFormData>({
         productId: '',
         productName: '',
-        size: '',
-        price: '',
-        weight_per_unit: '',
+        variants: [{ id: 'initial-row', size: '', price: '', weight_per_unit: '' }],
     });
 
     const variants = variantsData?.data || [];
@@ -77,9 +82,7 @@ export default function VariantsPage() {
         setFormData({
             productId: '',
             productName: '',
-            size: '',
-            price: '',
-            weight_per_unit: '',
+            variants: [{ id: generateId(), size: '', price: '', weight_per_unit: '' }],
         });
         setIsModalOpen(true);
     };
@@ -89,9 +92,14 @@ export default function VariantsPage() {
         setFormData({
             productId: variant.product_detail?.id || '',
             productName: variant.product_detail?.name || '',
-            size: variant.size,
-            price: variant.price.toString(),
-            weight_per_unit: (variant.weight_per_unit || '').toString(),
+            variants: [
+                {
+                    id: variant.id?.toString() || generateId(),
+                    size: variant.size,
+                    price: variant.price.toString(),
+                    weight_per_unit: (variant.weight_per_unit || '').toString(),
+                },
+            ],
         });
         setIsModalOpen(true);
     };
@@ -99,23 +107,33 @@ export default function VariantsPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const data = {
-            product: formData.productId,
-            size: formData.size,
-            price: parseFloat(formData.price) || 0,
-            weight_per_unit: parseFloat(formData.weight_per_unit) || 0,
-        };
-
         try {
             if (editingVariant) {
+                const variantData = formData.variants[0];
+                const data = {
+                    product: formData.productId,
+                    size: variantData.size,
+                    price: parseFloat(variantData.price) || 0,
+                    weight_per_unit: parseFloat(variantData.weight_per_unit) || 0,
+                };
                 await updateMutation.mutateAsync({ id: editingVariant.id, data });
             } else {
+                // Create multiple variants in a single API call
+                const data = formData.variants.map((v) => ({
+                    product: formData.productId,
+                    size: v.size,
+                    price: parseFloat(v.price) || 0,
+                    weight_per_unit: parseFloat(v.weight_per_unit) || 0,
+                }));
+
+                // Assuming the backend supports receiving an array for bulk creation
+                // If the backend expects a wrapper object, adjust here.
                 await createMutation.mutateAsync(data);
             }
             setIsModalOpen(false);
             setEditingVariant(null);
         } catch (error) {
-            console.error('Failed to save variant:', error);
+            console.error('Failed to save variant(s):', error);
         }
     };
 

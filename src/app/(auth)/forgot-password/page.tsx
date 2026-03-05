@@ -1,111 +1,209 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useForgotPassword } from '@/queries/use-auth';
+import { FormInput } from '@/components/ui/FormInput';
+import PhoneInput from '@/components/ui/PhoneInput';
+import GoldenButton from '@/components/ui/GoldenButton';
+import { signupSessionUtils } from '@/utils/signup-session';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signupSchema, type SignupFormData } from '@/validations/auth';
 
 export default function ForgotPasswordPage() {
-    const [email, setEmail] = useState('');
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const router = useRouter();
+    const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle forgot password logic here
-        console.log('Forgot Password:', { email });
-        setIsSubmitted(true);
+    const { mutate: forgotPassword, isPending } = useForgotPassword();
+
+    // Refs for maintaining focus during input switches
+    const emailInputRef = useRef<HTMLInputElement>(null);
+    const phoneInputRef = useRef<HTMLInputElement>(null);
+    const prevIsPhoneInput = useRef<boolean | null>(null);
+
+    const {
+        handleSubmit,
+        setError,
+        setValue,
+        watch,
+        clearErrors,
+        formState: { errors },
+    } = useForm<SignupFormData>({
+        resolver: zodResolver(signupSchema),
+        defaultValues: {
+            email: '',
+            phone: '',
+        },
+    });
+
+    const emailValue = watch('email');
+    const phoneValue = watch('phone');
+    const emailOrPhone = emailValue || phoneValue;
+
+    // Detect if input looks like a phone number (starts with digit)
+    const isPhoneInput = emailOrPhone ? /^\d/.test(emailOrPhone.trim()) : false;
+
+    // Handle input change for both email and phone
+    const handleInputChange = (value: string) => {
+        // Clear any API errors when the user starts typing
+        clearErrors('username' as keyof SignupFormData);
+
+        if (/^\d/.test(value.trim())) {
+            // User is typing a phone number
+            setValue('phone', value, { shouldValidate: true });
+            setValue('email', '', { shouldValidate: false });
+            clearErrors('email');
+        } else {
+            // User is typing an email
+            setValue('email', value, { shouldValidate: true });
+            setValue('phone', '', { shouldValidate: false });
+            clearErrors('phone');
+        }
     };
 
-    if (isSubmitted) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f] px-4">
-                <div className="w-full max-w-md">
-                    <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] p-8 shadow-2xl text-center">
-                        <div className="mb-6 flex justify-center">
-                            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
-                                <CheckCircle className="w-10 h-10 text-green-500" />
-                            </div>
-                        </div>
-                        <h1 className="text-2xl font-bold text-gray-100 mb-3">Check Your Email</h1>
-                        <p className="text-gray-400 text-sm mb-6">
-                            We've sent a password reset link to <span className="text-gray-300 font-medium">{email}</span>
-                        </p>
-                        <p className="text-gray-500 text-xs mb-6">
-                            Please check your inbox and click on the link to reset your password. If you don't see the email, check your spam folder.
-                        </p>
-                        <div className="space-y-3">
-                            <button
-                                onClick={() => setIsSubmitted(false)}
-                                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-colors"
-                            >
-                                Resend Email
-                            </button>
-                            <Link
-                                href="/login"
-                                className="block text-center text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
-                            >
-                                Back to Sign In
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    // Maintain focus when switching between input types
+    useEffect(() => {
+        if (prevIsPhoneInput.current !== null && prevIsPhoneInput.current !== isPhoneInput) {
+            // Input type changed, restore focus on next render
+            requestAnimationFrame(() => {
+                if (isPhoneInput && phoneInputRef.current) {
+                    phoneInputRef.current.focus();
+                    const len = (phoneValue || '').length;
+                    phoneInputRef.current.setSelectionRange(len, len);
+                } else if (!isPhoneInput && emailInputRef.current) {
+                    emailInputRef.current.focus();
+                    const len = (emailValue || '').length;
+                    emailInputRef.current.setSelectionRange(len, len);
+                }
+            });
+        }
+        prevIsPhoneInput.current = isPhoneInput;
+    }, [isPhoneInput, emailValue, phoneValue]);
+
+    const onSubmit = async (data: SignupFormData) => {
+        const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email || '';
+
+        forgotPassword(
+            { username },
+            {
+                onError: (error: any) => {
+                    if (error.errors) {
+                        const apiErrors = error.errors;
+                        Object.keys(apiErrors).forEach((field) => {
+                            setError(field as keyof SignupFormData, {
+                                type: 'server',
+                                message: apiErrors[field][0],
+                            });
+                        });
+                    } else {
+                        setError('email', {
+                            type: 'server',
+                            message: error?.message || 'Something went wrong. Please try again.',
+                        });
+                    }
+                },
+                onSuccess: (response) => {
+                    console.log('Forgot password request successful:', response);
+
+                    // Store the username and purpose in session for the OTP page
+                    const sessionData: {
+                        username: string;
+                        countryCode?: string;
+                        purpose: 'reset_password';
+                    } = {
+                        username,
+                        purpose: 'reset_password',
+                    };
+                    if (isPhoneInput) {
+                        sessionData.countryCode = phoneCountryCode;
+                    }
+                    signupSessionUtils.setSignupData(sessionData);
+
+                    router.push('/enter-otp');
+                },
+            }
         );
-    }
+    };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f] px-4">
-            <div className="w-full max-w-md">
-                <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] p-8 shadow-2xl">
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-100 mb-2">Forgot Password?</h1>
-                        <p className="text-gray-400 text-sm">
-                            No worries, we'll send you reset instructions.
-                        </p>
-                    </div>
+        <div className="w-full max-w-md">
+            {/* Logo */}
+            <div className="flex justify-center mb-8">
+                <Image
+                    src="/images/user/crizbe-logo.svg"
+                    alt="Crizbe"
+                    width={150}
+                    height={60}
+                    priority
+                />
+            </div>
 
-                    {/* Forgot Password Form */}
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Email Field */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Email Address
-                            </label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="w-full bg-[#2a2a2a] text-gray-100 pl-10 pr-4 py-3 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 transition-colors"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                        </div>
+            {/* Header */}
+            <div className="text-center mb-8">
+                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Forgot Password?</h1>
+                <p className="text-sm text-[#7A7A7A] leading-relaxed">
+                    No worries, enter your details and we&apos;ll
+                    <br />
+                    send you reset instructions.
+                </p>
+            </div>
 
-                        {/* Submit Button */}
-                        <button
-                            type="submit"
-                            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-colors"
-                        >
-                            Reset Password
-                        </button>
-                    </form>
+            {/* Forgot Password Form */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Email / Mobile Field */}
+                {isPhoneInput ? (
+                    <PhoneInput
+                        ref={phoneInputRef}
+                        label="Email / Mobile number"
+                        required
+                        value={phoneValue || ''}
+                        onChange={(value) => handleInputChange(value)}
+                        enableCodeSelect
+                        selectedCode={phoneCountryCode}
+                        onCodeChange={(code) => setPhoneCountryCode(code)}
+                        enableCodeSearch
+                        placeholder="Enter your mobile number"
+                        error={errors.phone?.message || errors.username?.message}
+                    />
+                ) : (
+                    <FormInput
+                        ref={emailInputRef}
+                        label="Email / Mobile number"
+                        required
+                        type="text"
+                        value={emailValue || ''}
+                        onChange={(e) => handleInputChange(e.target.value)}
+                        placeholder="Enter your email id / mobile number"
+                        error={errors.email?.message || errors.username?.message || ''}
+                    />
+                )}
 
-                    {/* Back to Login Link */}
-                    <div className="mt-6 text-center">
-                        <Link
-                            href="/login"
-                            className="inline-flex items-center text-sm text-gray-400 hover:text-purple-400 transition-colors"
-                        >
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Sign In
-                        </Link>
-                    </div>
-                </div>
+                {/* Submit Button */}
+                <GoldenButton
+                    type="submit"
+                    isLoading={isPending}
+                    loadingText="Please wait..."
+                    fullWidth
+                    className="mt-[32px] py-3"
+                >
+                    Reset Password
+                </GoldenButton>
+            </form>
+
+            {/* Back to Login Link */}
+            <div className="mt-8 text-center">
+                <Link
+                    href="/login"
+                    className="inline-flex items-center text-sm text-[#7A7A7A] hover:text-[#C4994A] transition-colors"
+                >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Sign In
+                </Link>
             </div>
         </div>
     );
 }
-

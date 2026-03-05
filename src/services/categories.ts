@@ -1,6 +1,7 @@
 import api from '../lib/axios';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { ApiBuilder } from '../utils/api-builder';
+import { handleApiResponse } from '../utils/api-handler';
 
 export const getCategories = async (params: any = {}, method: 'get' | 'post' = 'get') => {
     const { GET_CATEGORIES } = API_ENDPOINTS;
@@ -16,22 +17,12 @@ export const getCategories = async (params: any = {}, method: 'get' | 'post' = '
             .build();
 
         const response = await api.get(url);
-        const { status_code, message, data } = response?.data;
-
-        if (status_code === 6001) {
-            throw { message, errors: data };
-        }
-        return response.data;
+        return handleApiResponse(response);
     } else {
         const data = params as any;
         const url = new ApiBuilder(GET_CATEGORIES).build();
         const response = await api.post(url, data);
-        const { status_code, message, data: responseData } = response?.data;
-
-        if (status_code === 6001) {
-            throw { message, errors: responseData };
-        }
-        return response.data;
+        return handleApiResponse(response);
     }
 };
 
@@ -45,9 +36,9 @@ export const getCategory = async (
 
     if (method === 'put') {
         const response = await api.put(url, data);
-        return response.data;
+        return handleApiResponse(response);
     }
 
     const response = await api[method](url);
-    return response.data;
+    return handleApiResponse(response);
 };
