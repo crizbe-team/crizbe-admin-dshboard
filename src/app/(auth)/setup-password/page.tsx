@@ -158,9 +158,8 @@ export default function SetupPasswordPage() {
                                 },
                             })}
                             placeholder="Create your password"
-                            className={`w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${
-                                errors.password ? 'border-red-500' : 'border-[#E7E4DD]'
-                            }`}
+                            className={`w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${errors.password ? 'border-red-500' : 'border-[#E7E4DD]'
+                                }`}
                         />
                         <button
                             type="button"
@@ -182,11 +181,10 @@ export default function SetupPasswordPage() {
                         {[1, 2, 3, 4, 5].map((level) => (
                             <div
                                 key={level}
-                                className={`flex-1 rounded-full ${
-                                    passwordValue && strengthScore >= level
+                                className={`flex-1 rounded-full ${passwordValue && strengthScore >= level
                                         ? getStrengthColor()
                                         : 'bg-[#E7E4DD]'
-                                } transition-colors duration-300`}
+                                    } transition-colors duration-300`}
                             />
                         ))}
                     </div>
@@ -199,9 +197,8 @@ export default function SetupPasswordPage() {
                                     <X className="w-3.5 h-3.5 text-[#B7AFA5] shrink-0" />
                                 )}
                                 <span
-                                    className={`text-[11px] ${
-                                        req.met ? 'text-green-600' : 'text-[#7A7A7A]'
-                                    }`}
+                                    className={`text-[11px] ${req.met ? 'text-green-600' : 'text-[#7A7A7A]'
+                                        }`}
                                 >
                                     {req.label}
                                 </span>
@@ -226,9 +223,8 @@ export default function SetupPasswordPage() {
                                 },
                             })}
                             placeholder="Confirm your password"
-                            className={`w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${
-                                errors.confirmPassword ? 'border-red-500' : 'border-[#E7E4DD]'
-                            }`}
+                            className={`w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${errors.confirmPassword ? 'border-red-500' : 'border-[#E7E4DD]'
+                                }`}
                         />
                         <button
                             type="button"

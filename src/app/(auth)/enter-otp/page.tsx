@@ -238,17 +238,16 @@ export default function EnterOtpPage() {
                         type="button"
                         onClick={handleResendCode}
                         disabled={resendTimer > 0 || isResendPending}
-                        className={`font-medium transition-colors ${
-                            resendTimer > 0 || isResendPending
+                        className={`font-medium transition-colors ${resendTimer > 0 || isResendPending
                                 ? 'text-[#B7AFA5] cursor-not-allowed'
                                 : 'text-[#C4994A] hover:text-[#B38840] cursor-pointer'
-                        }`}
+                            }`}
                     >
                         {isResendPending
                             ? 'Resending...'
                             : resendTimer > 0
-                              ? `Resend in ${resendTimer}s`
-                              : 'Resend code'}
+                                ? `Resend in ${resendTimer}s`
+                                : 'Resend code'}
                     </button>
                 </div>
 
