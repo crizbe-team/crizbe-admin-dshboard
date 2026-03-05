@@ -16,7 +16,7 @@ import VariantStockAddModal from '@/components/Modals/VariantStockAddModal';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFetchVariantStock, useCreateStock, useDeleteStockHistory } from '@/queries/use-stock';
 import { API_ENDPOINTS } from '@/utils/api-endpoints';
-import Loader from '@/components/ui/loader';
+import UserLoaders from '@/components/ui/UserLoader';
 import { formatDateTime } from '@/utils/date-utils';
 
 export default function VariantStockDetailPage() {
@@ -75,7 +75,7 @@ export default function VariantStockDetailPage() {
     if (isLoading) {
         return (
             <div className="p-12">
-                <Loader />
+                <UserLoaders />
             </div>
         );
     }
@@ -201,11 +201,10 @@ export default function VariantStockDetailPage() {
 
                                         <td className="p-4">
                                             <span
-                                                className={`px-2 py-0.5 rounded-full bg-opacity-10 text-xs ${
-                                                    item.type === 'Addition'
-                                                        ? 'bg-blue-500 text-blue-400'
-                                                        : 'bg-red-500 text-red-400'
-                                                }`}
+                                                className={`px-2 py-0.5 rounded-full bg-opacity-10 text-xs ${item.type === 'Addition'
+                                                    ? 'bg-blue-500 text-blue-400'
+                                                    : 'bg-red-500 text-red-400'
+                                                    }`}
                                             >
                                                 {item.type}
                                             </span>

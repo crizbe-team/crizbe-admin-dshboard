@@ -14,7 +14,7 @@ import {
     Clock,
 } from 'lucide-react';
 import { useFetchSingleProduct } from '@/queries/use-products';
-import Loader from '@/components/ui/loader';
+import UserLoaders from '@/components/ui/UserLoader';
 import { useState } from 'react';
 
 const formatDateTime = (dateString: string) => {
@@ -45,7 +45,7 @@ export default function ProductDetailPage() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
-                <Loader />
+                <UserLoaders />
             </div>
         );
     }
@@ -177,8 +177,8 @@ export default function ProductDetailPage() {
                                         key={idx}
                                         onClick={() => setActiveImage(img.image)}
                                         className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${activeImage === img.image || (!activeImage && idx === 0)
-                                                ? 'border-purple-600 scale-95 shadow-lg shadow-purple-600/20'
-                                                : 'border-transparent opacity-50 hover:opacity-100'
+                                            ? 'border-purple-600 scale-95 shadow-lg shadow-purple-600/20'
+                                            : 'border-transparent opacity-50 hover:opacity-100'
                                             }`}
                                     >
                                         <img
@@ -203,8 +203,8 @@ export default function ProductDetailPage() {
                                 <span className="text-gray-400">Inventory Status</span>
                                 <span
                                     className={`px-2 py-0.5 rounded text-xs font-bold ${(product.available_stock || 0) > 10
-                                            ? 'text-green-400 bg-green-400/10'
-                                            : 'text-red-400 bg-red-400/10'
+                                        ? 'text-green-400 bg-green-400/10'
+                                        : 'text-red-400 bg-red-400/10'
                                         }`}
                                 >
                                     {(product.available_stock || 0) > 10 ? 'Healthy' : 'Low Stock'}
@@ -304,8 +304,8 @@ export default function ProductDetailPage() {
                                                 <td className="p-4">
                                                     <span
                                                         className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${(variant.stock || 0) > 0
-                                                                ? 'bg-green-500/20 text-green-500'
-                                                                : 'bg-red-500/20 text-red-500'
+                                                            ? 'bg-green-500/20 text-green-500'
+                                                            : 'bg-red-500/20 text-red-500'
                                                             }`}
                                                     >
                                                         {(variant.stock || 0) > 0

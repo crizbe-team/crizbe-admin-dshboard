@@ -14,8 +14,8 @@ const ProductsPage = () => {
     console.log('products', products);
 
     const breadcrumbItems = [
-        { label: 'Home', href: '/' },
-        { label: 'All Products' },
+        { label: <span className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">Home</span>, href: '/' },
+        { label: <span className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">All Products</span> },
     ];
 
     if (isLoading) {

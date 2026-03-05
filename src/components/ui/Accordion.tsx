@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
 
 interface AccordionItemProps {
-    title: string;
+    title: React.ReactNode;
     children: React.ReactNode;
     defaultOpen?: boolean;
 }
@@ -18,7 +18,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, defaultO
                 className="flex items-center justify-between w-full text-left focus:outline-none group"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <span className="text-lg font-medium text-[#1A1A1A] group-hover:text-amber-700 transition-colors">
+                <span className="text-lg font-medium text-[#1A1A1A] transition-colors">
                     {title}
                 </span>
                 {isOpen ? (

@@ -27,7 +27,7 @@ import {
 } from '@/queries/use-stock';
 import { useFetchProducts } from '@/queries/use-products';
 import { API_ENDPOINTS } from '@/utils/api-endpoints';
-import Loader from '@/components/ui/loader';
+import UserLoaders from '@/components/ui/UserLoader';
 import { formatDateTime } from '@/utils/date-utils';
 
 export default function ProductStockPage() {
@@ -150,7 +150,7 @@ export default function ProductStockPage() {
     if (isProductLoading) {
         return (
             <div className="p-12">
-                <Loader />
+                <UserLoaders />
             </div>
         );
     }
@@ -255,7 +255,7 @@ export default function ProductStockPage() {
                         <div className="overflow-x-auto">
                             {isHistoryLoading ? (
                                 <div className="p-12">
-                                    <Loader />
+                                    <UserLoaders />
                                 </div>
                             ) : history.length > 0 ? (
                                 <table className="w-full">
@@ -287,11 +287,10 @@ export default function ProductStockPage() {
                                                 </td>
                                                 <td className="p-4">
                                                     <span
-                                                        className={`px-2 py-0.5 rounded-full bg-opacity-10 text-xs ${
-                                                            item.type === 'Addition'
+                                                        className={`px-2 py-0.5 rounded-full bg-opacity-10 text-xs ${item.type === 'Addition'
                                                                 ? 'bg-blue-500 text-blue-400'
                                                                 : 'bg-red-500 text-red-400'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {item.type}
                                                     </span>

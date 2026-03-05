@@ -14,7 +14,7 @@ import {
     useUpdateProduct,
 } from '@/queries/use-products';
 import { useFetchCategories } from '@/queries/use-categories';
-import Loader from '@/components/ui/loader';
+import UserLoaders from '@/components/ui/UserLoader';
 
 export default function ProductsPage() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -154,10 +154,10 @@ export default function ProductsPage() {
                 imageFiles: isExistingImage
                     ? prevFormData.imageFiles
                     : prevFormData.imageFiles.filter(
-                          (_, i) =>
-                              i !==
-                              index - (prevFormData.images.length - prevFormData.imageFiles.length)
-                      ),
+                        (_, i) =>
+                            i !==
+                            index - (prevFormData.images.length - prevFormData.imageFiles.length)
+                    ),
             };
         });
     };
@@ -299,7 +299,7 @@ export default function ProductsPage() {
                 <div className="overflow-x-auto">
                     {isProductsLoading ? (
                         <div className="p-12 border-t border-[#2a2a2a]">
-                            <Loader />
+                            <UserLoaders />
                         </div>
                     ) : products.length > 0 ? (
                         <table className="w-full">

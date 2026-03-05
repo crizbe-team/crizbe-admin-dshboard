@@ -29,12 +29,12 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     return (
         <div className="flex flex-col font-sans">
             {/* Brand / Category */}
-            <span className="text-base text-[#5A5A5A] mb-1">
+            <span className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums text-[#5A5A5A] mb-1">
                 {product.category?.name || 'Crizbe'}
             </span>
 
             {/* Title */}
-            <h1 className="text-4xl font-bold text-[#1A1A1A] mb-3 leading-tight">
+            <h1 className="font-bricolage font-bold text-[36px] leading-[140%] text-[#1A1A1A] mb-3">
                 {product.name}
             </h1>
 
@@ -55,7 +55,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             </div>
 
             {/* Price */}
-            <div className="text-3xl font-medium text-[#1A1A1A] mb-8">
+            <div className="font-[var(--font-inter-tight)] font-medium text-[20px] leading-[120%] lining-nums proportional-nums text-[#1A1A1A] mb-8">
                 {formattedPrice}
             </div>
 
@@ -89,7 +89,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                             <button
                                 key={v.id}
                                 onClick={() => setSelectedVariant(v)}
-                                className={`px-5 py-3 rounded-2xl border text-sm font-semibold transition-all duration-300 ${selectedVariant?.id === v.id
+                                className={`px-5 py-3 rounded-2xl border font-[var(--font-inter-tight)] font-medium text-[16px] leading-[150%] text-center transition-all duration-300 ${selectedVariant?.id === v.id
                                     ? 'border-[#552C10] bg-[#552C10] text-white shadow-md transform scale-105'
                                     : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
                                     }`}
@@ -106,16 +106,16 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 <h3 className="text-sm font-medium text-[#1A1A1A] mb-3">Quantity</h3>
                 <div className="flex items-center border border-[#8E8E8E] rounded-lg w-fit h-12">
                     <button
-                        className="w-12 h-full flex items-center justify-center hover:bg-gray-50 transition-colors border-r border-[#8E8E8E]"
+                        className="w-12 h-full flex items-center justify-center cursor-pointer transition-colors border-r border-[#8E8E8E]"
                         onClick={() => handleQuantityChange('dec')}
                     >
                         <Minus className="w-4 h-4 text-[#1A1A1A]" />
                     </button>
-                    <span className="w-16 h-full flex items-center justify-center text-lg font-medium text-[#1A1A1A]">
+                    <span className="w-16 h-full flex items-center justify-center font-[var(--font-inter-tight)] font-medium text-[20px] leading-[120%] lining-nums proportional-nums text-[#1A1A1A]">
                         {quantity < 10 ? `0${quantity}` : quantity}
                     </span>
                     <button
-                        className="w-12 h-full flex items-center justify-center hover:bg-gray-50 transition-colors border-l border-[#8E8E8E]"
+                        className="w-12 h-full flex items-center justify-center cursor-pointer transition-colors border-l border-[#8E8E8E]"
                         onClick={() => handleQuantityChange('inc')}
                     >
                         <Plus className="w-4 h-4 text-[#1A1A1A]" />
@@ -129,7 +129,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     style={{
                         background: 'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)'
                     }}
-                    className="w-full relative overflow-hidden text-white text-base font-bold py-4 rounded-md flex items-center justify-center gap-3 transition-all duration-500 shadow-[0_4px_20px_rgba(154,114,54,0.2)] active:scale-[0.98] cursor-pointer"
+                    className="w-full relative overflow-hidden text-white font-[var(--font-inter-tight)] font-medium text-[16px] leading-[150%] text-center py-4 rounded-md flex items-center justify-center gap-3 transition-all duration-500 shadow-[0_4px_20px_rgba(154,114,54,0.2)] active:scale-[0.98] cursor-pointer"
                 >
                     {/* Shine Effect */}
                     <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />

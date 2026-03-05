@@ -11,7 +11,7 @@ import {
     useUpdateVariant,
 } from '@/queries/use-variants';
 import { useFetchProducts } from '@/queries/use-products';
-import Loader from '@/components/ui/loader';
+import UserLoaders from '@/components/ui/UserLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 
 export default function VariantsPage() {
@@ -191,7 +191,7 @@ export default function VariantsPage() {
                 <div className="overflow-x-auto">
                     {isVariantsLoading ? (
                         <div className="p-12 border-t border-[#2a2a2a]">
-                            <Loader />
+                            <UserLoaders />
                         </div>
                     ) : variants.length > 0 ? (
                         <table className="w-full">
