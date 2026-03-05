@@ -29,7 +29,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
                     )}
                     {...props}
                 />
-                {error && <p className="text-xs text-red-500">{error}</p>}
+                {error && <p className="text-xs mt-[6px] text-red-500">{error}</p>}
             </div>
         );
     }

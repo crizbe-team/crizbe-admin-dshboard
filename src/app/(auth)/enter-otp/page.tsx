@@ -195,8 +195,8 @@ export default function EnterOtpPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Enter OTP</h1>
-                <p className="text-sm text-[#7A7A7A] leading-relaxed">
+                <h1 className="text-2xl font-semibold font-bricolage text-[#191919] mb-3">Login with OTP</h1>
+                <p className="text-sm text-[#474747] leading-relaxed">
                     Enter the otp received on your email or
                     <br />
                     mobile number & continue
@@ -204,10 +204,10 @@ export default function EnterOtpPage() {
             </div>
 
             {/* OTP Form */}
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 gap-2">
                 {/* OTP Input Boxes */}
                 <div>
-                    <div className="flex justify-center gap-3">
+                    <div className="flex justify-between ">
                         {otp.map((digit, index) => (
                             <input
                                 key={index}
@@ -216,31 +216,32 @@ export default function EnterOtpPage() {
                                 }}
                                 type="text"
                                 inputMode="numeric"
+                                placeholder='0'
                                 maxLength={1}
                                 value={digit}
                                 onChange={(e) => handleOtpChange(index, e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(index, e)}
                                 onPaste={index === 0 ? handlePaste : undefined}
-                                className={`w-16 h-16 text-center text-2xl font-semibold text-[#4E3325] border ${errors.otp ? 'border-red-500 hover:border-red-600 focus:border-red-600' : 'border-[#E7E4DD] hover:border-[#C4994A] focus:border-[#C4994A]'} rounded-lg bg-white outline-none transition-colors`}
+                                className={` w-[76px] h-[70px] xs:w-[91px] xs:h-[80px] sm:w-[91px] sm:h-[80px] md:w-[91px] md:h-[80px] text-center placeholder:text-[#D5D7DA] placeholder:text-[30px] text-2xl font-semibold text-[#4E3325] border ${errors.otp ? 'border-red-500 hover:border-red-600 focus:border-red-600' : 'border-[#E7E4DD] hover:border-[#C4994A] focus:border-[#C4994A]'} rounded-lg bg-white outline-none transition-colors`}
                                 autoComplete="one-time-code"
                             />
                         ))}
                     </div>
-                    {errorMessage && (
-                        <p className="text-red-500 text-sm text-center mt-3">{errorMessage}</p>
-                    )}
+
                 </div>
 
                 {/* Resend Code */}
                 <div className="flex justify-between items-center text-sm">
-                    <span className="text-[#7A7A7A]">Don&apos;t get the code?</span>
+                    {errorMessage && (
+                        <p className="text-red-500 text-sm text-center ">{errorMessage}</p>
+                    )}
                     <button
                         type="button"
                         onClick={handleResendCode}
                         disabled={resendTimer > 0 || isResendPending}
                         className={`font-medium transition-colors ${resendTimer > 0 || isResendPending
-                                ? 'text-[#B7AFA5] cursor-not-allowed'
-                                : 'text-[#C4994A] hover:text-[#B38840] cursor-pointer'
+                            ? 'text-[#B7AFA5] cursor-not-allowed'
+                            : 'text-[#C4994A] hover:text-[#B38840] cursor-pointer'
                             }`}
                     >
                         {isResendPending
@@ -257,14 +258,14 @@ export default function EnterOtpPage() {
                     isLoading={isPending}
                     loadingText="Verifying..."
                     fullWidth
-                    className="rounded-full py-3"
+                    className="mt-[32px] py-3"
                 >
                     Continue
                 </GoldenButton>
             </form>
 
             {/* Change Email/Phone Link */}
-            <p className="mt-8 text-center">
+            <p className="mt-[16px] text-center">
                 <Link
                     href={
                         signupSessionUtils.getSignupData().purpose === 'reset_password'
@@ -273,7 +274,7 @@ export default function EnterOtpPage() {
                     }
                     className="text-sm text-[#C4994A] hover:text-[#B38840] font-medium transition-colors"
                 >
-                    Change email / phone number
+                    Login with another account
                 </Link>
             </p>
         </div>

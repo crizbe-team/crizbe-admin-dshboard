@@ -188,7 +188,7 @@ export default function ForgotPasswordPage() {
                     isLoading={isPending}
                     loadingText="Please wait..."
                     fullWidth
-                    className="rounded-full py-3"
+                    className="mt-[32px] py-3"
                 >
                     Reset Password
                 </GoldenButton>

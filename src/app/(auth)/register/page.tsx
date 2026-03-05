@@ -146,8 +146,8 @@ export default function RegisterPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Welcome</h1>
-                <p className="text-sm text-[#7A7A7A] leading-relaxed">
+                <h1 className="text-2xl font-bricolage font-semibold text-[#191919] mb-3">Welcome</h1>
+                <p className="text-sm text-[#474747] leading-relaxed">
                     Welcome to Crizbe, Please enter your details and
                     <br />
                     signup to try out our crunchy bytes.
@@ -190,7 +190,7 @@ export default function RegisterPage() {
                     isLoading={isPending}
                     loadingText="Please wait..."
                     fullWidth
-                    className="rounded-full py-3"
+                    className=" py-3 mt-[32px]"
                 >
                     Continue
                 </GoldenButton>
@@ -199,7 +199,7 @@ export default function RegisterPage() {
                 <button
                     type="button"
                     onClick={handleGoogleSignup}
-                    className="w-full flex items-center justify-center gap-3 bg-white border border-[#E7E4DD] hover:border-[#C4994A] text-[#4E3325] font-medium py-3 rounded-full transition-colors"
+                    className="w-full flex font-[var(--font-inter-tight)] items-center justify-center gap-3  text-[#404040] cursor-pointer   rounded-full transition-colors"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24">
                         <path
@@ -224,7 +224,7 @@ export default function RegisterPage() {
             </form>
 
             {/* Login Link */}
-            <p className="mt-8 text-center text-sm text-[#7A7A7A]">
+            <p className="mt-[32px] text-center text-sm text-[#474747]">
                 Have an account?{' '}
                 <Link
                     href="/login"
