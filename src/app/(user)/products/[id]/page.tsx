@@ -20,7 +20,7 @@ const ProductDetailsPage = () => {
     const { data: relatedProductsData } = useFetchProducts({ limit: 4 }); // Mock limit, adjust if API supports
     console.log(productData, 'productData');
     const product = productData;
-    const relatedProducts = relatedProductsData?.data?.slice(0, 4) || [];
+    const relatedProducts = relatedProductsData?.slice(0, 4) || [];
 
     const [showAllReviews, setShowAllReviews] = useState(false);
 
