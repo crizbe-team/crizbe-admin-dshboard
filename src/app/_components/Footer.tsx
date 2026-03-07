@@ -66,7 +66,7 @@ const Footer = () => {
                                 <li key={link.name}>
                                     <Link
                                         href={link.href}
-                                        className="text-[#797573] hover:bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] hover:bg-clip-text hover:text-transparent text-base transition-colors duration-300 font-medium"
+                                        className="text-[#373737] hover:bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] hover:bg-clip-text hover:text-transparent text-base transition-colors duration-300 font-medium"
                                     >
                                         {link.name}
                                     </Link>
@@ -84,16 +84,16 @@ const Footer = () => {
                     {/* Bottom Section */}
                     <motion.div
                         variants={itemVariants}
-                        className="w-full flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 gap-4"
+                        className="w-full flex flex-col md:flex-row justify-between items-center text-sm text-[#373737]"
                     >
                         <p>
                             © {new Date().getFullYear()} crizbe. All rights reserved.
                         </p>
                         <div className="flex gap-6">
-                            <Link href="/terms" className="hover:text-[#4E3325] transition-colors">
+                            <Link href="/terms" className="hover:text-[#4E3325] text-[#373737] transition-colors">
                                 Terms and Conditions
                             </Link>
-                            <Link href="/privacy" className="hover:text-[#4E3325] transition-colors">
+                            <Link href="/privacy" className="hover:text-[#4E3325] text-[#373737] transition-colors">
                                 Privacy Policy
                             </Link>
                         </div>
