@@ -237,9 +237,14 @@ export default function LoginPage() {
                 <Button
                     type="submit"
                     disabled={isPending}
-                    className="w-full bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] mb-[16px]
-          shadow-sm hover:opacity-95 active:opacity-90 transition py-3 rounded-[12px] h-[48px] cursor-pointer font-[var(--font-inter-tight)]"
+                    style={{
+                        background:
+                            'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
+                    }}
+                    className="group relative overflow-hidden w-full mb-[16px] shadow-sm hover:opacity-95 active:opacity-90 transition-all duration-300 py-3 rounded-[12px] h-[48px] cursor-pointer font-[var(--font-inter-tight)]"
                 >
+                    {/* Shine Effect */}
+                    <span className="pointer-events-none absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
                     {isPending ? (
                         <>
                             <Loader2 className="w-5 h-5 animate-spin" />

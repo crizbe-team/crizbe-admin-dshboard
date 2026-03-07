@@ -45,12 +45,12 @@ const ProductDetailsPage = () => {
     const breadcrumbItems = [
         { label: <span className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">Home</span>, href: '/' },
         { label: <span className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">Products</span>, href: '/products' },
-        { label: <span className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">{product.name}</span> },
+        { label: <span className="font-[var(--font-inter-tight)]  text-[16px] text-[#191919] font-medium leading-[140%] tracking-[0.01em] lining-nums proportional-nums">{product.name}</span> },
     ];
 
     return (
         <div className="wrapper pt-28 pb-8">
-            <div className="mb-8">
+            <div className="mb-[32px]">
                 <Breadcrumb items={breadcrumbItems} />
             </div>
 

@@ -40,12 +40,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             onClick={handleClick}
         >
             {/* Image Container */}
-            <div className="relative w-full aspect-square mb-6 rounded-[24px] overflow-hidden bg-[#7C7C44]">
+            <div className="relative w-full aspect-square mb-[16px] rounded-[12px] overflow-hidden bg-[#7C7C44]">
                 {product.images && product.images.length > 0 ? (
                     <img
                         src={imageUrl}
                         alt={product.name}
-                        className="object-contain w-full h-full hover:scale-105 transition-transform duration-500"
+                        className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-4xl text-white/50">
@@ -62,12 +62,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </p>
 
                 {/* Title */}
-                <h3 className="font-inter-tight font-semibold text-[16px] leading-[150%] text-[#191919] mb-2 line-clamp-1">
+                <h3 className="font-inter-tight font-semibold text-[18px] leading-[150%] text-[#191919]  line-clamp-1">
                     {product.name}
                 </h3>
 
                 {/* Price */}
-                <p className="font-inter-tight font-semibold text-[16px] leading-[150%] text-[#373737] mb-6">
+                <p className="font-inter-tight font-semibold text-[16px] leading-[150%] text-[#373737] mb-[16px]">
                     {formattedPrice}
                 </p>
 

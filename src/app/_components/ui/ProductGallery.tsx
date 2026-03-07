@@ -29,7 +29,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName, pr
                     <img
                         src={displayImage}
                         alt={productName}
-                        className="object-contain w-full h-full transform transition-transform duration-700 group-hover:scale-105"
+                        className="object-cover w-full h-full transform transition-transform duration-700 group-hover:scale-105"
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-6xl text-gray-300">
