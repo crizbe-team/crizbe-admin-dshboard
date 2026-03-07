@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCart, addToCart, updateCartItem, removeFromCart, clearCart } from '../services/cart';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
-const { GET_CART } = API_ENDPOINTS;
+const { GET_CART, GET_PRODUCT } = API_ENDPOINTS;
 
 export const useFetchCart = () => {
     return useQuery<any>({
@@ -17,6 +17,7 @@ export const useAddToCart = () => {
         mutationFn: (data: any) => addToCart(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CART] });
+            queryClient.invalidateQueries({ queryKey: [GET_PRODUCT] });
         },
     });
 };

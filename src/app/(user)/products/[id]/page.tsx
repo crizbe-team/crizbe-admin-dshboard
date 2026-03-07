@@ -18,8 +18,7 @@ const ProductDetailsPage = () => {
 
     const { data: productData, isLoading, isError } = useFetchSingleProduct(productId || '');
     const { data: relatedProductsData } = useFetchRelatedProducts(productId || '');
-    console.log(productData, 'productData');
-    const product = productData;
+    const product = productData?.data;
     const relatedProducts = relatedProductsData?.data || [];
 
     if (isLoading) {

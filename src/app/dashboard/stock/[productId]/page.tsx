@@ -53,8 +53,8 @@ export default function ProductStockPage() {
     const createMutation = useCreateStock();
     const deleteHistoryMutation = useDeleteStockHistory();
 
-    const product = productStockData || {};
-    const variants = productStockData?.variants || [];
+    const product = productStockData?.data || {};
+    const variants = productStockData?.data?.variants || [];
     const history = historyResponse?.data || [];
 
     const stats = [
@@ -234,9 +234,15 @@ export default function ProductStockPage() {
                                         </p>
                                     </div>
                                     <div className="flex items-center space-x-3">
-                                        <span className="text-sm font-semibold text-purple-400">
-                                            {v.quantity} in stock
-                                        </span>
+                                        {v.stock > 0 ? (
+                                            <span className="text-sm font-semibold text-purple-400">
+                                                {v.stock} in stock
+                                            </span>
+                                        ) : (
+                                            <span className="text-sm font-semibold text-red-400">
+                                                Out of stock
+                                            </span>
+                                        )}
                                         <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-gray-400 transition-colors" />
                                     </div>
                                 </Link>
