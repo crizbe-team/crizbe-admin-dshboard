@@ -49,7 +49,7 @@ const ProductDetailsPage = () => {
     ];
 
     return (
-        <div className="wrapper pt-28 pb-8">
+        <div className="wrapper pt-[80px] pb-8">
             <div className="mb-[32px]">
                 <Breadcrumb items={breadcrumbItems} />
             </div>

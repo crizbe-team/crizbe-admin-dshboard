@@ -124,23 +124,21 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             </div>
 
             {/* Add to Cart */}
-            <div className="relative group flex flex-col sm:flex-row gap-3 mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 mb-8">
                 <button
                     style={{
-                        background: 'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)'
+                        background:
+                            'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
                     }}
-                    className="w-full sm:flex-1 relative overflow-hidden h-[44px] py-[12px] px-[24px] rounded-[12px] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#FFFFFF] hover:text-white transition-all duration-300 cursor-pointer"
+                    className="group w-full sm:flex-1 relative overflow-hidden h-[44px] py-[12px] px-[24px] rounded-[12px] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#FFFFFF] hover:text-white transition-all duration-300 cursor-pointer"
                 >
                     {/* Shine Effect */}
-                    <div className="absolute top-0 -left-full w-full h-[44px] bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
-                    <span>Buy Now</span>
+                    <div className="pointer-events-none absolute inset-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
+                    <span className="relative z-10">Buy Now</span>
                 </button>
                 <button
                     className="w-full sm:flex-1 h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer"
                 >
-                    {/* Shine Effect */}
-                    <div className="absolute top-0 -left-full w-full h-full " />
-
                     <ShoppingCart className="w-5 h-5" />
                     <span>Add to Cart</span>
                 </button>
