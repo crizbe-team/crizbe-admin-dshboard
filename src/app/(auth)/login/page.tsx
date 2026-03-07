@@ -150,7 +150,7 @@ export default function LoginPage() {
             </div>
 
             {/* Login Form */}
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {globalError && (
                     <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg text-center">
                         {globalError}
@@ -253,7 +253,7 @@ export default function LoginPage() {
                 <button
                     type="button"
                     onClick={handleGoogleLogin}
-                    className="w-full flex font-[var(--font-inter-tight)] items-center justify-center gap-3  text-[#404040] cursor-pointer   rounded-full transition-colors"
+                    className="w-full  mb-[32px] flex font-[var(--font-inter-tight)] items-center justify-center gap-3  text-[#404040] cursor-pointer   rounded-full transition-colors"
                 >
                     <svg width="24" height="24" viewBox="0 0 24 24">
                         <path
@@ -278,7 +278,7 @@ export default function LoginPage() {
             </form>
 
             {/* Register Link */}
-            <p className="mt-[32px] text-center text-sm text-[#474747]">
+            <p className=" text-center text-sm text-[#474747]">
                 Don&apos;t have an account?{' '}
                 <Link
                     href="/register"

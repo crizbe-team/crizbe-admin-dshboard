@@ -190,7 +190,7 @@ export default function RegisterPage() {
                     isLoading={isPending}
                     loadingText="Please wait..."
                     fullWidth
-                    className=" py-3 mt-[32px]"
+                    className=" py-3"
                 >
                     Continue
                 </GoldenButton>
@@ -199,7 +199,7 @@ export default function RegisterPage() {
                 <button
                     type="button"
                     onClick={handleGoogleSignup}
-                    className="w-full flex font-[var(--font-inter-tight)] items-center justify-center gap-3  text-[#404040] cursor-pointer   rounded-full transition-colors"
+                    className="w-full mb-[32px] flex font-[var(--font-inter-tight)] items-center justify-center gap-3  text-[#404040] cursor-pointer   rounded-full transition-colors"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24">
                         <path
@@ -224,7 +224,7 @@ export default function RegisterPage() {
             </form>
 
             {/* Login Link */}
-            <p className="mt-[32px] text-center text-sm text-[#474747]">
+            <p className=" text-center text-sm text-[#474747]">
                 Have an account?{' '}
                 <Link
                     href="/login"

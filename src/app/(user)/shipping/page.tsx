@@ -148,21 +148,9 @@ export default function ShippingPage() {
                 </div>
                 <div className="flex items-start justify-between gap-10 flex-col lg:flex-row">
                     <section className="w-full flex-1">
-                        <div className="flex items-center justify-between gap-4">
-                            <h1 className=" text-[22px] sm:text-[28px] font-medium text-[#191919]">
-                                Shipping address
-                            </h1>
-                            <button
-                                type="button"
-                                onClick={handleAddAddress}
-                                className="text-xs font-medium text-[#4E3325] hover:opacity-80 transition"
-                                disabled={isCreating || isUpdating || isDeleting}
-                            >
-                                <span className="mr-2 text-sm">+</span> Add new address
-                            </button>
-                        </div>
 
-                        <div className="mt-6 space-y-4">
+
+                        <div className="">
                             {addresses.map((a: Address) => {
                                 const active = a.id === selected;
                                 return (

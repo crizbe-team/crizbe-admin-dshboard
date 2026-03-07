@@ -104,7 +104,7 @@ export default function CartPage() {
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
             <div className="wrapper mx-auto pt-[110px] pb-16">
                 <CheckoutSteps active="Cart" />
-                <h1 className="text-[28px] font-medium text-[#191919] mb-[32px]">
+                <h1 className="text-[28px] font-medium text-[#191919] py-[32px]">
                     Your cart{' '}
                     <span className="text-sm  md:text-base  lg:text-lg font-normal text-[#747474]">
                         ({itemsCount} items)
@@ -147,8 +147,8 @@ export default function CartPage() {
                                                     {isLoading
                                                         ? 'Loading...'
                                                         : convertPrice(
-                                                              it.variant_details?.price || 0
-                                                          )}
+                                                            it.variant_details?.price || 0
+                                                        )}
                                                 </span>
                                             </div>
 
@@ -167,7 +167,7 @@ export default function CartPage() {
                                                                     handleUpdateQuantity(
                                                                         it.id,
                                                                         localQuantities[it.id] ??
-                                                                            it.quantity,
+                                                                        it.quantity,
                                                                         -1,
                                                                         it.available_stock ?? 999
                                                                     )
@@ -195,13 +195,13 @@ export default function CartPage() {
                                                                     updatingId === it.id ||
                                                                     (localQuantities[it.id] ??
                                                                         it.quantity) >=
-                                                                        (it.available_stock ?? 999)
+                                                                    (it.available_stock ?? 999)
                                                                 }
                                                                 onClick={() =>
                                                                     handleUpdateQuantity(
                                                                         it.id,
                                                                         localQuantities[it.id] ??
-                                                                            it.quantity,
+                                                                        it.quantity,
                                                                         1,
                                                                         it.available_stock ?? 999
                                                                     )
@@ -215,7 +215,7 @@ export default function CartPage() {
                                                             it.available_stock < 10 &&
                                                             (localQuantities[it.id] ??
                                                                 it.quantity) <=
-                                                                it.available_stock && (
+                                                            it.available_stock && (
                                                                 <span className="text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
                                                                     🔥 Only {it.available_stock}{' '}
                                                                     left!
@@ -223,7 +223,7 @@ export default function CartPage() {
                                                             )}
                                                     </div>
                                                     {(localQuantities[it.id] ?? it.quantity) >
-                                                    (it.available_stock ?? 0) ? (
+                                                        (it.available_stock ?? 0) ? (
                                                         <p className="mt-2 text-[11px] font-medium text-red-600">
                                                             <span className="font-bold">
                                                                 Reduce quantity!
@@ -238,7 +238,7 @@ export default function CartPage() {
                                                             available — please lower your quantity.
                                                         </p>
                                                     ) : it.available_stock > 0 &&
-                                                      it.available_stock < 10 ? (
+                                                        it.available_stock < 10 ? (
                                                         <p className="mt-2 text-[11px] font-medium text-orange-700">
                                                             <span className="font-bold">
                                                                 Hurry!
