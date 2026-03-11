@@ -3,7 +3,6 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface Product {
     id: string;
@@ -22,7 +21,12 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const router = useRouter();
-    const { convertPrice, isLoading } = useCurrency();
+
+    // Format price
+    const formattedPrice = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+    }).format(Number(product.price) || 0);
 
     const imageUrl = product.images?.[0]?.image || '/placeholder-image.png';
 
@@ -32,11 +36,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     return (
         <div
-            className="rounded-[32px] flex flex-col h-full transition-shadow duration-300 cursor-pointer"
+            className="flex flex-col h-full transition-shadow duration-300 cursor-pointer"
             onClick={handleClick}
         >
             {/* Image Container */}
-            <div className="relative w-full aspect-square mb-6 rounded-[24px] overflow-hidden bg-[#EAEAEA]">
+            <div className="relative w-full aspect-square mb-[16px] rounded-[12px] overflow-hidden bg-[#7C7C44]">
                 {product.images && product.images.length > 0 ? (
                     <img
                         src={imageUrl}
@@ -44,7 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl">
+                    <div className="w-full h-full flex items-center justify-center text-4xl text-white/50">
                         {product.icon || '📦'}
                     </div>
                 )}
@@ -53,23 +57,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {/* Content */}
             <div className="flex flex-col flex-grow">
                 {/* Category */}
-                <p className="font-[var(--font-bricolage)] font-normal text-[12px] leading-[16px] text-[#AFAFAF] mb-2 uppercase align-middle">
-                    {product.category?.name || 'Uncategorized'}
+                <p className="font-bricolage font-normal text-[12px] leading-[16px] text-[#747474] mb-2">
+                    {product.category?.name || 'Category'}
                 </p>
 
                 {/* Title */}
-                <h3 className="font-[var(--font-inter-tight)] font-semibold text-[16px] leading-[150%] mb-2 line-clamp-2 align-middle">
+                <h3 className="font-inter-tight font-semibold text-[18px] leading-[150%] text-[#191919]  line-clamp-1">
                     {product.name}
                 </h3>
 
                 {/* Price */}
-                <p className="font-[var(--font-inter-tight)] font-semibold text-[16px] leading-[150%] mb-6 align-middle">
-                    {isLoading ? 'Loading...' : convertPrice(product.price)}
+                <p className="font-inter-tight font-semibold text-[16px] leading-[150%] text-[#373737] mb-[16px]">
+                    {formattedPrice}
                 </p>
 
                 {/* Add to Cart Button */}
                 <button
-                    className="w-full py-[12px] px-[24px] rounded-[12px] border border-[#000] font-medium text-[14px] hover:bg-white hover:text-[#373737] transition-all duration-300 flex items-center justify-center gap-[8px]"
+                    className="w-full max-w-full h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-normal text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer"
                     onClick={(e) => {
                         e.stopPropagation();
                         // Add to cart logic here

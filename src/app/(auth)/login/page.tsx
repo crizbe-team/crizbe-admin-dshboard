@@ -143,14 +143,14 @@ export default function LoginPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Welcome Back</h1>
-                <p className="text-sm text-[#7A7A7A] leading-relaxed">
-                    Sign in to your account to continue
+                <h1 className="text-2xl font-bricolage font-semibold text-[#191919] mb-3">Welcome back</h1>
+                <p className="text-sm text-[#474747] leading-relaxed">
+                    Welcome back! Please enter your details.
                 </p>
             </div>
 
             {/* Login Form */}
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {globalError && (
                     <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg text-center">
                         {globalError}
@@ -171,6 +171,7 @@ export default function LoginPage() {
                         enableCodeSearch
                         placeholder="Enter your mobile number"
                         error={errors.phone?.message || errors.username?.message}
+
                     />
                 ) : (
                     <FormInput
@@ -182,6 +183,7 @@ export default function LoginPage() {
                         onChange={(e) => handleInputChange(e.target.value)}
                         placeholder="Enter your email id / mobile number"
                         error={errors.email?.message || errors.username?.message || ''}
+
                     />
                 )}
 
@@ -189,7 +191,7 @@ export default function LoginPage() {
                 <div className="flex flex-col gap-1">
                     <label className="text-xs font-medium text-[#404040]">
                         Password
-                        <span className="text-red-500 ml-1">*</span>
+                        <span className="text-[#002D62] ml-1">*</span>
                     </label>
                     <div className="relative">
                         <input
@@ -201,14 +203,13 @@ export default function LoginPage() {
                                 },
                             })}
                             placeholder="Enter your password"
-                            className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#4E3325] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${
-                                errors.password ? 'border-red-500' : 'border-[#E7E4DD]'
-                            }`}
+                            className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#474747] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${errors.password ? 'border-red-500' : 'border-[#E7E4DD]'
+                                }`}
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#B7AFA5] hover:text-[#4E3325] transition-colors"
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#474747] hover:text-[#4E3325] transition-colors"
                         >
                             {showPassword ? (
                                 <EyeOff className="w-4 h-4" />
@@ -226,7 +227,7 @@ export default function LoginPage() {
                 <div className="flex justify-end">
                     <Link
                         href="/forgot-password"
-                        className="text-sm text-[#C4994A] hover:text-[#B38840] transition-colors"
+                        className="text-sm text-[#C4994A] font-bricolage hover:text-[#B38840] transition-colors"
                     >
                         Forgot password?
                     </Link>
@@ -236,15 +237,20 @@ export default function LoginPage() {
                 <Button
                     type="submit"
                     disabled={isPending}
-                    className="w-full bg-[#C4994A] hover:bg-[#B38840] text-white font-medium py-3 rounded-full"
+                    style={{
+                        background:
+                            'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
+                    }}
+                    className="group relative overflow-hidden w-full mb-[16px] shadow-sm hover:opacity-95 active:opacity-90 transition-all duration-300 py-3 rounded-[12px] h-[48px] cursor-pointer font-[var(--font-inter-tight)]"
                 >
+                    {/* Shine Effect */}
+                    <span className="pointer-events-none absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
                     {isPending ? (
                         <>
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            <span>Signing in...</span>
                         </>
                     ) : (
-                        'Sign In'
+                        'Login'
                     )}
                 </Button>
 
@@ -252,9 +258,9 @@ export default function LoginPage() {
                 <button
                     type="button"
                     onClick={handleGoogleLogin}
-                    className="w-full flex items-center justify-center gap-3 bg-white border border-[#E7E4DD] hover:border-[#C4994A] text-[#4E3325] font-medium py-3 rounded-full transition-colors"
+                    className="w-full  mb-[32px] flex font-[var(--font-inter-tight)] items-center justify-center gap-3  text-[#404040] cursor-pointer   rounded-full transition-colors"
                 >
-                    <svg width="20" height="20" viewBox="0 0 24 24">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
                         <path
                             fill="#4285F4"
                             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -277,7 +283,7 @@ export default function LoginPage() {
             </form>
 
             {/* Register Link */}
-            <p className="mt-8 text-center text-sm text-[#7A7A7A]">
+            <p className=" text-center text-sm text-[#474747]">
                 Don&apos;t have an account?{' '}
                 <Link
                     href="/register"

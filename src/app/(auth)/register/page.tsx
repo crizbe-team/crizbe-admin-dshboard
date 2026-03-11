@@ -146,8 +146,8 @@ export default function RegisterPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Welcome</h1>
-                <p className="text-sm text-[#7A7A7A] leading-relaxed">
+                <h1 className="text-2xl font-bricolage font-semibold text-[#191919] mb-3">Welcome</h1>
+                <p className="text-sm text-[#474747] leading-relaxed">
                     Welcome to Crizbe, Please enter your details and
                     <br />
                     signup to try out our crunchy bytes.
@@ -190,8 +190,14 @@ export default function RegisterPage() {
                     isLoading={isPending}
                     loadingText="Please wait..."
                     fullWidth
-                    className="rounded-full py-3"
+                    style={{
+                        background:
+                            'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
+                    }}
+                    className="transition-all duration-300 ease-out hover:scale-[1.02] whitespace-nowrap py-3 group relative overflow-hidden w-full mb-[16px] shadow-sm hover:opacity-95 active:opacity-90  rounded-[12px] h-[48px] cursor-pointer font-[var(--font-inter-tight)]"
+
                 >
+                    <span className="pointer-events-none absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
                     Continue
                 </GoldenButton>
 
@@ -199,7 +205,7 @@ export default function RegisterPage() {
                 <button
                     type="button"
                     onClick={handleGoogleSignup}
-                    className="w-full flex items-center justify-center gap-3 bg-white border border-[#E7E4DD] hover:border-[#C4994A] text-[#4E3325] font-medium py-3 rounded-full transition-colors"
+                    className="w-full mb-[32px] flex font-[var(--font-inter-tight)] items-center justify-center gap-3  text-[#404040] cursor-pointer   rounded-full transition-colors"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24">
                         <path
@@ -224,7 +230,7 @@ export default function RegisterPage() {
             </form>
 
             {/* Login Link */}
-            <p className="mt-8 text-center text-sm text-[#7A7A7A]">
+            <p className=" text-center text-sm text-[#474747]">
                 Have an account?{' '}
                 <Link
                     href="/login"

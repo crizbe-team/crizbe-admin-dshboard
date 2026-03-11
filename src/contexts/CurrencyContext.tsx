@@ -28,7 +28,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     const fetchExchangeRates = async () => {
         try {
             const response = await api.get('core/currency-rates/');
-            console.log("response.data.rates",response.data.data.rates)
+            console.log("response.data.rates", response.data.data.rates)
             setRates(response.data.data.rates);
         } catch (error) {
             console.error('Failed to fetch exchange rates:', error);
@@ -63,20 +63,23 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const initializeCurrency = async () => {
             setIsLoading(true);
+            try {
+                // Check localStorage first
+                const savedCurrency = localStorage.getItem('selectedCurrency');
+                if (savedCurrency && SUPPORTED_CURRENCIES.includes(savedCurrency)) {
+                    setCurrencyState(savedCurrency);
+                } else {
+                    // Auto-detect if no saved currency
+                    await detectUserCurrency();
+                }
 
-            // Check localStorage first
-            const savedCurrency = localStorage.getItem('selectedCurrency');
-            if (savedCurrency && SUPPORTED_CURRENCIES.includes(savedCurrency)) {
-                setCurrencyState(savedCurrency);
-            } else {
-                // Auto-detect if no saved currency
-                await detectUserCurrency();
+                // Fetch exchange rates
+                await fetchExchangeRates();
+            } catch (error) {
+                console.error('Initialization error in CurrencyProvider:', error);
+            } finally {
+                setIsLoading(false);
             }
-
-            // Fetch exchange rates
-            await fetchExchangeRates();
-
-            setIsLoading(false);
         };
 
         initializeCurrency();

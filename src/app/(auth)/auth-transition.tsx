@@ -22,7 +22,7 @@ export default function AuthTransition({ children }: { children: ReactNode }) {
             <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
                     key={pathname}
-                    className="w-full h-full flex justify-center items-center px-6 py-12"
+                    className="w-full h-full flex justify-center items-center"
                     variants={{
                         initial: {
                             x: '100%',

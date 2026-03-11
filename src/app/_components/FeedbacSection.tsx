@@ -80,8 +80,8 @@ const FeedbacSection = () => {
                                     sizes="(max-width: 768px) 100vw, 50vw"
                                     priority
                                 />
-                                <div className='absolute bottom-6 left-6 right-6 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl'>
-                                    <h3 className='text-white text-xl font-semibold mb-1'>
+                                <div className='absolute bottom-6 left-6 right-6 p-[20px] bg-[#8B7D79]/10 backdrop-blur-lg border border-white/20 rounded-2xl'>
+                                    <h3 className='text-white text-xl font-semibold font-bricolage mb-1'>
                                         {currentFeedback.name}
                                     </h3>
                                     <p className='text-white/80 text-sm'>

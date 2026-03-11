@@ -100,13 +100,13 @@ export default function AddAddressModal({
     useEffect(() => {
         if (editingAddress) {
             // Extract country ID from either string or object format
-            const countryId = typeof editingAddress.country === 'string' 
-                ? editingAddress.country 
+            const countryId = typeof editingAddress.country === 'string'
+                ? editingAddress.country
                 : editingAddress.country?.id || "";
-            
+
             // Extract state ID from either string or object format
-            const stateId = typeof editingAddress.state === 'string' 
-                ? editingAddress.state 
+            const stateId = typeof editingAddress.state === 'string'
+                ? editingAddress.state
                 : editingAddress.state?.id || "";
 
             setForm({
@@ -171,7 +171,7 @@ export default function AddAddressModal({
 
         try {
             await onSubmit(addressData);
-           
+
         } catch (error) {
             // Optionally handle submission errors here
             console.error("Submission error:", error);
@@ -226,6 +226,7 @@ export default function AddAddressModal({
                                 setForm((prev) => ({ ...prev, firstName: e.target.value }))
                             }
                             error={errors.firstName}
+
                         />
                         <FormInput
                             label="Last name"

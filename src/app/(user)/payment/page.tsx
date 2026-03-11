@@ -198,14 +198,13 @@ export default function PaymentPage() {
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
             <div className="wrapper mx-auto pt-[110px] pb-16">
                 <CheckoutSteps active="Payment" />
+                <h1 className="text-2xl font-semibold text-[#4E3325] py-[32px]">
+                    Choose payment method
+                </h1>
 
                 <div className="mt-3 flex items-start justify-between gap-10 flex-col lg:flex-row">
                     <section className="w-full flex-1">
-                        <h1 className="text-2xl font-semibold text-[#4E3325]">
-                            Choose payment method
-                        </h1>
-
-                        <div className="mt-6 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm overflow-hidden">
+                        <div className="rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm overflow-hidden">
                             {methods.map((m, idx) => {
                                 const Icon = m.icon;
                                 const active = selected === m.id;

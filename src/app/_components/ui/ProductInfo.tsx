@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Minus, Plus, ShoppingCart, Star, Loader2, ArrowRight, Flame, Clock } from 'lucide-react';
+import { ArrowRight, Clock, Flame, Loader2, Minus, Plus, ShoppingCart, Star } from 'lucide-react';
 import { useAddToCart } from '@/queries/use-cart';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface ProductInfoProps {
@@ -11,32 +11,31 @@ interface ProductInfoProps {
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
-    const router = useRouter();
-    const { convertPrice, isLoading } = useCurrency();
     const [quantity, setQuantity] = useState(1);
     const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null);
-    const { mutate: addToCart, isPending } = useAddToCart();
 
     const handleQuantityChange = (type: 'inc' | 'dec') => {
         if (type === 'dec' && quantity > 1) {
             setQuantity(quantity - 1);
         } else if (type === 'inc') {
-            const stockLimit = selectedVariant?.stock ?? Infinity;
-            if (quantity < stockLimit) {
-                setQuantity(quantity + 1);
-            }
+            setQuantity(quantity + 1);
         }
     };
+
+    const currentPrice = selectedVariant ? selectedVariant.price : product.price;
+
+    const hasVariants = product.variants && product.variants.length > 0;
+    const isInStock = hasVariants
+        ? selectedVariant && selectedVariant.stock > 0 && selectedVariant.in_stock !== false
+        : false; // If no variants are present, consider it not purchasable for now
+    const isLowStock = selectedVariant && selectedVariant.stock > 0 && selectedVariant.stock < 10;
+
+    const router = useRouter();
+    const { mutate: addToCart, isPending } = useAddToCart();
 
     const handleAddToCart = () => {
         if (!selectedVariant && product.variants?.length > 0) {
             alert('Please select a size');
-            return;
-        }
-
-        const stockLimit = selectedVariant?.stock ?? 0;
-        if (selectedVariant && quantity > stockLimit) {
-            alert(`Sorry, only ${stockLimit} units available.`);
             return;
         }
 
@@ -52,46 +51,24 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         });
     };
 
-    const currentPrice = selectedVariant ? selectedVariant.price : product.price;
+    const { convertPrice, isLoading } = useCurrency();
 
-    const hasVariants = product.variants && product.variants.length > 0;
-    const isInStock = hasVariants
-        ? selectedVariant && selectedVariant.stock > 0 && selectedVariant.in_stock !== false
-        : false; // If no variants are present, consider it not purchasable for now
-    const isLowStock = selectedVariant && selectedVariant.stock > 0 && selectedVariant.stock < 10;
+    const formattedPrice = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+    }).format(Number(currentPrice) || 0);
 
     return (
         <div className="flex flex-col font-sans">
             {/* Brand / Category */}
-            <span className="text-base text-[#5A5A5A] mb-1">
+            <span className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums text-[#5A5A5A] mb-1">
                 {product.category?.name || 'Crizbe'}
             </span>
 
             {/* Title */}
-            <div className="flex items-start justify-between gap-4">
-                <h1 className="text-4xl font-bold text-[#1A1A1A] mb-3 leading-tight flex-1">
-                    {product.name}
-                </h1>
-                {selectedVariant && (
-                    <div className="flex flex-col items-end shrink-0 pt-2">
-                        {selectedVariant.stock > 0 ? (
-                            <span
-                                className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full ${
-                                    isLowStock
-                                        ? 'bg-orange-100 text-orange-600'
-                                        : 'bg-green-100 text-green-600'
-                                }`}
-                            >
-                                {isLowStock ? `Only ${selectedVariant.stock} left` : 'In Stock'}
-                            </span>
-                        ) : (
-                            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full bg-red-100 text-red-600">
-                                Out of Stock
-                            </span>
-                        )}
-                    </div>
-                )}
-            </div>
+            <h1 className="font-bricolage font-bold text-[36px] leading-[140%] text-[#1A1A1A] mb-3">
+                {product.name}
+            </h1>
 
             {/* Reviews */}
             <div className="flex items-center gap-2 mb-6">

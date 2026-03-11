@@ -7,7 +7,7 @@ import StockAddModal from '@/components/Modals/StockAddModal';
 import { useFetchStockList, useCreateStock } from '@/queries/use-stock';
 import { useFetchProducts } from '@/queries/use-products';
 import { useFetchCategories } from '@/queries/use-categories';
-import Loader from '@/components/ui/loader';
+import UserLoaders from '@/components/ui/UserLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 
@@ -168,7 +168,7 @@ export default function StockPage() {
                 <div className="overflow-x-auto">
                     {isStockLoading ? (
                         <div className="p-12 border-t border-[#2a2a2a]">
-                            <Loader />
+                            <UserLoaders />
                         </div>
                     ) : products.length > 0 ? (
                         <table className="w-full">
@@ -210,13 +210,12 @@ export default function StockPage() {
                                         <td className="p-4 text-gray-300">{product.total_stock}</td>
                                         <td className="p-4">
                                             <span
-                                                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                    product.status === 'In Stock'
+                                                className={`px-2 py-1 rounded-full text-xs font-medium ${product.status === 'In Stock'
                                                         ? 'bg-green-500 bg-opacity-10 text-green-400'
                                                         : product.status === 'Low Stock'
-                                                          ? 'bg-orange-500 bg-opacity-10 text-orange-400'
-                                                          : 'bg-red-500 bg-opacity-10 text-red-400'
-                                                }`}
+                                                            ? 'bg-orange-500 bg-opacity-10 text-orange-400'
+                                                            : 'bg-red-500 bg-opacity-10 text-red-400'
+                                                    }`}
                                             >
                                                 {product.status}
                                             </span>

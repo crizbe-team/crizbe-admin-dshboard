@@ -18,7 +18,7 @@ import CategoryAddEditModal, {
 } from '@/components/Modals/CategoryAddEditModal';
 import CategoryDeleteModal from '@/components/Modals/CategoryDeleteModal';
 import { useFetchCategories, useDeleteCategory } from '@/queries/use-categories';
-import Loader from '@/components/ui/loader';
+import UserLoaders from '@/components/ui/UserLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 
 export default function CategoriesPage() {
@@ -185,7 +185,7 @@ export default function CategoriesPage() {
 
                 <div className="overflow-x-auto">
                     {isLoading ? (
-                        <Loader />
+                        <UserLoaders />
                     ) : data?.data?.length > 0 ? (
                         <table className="w-full">
                             <thead>

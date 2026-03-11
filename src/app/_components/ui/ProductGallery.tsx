@@ -24,7 +24,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName, pr
     return (
         <div className="flex flex-col gap-6">
             {/* Main Image */}
-            <div className="relative w-full aspect-square bg-[#F5F2EA] rounded-[32px] overflow-hidden shadow-sm group">
+            <div className="relative w-full aspect-square bg-[#F5F2EA] h-[550px] rounded-[32px] overflow-hidden shadow-sm group">
                 {displayImage ? (
                     <img
                         src={displayImage}
