@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, Clock, Flame, Loader2, Minus, Plus, ShoppingCart, Star } from 'lucide-react';
 import { useAddToCart } from '@/queries/use-cart';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface ProductInfoProps {
@@ -11,6 +11,7 @@ interface ProductInfoProps {
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
+    const router = useRouter();
     const [quantity, setQuantity] = useState(1);
     const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null);
 
@@ -30,7 +31,6 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         : false; // If no variants are present, consider it not purchasable for now
     const isLowStock = selectedVariant && selectedVariant.stock > 0 && selectedVariant.stock < 10;
 
-    const router = useRouter();
     const { mutate: addToCart, isPending } = useAddToCart();
 
     const handleAddToCart = () => {

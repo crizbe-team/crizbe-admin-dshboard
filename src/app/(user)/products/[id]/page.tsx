@@ -2,11 +2,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import {
-    useFetchSingleProduct,
-    useFetchProducts,
-    useFetchRelatedProducts,
-} from '@/queries/use-products';
+import { useFetchSingleProduct, useFetchRelatedProducts } from '@/queries/use-products';
 import UserLoaders from '@/components/ui/UserLoader';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import ProductGallery from '@/app/_components/ui/ProductGallery';
@@ -22,9 +18,11 @@ const ProductDetailsPage = () => {
 
     const { data: productData, isLoading, isError } = useFetchSingleProduct(productId || '');
     const { data: relatedProductsData } = useFetchRelatedProducts(productId || '');
-    const product = productData?.data;
+    const product = productData;
     const relatedProducts = relatedProductsData?.data || [];
     const [showAllReviews, setShowAllReviews] = useState(false);
+
+    console.log(productData, 'isError', isError);
 
     if (isLoading) {
         return <UserLoaders />;
