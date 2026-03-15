@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState, useRef, useEffect } from 'react';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ShoppingCart, User } from 'lucide-react';
 
 export default function Header() {
     const { currency, setCurrency, isLoading } = useCurrency();
@@ -47,8 +47,9 @@ export default function Header() {
                     </Link>
                 </h1>
 
-                {/* Currency Switcher */}
-                <div className="flex items-center gap-4">
+                {/* Right side actions */}
+                <div className="flex items-center gap-6">
+                    {/* Currency Switcher */}
                     <div className="relative" ref={dropdownRef}>
                         <button
                             onClick={() => setIsOpen(!isOpen)}
@@ -97,7 +98,26 @@ export default function Header() {
                         )}
                     </div>
 
-                    <button className="flex h-[10px] w-[32px] flex-col justify-between cursor-pointer">
+                    {/* Cart & Profile */}
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/cart"
+                            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
+                            aria-label="Cart"
+                        >
+                            <ShoppingCart className="w-5 h-5" />
+                        </Link>
+                        <Link
+                            href="/profile"
+                            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
+                            aria-label="Profile"
+                        >
+                            <User className="w-5 h-5" />
+                        </Link>
+                    </div>
+
+                    {/* Menu icon */}
+                    <button className="flex h-[10px] w-[32px] flex-col justify-between cursor-pointer" aria-label="Open menu">
                         <span className="h-[3px] w-full rounded bg-[#4E3325]"></span>
                         <span className="h-[3px] w-full rounded bg-[#4E3325]"></span>
                     </button>
