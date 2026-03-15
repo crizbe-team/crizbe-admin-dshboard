@@ -61,17 +61,17 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     return (
         <div className="flex flex-col font-sans">
             {/* Brand / Category */}
-            <span className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums text-[#5A5A5A] mb-1">
+            <span className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums text-[#5A5A5A] mb-[4px]">
                 {product.category?.name || 'Crizbe'}
             </span>
 
             {/* Title */}
-            <h1 className="font-bricolage font-bold text-[36px] leading-[140%] text-[#1A1A1A] mb-3">
+            <h1 className="font-bricolage font-bold text-[36px] leading-[140%] text-[#1A1A1A] mb-[12px]">
                 {product.name}
             </h1>
 
             {/* Reviews */}
-            <div className="flex items-center gap-2 mb-6">
+            <div className="flex items-center gap-2 mb-[20px]">
                 <div className="flex text-[#FFB800] gap-0.5">
                     {[...Array(5)].map((_, i) => (
                         <Star
@@ -92,7 +92,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             {hasVariants ? (
                 <>
                     {/* Price */}
-                    <div className="text-3xl font-medium text-[#1A1A1A] mb-5">
+                    <div className="text-3xl font-medium text-[#1A1A1A] mb-[24px]">
                         {isLoading ? 'Loading...' : convertPrice(currentPrice)}
                     </div>
 
@@ -133,8 +133,30 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                         </div>
                     )}
 
+                    {/* Flavour Mock */}
+                    <div className="mb-[24px]">
+                        <h3 className="text-sm font-medium text-[#191919] mb-3">Flavour</h3>
+                        <div className="flex gap-4">
+                            {['Almond', 'Pistachio', 'Dark Choco'].map((flavour, i) => (
+                                <button
+                                    key={i}
+                                    className={`group relative w-16 h-16 rounded-[12px] overflow-hidden transition-all duration-200 ${i === 0 ? 'ring-2 ring-[#552C10] ring-offset-2' : 'hover:opacity-80'}`}
+                                    title={flavour}
+                                >
+                                    <img
+                                        src={product.images?.[i]?.image || product.images?.[0]?.image}
+                                        className="w-full h-full object-cover"
+                                        alt={flavour}
+                                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+
                     {/* Variant Selection */}
-                    <div className="mb-8">
+                    <div className="mb-[24px]">
                         <h3 className="text-sm font-medium text-[#1A1A1A] mb-3">Select Size</h3>
                         <div className="flex flex-wrap gap-4">
                             {product.variants.map((v: any) => (
@@ -146,11 +168,10 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                             setQuantity(Math.max(1, v.stock || 0));
                                         }
                                     }}
-                                    className={`px-5 py-3 rounded-2xl cursor-pointer border text-sm font-semibold transition-all duration-300 ${
-                                        selectedVariant?.id === v.id
-                                            ? 'border-[#552C10] bg-[#552C10] text-white shadow-md transform scale-105'
-                                            : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
-                                    }`}
+                                    className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-[var(--font-inter-tight)] font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${selectedVariant?.id === v.id
+                                        ? 'border-[#552C10] bg-[#552C10] text-white shadow-md transform scale-105'
+                                        : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
+                                        }`}
                                 >
                                     {v.size}
                                 </button>
@@ -160,9 +181,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
 
                     {/* Quantity Selector */}
                     <div
-                        className={`mb-10 transition-opacity duration-300 ${!isInStock ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}
+                        className={`mb-[32px] transition-opacity duration-300 ${!isInStock ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}
                     >
-                        <div className="flex items-center justify-between mb-3 pr-2">
+                        <div className='mb-3'>
                             <h3 className="text-sm font-medium text-[#1A1A1A]">Quantity</h3>
                             {selectedVariant &&
                                 quantity >= selectedVariant.stock &&
@@ -172,19 +193,19 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                     </span>
                                 )}
                         </div>
-                        <div className="flex items-center border border-[#8E8E8E] rounded-lg w-fit h-12 overflow-hidden">
+                        <div className="flex items-center border border-[#8E8E8E] rounded-lg w-fit h-[44px]">
                             <button
-                                className="w-12 h-full flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors border-r border-[#8E8E8E] disabled:opacity-30"
+                                className="w-12 h-full flex items-center justify-center cursor-pointer transition-colors border-r border-[#8E8E8E]"
                                 onClick={() => handleQuantityChange('dec')}
                                 disabled={quantity <= 1}
                             >
                                 <Minus className="w-4 h-4 text-[#1A1A1A]" />
                             </button>
-                            <span className="w-16 h-full flex items-center justify-center text-lg font-medium text-[#1A1A1A]">
+                            <span className="w-16 h-full flex items-center justify-center font-[var(--font-inter-tight)] font-medium text-[16px] leading-[120%] lining-nums proportional-nums text-[#1A1A1A]">
                                 {quantity < 10 ? `0${quantity}` : quantity}
                             </span>
                             <button
-                                className="w-12 h-full flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors border-l border-[#8E8E8E] disabled:opacity-30"
+                                className="w-12 h-full flex items-center justify-center cursor-pointer transition-colors border-l border-[#8E8E8E]"
                                 onClick={() => handleQuantityChange('inc')}
                                 disabled={selectedVariant && quantity >= selectedVariant.stock}
                             >
@@ -211,40 +232,39 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     )}
 
                     {/* Add to Cart */}
-                    <div className="relative group mb-8">
+                    <div className="flex flex-col sm:flex-row gap-3 mb-[32px]">
+                        <button
+                            style={{
+                                background:
+                                    'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
+                            }}
+                            className="group w-full sm:flex-1 relative overflow-hidden h-[44px] py-[12px] px-[24px] rounded-[12px] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#FFFFFF] hover:text-white transition-all duration-300 cursor-pointer"
+                        >
+                            {/* Shine Effect */}
+                            <div className="pointer-events-none absolute inset-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
+                            <span className="relative z-10">Buy Now</span>
+                        </button>
                         <button
                             onClick={handleAddToCart}
                             disabled={isPending || !isInStock}
-                            style={{
-                                background: !isInStock
-                                    ? '#AFAFAF'
-                                    : 'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
-                            }}
-                            className={`w-full relative overflow-hidden text-white text-base font-bold py-4 rounded-md flex items-center justify-center gap-3 transition-all duration-500 shadow-[0_4px_20px_rgba(154,114,54,0.2)] active:scale-[0.98] ${
-                                !isInStock ? 'cursor-not-allowed' : 'cursor-pointer'
-                            } disabled:opacity-70`}
+                            className="w-full sm:flex-1 h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer"
                         >
-                            {/* Shine Effect */}
-                            {isInStock && (
-                                <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
-                            )}
-
                             {isPending ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : selectedVariant &&
-                              !selectedVariant.in_stock ? null : selectedVariant?.is_in_cart ? (
-                                <ArrowRight className="w-5 h-5" />
-                            ) : (
+                                !selectedVariant.in_stock ? null : selectedVariant?.is_in_cart ? (
+                                    <ArrowRight className="w-5 h-5" />
+                                ) : (
                                 <ShoppingCart className="w-5 h-5" />
                             )}
                             <span>
                                 {isPending
-                                    ? 'Adding...'
+                                    ? ""
                                     : !isInStock
-                                      ? 'Out of Stock'
-                                      : selectedVariant?.is_in_cart
-                                        ? 'Go to Cart'
-                                        : 'Add to Cart'}
+                                        ? 'Out of Stock'
+                                        : selectedVariant?.is_in_cart
+                                            ? 'Go to Cart'
+                                            : 'Add to Cart'}
                             </span>
                         </button>
                     </div>
@@ -259,8 +279,8 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 </div>
             )}
 
-            <hr className="border-t border-dashed border-[#EAEAEA] mb-8" />
-        </div>
+            <hr className="border-t border-dashed border-[#EAEAEA]" />
+        </div >
     );
 };
 

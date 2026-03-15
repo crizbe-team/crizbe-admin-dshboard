@@ -94,7 +94,7 @@ const ProductDetailsPage = () => {
                         {/* About the product - Styled as per screenshot "About the product" with a small line on right? Screenshot shows "-" (minus) icon typically for open accordion */}
                         <AccordionItem
                             title={
-                                <span className="font-[var(--font-inter-tight)] font-medium text-[20px] leading-[26px] tracking-[0.02em] text-[#191919] text-center lining-nums proportional-nums">
+                                <span className="font-[var(--font-inter-tight)] font-medium text-[18px]  tracking-[0.02em] text-[#191919] text-center lining-nums proportional-nums">
                                     About the product
                                 </span>
                             }
@@ -110,7 +110,7 @@ const ProductDetailsPage = () => {
                         {/* Ratings & Reviews - Match API data */}
                         <AccordionItem
                             title={
-                                <span className="font-[var(--font-inter-tight)] font-medium text-[20px] leading-[26px] tracking-[0.02em] text-[#191919] text-center lining-nums proportional-nums">
+                                <span className="font-[var(--font-inter-tight)] font-medium text-[18px]  tracking-[0.02em] text-[#191919] text-center lining-nums proportional-nums">
                                     Ratings & Reviews
                                 </span>
                             }
@@ -125,7 +125,7 @@ const ProductDetailsPage = () => {
                                                 {Number(product.average_rating || 0).toFixed(1)}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-gray-500 mt-1">
+                                        <p className="text-sm text-[#747474] mt-1">
                                             {product.total_reviews || 0} ratings & reviews
                                         </p>
                                     </div>
@@ -142,12 +142,12 @@ const ProductDetailsPage = () => {
                                                 rating === 5
                                                     ? 'Excellent'
                                                     : rating === 4
-                                                      ? 'Very good'
-                                                      : rating === 3
-                                                        ? 'Good'
-                                                        : rating === 2
-                                                          ? 'Average'
-                                                          : 'Poor';
+                                                        ? 'Very good'
+                                                        : rating === 3
+                                                            ? 'Good'
+                                                            : rating === 2
+                                                                ? 'Average'
+                                                                : 'Poor';
 
                                             return (
                                                 <div
@@ -173,8 +173,8 @@ const ProductDetailsPage = () => {
                                 </div>
 
                                 {/* Customer Reviews Box style */}
-                                <div className="border border-[#EAEAEA] rounded-2xl p-6">
-                                    <h3 className="font-inter-tight font-medium text-[20px] leading-[35.91px] tracking-[0.02em] text-[#191919] mb-6">
+                                <div className="border border-[#EAEAEA] rounded-2xl p-[20px]">
+                                    <h3 className="font-inter-tight font-medium text-[18px] leading-[35.91px] tracking-[0.02em] text-[#191919] mb-6">
                                         Customers Reviews
                                     </h3>
 

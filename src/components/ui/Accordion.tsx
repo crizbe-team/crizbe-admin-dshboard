@@ -12,8 +12,14 @@ interface AccordionItemProps {
 const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, defaultOpen = false }) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
 
+    const isRatingsSection =
+        typeof title === 'string'
+            ? title === 'Ratings & Reviews'
+            : React.isValidElement<{ children?: React.ReactNode }>(title) &&
+            title.props.children === 'Ratings & Reviews';
+
     return (
-        <div className="border-b border-dashed border-[#EAEAEA] py-4">
+        <div className={isRatingsSection ? 'py-[24px]' : 'border-b border-dashed border-[#EAEAEA] py-[24px] '}>
             <button
                 className="flex items-center justify-between w-full text-left focus:outline-none group"
                 onClick={() => setIsOpen(!isOpen)}
@@ -28,7 +34,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, defaultO
                 )}
             </button>
             <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? ' opacity-100 mt-4' : 'max-h-0 opacity-0'
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? ' opacity-100 mt-[22px]' : 'max-h-0 opacity-0'
                     }`}
             >
                 <div className="text-[#5A5A5A] leading-relaxed pb-2">
