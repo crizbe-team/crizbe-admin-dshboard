@@ -66,7 +66,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             </span>
 
             {/* Title */}
-            <h1 className="font-bricolage font-bold text-[36px] leading-[140%] text-[#1A1A1A] mb-[12px]">
+            <h1 className="font-bricolage font-bold capitalize text-[36px] leading-[140%] text-[#1A1A1A] mb-[12px]">
                 {product.name}
             </h1>
 
@@ -169,7 +169,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                         }
                                     }}
                                     className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-[var(--font-inter-tight)] font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${selectedVariant?.id === v.id
-                                        ? 'border-[#552C10] bg-[#552C10] text-white shadow-md transform scale-105'
+                                        ? 'border-[#4E3325] bg-[#4E3325] text-white shadow-md transform scale-105'
                                         : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
                                         }`}
                                 >
@@ -279,7 +279,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 </div>
             )}
 
-            <hr className="border-t border-dashed border-[#EAEAEA]" />
+            <hr className="border-t border-dashed border-[#CEA663]" />
         </div >
     );
 };

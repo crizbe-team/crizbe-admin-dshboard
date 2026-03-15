@@ -19,7 +19,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, defaultO
             title.props.children === 'Ratings & Reviews';
 
     return (
-        <div className={isRatingsSection ? 'py-[24px]' : 'border-b border-dashed border-[#EAEAEA] py-[24px] '}>
+        <div className={isRatingsSection ? 'py-[24px]' : 'border-b  border-dashed border-[#CEA663] py-[24px] '}>
             <button
                 className="flex items-center justify-between w-full text-left focus:outline-none group"
                 onClick={() => setIsOpen(!isOpen)}
