@@ -247,7 +247,7 @@ const ProductDetailsPage = () => {
 
             {/* Related Products */}
             {relatedProducts.length > 0 && (
-                <div className="mt-32 pt-12 border-t border-[#EAEAEA]">
+                <div className="mt-[40px] pt-12 border-t border-[#EAEAEA]">
                     <h2 className="font-inter font-semibold text-[25px] leading-[150%] tracking-[0%] text-[#191919] text-left mb-8">
                         Related Products
                     </h2>
