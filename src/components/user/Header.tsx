@@ -59,9 +59,8 @@ export default function Header() {
                             <span className="font-medium">{currentCurrency.symbol}</span>
                             <span className="text-sm">{currentCurrency.code}</span>
                             <ChevronDown
-                                className={`w-4 h-4 transition-transform duration-200 ${
-                                    isOpen ? 'rotate-180' : ''
-                                }`}
+                                className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''
+                                    }`}
                             />
                         </button>
 
@@ -74,11 +73,10 @@ export default function Header() {
                                             setCurrency(curr.code);
                                             setIsOpen(false);
                                         }}
-                                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between ${
-                                            currency === curr.code
-                                                ? 'bg-blue-50 text-blue-600'
-                                                : 'text-gray-700'
-                                        }`}
+                                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between ${currency === curr.code
+                                            ? 'bg-blue-50 text-blue-600'
+                                            : 'text-gray-700'
+                                            }`}
                                     >
                                         <div className="flex items-center gap-3">
                                             <span className="font-medium">{curr.symbol}</span>
@@ -105,14 +103,14 @@ export default function Header() {
                             className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
                             aria-label="Cart"
                         >
-                            <ShoppingCart className="w-5 h-5" />
+                            <ShoppingCart className="w-[24px] h-[24px]" />
                         </Link>
                         <Link
                             href="/profile"
                             className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
                             aria-label="Profile"
                         >
-                            <User className="w-5 h-5" />
+                            <User className="w-[24px] h-[24px]" />
                         </Link>
                     </div>
 
