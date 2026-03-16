@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 interface Product {
     id: string;
+    slug: string;
     name: string;
     category?: {
         name: string;
@@ -31,7 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const imageUrl = product.images?.[0]?.image || '/placeholder-image.png';
 
     const handleClick = () => {
-        router.push(`/products/${product.id}`);
+        router.push(`/products/${product.slug}`);
     };
 
     return (
