@@ -29,8 +29,11 @@ export default function Flavours() {
                             Crunch.
                         </span>
                     </h2>
-                    <Button className="bg-[#FAF3E2] h-[54px] w-[193px] ">
-                        <span className=' font-medium bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent' onClick={() => router.push('/products')}>
+                    <Button className="bg-[#FAF3E2] h-[54px] w-[193px] hover:bg-black/5 focus-visible:border-[#C4994A] outline-none transition disabled:opacity-50 group">
+                        <span
+                            className="font-medium bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent group-hover:text-white group-hover:bg-none"
+                            onClick={() => router.push('/products')}
+                        >
                             Get it Now
                         </span>
 
