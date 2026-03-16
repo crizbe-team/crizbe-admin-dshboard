@@ -57,7 +57,7 @@ const ProductsPage = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search products..."
-                        className="w-full h-[44px] pl-10 pr-3 rounded-[12px] border border-[#E7E4DD] bg-white text-sm text-[#474747] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors"
+                        className="w-full h-[44px] pl-10 pr-3 rounded-[12px] border border-[#E7E4DD] bg-white text-sm text-[#474747] outline-none placeholder:text-[#B7AFA5] "
                     />
                 </div>
             </div>
