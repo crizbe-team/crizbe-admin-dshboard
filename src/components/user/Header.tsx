@@ -5,11 +5,17 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { ChevronDown, ShoppingCart, User } from 'lucide-react';
 import AuthActionWrapper from '@/components/AuthActionWrapper';
+import { authUtils } from '@/utils/auth';
+import { useFetchMinimalDetails } from '@/queries/use-account';
 
 export default function Header() {
     const { currency, setCurrency, isLoading } = useCurrency();
     const [isOpen, setIsOpen] = useState(false);
+    const [isAuth, setIsAuth] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const { data: minimalDetailsRes } = useFetchMinimalDetails(isAuth);
+    const cartCount = minimalDetailsRes?.data?.cart_count || 0;
 
     const currencies = [
         { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
@@ -22,6 +28,8 @@ export default function Header() {
     const currentCurrency = currencies.find((c) => c.code === currency) || currencies[0];
 
     useEffect(() => {
+        setIsAuth(authUtils.isAuthenticated());
+
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
@@ -104,10 +112,15 @@ export default function Header() {
                         <AuthActionWrapper>
                             <Link
                                 href="/cart"
-                                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
+                                className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
                                 aria-label="Cart"
                             >
                                 <ShoppingCart className="w-[24px] h-[24px]" />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1.5 -right-1.5 flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-[#E8BF7A] text-[10px] font-bold text-white px-1 shadow-sm">
+                                        {cartCount > 99 ? '99+' : cartCount}
+                                    </span>
+                                )}
                             </Link>
                         </AuthActionWrapper>
                         <AuthActionWrapper>

@@ -10,6 +10,13 @@ export const getAddresses = async () => {
     return handleApiResponse(response);
 };
 
+export const getMinimalDetails = async () => {
+    const { GET_MINIMAL_DETAILS } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_MINIMAL_DETAILS).build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
+
 export const getAddress = async (
     id: string,
     method: 'get' | 'delete' | 'put' = 'get',

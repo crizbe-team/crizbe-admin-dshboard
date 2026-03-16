@@ -6,10 +6,19 @@ import {
     getClients,
     getClient,
     createClient,
+    getMinimalDetails,
 } from '../services/account';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
-const { GET_ADDRESSES, GET_CLIENTS } = API_ENDPOINTS;
+const { GET_ADDRESSES, GET_CLIENTS, GET_MINIMAL_DETAILS } = API_ENDPOINTS;
+
+export const useFetchMinimalDetails = (enabled: boolean = false) => {
+    return useQuery<any>({
+        queryKey: [GET_MINIMAL_DETAILS],
+        queryFn: () => getMinimalDetails(),
+        enabled: enabled,
+    });
+};
 
 export const useFetchAddresses = () => {
     return useQuery<any>({

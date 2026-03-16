@@ -51,6 +51,7 @@ export const API_ENDPOINTS = {
     // Account/Profile endpoints
     GET_ADDRESSES: 'accounts/addresses/',
     GET_ADDRESS: 'accounts/addresses/:id/',
+    GET_MINIMAL_DETAILS: 'accounts/minimal-details/',
 
     // Client endpoints
     GET_CLIENTS: 'accounts/clients/',

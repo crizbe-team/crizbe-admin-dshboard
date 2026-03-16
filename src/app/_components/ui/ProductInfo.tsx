@@ -170,7 +170,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                             setQuantity(Math.max(1, v.stock || 0));
                                         }
                                     }}
-                                    className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-(--font-inter-tight) font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${
+                                    className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-inter-tight font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${
                                         selectedVariant?.id === v.id
                                             ? 'border-[#4E3325] bg-[#4E3325] text-white shadow-md transform scale-105'
                                             : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
