@@ -104,9 +104,9 @@ export default function CartPage() {
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
             <div className="wrapper mx-auto pt-[110px] pb-16">
                 <CheckoutSteps active="Cart" />
-                <h1 className="text-[28px] font-medium text-[#191919] py-[32px]">
+                <h1 className="text-[28px]  font-medium text-[#191919] py-[32px] flex items-center">
                     Your cart{' '}
-                    <span className="text-sm  md:text-base  lg:text-lg font-normal text-[#747474]">
+                    <span className="text-sm ml-[8px] md:text-base  lg:text-lg font-normal text-[#747474]">
                         ({itemsCount} items)
                     </span>
                 </h1>

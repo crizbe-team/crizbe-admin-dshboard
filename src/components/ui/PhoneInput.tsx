@@ -87,7 +87,7 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
                 {label && (
                     <label className={cn('text-xs text-[#404040] font-medium', labelClassName)}>
                         {label}
-                        {required && <span className="text-red-500 ml-1">*</span>}
+                        {required && <span className="text-[#002D62] ml-1">*</span>}
                     </label>
                 )}
                 <div
@@ -144,7 +144,7 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
                                                     className={cn(
                                                         'w-full px-2 py-1.5 text-left text-xs hover:bg-[#F5F3F0] text-[#4E3325]',
                                                         c.phone_code === selectedCode &&
-                                                            'font-medium'
+                                                        'font-medium'
                                                     )}
                                                 >
                                                     {c.name} ({c.phone_code})

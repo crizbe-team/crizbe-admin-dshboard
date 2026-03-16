@@ -256,6 +256,7 @@ export default function AddAddressModal({
                             codeSearchPlaceholder="Search country code..."
                             onCodeSearchChange={setCountrySearchQuery}
                             placeholder="000 0000 000"
+                            error={errors.phoneNumber}
                         />
 
                         <FormInput

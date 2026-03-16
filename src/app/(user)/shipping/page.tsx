@@ -169,7 +169,7 @@ export default function ShippingPage() {
                                                 name="address"
                                                 checked={active}
                                                 onChange={() => setSelected(a.id)}
-                                                className="mt-1 accent-[#4E3325]"
+                                                className="accent-[#4E3325]"
                                                 disabled={isCreating || isUpdating || isDeleting}
                                             />
 

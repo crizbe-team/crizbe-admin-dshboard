@@ -58,7 +58,7 @@ export function FormSelect({
             {label && (
                 <label className="text-xs font-medium text-[#404040]">
                     {label}
-                    {required && <span className="text-red-500 ml-1">*</span>}
+                    {required && <span className="text-[#002D62] ml-1">*</span>}
                 </label>
             )}
 
