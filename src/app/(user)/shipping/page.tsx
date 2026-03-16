@@ -148,8 +148,6 @@ export default function ShippingPage() {
                 </div>
                 <div className="flex items-start justify-between gap-10 flex-col lg:flex-row">
                     <section className="w-full flex-1">
-
-
                         <div className="">
                             {addresses.map((a: Address) => {
                                 const active = a.id === selected;
@@ -157,7 +155,7 @@ export default function ShippingPage() {
                                     <label
                                         key={a.id}
                                         className={[
-                                            'block rounded-2xl border bg-white/70 backdrop-blur-sm p-[24px] cursor-pointer',
+                                            'block rounded-2xl mb-[20px] last:mb-0  border bg-white/70 backdrop-blur-sm p-[24px] cursor-pointer',
                                             active
                                                 ? 'border-[#4E3325] shadow-sm'
                                                 : 'border-[#E7E1D6]',
