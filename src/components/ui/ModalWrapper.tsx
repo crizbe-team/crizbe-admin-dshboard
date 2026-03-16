@@ -1,5 +1,6 @@
 'use client';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
@@ -24,6 +25,11 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
 }: ModalWrapperProps) => {
     const modalInnerRef = useRef<any>(null);
     const modalRootRef = useRef<any>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useOutsideClick({
         ref: modalInnerRef,
@@ -51,7 +57,9 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
         };
     }, [open]);
 
-    return (
+    if (!mounted) return null;
+
+    return createPortal(
         <AnimatePresence>
             {open && (
                 <motion.div
@@ -62,7 +70,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
                     exit="from"
                     variants={fadeInOut(0.25)}
                     className={cn(
-                        'flex items-center justify-center fixed bg-[#000000b3] inset-0 z-50 cursor-pointer',
+                        'flex items-center justify-center fixed bg-[#000000b3] inset-0 z-999 cursor-pointer',
                         'p-4 md:p-5'
                     )}
                 >
@@ -100,6 +108,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
                     </motion.div>
                 </motion.div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 };

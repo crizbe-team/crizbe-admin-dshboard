@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React, { useState, useRef, useEffect } from 'react';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { ChevronDown, ShoppingCart, User } from 'lucide-react';
+import AuthActionWrapper from '@/components/AuthActionWrapper';
 
 export default function Header() {
     const { currency, setCurrency, isLoading } = useCurrency();
@@ -59,8 +60,9 @@ export default function Header() {
                             <span className="font-medium">{currentCurrency.symbol}</span>
                             <span className="text-sm">{currentCurrency.code}</span>
                             <ChevronDown
-                                className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''
-                                    }`}
+                                className={`w-4 h-4 transition-transform duration-200 ${
+                                    isOpen ? 'rotate-180' : ''
+                                }`}
                             />
                         </button>
 
@@ -73,10 +75,11 @@ export default function Header() {
                                             setCurrency(curr.code);
                                             setIsOpen(false);
                                         }}
-                                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between ${currency === curr.code
-                                            ? 'bg-blue-50 text-blue-600'
-                                            : 'text-gray-700'
-                                            }`}
+                                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between ${
+                                            currency === curr.code
+                                                ? 'bg-blue-50 text-blue-600'
+                                                : 'text-gray-700'
+                                        }`}
                                     >
                                         <div className="flex items-center gap-3">
                                             <span className="font-medium">{curr.symbol}</span>
@@ -98,24 +101,31 @@ export default function Header() {
 
                     {/* Cart & Profile */}
                     <div className="flex items-center gap-4">
-                        <Link
-                            href="/cart"
-                            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
-                            aria-label="Cart"
-                        >
-                            <ShoppingCart className="w-[24px] h-[24px]" />
-                        </Link>
-                        <Link
-                            href="/profile"
-                            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
-                            aria-label="Profile"
-                        >
-                            <User className="w-[24px] h-[24px]" />
-                        </Link>
+                        <AuthActionWrapper>
+                            <Link
+                                href="/cart"
+                                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
+                                aria-label="Cart"
+                            >
+                                <ShoppingCart className="w-[24px] h-[24px]" />
+                            </Link>
+                        </AuthActionWrapper>
+                        <AuthActionWrapper>
+                            <Link
+                                href="/profile"
+                                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-[#4E3325] transition-colors"
+                                aria-label="Profile"
+                            >
+                                <User className="w-[24px] h-[24px]" />
+                            </Link>
+                        </AuthActionWrapper>
                     </div>
 
                     {/* Menu icon */}
-                    <button className="flex h-[10px] w-[32px] flex-col justify-between cursor-pointer" aria-label="Open menu">
+                    <button
+                        className="flex h-[10px] w-[32px] flex-col justify-between cursor-pointer"
+                        aria-label="Open menu"
+                    >
                         <span className="h-[3px] w-full rounded bg-[#4E3325]"></span>
                         <span className="h-[3px] w-full rounded bg-[#4E3325]"></span>
                     </button>
