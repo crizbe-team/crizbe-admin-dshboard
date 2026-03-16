@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import ProductCard from '@/app/_components/ui/ProductCard';
 import { useFetchProducts } from '@/queries/use-products';
 import UserLoaders from '@/components/ui/UserLoader';
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import { Search } from 'lucide-react';
 
 const ProductsPage = () => {
     // Fetch products
@@ -12,6 +13,17 @@ const ProductsPage = () => {
 
     const products = productsData || [];
     console.log('products', products, productsData);
+
+    const [search, setSearch] = useState('');
+    const filteredProducts = useMemo(() => {
+        const q = search.trim().toLowerCase();
+        if (!q) return products;
+        return products.filter((p: any) => {
+            const name = String(p?.name ?? '').toLowerCase();
+            const category = String(p?.category?.name ?? '').toLowerCase();
+            return name.includes(q) || category.includes(q);
+        });
+    }, [products, search]);
 
     const breadcrumbItems = [
         { label: <span className="font-[var(--font-inter-tight)] font-normal text-[#747474] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">Home</span>, href: '/' },
@@ -36,15 +48,27 @@ const ProductsPage = () => {
 
     return (
         <div className="wrapper mx-auto px-4 pt-22 pb-8">
-            <Breadcrumb items={breadcrumbItems} />
+            <div className="flex flex-col gap-4 mb-[24px] sm:flex-row sm:items-center sm:justify-between">
+                <Breadcrumb items={breadcrumbItems} />
 
-            {products.length === 0 ? (
+                <div className="relative w-full sm:w-[360px]">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8E8E8E]" />
+                    <input
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Search products..."
+                        className="w-full h-[44px] pl-10 pr-3 rounded-[12px] border border-[#E7E4DD] bg-white text-sm text-[#474747] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors"
+                    />
+                </div>
+            </div>
+
+            {filteredProducts.length === 0 ? (
                 <div className="text-center py-12 text-gray-500">
                     No products found.
                 </div>
             ) : (
                 <div className="grid grid-cols-1 space-y-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-                    {products.map((product: any) => (
+                    {filteredProducts.map((product: any) => (
                         <ProductCard key={product.id} product={product} />
                     ))}
                 </div>

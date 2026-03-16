@@ -13,7 +13,7 @@ interface BreadcrumbProps {
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
     return (
-        <nav className="flex items-center text-sm  text-[#8E8E8E] mb-8">
+        <nav className="flex items-center text-sm  text-[#8E8E8E]">
             {items.map((item, index) => (
                 <div key={index} className="flex items-center">
                     {index > 0 && <span className="mx-2 text-xs">/</span>}
