@@ -5,6 +5,7 @@ import { ArrowRight, Clock, Flame, Loader2, Minus, Plus, ShoppingCart, Star } fr
 import { useAddToCart } from '@/queries/use-cart';
 import { useRouter } from 'next/navigation';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import AuthActionWrapper from '@/components/AuthActionWrapper';
 
 interface ProductInfoProps {
     product: any; // Using any for now to match flexible backend data
@@ -144,7 +145,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                     title={flavour}
                                 >
                                     <img
-                                        src={product.images?.[i]?.image || product.images?.[0]?.image}
+                                        src={
+                                            product.images?.[i]?.image || product.images?.[0]?.image
+                                        }
                                         className="w-full h-full object-cover"
                                         alt={flavour}
                                         onError={(e) => (e.currentTarget.style.display = 'none')}
@@ -153,7 +156,6 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                             ))}
                         </div>
                     </div>
-
 
                     {/* Variant Selection */}
                     <div className="mb-[24px]">
@@ -168,10 +170,11 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                             setQuantity(Math.max(1, v.stock || 0));
                                         }
                                     }}
-                                    className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-[var(--font-inter-tight)] font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${selectedVariant?.id === v.id
-                                        ? 'border-[#4E3325] bg-[#4E3325] text-white shadow-md transform scale-105'
-                                        : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
-                                        }`}
+                                    className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-(--font-inter-tight) font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${
+                                        selectedVariant?.id === v.id
+                                            ? 'border-[#4E3325] bg-[#4E3325] text-white shadow-md transform scale-105'
+                                            : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
+                                    }`}
                                 >
                                     {v.size}
                                 </button>
@@ -183,7 +186,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     <div
                         className={`mb-[32px] transition-opacity duration-300 ${!isInStock ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}
                     >
-                        <div className='mb-3'>
+                        <div className="mb-3">
                             <h3 className="text-sm font-medium text-[#1A1A1A]">Quantity</h3>
                             {selectedVariant &&
                                 quantity >= selectedVariant.stock &&
@@ -233,40 +236,45 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
 
                     {/* Add to Cart */}
                     <div className="flex flex-col sm:flex-row gap-3 mb-[32px]">
-                        <button
-                            style={{
-                                background:
-                                    'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
-                            }}
-                            className="group w-full sm:flex-1 relative overflow-hidden h-[44px] py-[12px] px-[24px] rounded-[12px] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#FFFFFF] hover:text-white transition-all duration-300 cursor-pointer"
-                        >
-                            {/* Shine Effect */}
-                            <div className="pointer-events-none absolute inset-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
-                            <span className="relative z-10">Buy Now</span>
-                        </button>
-                        <button
-                            onClick={handleAddToCart}
-                            disabled={isPending || !isInStock}
-                            className="w-full sm:flex-1 h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer"
-                        >
-                            {isPending ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                            ) : selectedVariant &&
-                                !selectedVariant.in_stock ? null : selectedVariant?.is_in_cart ? (
+                        <AuthActionWrapper>
+                            <button
+                                style={{
+                                    background:
+                                        'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
+                                }}
+                                className="group w-full sm:flex-1 relative overflow-hidden h-[44px] py-[12px] px-[24px] rounded-[12px] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#FFFFFF] hover:text-white transition-all duration-300 cursor-pointer"
+                            >
+                                {/* Shine Effect */}
+                                <div className="pointer-events-none absolute inset-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
+                                <span className="relative z-10">Buy Now</span>
+                            </button>
+                        </AuthActionWrapper>
+
+                        <AuthActionWrapper>
+                            <button
+                                onClick={handleAddToCart}
+                                disabled={isPending || !isInStock}
+                                className="w-full sm:flex-1 h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer"
+                            >
+                                {isPending ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : selectedVariant &&
+                                  !selectedVariant.in_stock ? null : selectedVariant?.is_in_cart ? (
                                     <ArrowRight className="w-5 h-5" />
                                 ) : (
-                                <ShoppingCart className="w-5 h-5" />
-                            )}
-                            <span>
-                                {isPending
-                                    ? ""
-                                    : !isInStock
-                                        ? 'Out of Stock'
-                                        : selectedVariant?.is_in_cart
+                                    <ShoppingCart className="w-5 h-5" />
+                                )}
+                                <span>
+                                    {isPending
+                                        ? ''
+                                        : !isInStock
+                                          ? 'Out of Stock'
+                                          : selectedVariant?.is_in_cart
                                             ? 'Go to Cart'
                                             : 'Add to Cart'}
-                            </span>
-                        </button>
+                                </span>
+                            </button>
+                        </AuthActionWrapper>
                     </div>
                 </>
             ) : (
@@ -280,7 +288,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             )}
 
             <hr className="border-t border-dashed border-[#CEA663]" />
-        </div >
+        </div>
     );
 };
 
