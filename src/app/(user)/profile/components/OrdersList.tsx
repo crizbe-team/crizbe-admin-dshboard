@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { Search, Loader2 } from 'lucide-react';
-import OrderCard, { Order } from './OrderCard';
+import OrderCard from './OrderCard';
+import type { Order } from '@/types/order';
 import { useFetchOrders } from '@/queries/use-orders';
 
 export default function OrdersList() {
@@ -44,7 +45,9 @@ export default function OrdersList() {
 
             <div className="grid gap-[22px]">
                 {ordersResponse?.data?.length > 0 ? (
-                    ordersResponse?.data?.map((order) => <OrderCard key={order.id} order={order} />)
+                    ordersResponse?.data?.map((order: Order) => (
+                        <OrderCard key={order.id} order={order} />
+                    ))
                 ) : (
                     <div className="text-center py-[50px] rounded-[20px] border border-[#EEEEEE] bg-white text-[#555555]">
                         <p className="mb-4">No orders found.</p>
