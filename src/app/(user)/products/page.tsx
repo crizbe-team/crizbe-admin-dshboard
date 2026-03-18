@@ -11,8 +11,7 @@ const ProductsPage = () => {
     // Fetch products
     const { data: productsData, isLoading, isError } = useFetchProducts();
 
-    const products = productsData || [];
-    console.log('products', products, productsData);
+    const products = productsData?.data || [];
 
     const [search, setSearch] = useState('');
     const filteredProducts = useMemo(() => {
@@ -26,8 +25,21 @@ const ProductsPage = () => {
     }, [products, search]);
 
     const breadcrumbItems = [
-        { label: <span className="font-[var(--font-inter-tight)] font-normal text-[#747474] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">Home</span>, href: '/' },
-        { label: <span className="font-[var(--font-inter-tight)] font-medium text-[#191919] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">All Products</span> },
+        {
+            label: (
+                <span className="font-[var(--font-inter-tight)] font-normal text-[#747474] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                    Home
+                </span>
+            ),
+            href: '/',
+        },
+        {
+            label: (
+                <span className="font-[var(--font-inter-tight)] font-medium text-[#191919] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                    All Products
+                </span>
+            ),
+        },
     ];
 
     if (isLoading) {
@@ -63,9 +75,7 @@ const ProductsPage = () => {
             </div>
 
             {filteredProducts.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                    No products found.
-                </div>
+                <div className="text-center py-12 text-gray-500">No products found.</div>
             ) : (
                 <div className="grid grid-cols-1 space-y-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
                     {filteredProducts.map((product: any) => (

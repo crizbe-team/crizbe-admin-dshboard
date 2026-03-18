@@ -18,7 +18,7 @@ const ProductDetailsPage = () => {
 
     const { data: productData, isLoading, isError } = useFetchSingleProduct(productId || '');
     const { data: relatedProductsData } = useFetchRelatedProducts(productId || '');
-    const product = productData;
+    const product = productData?.data;
     const relatedProducts = relatedProductsData?.data || [];
     const [showAllReviews, setShowAllReviews] = useState(false);
 
@@ -142,12 +142,12 @@ const ProductDetailsPage = () => {
                                                 rating === 5
                                                     ? 'Excellent'
                                                     : rating === 4
-                                                        ? 'Very good'
-                                                        : rating === 3
-                                                            ? 'Good'
-                                                            : rating === 2
-                                                                ? 'Average'
-                                                                : 'Poor';
+                                                      ? 'Very good'
+                                                      : rating === 3
+                                                        ? 'Good'
+                                                        : rating === 2
+                                                          ? 'Average'
+                                                          : 'Poor';
 
                                             return (
                                                 <div

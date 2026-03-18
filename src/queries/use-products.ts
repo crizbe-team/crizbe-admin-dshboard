@@ -8,7 +8,6 @@ export const useFetchProducts = (filters: any = {}) => {
     return useQuery<any>({
         queryKey: [GET_PRODUCTS, filters],
         queryFn: () => getProducts(filters, 'get'),
-        select: (data) => data?.data,
     });
 };
 
@@ -16,7 +15,6 @@ export const useFetchSingleProduct = (id: string) => {
     return useQuery<any>({
         queryKey: [GET_PRODUCT, id],
         queryFn: () => getProduct(id, 'get'),
-        select: (data) => data?.data,
     });
 };
 

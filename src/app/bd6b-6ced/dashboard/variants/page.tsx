@@ -158,13 +158,6 @@ export default function VariantsPage() {
         setVariantToDelete(null);
     };
 
-    const availableProducts =
-        productsData?.data?.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            product_id_code: p.productId,
-        })) || [];
-
     return (
         <div className="space-y-6">
             {/* Statistics Cards */}
@@ -287,7 +280,7 @@ export default function VariantsPage() {
                 handleSubmit={handleSubmit}
                 formData={formData}
                 setFormData={setFormData}
-                availableProducts={availableProducts}
+                availableProducts={productsData?.data}
                 isSubmitting={createMutation.isPending || updateMutation.isPending}
                 isEditMode={!!editingVariant}
             />
