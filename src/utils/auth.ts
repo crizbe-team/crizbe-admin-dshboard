@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 export const AUTH_TOKEN_KEYS = {
     ACCESS_TOKEN: 'access_token',
     REFRESH_TOKEN: 'refresh_token',
+    ROLE: 'role',
 } as const;
 
 export const authUtils = {
@@ -86,5 +87,30 @@ export const authUtils = {
 
         const currentTime = Date.now() / 1000;
         return payload.exp < currentTime;
+    },
+
+    setRole: (role: string) => {
+        try {
+            Cookies.set(AUTH_TOKEN_KEYS.ROLE, role, {
+                expires: 7,
+                secure: process.env.NEXT_PUBLIC_SERVER === 'PRODUCTION',
+                sameSite: 'strict',
+                path: '/',
+            });
+        } catch (error) {
+            console.error('Error setting role:', error);
+        }
+    },
+
+    getRole: () => {
+        return Cookies.get(AUTH_TOKEN_KEYS.ROLE) || '';
+    },
+
+    removeRole: () => {
+        try {
+            Cookies.remove(AUTH_TOKEN_KEYS.ROLE);
+        } catch (error) {
+            console.error('Error removing role:', error);
+        }
     },
 };

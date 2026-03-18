@@ -128,7 +128,6 @@ export default function EnterOtpPage() {
         };
         verifyOtp(apiPayload, {
             onSuccess: (response: any) => {
-                console.log('verifyOtp', response);
                 const token = response.data?.token || response.token;
                 if (token) {
                     Cookies.set('reset_token', token, {
@@ -195,7 +194,9 @@ export default function EnterOtpPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-semibold font-bricolage text-[#191919] mb-3">Login with OTP</h1>
+                <h1 className="text-2xl font-semibold font-bricolage text-[#191919] mb-3">
+                    Login with OTP
+                </h1>
                 <p className="text-sm text-[#474747] leading-relaxed">
                     Enter the otp received on your email or
                     <br />
@@ -216,7 +217,7 @@ export default function EnterOtpPage() {
                                 }}
                                 type="text"
                                 inputMode="numeric"
-                                placeholder='0'
+                                placeholder="0"
                                 maxLength={1}
                                 value={digit}
                                 onChange={(e) => handleOtpChange(index, e.target.value)}
@@ -227,7 +228,6 @@ export default function EnterOtpPage() {
                             />
                         ))}
                     </div>
-
                 </div>
 
                 {/* Resend Code */}
@@ -239,16 +239,17 @@ export default function EnterOtpPage() {
                         type="button"
                         onClick={handleResendCode}
                         disabled={resendTimer > 0 || isResendPending}
-                        className={`font-medium transition-colors ${resendTimer > 0 || isResendPending
-                            ? 'text-[#B7AFA5] cursor-not-allowed'
-                            : 'text-[#C4994A] hover:text-[#B38840] cursor-pointer'
-                            }`}
+                        className={`font-medium transition-colors ${
+                            resendTimer > 0 || isResendPending
+                                ? 'text-[#B7AFA5] cursor-not-allowed'
+                                : 'text-[#C4994A] hover:text-[#B38840] cursor-pointer'
+                        }`}
                     >
                         {isResendPending
                             ? 'Resending...'
                             : resendTimer > 0
-                                ? `Resend in ${resendTimer}s`
-                                : 'Resend code'}
+                              ? `Resend in ${resendTimer}s`
+                              : 'Resend code'}
                     </button>
                 </div>
 
@@ -263,7 +264,6 @@ export default function EnterOtpPage() {
                             'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
                     }}
                     className="transition-all duration-300 ease-out hover:scale-[1.02] whitespace-nowrap py-3 group relative overflow-hidden w-full mb-[16px] shadow-sm hover:opacity-95 active:opacity-90  rounded-[12px] h-[48px] cursor-pointer font-[var(--font-inter-tight)]"
-
                 >
                     <span className="pointer-events-none absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
                     Continue

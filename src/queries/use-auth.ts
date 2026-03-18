@@ -14,16 +14,12 @@ export const useLogin = () => {
     return useMutation({
         mutationFn: (userData: any) => login(userData),
         onSuccess: (data: any) => {
-            if (data.access && data.refresh) {
-                authUtils.setTokens({
-                    access_token: data.access,
-                    refresh_token: data.refresh,
-                });
-            } else if (data.data && data.data.access && data.data.refresh) {
+            if (data.data && data.data.access && data.data.refresh) {
                 authUtils.setTokens({
                     access_token: data.data.access,
                     refresh_token: data.data.refresh,
                 });
+                authUtils.setRole(data.data.role);
             }
         },
     });
@@ -50,19 +46,6 @@ export const useSignupResendOtp = () => {
 export const useVerifyOtp = () => {
     return useMutation({
         mutationFn: (otpData: any) => verifyOtp(otpData),
-        onSuccess: (data: any) => {
-            if (data.access && data.refresh) {
-                authUtils.setTokens({
-                    access_token: data.access,
-                    refresh_token: data.refresh,
-                });
-            } else if (data.data && data.data.access && data.data.refresh) {
-                authUtils.setTokens({
-                    access_token: data.data.access,
-                    refresh_token: data.data.refresh,
-                });
-            }
-        },
     });
 };
 
@@ -70,16 +53,12 @@ export const useSetPassword = () => {
     return useMutation({
         mutationFn: (passwordData: any) => setPassword(passwordData),
         onSuccess: (data: any) => {
-            if (data.access && data.refresh) {
-                authUtils.setTokens({
-                    access_token: data.access,
-                    refresh_token: data.refresh,
-                });
-            } else if (data.data && data.data.access && data.data.refresh) {
+            if (data.data && data.data.access && data.data.refresh) {
                 authUtils.setTokens({
                     access_token: data.data.access,
                     refresh_token: data.data.refresh,
                 });
+                authUtils.setRole(data.data.role);
             }
         },
     });
