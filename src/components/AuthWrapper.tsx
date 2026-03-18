@@ -28,9 +28,23 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
         return null; // Prevent hydration mismatch
     }
 
-    // Role-based interception
-    if (pathname?.startsWith('/bd6b-6ced/dashboard') && !isAuthPage && role === 'user') {
-        notFound();
+    const isDashboard = pathname?.startsWith('/bd6b-6ced/dashboard');
+    const isDashboardLogin = pathname === '/bd6b-6ced/dashboard/login';
+
+    if (isDashboard) {
+        if (role === 'admin' || role === 'superadmin') {
+            // Already logged in as Admin: Redirect away from login page to actual dashboard
+            if (isDashboardLogin) {
+                window.location.replace('/bd6b-6ced/dashboard');
+                return null;
+            }
+        } else {
+            // Not Admin (user role or no role/unauthenticated)
+            // Show 404 for EVERYTHING inside dashboard except the exact /login path
+            if (!isDashboardLogin) {
+                notFound();
+            }
+        }
     }
 
     if (isAuthPage) {
