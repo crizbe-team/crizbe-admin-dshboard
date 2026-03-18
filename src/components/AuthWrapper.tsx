@@ -14,7 +14,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
         pathname?.startsWith('/login') ||
         pathname?.startsWith('/signup') ||
         pathname?.startsWith('/forgot-password') ||
-        pathname?.startsWith('/dashboard/login');
+        pathname?.startsWith('/bd6b-6ced/dashboard/login');
 
     const [isMounted, setIsMounted] = useState(false);
     const [role, setRole] = useState<string | null>(null);
@@ -29,7 +29,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
     }
 
     // Role-based interception
-    if (pathname?.startsWith('/dashboard') && !isAuthPage && role === 'user') {
+    if (pathname?.startsWith('/bd6b-6ced/dashboard') && !isAuthPage && role === 'user') {
         notFound();
     }
 

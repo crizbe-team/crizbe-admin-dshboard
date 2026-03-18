@@ -190,12 +190,11 @@ export default function OrdersPage() {
                                         <td className="p-4">
                                             <div className="flex items-center space-x-2">
                                                 <Link
-                                                    href={`/dashboard/orders/${order.id}`}
+                                                    href={`/bd6b-6ced/dashboard/orders/${order.id}`}
                                                     className="p-2 bg-purple-500/10 hover:bg-purple-500/20 rounded-lg transition-all group-hover:scale-110"
                                                 >
                                                     <Eye className="w-4 h-4 text-purple-400" />
                                                 </Link>
-                                               
                                             </div>
                                         </td>
                                     </tr>
@@ -205,7 +204,6 @@ export default function OrdersPage() {
                     )}
                 </div>
             </div>
-
         </div>
     );
 }

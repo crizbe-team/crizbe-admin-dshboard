@@ -224,7 +224,7 @@ export default function ProductStockPage() {
                             {variants.map((v: any) => (
                                 <Link
                                     key={v.id}
-                                    href={`/dashboard/stock/${productId}/${v.id}`}
+                                    href={`/bd6b-6ced/dashboard/stock/${productId}/${v.id}`}
                                     className="p-4 flex items-center justify-between hover:bg-[#2a2a2a] transition-colors group"
                                 >
                                     <div>
@@ -293,10 +293,11 @@ export default function ProductStockPage() {
                                                 </td>
                                                 <td className="p-4">
                                                     <span
-                                                        className={`px-2 py-0.5 rounded-full bg-opacity-10 text-xs ${item.type === 'Addition'
+                                                        className={`px-2 py-0.5 rounded-full bg-opacity-10 text-xs ${
+                                                            item.type === 'Addition'
                                                                 ? 'bg-blue-500 text-blue-400'
                                                                 : 'bg-red-500 text-red-400'
-                                                            }`}
+                                                        }`}
                                                     >
                                                         {item.type}
                                                     </span>

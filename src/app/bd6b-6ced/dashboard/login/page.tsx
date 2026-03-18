@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
             { username, password: data.password, role: 'admin' },
             {
                 onSuccess: (response: any) => {
-                    router.push('/dashboard');
+                    router.push('/bd6b-6ced/dashboard');
                 },
                 onError: (error: any) => {
                     if (error?.errors && Object.keys(error.errors).length > 0) {

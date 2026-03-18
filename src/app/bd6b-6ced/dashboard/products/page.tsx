@@ -154,10 +154,10 @@ export default function ProductsPage() {
                 imageFiles: isExistingImage
                     ? prevFormData.imageFiles
                     : prevFormData.imageFiles.filter(
-                        (_, i) =>
-                            i !==
-                            index - (prevFormData.images.length - prevFormData.imageFiles.length)
-                    ),
+                          (_, i) =>
+                              i !==
+                              index - (prevFormData.images.length - prevFormData.imageFiles.length)
+                      ),
             };
         });
     };
@@ -374,7 +374,7 @@ export default function ProductsPage() {
                                         <td className="p-4">
                                             <div className="flex items-center space-x-2">
                                                 <Link
-                                                    href={`/dashboard/products/${product.id}`}
+                                                    href={`/bd6b-6ced/dashboard/products/${product.id}`}
                                                     className="p-2 bg-purple-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
                                                     title="View Details"
                                                 >

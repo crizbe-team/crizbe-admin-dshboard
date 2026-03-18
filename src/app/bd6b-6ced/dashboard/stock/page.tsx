@@ -210,12 +210,13 @@ export default function StockPage() {
                                         <td className="p-4 text-gray-300">{product.total_stock}</td>
                                         <td className="p-4">
                                             <span
-                                                className={`px-2 py-1 rounded-full text-xs font-medium ${product.status === 'In Stock'
+                                                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                    product.status === 'In Stock'
                                                         ? 'bg-green-500 bg-opacity-10 text-green-400'
                                                         : product.status === 'Low Stock'
-                                                            ? 'bg-orange-500 bg-opacity-10 text-orange-400'
-                                                            : 'bg-red-500 bg-opacity-10 text-red-400'
-                                                    }`}
+                                                          ? 'bg-orange-500 bg-opacity-10 text-orange-400'
+                                                          : 'bg-red-500 bg-opacity-10 text-red-400'
+                                                }`}
                                             >
                                                 {product.status}
                                             </span>
@@ -232,7 +233,7 @@ export default function StockPage() {
                                                     <Plus className="w-4 h-4" />
                                                 </button>
                                                 <Link
-                                                    href={`/dashboard/stock/${product.id}`}
+                                                    href={`/bd6b-6ced/dashboard/stock/${product.id}`}
                                                     className="p-2 inline-block bg-purple-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
                                                     title="View History"
                                                 >

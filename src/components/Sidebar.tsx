@@ -23,18 +23,18 @@ import {
 } from 'lucide-react';
 
 const menuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Layers, label: 'Categories', path: '/dashboard/categories' },
-    { icon: Package, label: 'Products', path: '/dashboard/products' },
-    { icon: Tags, label: 'Variants', path: '/dashboard/variants' },
-    { icon: Box, label: 'Stock', path: '/dashboard/stock' },
-    { icon: ShoppingCart, label: 'Orders', path: '/dashboard/orders' },
-    { icon: DollarSign, label: 'Sales', path: '/dashboard/sales' },
-    { icon: Users, label: 'Clients', path: '/dashboard/clients' },
-    { icon: Settings, label: 'Settings', path: '/dashboard/settings' },
-    { icon: Mail, label: 'Messages', path: '/dashboard/messages' },
-    { icon: Bell, label: 'Notifications', path: '/dashboard/notifications' },
-    { icon: HelpCircle, label: 'Help', path: '/dashboard/help' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/bd6b-6ced/dashboard' },
+    { icon: Layers, label: 'Categories', path: '/bd6b-6ced/dashboard/categories' },
+    { icon: Package, label: 'Products', path: '/bd6b-6ced/dashboard/products' },
+    { icon: Tags, label: 'Variants', path: '/bd6b-6ced/dashboard/variants' },
+    { icon: Box, label: 'Stock', path: '/bd6b-6ced/dashboard/stock' },
+    { icon: ShoppingCart, label: 'Orders', path: '/bd6b-6ced/dashboard/orders' },
+    { icon: DollarSign, label: 'Sales', path: '/bd6b-6ced/dashboard/sales' },
+    { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients' },
+    { icon: Settings, label: 'Settings', path: '/bd6b-6ced/dashboard/settings' },
+    { icon: Mail, label: 'Messages', path: '/bd6b-6ced/dashboard/messages' },
+    { icon: Bell, label: 'Notifications', path: '/bd6b-6ced/dashboard/notifications' },
+    { icon: HelpCircle, label: 'Help', path: '/bd6b-6ced/dashboard/help' },
 ];
 
 export default function Sidebar() {
