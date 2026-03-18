@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Search, X } from 'lucide-react';
+import { ChevronDown, Search } from 'lucide-react';
+import { useDebouncedCallback } from '@/hooks/use-debounce';
 
 interface Option {
     label: string;
@@ -12,28 +13,43 @@ interface SearchableSelectProps {
     options: Option[];
     value: string;
     onChange: (value: string) => void;
+    onSearchChange?: (query: string) => void;
     placeholder?: string;
     className?: string;
     isDisabled?: boolean;
+    isLoading?: boolean;
 }
 
 export default function SearchableSelect({
     options,
     value,
     onChange,
+    onSearchChange,
     placeholder = 'Select option...',
     className = '',
     isDisabled = false,
+    isLoading = false,
 }: SearchableSelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const containerRef = useRef<HTMLDivElement>(null);
+    const debouncedSearchChange = useDebouncedCallback((query: string) => {
+        onSearchChange?.(query);
+    }, 500);
+
+    const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        if (onSearchChange) {
+            debouncedSearchChange(query);
+        }
+    };
 
     const selectedOption = options.find((opt) => opt.value === value);
 
-    const filteredOptions = options.filter((opt) =>
-        opt.label.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredOptions = onSearchChange
+        ? options
+        : options.filter((opt) => opt.label.toLowerCase().includes(searchQuery.toLowerCase()));
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -81,14 +97,19 @@ export default function SearchableSelect({
                                 type="text"
                                 autoFocus
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={handleSearchQueryChange}
                                 placeholder="Search..."
                                 className="w-full bg-[#2a2a2a] text-gray-100 pl-9 pr-4 py-2 rounded-md border border-[#3a3a3a] focus:outline-none focus:border-purple-500 text-sm"
                             />
                         </div>
                     </div>
                     <div className="max-h-60 overflow-y-auto">
-                        {filteredOptions.length > 0 ? (
+                        {isLoading ? (
+                            <div className="p-4 flex flex-col items-center justify-center gap-2 text-gray-400">
+                                <Search className="w-5 h-5 animate-pulse text-purple-500" />
+                                <span className="text-xs">Finding options...</span>
+                            </div>
+                        ) : filteredOptions.length > 0 ? (
                             filteredOptions.map((option) => (
                                 <div
                                     key={option.value}

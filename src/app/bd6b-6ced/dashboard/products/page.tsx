@@ -1,38 +1,44 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Package, Box, Layers, Search, Edit, Trash2, Plus, IndianRupee, Eye } from 'lucide-react';
+import { Package, Box, Layers, Edit, Trash2, Plus, Eye } from 'lucide-react';
 import Link from 'next/link';
-import ProductAddEditModal, { SizeVariant, Product } from '@/components/Modals/ProductAddEditModal';
+import ProductAddEditModal, { Product } from '@/components/Modals/ProductAddEditModal';
 import DeleteModal from '@/components/Modals/DeleteModal';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
-import {
-    useFetchProducts,
-    useDeleteProduct,
-    useCreateProduct,
-    useUpdateProduct,
-} from '@/queries/use-products';
+import { useFetchProducts, useDeleteProduct } from '@/queries/use-products';
 import { useFetchCategories } from '@/queries/use-categories';
 import UserLoaders from '@/components/ui/UserLoader';
+import Pagination from '@/components/ui/Pagination';
+import { useEffect } from 'react';
 
 export default function ProductsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
+    const [currentPage, setCurrentPage] = useState(1);
 
     // Fetch Products
     const { data: productsData, isLoading: isProductsLoading } = useFetchProducts({
         q: searchQuery,
         category: selectedCategory === 'All' ? undefined : selectedCategory,
+        page: currentPage,
     });
 
+    const [categorySearch, setCategorySearch] = useState('');
+
     // Fetch Categories for the dropdown
-    const { data: categoriesData } = useFetchCategories();
+    const { data: categoriesData, isLoading: isCategoriesLoading } = useFetchCategories({
+        q: categorySearch,
+    });
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, selectedCategory]);
 
     // Delete Mutation
     const deleteMutation = useDeleteProduct();
-    const createMutation = useCreateProduct();
-    const updateMutation = useUpdateProduct();
 
     const categoryOptions = useMemo(() => {
         const cats =
@@ -47,18 +53,6 @@ export default function ProductsPage() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [productToDelete, setProductToDelete] = useState<Product | null>(null);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-
-    const [formData, setFormData] = useState({
-        name: '',
-        category: '',
-        price: '',
-        stock: '',
-        icon: '',
-        images: [] as string[],
-        imageFiles: [] as File[],
-        description: '',
-        ingredients: '',
-    });
 
     const products = productsData?.data || [];
     const baseData = productsData?.base_data || {};
@@ -93,127 +87,13 @@ export default function ProductsPage() {
     // Open modal for adding new product
     const handleAddProduct = () => {
         setEditingProduct(null);
-        setFormData({
-            name: '',
-            category: categoryOptions[1]?.value || '', // Default to first category if available
-            price: '',
-            stock: '',
-            icon: '📦',
-            images: [],
-            imageFiles: [],
-            description: '',
-            ingredients: '',
-        });
         setIsModalOpen(true);
-    };
-
-    // Handle multiple image file uploads
-    const handleImageFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
-        if (files.length > 0) {
-            const newPreviews: string[] = [];
-            let processedCount = 0;
-
-            files.forEach((file) => {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const result = reader.result as string;
-                    newPreviews.push(result);
-                    processedCount++;
-
-                    if (processedCount === files.length) {
-                        setFormData((prevFormData) => ({
-                            ...prevFormData,
-                            images: [...prevFormData.images, ...newPreviews],
-                            imageFiles: [...prevFormData.imageFiles, ...files],
-                        }));
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    };
-
-    // Handle adding image URL
-    const handleImageUrlAdd = (url: string) => {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            images: [...prevFormData.images, url],
-        }));
-    };
-
-    // Handle removing an image
-    const handleImageRemove = (index: number) => {
-        setFormData((prevFormData) => {
-            const isExistingImage =
-                index < prevFormData.images.length - prevFormData.imageFiles.length;
-
-            return {
-                ...prevFormData,
-                images: prevFormData.images.filter((_, i) => i !== index),
-                imageFiles: isExistingImage
-                    ? prevFormData.imageFiles
-                    : prevFormData.imageFiles.filter(
-                          (_, i) =>
-                              i !==
-                              index - (prevFormData.images.length - prevFormData.imageFiles.length)
-                      ),
-            };
-        });
     };
 
     // Open modal for editing product
     const handleEditProduct = (product: Product) => {
         setEditingProduct(product);
-        setFormData({
-            name: product.name,
-            category: product.category?.id || '',
-            price: (product.price || '').replace('$', ''),
-            stock: (product.stock || 0).toString(),
-            icon: product.icon,
-            images: product.images?.map((img) => img.image) || [],
-            imageFiles: [],
-            description: product.description || '',
-            ingredients: product.ingredients || '',
-        });
         setIsModalOpen(true);
-    };
-
-    // Handle form submission
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const data = new FormData();
-        data.append('name', formData.name);
-        data.append('category', formData.category);
-        data.append('description', formData.description);
-        data.append('ingredients', formData.ingredients);
-        data.append('stock', formData.stock);
-        data.append('price', formData.price);
-        data.append('icon', formData.icon);
-
-        // Append existing images as strings if any
-        const existingImages = formData.images.filter((img) => !img.startsWith('data:'));
-        existingImages.forEach((img) => {
-            data.append('existing_images', img);
-        });
-
-        // Append new image files
-        formData.imageFiles.forEach((file) => {
-            data.append('images', file);
-        });
-
-        try {
-            if (editingProduct) {
-                await updateMutation.mutateAsync({ id: editingProduct.id, data });
-            } else {
-                await createMutation.mutateAsync(data);
-            }
-            setIsModalOpen(false);
-            setEditingProduct(null);
-        } catch (error) {
-            console.error('Failed to save product:', error);
-        }
     };
 
     // Handle delete product - open confirmation modal
@@ -281,6 +161,8 @@ export default function ProductsPage() {
                             options={categoryOptions}
                             value={selectedCategory}
                             onChange={setSelectedCategory}
+                            onSearchChange={setCategorySearch}
+                            isLoading={isCategoriesLoading}
                             placeholder="All Categories"
                             className="w-48"
                         />
@@ -404,6 +286,18 @@ export default function ProductsPage() {
                         </div>
                     )}
                 </div>
+
+                {productsData?.pagination && productsData.pagination.total_pages > 1 && (
+                    <div className="p-4 border-t border-[#2a2a2a]">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={productsData.pagination.total_pages}
+                            onPageChange={setCurrentPage}
+                            hasNext={productsData.pagination.has_next}
+                            hasPrevious={productsData.pagination.has_previous}
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Add/Edit Product Modal */}
@@ -411,14 +305,7 @@ export default function ProductsPage() {
                 isModalOpen={isModalOpen}
                 editingProduct={editingProduct}
                 handleCloseModal={handleCloseModal}
-                handleSubmit={handleSubmit}
-                formData={formData}
-                setFormData={setFormData}
-                handleImageFilesChange={handleImageFilesChange}
-                handleImageUrlAdd={handleImageUrlAdd}
-                handleImageRemove={handleImageRemove}
                 categories={categoriesData?.data}
-                isSubmitting={createMutation.isPending || updateMutation.isPending}
             />
 
             {/* Delete Confirmation Modal */}
