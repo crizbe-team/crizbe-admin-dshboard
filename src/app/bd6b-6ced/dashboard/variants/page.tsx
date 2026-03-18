@@ -1,51 +1,55 @@
 'use client';
 
-import { useState } from 'react';
-import { Tags, Search, Edit, Trash2, Plus, Package, Box, ShoppingCart } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Tags, Edit, Trash2, Plus, Package, Box, ShoppingCart } from 'lucide-react';
 import VariantAddEditModal, { VariantFormData } from '@/components/Modals/VariantAddEditModal';
 import VariantDeleteModal from '@/components/Modals/VariantDeleteModal';
-import {
-    useFetchVariants,
-    useDeleteVariant,
-    useCreateVariant,
-    useUpdateVariant,
-} from '@/queries/use-variants';
+import { useFetchVariants, useDeleteVariant } from '@/queries/use-variants';
 import { useFetchProducts } from '@/queries/use-products';
 import UserLoaders from '@/components/ui/UserLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
+import SearchableSelect from '@/components/ui/SearchableSelect';
+import Pagination from '@/components/ui/Pagination';
 
 export default function VariantsPage() {
     const [searchQuery, setSearchQuery] = useState('');
-
-    const generateId = () => {
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            return crypto.randomUUID();
-        }
-        return Math.random().toString(36).substring(2, 11);
-    };
+    const [selectedProduct, setSelectedProduct] = useState<string>('All');
+    const [productSearch, setProductSearch] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     // Fetch Variants
     const { data: variantsData, isLoading: isVariantsLoading } = useFetchVariants({
         q: searchQuery,
+        productId: selectedProduct === 'All' ? undefined : selectedProduct,
+        page: currentPage,
     });
 
-    // Fetch Products for the modal
-    const { data: productsData } = useFetchProducts();
+    // Fetch Products for the filter dropdown
+    const { data: productsData, isLoading: isProductsLoading } = useFetchProducts({
+        q: productSearch,
+    });
+
+    const productOptions = useMemo(() => {
+        const products =
+            productsData?.data?.map((p: any) => ({
+                label: p.name,
+                value: p.id,
+            })) || [];
+        return [{ label: 'All Products', value: 'All' }, ...products];
+    }, [productsData]);
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, selectedProduct]);
 
     // Mutations
     const deleteMutation = useDeleteVariant();
-    const createMutation = useCreateVariant();
-    const updateMutation = useUpdateVariant();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [variantToDelete, setVariantToDelete] = useState<any | null>(null);
-    const [editingVariant, setEditingVariant] = useState<any | null>(null);
-    const [formData, setFormData] = useState<VariantFormData>({
-        productId: '',
-        productName: '',
-        variants: [{ id: 'initial-row', size: '', price: '', weight_per_unit: '' }],
-    });
+    const [editingVariantData, setEditingVariantData] = useState<VariantFormData | null>(null);
 
     const variants = variantsData?.data || [];
     const baseData = variantsData?.base_data || {};
@@ -78,23 +82,17 @@ export default function VariantsPage() {
     ];
 
     const handleAddVariant = () => {
-        setEditingVariant(null);
-        setFormData({
-            productId: '',
-            productName: '',
-            variants: [{ id: generateId(), size: '', price: '', weight_per_unit: '' }],
-        });
+        setEditingVariantData(null);
         setIsModalOpen(true);
     };
 
     const handleEditVariant = (variant: any) => {
-        setEditingVariant(variant);
-        setFormData({
+        setEditingVariantData({
             productId: variant.product_detail?.id || '',
             productName: variant.product_detail?.name || '',
             variants: [
                 {
-                    id: variant.id?.toString() || generateId(),
+                    id: variant.id?.toString(),
                     size: variant.size,
                     price: variant.price.toString(),
                     weight_per_unit: (variant.weight_per_unit || '').toString(),
@@ -102,39 +100,6 @@ export default function VariantsPage() {
             ],
         });
         setIsModalOpen(true);
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        try {
-            if (editingVariant) {
-                const variantData = formData.variants[0];
-                const data = {
-                    product: formData.productId,
-                    size: variantData.size,
-                    price: parseFloat(variantData.price) || 0,
-                    weight_per_unit: parseFloat(variantData.weight_per_unit) || 0,
-                };
-                await updateMutation.mutateAsync({ id: editingVariant.id, data });
-            } else {
-                // Create multiple variants in a single API call
-                const data = formData.variants.map((v) => ({
-                    product: formData.productId,
-                    size: v.size,
-                    price: parseFloat(v.price) || 0,
-                    weight_per_unit: parseFloat(v.weight_per_unit) || 0,
-                }));
-
-                // Assuming the backend supports receiving an array for bulk creation
-                // If the backend expects a wrapper object, adjust here.
-                await createMutation.mutateAsync(data);
-            }
-            setIsModalOpen(false);
-            setEditingVariant(null);
-        } catch (error) {
-            console.error('Failed to save variant(s):', error);
-        }
     };
 
     const handleDeleteVariant = (variant: any) => {
@@ -184,15 +149,26 @@ export default function VariantsPage() {
             </div>
 
             <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a]">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
-                    <DebouncedSearch
-                        onSearch={setSearchQuery}
-                        placeholder="Search Variants..."
-                        className="max-w-xs"
-                    />
+                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center space-x-4 flex-1 min-w-[300px]">
+                        <DebouncedSearch
+                            onSearch={setSearchQuery}
+                            placeholder="Search Variants..."
+                            className="max-w-xs"
+                        />
+                        <SearchableSelect
+                            options={productOptions}
+                            value={selectedProduct}
+                            onChange={setSelectedProduct}
+                            onSearchChange={setProductSearch}
+                            isLoading={isProductsLoading}
+                            placeholder="All Products"
+                            className="w-48"
+                        />
+                    </div>
                     <button
                         onClick={handleAddVariant}
-                        className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                        className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors whitespace-nowrap"
                     >
                         <Plus className="w-4 h-4" />
                         <span>Add Variant</span>
@@ -243,7 +219,7 @@ export default function VariantsPage() {
                                             </span>
                                         </td>
                                         <td className="p-4 text-purple-400 font-medium">
-                                            ${parseFloat(variant.price || '0').toFixed(2)}
+                                            ₹{parseFloat(variant.price || '0').toFixed(2)}
                                         </td>
                                         <td className="p-4 text-gray-300">{variant.stock} units</td>
                                         <td className="p-4">
@@ -272,17 +248,25 @@ export default function VariantsPage() {
                         </div>
                     )}
                 </div>
+
+                {variantsData?.pagination && variantsData.pagination.total_pages > 1 && (
+                    <div className="p-4 border-t border-[#2a2a2a]">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={variantsData.pagination.total_pages}
+                            onPageChange={setCurrentPage}
+                            hasNext={variantsData.pagination.has_next}
+                            hasPrevious={variantsData.pagination.has_previous}
+                        />
+                    </div>
+                )}
             </div>
 
             <VariantAddEditModal
                 isModalOpen={isModalOpen}
                 handleCloseModal={() => setIsModalOpen(false)}
-                handleSubmit={handleSubmit}
-                formData={formData}
-                setFormData={setFormData}
-                availableProducts={productsData?.data}
-                isSubmitting={createMutation.isPending || updateMutation.isPending}
-                isEditMode={!!editingVariant}
+                currentVariantData={editingVariantData}
+                isEditMode={!!editingVariantData}
             />
 
             <VariantDeleteModal

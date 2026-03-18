@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Loader2, Plus, Trash2 } from 'lucide-react';
 import SearchableSelect from '@/components/ui/SearchableSelect';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { variantSchema, type VariantFieldValues } from '@/validations/variant';
+import { useFetchProducts } from '@/queries/use-products';
+import { useCreateVariant, useUpdateVariant } from '@/queries/use-variants';
 
 export interface VariantItem {
     id?: string;
@@ -24,11 +29,7 @@ interface Product {
 interface Props {
     isModalOpen: boolean;
     handleCloseModal: () => void;
-    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    formData: VariantFormData;
-    setFormData: React.Dispatch<React.SetStateAction<VariantFormData>>;
-    availableProducts: Product[];
-    isSubmitting?: boolean;
+    currentVariantData: VariantFormData | null;
     isEditMode?: boolean;
 }
 
@@ -37,30 +38,81 @@ const commonSizes = ['100gm', '200gm', '250gm', '400gm', '500gm', '1kg'];
 function VariantAddEditModal({
     isModalOpen,
     handleCloseModal,
-    handleSubmit,
-    formData,
-    setFormData,
-    availableProducts,
-    isSubmitting = false,
+    currentVariantData,
     isEditMode = false,
 }: Props) {
-    const [customSizeStates, setCustomSizeStates] = useState<Record<string, boolean>>({});
+    const [productSearch, setProductSearch] = useState('');
+    const { data: productsData, isLoading: isProductsLoading } = useFetchProducts({
+        q: productSearch,
+    });
+    const productsList = productsData?.data || [];
 
-    const generateId = () => {
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            return crypto.randomUUID();
+    const { mutate: createVariant, isPending: isCreating } = useCreateVariant();
+    const { mutate: updateVariant, isPending: isUpdating } = useUpdateVariant();
+    const isSubmitting = isCreating || isUpdating;
+
+    const [customSizeStates, setCustomSizeStates] = useState<Record<number, boolean>>({});
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        reset,
+        watch,
+        setValue,
+        setError,
+        formState: { errors },
+    } = useForm<VariantFieldValues>({
+        resolver: zodResolver(variantSchema),
+        defaultValues: {
+            productId: '',
+            variants: [{ size: '', price: '', weight_per_unit: '' }],
+        },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'variants',
+    });
+
+    // Sync form with props when modal opens or dataset changes
+    useEffect(() => {
+        if (isModalOpen) {
+            if (currentVariantData) {
+                reset({
+                    productId: currentVariantData.productId,
+                    variants: currentVariantData.variants.map((v) => ({
+                        id: v.id,
+                        size: v.size,
+                        price: (v.price || '').toString().replace('$', ''),
+                        weight_per_unit: (v.weight_per_unit || '').toString(),
+                    })),
+                });
+
+                // Initialize custom size states
+                const initialCustomStates: Record<number, boolean> = {};
+                currentVariantData.variants.forEach((v, index) => {
+                    if (v.size && !commonSizes.includes(v.size)) {
+                        initialCustomStates[index] = true;
+                    }
+                });
+                setCustomSizeStates(initialCustomStates);
+            } else {
+                reset({
+                    productId: '',
+                    variants: [{ size: '', price: '', weight_per_unit: '' }],
+                });
+                setCustomSizeStates({});
+            }
         }
-        return Math.random().toString(36).substring(2, 11);
-    };
+    }, [isModalOpen, currentVariantData, reset]);
 
     const calculateWeight = (size: string): string | null => {
         const lowerSize = size.toLowerCase().trim();
-        // Handle gm and ml (1:1 conversion for weight approximation)
         if (lowerSize.endsWith('gm') || lowerSize.endsWith('ml')) {
             const num = parseFloat(lowerSize.replace(/gm|ml/g, ''));
             if (!isNaN(num)) return (num / 1000).toString();
         }
-        // Handle kg and l
         if (lowerSize.endsWith('kg') || lowerSize.endsWith('l')) {
             const num = parseFloat(lowerSize.replace(/kg|l/g, ''));
             if (!isNaN(num)) return num.toString();
@@ -68,83 +120,83 @@ function VariantAddEditModal({
         return null;
     };
 
-    const handleAddRow = () => {
-        setFormData({
-            ...formData,
-            variants: [
-                ...formData.variants,
-                { id: generateId(), size: '', price: '', weight_per_unit: '' },
-            ],
-        });
-    };
-
-    const handleRemoveRow = (id: string) => {
-        const updatedVariants = formData.variants.filter((v) => v.id !== id);
-        setFormData({ ...formData, variants: updatedVariants });
-
-        // Cleanup custom state for removed row
-        const newStates = { ...customSizeStates };
-        delete newStates[id];
-        setCustomSizeStates(newStates);
-    };
-
-    const handleVariantChange = (id: string, field: keyof VariantItem, value: string) => {
-        const updatedVariants = formData.variants.map((v) => {
-            if (v.id === id) {
-                const updated = { ...v, [field]: value };
-                // Auto-calculate weight while typing custom size
-                if (field === 'size' && customSizeStates[id]) {
-                    const weight = calculateWeight(value);
-                    if (weight) updated.weight_per_unit = weight;
-                }
-                return updated;
-            }
-            return v;
-        });
-        setFormData({ ...formData, variants: updatedVariants });
-    };
-
-    const handleSizeChange = (item: VariantItem, value: string) => {
-        const itemId = item.id!;
+    const handleSizeChange = (index: number, value: string) => {
         if (value === 'custom') {
-            setCustomSizeStates({ ...customSizeStates, [itemId]: true });
-            handleVariantChange(itemId, 'size', '');
+            setCustomSizeStates((prev) => ({ ...prev, [index]: true }));
+            setValue(`variants.${index}.size`, '');
         } else {
-            setCustomSizeStates({ ...customSizeStates, [itemId]: false });
+            setCustomSizeStates((prev) => ({ ...prev, [index]: false }));
+            setValue(`variants.${index}.size`, value);
 
             const weight = calculateWeight(value);
-            const updatedVariants = formData.variants.map((v) =>
-                v.id === itemId
-                    ? {
-                          ...v,
-                          size: value,
-                          weight_per_unit: weight || v.weight_per_unit,
-                      }
-                    : v
-            );
-            setFormData({ ...formData, variants: updatedVariants });
+            if (weight) {
+                setValue(`variants.${index}.weight_per_unit`, weight);
+            }
         }
     };
 
-    // Initialize custom states ONLY when modal opens to avoid resets during typing
-    useEffect(() => {
-        if (isModalOpen) {
-            const initialStates: Record<string, boolean> = {};
-            formData.variants.forEach((v) => {
-                if (v.size && !commonSizes.includes(v.size)) {
-                    initialStates[v.id || ''] = true;
-                }
-            });
-            setCustomSizeStates(initialStates);
+    const handleCustomSizeChange = (index: number, value: string) => {
+        setValue(`variants.${index}.size`, value);
+        const weight = calculateWeight(value);
+        if (weight) {
+            setValue(`variants.${index}.weight_per_unit`, weight);
         }
-    }, [isModalOpen]);
+    };
+
+    const onSubmit = (data: VariantFieldValues) => {
+        const mutationOptions = {
+            onSuccess: () => {
+                handleCloseModal();
+                reset();
+            },
+            onError: (error: any) => {
+                if (error?.errors) {
+                    Object.keys(error.errors).forEach((field) => {
+                        setError(field as any, {
+                            type: 'server',
+                            message: error.errors[field][0],
+                        });
+                    });
+                } else {
+                    setError('root.serverError' as any, {
+                        type: 'server',
+                        message: error?.message || 'Failed to save variants.',
+                    });
+                }
+            },
+        };
+
+        if (isEditMode && currentVariantData?.variants[0]?.id) {
+            const variantData = data.variants[0];
+            const formattedData = {
+                product: data.productId,
+                size: variantData.size,
+                price: parseFloat(variantData.price) || 0,
+                weight_per_unit: parseFloat(variantData.weight_per_unit) || 0,
+            };
+            updateVariant(
+                { id: currentVariantData.variants[0].id, data: formattedData },
+                mutationOptions
+            );
+        } else {
+            const formattedData = data.variants.map((v) => ({
+                product: data.productId,
+                size: v.size,
+                price: parseFloat(v.price) || 0,
+                weight_per_unit: parseFloat(v.weight_per_unit) || 0,
+            }));
+            createVariant(formattedData, mutationOptions);
+        }
+    };
 
     if (!isModalOpen) return null;
 
+    const globalError = (errors.root as any)?.serverError?.message;
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between shrink-0">
+            <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between shrink-0 bg-[#212121]">
                     <h2 className="text-xl font-semibold text-gray-100">
                         {isEditMode ? 'Edit Variant' : 'Add New Variants'}
                     </h2>
@@ -156,208 +208,249 @@ function VariantAddEditModal({
                     </button>
                 </div>
 
-                <div className="p-6 overflow-y-auto">
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="p-6 overflow-y-auto flex-1">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                        {globalError && (
+                            <div className="p-3 bg-red-900/20 border border-red-900/50 rounded-lg text-red-500 text-sm">
+                                {globalError}
+                            </div>
+                        )}
+
                         {/* Product Selection */}
                         <div className="max-w-md">
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                                 Select Product
                             </label>
-                            <SearchableSelect
-                                options={availableProducts.map((p) => ({
-                                    label: `${p.name}`,
-                                    value: p.id,
-                                }))}
-                                value={formData.productId}
-                                onChange={(value) => {
-                                    const selectedProduct = availableProducts.find(
-                                        (p) => p.id === value
-                                    );
-                                    setFormData({
-                                        ...formData,
-                                        productId: value,
-                                        productName: selectedProduct ? selectedProduct.name : '',
-                                    });
-                                }}
-                                placeholder="Select a Product"
-                                isDisabled={isEditMode}
+                            <Controller
+                                control={control}
+                                name="productId"
+                                render={({ field }) => (
+                                    <SearchableSelect
+                                        options={productsList.map((p: any) => ({
+                                            label: `${p.name}`,
+                                            value: p.id,
+                                        }))}
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        onSearchChange={setProductSearch}
+                                        isLoading={isProductsLoading}
+                                        placeholder="Search for a product..."
+                                        isDisabled={isEditMode}
+                                    />
+                                )}
                             />
+                            {errors.productId && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.productId.message}
+                                </p>
+                            )}
                         </div>
 
                         {/* Variants List */}
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider">
-                                    Variant Details
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between border-b border-[#2a2a2a] pb-2">
+                                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+                                    Variant Configurations
                                 </h3>
                                 {!isEditMode && (
                                     <button
                                         type="button"
-                                        onClick={handleAddRow}
-                                        className="flex items-center gap-1 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                                        onClick={() =>
+                                            append({ size: '', price: '', weight_per_unit: '' })
+                                        }
+                                        className="flex items-center gap-1.5 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors bg-purple-500/10 px-3 py-1.5 rounded-full border border-purple-500/20"
                                     >
-                                        <Plus className="w-4 h-4" />
-                                        Add Row
+                                        <Plus className="w-3.5 h-3.5" />
+                                        ADD VARIANT
                                     </button>
                                 )}
                             </div>
 
-                            <div className="space-y-4">
-                                {formData.variants.map((variant) => {
-                                    const itemId = variant.id!;
-                                    return (
-                                        <div
-                                            key={itemId}
-                                            className="p-4 bg-[#212121] rounded-xl border border-[#2a2a2a] relative group"
-                                        >
-                                            {!isEditMode && formData.variants.length > 1 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveRow(itemId)}
-                                                    className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            )}
+                            <div className="space-y-6">
+                                {fields.map((field, index) => (
+                                    <div
+                                        key={field.id}
+                                        className="p-5 bg-[#212121] rounded-2xl border border-[#2a2a2a] relative group transition-all hover:border-[#3a3a3a] hover:bg-[#252525]"
+                                    >
+                                        {!isEditMode && fields.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => remove(index)}
+                                                className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:bg-red-600 scale-90 group-hover:scale-100"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        )}
 
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                {/* Size */}
-                                                <div>
-                                                    <label className="block text-xs font-medium text-gray-400 mb-1">
-                                                        Size
-                                                    </label>
-                                                    {customSizeStates[itemId] ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            {/* Size */}
+                                            <div>
+                                                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase">
+                                                    Size
+                                                </label>
+                                                {customSizeStates[index] ? (
+                                                    <div className="space-y-2">
                                                         <div className="flex items-center space-x-2">
                                                             <input
                                                                 type="text"
-                                                                required
-                                                                autoFocus
-                                                                value={variant.size}
+                                                                {...register(
+                                                                    `variants.${index}.size`
+                                                                )}
                                                                 onChange={(e) =>
-                                                                    handleVariantChange(
-                                                                        itemId,
-                                                                        'size',
+                                                                    handleCustomSizeChange(
+                                                                        index,
                                                                         e.target.value
                                                                     )
                                                                 }
                                                                 placeholder="e.g. 750gm"
-                                                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
+                                                                className={`w-full bg-[#1a1a1a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border focus:outline-none transition-colors ${
+                                                                    errors.variants?.[index]?.size
+                                                                        ? 'border-red-500'
+                                                                        : 'border-[#3a3a3a] focus:border-purple-500'
+                                                                }`}
+                                                                autoFocus
                                                             />
                                                             <button
                                                                 type="button"
                                                                 onClick={() => {
-                                                                    const newStates = {
-                                                                        ...customSizeStates,
-                                                                    };
-                                                                    delete newStates[itemId];
-                                                                    setCustomSizeStates(newStates);
-                                                                    handleVariantChange(
-                                                                        itemId,
-                                                                        'size',
+                                                                    setCustomSizeStates((prev) => {
+                                                                        const next = { ...prev };
+                                                                        delete next[index];
+                                                                        return next;
+                                                                    });
+                                                                    setValue(
+                                                                        `variants.${index}.size`,
                                                                         ''
                                                                     );
                                                                 }}
-                                                                className="text-xs text-gray-400 hover:text-white"
+                                                                className="text-[10px] font-bold text-gray-500 uppercase hover:text-white bg-[#333] px-2 py-1 rounded"
                                                             >
-                                                                Reset
+                                                                Standard
                                                             </button>
                                                         </div>
-                                                    ) : (
+                                                        {errors.variants?.[index]?.size && (
+                                                            <p className="mt-1 text-[10px] text-red-500 font-medium">
+                                                                {
+                                                                    errors.variants[index]?.size
+                                                                        ?.message
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div>
                                                         <select
-                                                            required
-                                                            value={variant.size}
+                                                            className={`w-full bg-[#1a1a1a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border focus:outline-none transition-colors ${
+                                                                errors.variants?.[index]?.size
+                                                                    ? 'border-red-500'
+                                                                    : 'border-[#3a3a3a] focus:border-purple-500'
+                                                            }`}
+                                                            value={
+                                                                watch(`variants.${index}.size`) ||
+                                                                ''
+                                                            }
                                                             onChange={(e) =>
                                                                 handleSizeChange(
-                                                                    variant,
+                                                                    index,
                                                                     e.target.value
                                                                 )
                                                             }
-                                                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
                                                         >
-                                                            <option value="">
-                                                                -- Select Size --
-                                                            </option>
-                                                            {commonSizes.map((size) => (
-                                                                <option key={size} value={size}>
-                                                                    {size}
+                                                            <option value="">Select Size</option>
+                                                            {commonSizes.map((s) => (
+                                                                <option key={s} value={s}>
+                                                                    {s}
                                                                 </option>
                                                             ))}
                                                             <option value="custom">
                                                                 Custom Size...
                                                             </option>
                                                         </select>
+                                                        {errors.variants?.[index]?.size && (
+                                                            <p className="mt-1 text-[10px] text-red-500 font-medium">
+                                                                {
+                                                                    errors.variants[index]?.size
+                                                                        ?.message
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Price */}
+                                            <div>
+                                                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase">
+                                                    Price (₹)
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    {...register(`variants.${index}.price`)}
+                                                    className={`w-full bg-[#1a1a1a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border focus:outline-none transition-colors ${
+                                                        errors.variants?.[index]?.price
+                                                            ? 'border-red-500'
+                                                            : 'border-[#3a3a3a] focus:border-purple-500'
+                                                    }`}
+                                                    placeholder="0.00"
+                                                />
+                                                {errors.variants?.[index]?.price && (
+                                                    <p className="mt-1 text-[10px] text-red-500 font-medium">
+                                                        {errors.variants[index]?.price?.message}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            {/* Weight */}
+                                            <div>
+                                                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase">
+                                                    Weight (kg)
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    {...register(
+                                                        `variants.${index}.weight_per_unit`
                                                     )}
-                                                </div>
-
-                                                {/* Price */}
-                                                <div>
-                                                    <label className="block text-xs font-medium text-gray-400 mb-1">
-                                                        Price ($)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        step="0.01"
-                                                        required
-                                                        value={variant.price}
-                                                        onChange={(e) =>
-                                                            handleVariantChange(
-                                                                itemId,
-                                                                'price',
-                                                                e.target.value
-                                                            )
+                                                    className={`w-full bg-[#1a1a1a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border focus:outline-none transition-colors ${
+                                                        errors.variants?.[index]?.weight_per_unit
+                                                            ? 'border-red-500'
+                                                            : 'border-[#3a3a3a] focus:border-purple-500'
+                                                    }`}
+                                                    placeholder="0.100"
+                                                />
+                                                {errors.variants?.[index]?.weight_per_unit && (
+                                                    <p className="mt-1 text-[10px] text-red-500 font-medium">
+                                                        {
+                                                            errors.variants[index]?.weight_per_unit
+                                                                ?.message
                                                         }
-                                                        className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                                        placeholder="0.00"
-                                                    />
-                                                </div>
-
-                                                {/* Weight */}
-                                                <div>
-                                                    <label className="block text-xs font-medium text-gray-400 mb-1">
-                                                        Weight (kg)
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        step="0.001"
-                                                        required
-                                                        value={variant.weight_per_unit}
-                                                        onChange={(e) =>
-                                                            handleVariantChange(
-                                                                itemId,
-                                                                'weight_per_unit',
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                        className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                                                        placeholder="0.1"
-                                                    />
-                                                </div>
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                        <div className="flex justify-end space-x-3 pt-4 border-t border-[#2a2a2a]">
+                        <div className="flex justify-end space-x-3 pt-6 border-t border-[#2a2a2a] bg-[#1a1a1a]">
                             <button
                                 type="button"
                                 onClick={handleCloseModal}
-                                className="px-4 py-2 bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a] rounded-lg transition-colors"
+                                className="px-5 py-2.5 bg-[#2a2a2a] text-gray-300 hover:bg-[#333] rounded-xl transition-all font-medium border border-[#3a3a3a]"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="px-6 py-2 min-h-[40px] bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="px-8 py-2.5 min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-bold shadow-lg shadow-purple-600/20"
                             >
                                 {isSubmitting ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
                                 ) : isEditMode ? (
                                     'Update Variant'
                                 ) : (
-                                    `Create ${formData.variants.length} Variant${formData.variants.length > 1 ? 's' : ''}`
+                                    `Create ${fields.length} Variant${fields.length > 1 ? 's' : ''}`
                                 )}
                             </button>
                         </div>
