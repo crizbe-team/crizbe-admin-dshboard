@@ -18,6 +18,7 @@ import { useFetchVariantStock, useCreateStock, useDeleteStockHistory } from '@/q
 import { API_ENDPOINTS } from '@/utils/api-endpoints';
 import UserLoaders from '@/components/ui/UserLoader';
 import { formatDateTime } from '@/utils/date-utils';
+import Pagination from '@/components/ui/Pagination';
 
 export default function VariantStockDetailPage() {
     const params = useParams();
@@ -27,16 +28,22 @@ export default function VariantStockDetailPage() {
     const queryClient = useQueryClient();
 
     // Fetch Variant Stock Detail and History
-    const { data: variantStockData, isLoading } = useFetchVariantStock(variantId);
+    const [currentHistoryPage, setCurrentHistoryPage] = useState(1);
+    const [historyType, setHistoryType] = useState<string>('All');
+
+    const { data: variantStockData, isLoading } = useFetchVariantStock(variantId, {
+        page: currentHistoryPage,
+        type: historyType === 'All' ? undefined : historyType,
+    });
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     const createMutation = useCreateStock();
     const deleteHistoryMutation = useDeleteStockHistory();
 
-    const variant = variantStockData?.variant || {};
-    const history = variantStockData?.history || [];
-    const productName = variantStockData?.product_name || '';
+    const variant = variantStockData?.base_data?.variant || {};
+    const history = variantStockData?.data || [];
+    const productName = variantStockData?.base_data?.product_name || '';
     const baseData = variantStockData?.base_data || {};
 
     const handleAddStock = async (data: any) => {
@@ -110,7 +117,7 @@ export default function VariantStockDetailPage() {
                 <div className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a]">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-gray-400 text-sm mb-1">Total Stock (kg)</p>
+                            <p className="text-gray-400 text-sm mb-1">Total Stock (nos)</p>
                             <p className="text-3xl font-bold text-gray-100">
                                 {baseData.total_stock || 0}
                             </p>
@@ -124,7 +131,7 @@ export default function VariantStockDetailPage() {
                 <div className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a]">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-gray-400 text-sm mb-1">Available Stock (kg)</p>
+                            <p className="text-gray-400 text-sm mb-1">Available Stock (nos)</p>
                             <p className="text-3xl font-bold text-gray-100">
                                 {baseData.available_stock || 0}
                             </p>
@@ -138,7 +145,7 @@ export default function VariantStockDetailPage() {
                 <div className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a]">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-gray-400 text-sm mb-1">Total Sold (kg)</p>
+                            <p className="text-gray-400 text-sm mb-1">Total Sold (nos)</p>
                             <p className="text-3xl font-bold text-gray-100">
                                 {baseData.total_sold || 0}
                             </p>
@@ -154,7 +161,7 @@ export default function VariantStockDetailPage() {
                         <div>
                             <p className="text-gray-400 text-sm mb-1">Price</p>
                             <p className="text-3xl font-bold text-gray-100">
-                                ${parseFloat(variant.price || '0').toFixed(2)}
+                                ₹{parseFloat(variant.price || '0').toFixed(2)}
                             </p>
                         </div>
                         <div className="text-yellow-400 bg-yellow-500 bg-opacity-10 p-3 rounded-lg">
@@ -165,9 +172,23 @@ export default function VariantStockDetailPage() {
             </div>
 
             <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a]">
-                <div className="p-4 border-b border-[#2a2a2a] flex items-center space-x-2">
-                    <History className="w-4 h-4 text-blue-400" />
-                    <h2 className="font-semibold text-gray-100">Variation Stock History</h2>
+                <div className="p-4 border-b border-[#2a2a2a] flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                        <History className="w-4 h-4 text-blue-400" />
+                        <h2 className="font-semibold text-gray-100">Variation Stock History</h2>
+                    </div>
+                    <select
+                        value={historyType}
+                        onChange={(e) => {
+                            setHistoryType(e.target.value);
+                            setCurrentHistoryPage(1);
+                        }}
+                        className="bg-[#2a2a2a] text-gray-300 text-sm px-3 py-1.5 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 cursor-pointer"
+                    >
+                        <option value="All">All Types</option>
+                        <option value="Addition">Addition</option>
+                        <option value="Subtraction">Subtraction</option>
+                    </select>
                 </div>
                 <div className="overflow-x-auto">
                     {history.length > 0 ? (
@@ -201,10 +222,11 @@ export default function VariantStockDetailPage() {
 
                                         <td className="p-4">
                                             <span
-                                                className={`px-2 py-0.5 rounded-full bg-opacity-10 text-xs ${item.type === 'Addition'
-                                                    ? 'bg-blue-500 text-blue-400'
-                                                    : 'bg-red-500 text-red-400'
-                                                    }`}
+                                                className={`px-2 py-0.5 rounded-full bg-opacity-10 text-xs ${
+                                                    item.type === 'Addition'
+                                                        ? 'bg-blue-500 text-blue-400'
+                                                        : 'bg-red-500 text-red-400'
+                                                }`}
                                             >
                                                 {item.type}
                                             </span>

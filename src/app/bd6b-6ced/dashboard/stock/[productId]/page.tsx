@@ -35,6 +35,7 @@ export default function ProductStockPage() {
     const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
     const [isStockModalOpen, setIsStockModalOpen] = useState(false);
     const [currentHistoryPage, setCurrentHistoryPage] = useState(1);
+    const [historyType, setHistoryType] = useState<string>('All');
 
     // Fetch Product Stock Detail
     const { data: productStockData, isLoading: isProductLoading } = useFetchProductStock(productId);
@@ -43,6 +44,7 @@ export default function ProductStockPage() {
     const { data: historyResponse, isLoading: isHistoryLoading } = useFetchStockHistoryList({
         product: productId,
         page: currentHistoryPage,
+        type: historyType === 'All' ? undefined : historyType,
     });
 
     const createMutation = useCreateStock();
@@ -201,9 +203,23 @@ export default function ProductStockPage() {
                 {/* Stock History */}
                 <div className="lg:col-span-2">
                     <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a]">
-                        <div className="p-4 border-b border-[#2a2a2a] flex items-center space-x-2">
-                            <History className="w-4 h-4 text-blue-400" />
-                            <h2 className="font-semibold text-gray-100">Stock History</h2>
+                        <div className="p-4 border-b border-[#2a2a2a] flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                                <History className="w-4 h-4 text-blue-400" />
+                                <h2 className="font-semibold text-gray-100">Stock History</h2>
+                            </div>
+                            <select
+                                value={historyType}
+                                onChange={(e) => {
+                                    setHistoryType(e.target.value);
+                                    setCurrentHistoryPage(1);
+                                }}
+                                className="bg-[#2a2a2a] text-gray-300 text-sm px-3 py-1.5 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 cursor-pointer"
+                            >
+                                <option value="All">All Types</option>
+                                <option value="Addition">Addition</option>
+                                <option value="Subtraction">Subtraction</option>
+                            </select>
                         </div>
                         <div className="overflow-x-auto">
                             {isHistoryLoading ? (

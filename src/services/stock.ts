@@ -30,9 +30,13 @@ export const getProductStock = async (id: string | number) => {
     return handleApiResponse(response);
 };
 
-export const getVariantStock = async (id: string | number) => {
+export const getVariantStock = async (id: string | number, params: any = {}) => {
     const { GET_VARIANT_STOCK } = API_ENDPOINTS;
-    const url = new ApiBuilder(GET_VARIANT_STOCK).path('id', id).build();
+    const url = new ApiBuilder(GET_VARIANT_STOCK)
+        .path('id', id)
+        .query('page', params.page)
+        .query('type', params.type)
+        .build();
     const response = await api.get(url);
     return handleApiResponse(response);
 };

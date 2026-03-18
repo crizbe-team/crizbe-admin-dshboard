@@ -73,10 +73,10 @@ export const useFetchProductStock = (id: string) => {
     });
 };
 
-export const useFetchVariantStock = (id: string) => {
+export const useFetchVariantStock = (id: string, filters: any = {}) => {
     return useQuery<any>({
-        queryKey: [GET_VARIANT_STOCK, id],
-        queryFn: () => getVariantStock(id),
+        queryKey: [GET_VARIANT_STOCK, id, filters],
+        queryFn: () => getVariantStock(id, filters),
         enabled: !!id,
     });
 };
