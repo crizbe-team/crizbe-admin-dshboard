@@ -1,4 +1,4 @@
-export const handleApiResponse = <T>(response: any): T => {
+export const handleApiResponse = <T = any>(response: any): T => {
     const { status_code, message, data, errors } = response?.data || {};
 
     if (status_code === 6000 || status_code === 200 || status_code === 201) {
@@ -10,7 +10,7 @@ export const handleApiResponse = <T>(response: any): T => {
         return {
             status_code: response.status,
             data: response.data,
-            message: "Success"
+            message: 'Success',
         } as any;
     }
 
