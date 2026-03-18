@@ -2,64 +2,71 @@ import OrderCard, { Order } from './OrderCard';
 
 const orders: Order[] = [
     {
-        id: 'ORD-000123',
-        date: 'Jan 12, 2024',
+        id: '000004085',
+        date: 'Jan 10, 2024',
         status: 'Delivered',
-        total: '₹250.00',
-        item: {
-            title: 'Crunch Stick Almond',
-            weight: '100 g',
-            qty: 1,
-            image: 'https://images.unsplash.com/photo-1600185365449-2ecb63f7aa9c?auto=format&fit=crop&w=500&q=80',
-        },
+        total: '₹949.00',
+        items: [
+            {
+                title: 'Crunch Stick Almond',
+                weight: '100 g',
+                qty: 1,
+                price: '₹250.00',
+                image: '/images/product1.png', // Just dummy url, but we need something that works
+            },
+        ],
     },
     {
-        id: 'ORD-000124',
-        date: 'Jan 12, 2024',
+        id: '000004086',
+        date: 'Jan 10, 2024',
         status: 'Delivered',
-        total: '₹699.00',
-        item: {
-            title: 'Crunch Stick Almond, Pistachio, chocolate hamper',
-            weight: '350 g',
-            qty: 1,
-            image: 'https://images.unsplash.com/photo-1600185365449-2ecb63f7aa9c?auto=format&fit=crop&w=500&q=80',
-        },
-    },
-    {
-        id: 'ORD-000125',
-        date: 'Jan 12, 2024',
-        status: 'Delivered',
-        total: '₹250.00',
-        item: {
-            title: 'Crunch Stick Almond',
-            weight: '100 g',
-            qty: 1,
-            image: 'https://images.unsplash.com/photo-1600185365449-2ecb63f7aa9c?auto=format&fit=crop&w=500&q=80',
-        },
+        total: '₹949.00',
+        items: [
+            {
+                title: 'Crunch Stick Almond',
+                weight: '100 g',
+                qty: 1,
+                price: '₹250.00',
+                image: '/images/product1.png',
+            },
+            {
+                title: 'Crunch Stick Almond, Pistachio, chocolate hamber',
+                weight: '200 g',
+                qty: 1,
+                price: '₹699.00',
+                image: '/images/product2.png',
+            },
+        ],
     },
 ];
 
+import { Search } from 'lucide-react';
+
 export default function OrdersList() {
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-1">
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-900">My orders</h1>
+                    <h1 className="text-[22px] font-medium text-[#1A1A1A]">My orders</h1>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 relative">
                     <label className="sr-only" htmlFor="order-search">
                         Search orders
                     </label>
+                    <Search
+                        className="absolute left-[14px] top-1/2 -translate-y-1/2 text-[#999999] h-[18px] w-[18px]"
+                        strokeWidth={2}
+                    />
                     <input
                         id="order-search"
                         type="text"
                         placeholder="Search orders"
-                        className="h-10 w-[550px] max-w-xs rounded-lg border border-gray-200 bg-white/80 px-4 text-sm text-gray-700 shadow-sm outline-none focus:border-[#E8BF7A] focus:ring-2 focus:ring-[#E8BF7A]/30"
+                        className="h-[44px] w-full sm:w-[480px] rounded-[10px] border border-[#EEEEEE] bg-white pl-[42px] pr-4 text-[13px] text-[#333333] outline-none placeholder:text-[#999999] focus:border-[#E8BF7A] focus:ring-1 focus:ring-[#E8BF7A]"
                     />
                 </div>
             </div>
 
-            <div className="grid gap-6 max-h-[70vh] overflow-y-auto pr-2">
+            <div className="grid gap-[22px]">
                 {orders.map((order) => (
                     <OrderCard key={order.id} order={order} />
                 ))}

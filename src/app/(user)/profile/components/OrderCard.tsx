@@ -1,14 +1,12 @@
 'use client';
 import { useState } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-export type OrderCardProps = {
-    order: Order;
-};
-
-type OrderItem = {
+export type OrderItem = {
     title: string;
     weight: string;
     qty: number;
+    price: string;
     image: string;
 };
 
@@ -17,53 +15,63 @@ export type Order = {
     date: string;
     status: string;
     total: string;
-    item: OrderItem;
+    items: OrderItem[];
+};
+
+export type OrderCardProps = {
+    order: Order;
 };
 
 export default function OrderCard({ order }: OrderCardProps) {
     const [showDetails, setShowDetails] = useState(false);
 
     return (
-        <article className="rounded-2xl border border-[#EEEEEE] bg-white shadow-sm">
-            <header className="flex items-center justify-between rounded-t-2xl border-b border-slate-100 bg-[#FAF8F5] px-6 py-4 text-xs text-black">
-                <span>Order no {order.id}</span>
+        <article className="rounded-[20px] border border-[#EEEEEE] bg-white overflow-hidden shadow-sm">
+            <header className="flex items-center justify-between border-b border-[#EEEEEE] px-6 py-[18px] text-[13px] text-[#555555]">
+                <span>Order no &nbsp;&nbsp;{order.id}</span>
                 <span>Ordered on : {order.date}</span>
             </header>
 
-            <div className="flex flex-col gap-4 px-6 py-6 md:flex-row md:items-start md:justify-between">
-                <div className="flex items-start gap-4">
-                    <div className="relative">
-                        <img
-                            src={order.item.image}
-                            alt={order.item.title}
-                            className="h-24 w-24 rounded-2xl object-cover"
-                        />
-                        <span className="absolute left-2 top-2 rounded-full bg-[#EDEDED] px-3 py-1 text-xs font-medium text-slate-800">
-                            Offer
-                        </span>
-                    </div>
-                    <div>
-                        <h2 className="text-lg text-slate-900">{order.item.title}</h2>
-                        <div className="mt-2 text-sm text-slate-500">
-                            Weight : {order.item.weight}
+            <div className="flex flex-col">
+                {order.items.map((item, index) => (
+                    <div
+                        key={index}
+                        className={`flex flex-col gap-4 px-6 py-[22px] md:flex-row md:items-start md:justify-between ${index !== order.items.length - 1 ? 'border-b border-[#EEEEEE]' : ''}`}
+                    >
+                        <div className="flex items-start gap-5">
+                            <div className="relative">
+                                <div className="flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-xl bg-[#F4F4F4]">
+                                    <img
+                                        src={item.image}
+                                        alt={item.title}
+                                        className="h-full w-full object-cover mix-blend-multiply"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex flex-col pt-1">
+                                <h2 className="text-[15px] font-medium text-black">{item.title}</h2>
+                                <div className="mt-2 text-[13px] text-gray-500">
+                                    Weight : {item.weight}
+                                </div>
+                                <div className="mt-0.5 text-[13px] text-gray-500">
+                                    QTY : {String(item.qty).padStart(2, '0')}
+                                </div>
+                            </div>
                         </div>
-                        <div className="text-sm text-slate-500">
-                            QTY : {String(order.item.qty).padStart(2, '0')}
-                        </div>
-                    </div>
-                </div>
 
-                <div className="flex flex-col items-start gap-1 text-right md:items-end">
-                    <div className="text-lg text-slate-900">{order.total}</div>
-                </div>
+                        <div className="flex flex-col items-start gap-1 text-right md:items-end pt-1">
+                            <div className="text-[17px] font-medium text-black">{item.price}</div>
+                        </div>
+                    </div>
+                ))}
             </div>
 
             {showDetails && (
-                <div className="border-t border-slate-100 px-6 py-6">
+                <div className="border-t border-[#EEEEEE] px-6 py-6">
                     <div className="flex gap-4 items-center">
                         <div>
                             <h3 className="text-sm font-medium text-slate-900">Delivery Details</h3>
-                            <div className="mt-4 rounded-2xl border border-slate-100 bg-white p-5">
+                            <div className="mt-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-sm font-medium text-slate-900">
@@ -81,10 +89,10 @@ export default function OrderCard({ order }: OrderCardProps) {
 
                         <div>
                             <h3 className="text-sm font-medium text-slate-900">Invoice</h3>
-                            <div className="mt-4 rounded-2xl border border-slate-100 bg-white p-5">
+                            <div className="mt-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                                 <button
                                     type="button"
-                                    className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 shadow-sm hover:bg-slate-50"
+                                    className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-900 shadow-sm hover:bg-slate-50"
                                 >
                                     Download Invoice
                                 </button>
@@ -94,7 +102,7 @@ export default function OrderCard({ order }: OrderCardProps) {
                         <div>
                             <button
                                 type="button"
-                                className="h-[44px] w-full rounded-xl border border-transparent bg-gradient-to-r from-[#9A7236] via-[#E8BF7A] to-[#937854] px-6 text-sm font-medium text-white shadow-sm"
+                                className="h-[44px] w-[140px] rounded-xl bg-[#c59d5f] px-6 text-sm font-medium text-white shadow-sm hover:bg-[#b08b50] transition-colors"
                             >
                                 Track
                             </button>
@@ -103,23 +111,30 @@ export default function OrderCard({ order }: OrderCardProps) {
                 </div>
             )}
 
-            <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 px-6 py-4 text-sm text-slate-600">
-                <div className="flex items-center gap-2">
-                    <span className="text-slate-500">Order status :</span>
-                    <span className="text-emerald-700">{order.status}</span>
-                </div>
+            <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-[#EEEEEE] px-6 py-[18px]">
+                <div className="flex items-center gap-12">
+                    <div className="flex items-center gap-2 text-[13px]">
+                        <span className="text-[#555555]">Order status :</span>
+                        <span className="text-[#0E9F6E]">{order.status}</span>
+                    </div>
 
-                <div className="flex items-center gap-2">
-                    <span className="text-slate-500">Order total :</span>
-                    <span className="text-slate-900">{order.total}</span>
+                    <div className="flex items-center gap-2 text-[13px]">
+                        <span className="text-[#555555]">Order total :</span>
+                        <span className="text-black font-medium">{order.total}</span>
+                    </div>
                 </div>
 
                 <button
                     type="button"
                     onClick={() => setShowDetails((prev) => !prev)}
-                    className="text-sm text-[#007DDC]"
+                    className="flex items-center gap-1.5 text-[13px] font-medium text-[#007DDC] hover:text-[#006bbd]"
                 >
                     {showDetails ? 'Hide details' : 'View details'}
+                    {showDetails ? (
+                        <ChevronUp size={16} strokeWidth={2.5} />
+                    ) : (
+                        <ChevronDown size={16} strokeWidth={2.5} />
+                    )}
                 </button>
             </footer>
         </article>

@@ -3,54 +3,58 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
+import { ChevronRight, LogOut } from 'lucide-react';
 
 const NAV_ITEMS = [
     { href: '/profile', label: 'Profile' },
     { href: '/profile/my-orders', label: 'My orders' },
-    { href: '/profile/my-addresses', label: 'My addresses' },
+    { href: '/profile/my-addresses', label: 'My addresses', dividerAfter: true },
     { href: '/profile/about-us', label: 'About us' },
     { href: '/profile/privacy-policy', label: 'Privacy policy' },
-    { href: '/profile/terms-and-conditions', label: 'Terms & conditions' },
+    { href: '/profile/terms-and-conditions', label: 'Terms & conditions', dividerAfter: true },
 ];
 
 export default function ProfileSidebar({ userName = 'Customer' }: { userName?: string }) {
     const pathname = usePathname();
 
     return (
-        <aside className="w-full rounded-2xl border border-gray-200 bg-white/80 p-[25px] shadow-sm lg:w-[280px]">
-            <div className="mb-8 border-b border-[#EEEEEE] pb-6 flex items-center">
-                <p className="text-[20px] font-medium text-gray-500">Hello,</p>
-                <h2 className="ml-[5px] text-[20px]  text-gray-900">{userName}</h2>
+        <aside className="w-full rounded-[20px] border border-[#EEEEEE] bg-white p-[24px] shadow-sm flex flex-col ">
+            <div className="mx-0 mb-[16px] border-b border-[#EEEEEE] pb-[16px] flex items-center px-2">
+                <p className="text-[20px] text-[#555555]">Hello,</p>
+                <h2 className="ml-1.5 text-[20px] text-[#191919]">{userName}</h2>
             </div>
-            <nav className="space-y-1">
-                {NAV_ITEMS.map((item, index) => {
+
+            <nav className="flex flex-col">
+                {NAV_ITEMS.map((item) => {
                     const isActive = pathname === item.href;
                     return (
                         <React.Fragment key={item.href}>
                             <Link
                                 href={item.href}
-                                className={`block rounded-lg px-[10px] py-[10px] text-[18px] font-medium transition-colors ${
+                                className={`flex items-center justify-between rounded-xl px-2 mb-[16px] text-[18px] transition-colors ${
                                     isActive
                                         ? 'text-[#007DDC]'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                        : 'text-[#191919] hover:text-[#007DDC]'
                                 }`}
                             >
-                                {item.label}
+                                <span>{item.label}</span>
+                                {isActive && (
+                                    <ChevronRight className="h-[18px] w-[18px] stroke-[1.5px]" />
+                                )}
                             </Link>
-                            {item.label === 'My addresses' && (
-                                <div className="mx-4 my-3 h-px bg-[#EEEEEE]" />
-                            )}
+                            {item.dividerAfter && <div className="mb-[16px] h-px bg-[#EEEEEE]" />}
                         </React.Fragment>
                     );
                 })}
             </nav>
 
-            <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="">
                 <button
                     type="button"
-                    className="w-full rounded-lg bg-white py-2 text-[18px] font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 text-[18px] text-red-500 hover:text-red-600 transition-colors group"
                 >
-                    Logout
+                    <LogOut className="h-[22px] w-[22px] rotate-180 stroke-[1.5px] text-red-500 group-hover:text-red-600 transition-colors" />
+                    <span>Logout</span>
                 </button>
             </div>
         </aside>
