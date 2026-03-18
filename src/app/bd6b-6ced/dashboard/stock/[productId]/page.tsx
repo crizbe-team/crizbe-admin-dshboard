@@ -8,12 +8,9 @@ import {
     History,
     Layers,
     ChevronRight,
-    Trash2,
-    ShoppingCart,
     Archive,
     CheckCircle,
     Package,
-    Box,
 } from 'lucide-react';
 import Link from 'next/link';
 import VariantStockAddModal from '@/components/Modals/VariantStockAddModal';
@@ -23,12 +20,11 @@ import {
     useFetchProductStock,
     useFetchStockHistoryList,
     useCreateStock,
-    useDeleteStockHistory,
 } from '@/queries/use-stock';
-import { useFetchProducts } from '@/queries/use-products';
 import { API_ENDPOINTS } from '@/utils/api-endpoints';
 import UserLoaders from '@/components/ui/UserLoader';
 import { formatDateTime } from '@/utils/date-utils';
+import Pagination from '@/components/ui/Pagination';
 
 export default function ProductStockPage() {
     const params = useParams();
@@ -36,22 +32,20 @@ export default function ProductStockPage() {
     const productId = params.productId as string;
     const queryClient = useQueryClient();
 
+    const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+    const [isStockModalOpen, setIsStockModalOpen] = useState(false);
+    const [currentHistoryPage, setCurrentHistoryPage] = useState(1);
+
     // Fetch Product Stock Detail
     const { data: productStockData, isLoading: isProductLoading } = useFetchProductStock(productId);
 
     // Fetch Global Stock History for this product
     const { data: historyResponse, isLoading: isHistoryLoading } = useFetchStockHistoryList({
         product: productId,
+        page: currentHistoryPage,
     });
 
-    // Fetch Products for the modal
-    const { data: productsData } = useFetchProducts();
-
-    const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
-    const [isStockModalOpen, setIsStockModalOpen] = useState(false);
-
     const createMutation = useCreateStock();
-    const deleteHistoryMutation = useDeleteStockHistory();
 
     const product = productStockData?.data || {};
     const variants = productStockData?.data?.variants || [];
@@ -99,53 +93,6 @@ export default function ProductStockPage() {
             console.error('Failed to add variant stock:', error);
         }
     };
-
-    const handleAddStock = async (data: any) => {
-        try {
-            await createMutation.mutateAsync({
-                product: data.productId,
-                quantity: data.quantity,
-                purchase_price: data.purchase_price,
-                notes: data.notes,
-                type: 'Addition',
-            });
-            // Invalidate queries to refresh data
-            queryClient.invalidateQueries({
-                queryKey: [API_ENDPOINTS.GET_STOCK_HISTORY_LIST, { product: productId }],
-            });
-            queryClient.invalidateQueries({
-                queryKey: [API_ENDPOINTS.GET_PRODUCT_STOCK, productId],
-            });
-            setIsStockModalOpen(false);
-        } catch (error) {
-            console.error('Failed to add stock:', error);
-        }
-    };
-
-    const handleDeleteHistory = async (id: string | number) => {
-        if (
-            confirm(
-                'Are you sure you want to delete this history record? This will reverse the stock change.'
-            )
-        ) {
-            try {
-                await deleteHistoryMutation.mutateAsync(id);
-                // Also invalidate detail to update stats
-                queryClient.invalidateQueries({
-                    queryKey: [API_ENDPOINTS.GET_PRODUCT_STOCK, productId],
-                });
-            } catch (error) {
-                console.error('Failed to delete history:', error);
-            }
-        }
-    };
-
-    const availableProducts =
-        productsData?.data?.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            product_id_code: p.productId,
-        })) || [];
 
     if (isProductLoading) {
         return (
@@ -230,7 +177,7 @@ export default function ProductStockPage() {
                                     <div>
                                         <p className="text-gray-100 font-medium">{v.size}</p>
                                         <p className="text-sm text-gray-400">
-                                            ${parseFloat(v.price || '0').toFixed(2)}
+                                            ₹{parseFloat(v.price || '0').toFixed(2)}
                                         </p>
                                     </div>
                                     <div className="flex items-center space-x-3">
@@ -318,6 +265,19 @@ export default function ProductStockPage() {
                                 </div>
                             )}
                         </div>
+
+                        {historyResponse?.pagination &&
+                            historyResponse.pagination.total_pages > 1 && (
+                                <div className="p-4 border-t border-[#2a2a2a]">
+                                    <Pagination
+                                        currentPage={currentHistoryPage}
+                                        totalPages={historyResponse.pagination.total_pages}
+                                        onPageChange={setCurrentHistoryPage}
+                                        hasNext={historyResponse.pagination.has_next}
+                                        hasPrevious={historyResponse.pagination.has_previous}
+                                    />
+                                </div>
+                            )}
                     </div>
                 </div>
             </div>
@@ -328,15 +288,13 @@ export default function ProductStockPage() {
                 handleSubmit={handleAddVariantStock}
                 variants={variants}
                 productName={product.name}
+                isLoading={createMutation.isPending}
             />
 
             <StockAddModal
                 isModalOpen={isStockModalOpen}
                 handleCloseModal={() => setIsStockModalOpen(false)}
-                handleSubmit={handleAddStock}
-                availableProducts={availableProducts}
                 defaultProductId={productId}
-                isLoading={createMutation.isPending}
             />
         </div>
     );

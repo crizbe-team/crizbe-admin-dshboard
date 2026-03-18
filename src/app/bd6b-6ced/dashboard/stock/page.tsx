@@ -1,20 +1,22 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Package, Box, Search, Plus, Eye, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Box, Plus, Eye, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import Link from 'next/link';
 import StockAddModal from '@/components/Modals/StockAddModal';
-import { useFetchStockList, useCreateStock } from '@/queries/use-stock';
-import { useFetchProducts } from '@/queries/use-products';
+import { useFetchStockList } from '@/queries/use-stock';
 import { useFetchCategories } from '@/queries/use-categories';
 import UserLoaders from '@/components/ui/UserLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
+import Pagination from '@/components/ui/Pagination';
 
 export default function StockPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
+    const [categorySearch, setCategorySearch] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<string>('All');
+    const [currentPage, setCurrentPage] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedProductForAdd, setSelectedProductForAdd] = useState<string | undefined>(
         undefined
@@ -25,15 +27,13 @@ export default function StockPage() {
         q: searchQuery,
         category: selectedCategory === 'All' ? undefined : selectedCategory,
         status: selectedStatus === 'All' ? undefined : selectedStatus,
+        page: currentPage,
     });
 
     // Fetch Categories
-    const { data: categoriesData } = useFetchCategories();
-
-    // Fetch Products for the modal
-    const { data: productsData } = useFetchProducts();
-
-    const createMutation = useCreateStock();
+    const { data: categoriesData, isLoading: isCategoriesLoading } = useFetchCategories({
+        q: categorySearch,
+    });
 
     const categoryOptions = useMemo(() => {
         const cats =
@@ -81,33 +81,10 @@ export default function StockPage() {
         },
     ];
 
-    const handleAddStock = async (data: any) => {
-        try {
-            await createMutation.mutateAsync({
-                product: data.productId,
-                quantity: data.quantity,
-                purchase_price: data.purchase_price,
-                notes: data.notes,
-                type: 'Addition',
-            });
-            setIsAddModalOpen(false);
-            setSelectedProductForAdd(undefined);
-        } catch (error) {
-            console.error('Failed to add stock:', error);
-        }
-    };
-
     const handleOpenAddStockModal = (productId?: string) => {
         setSelectedProductForAdd(productId);
         setIsAddModalOpen(true);
     };
-
-    const availableProducts =
-        productsData?.data?.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            product_id_code: p.productId,
-        })) || [];
 
     return (
         <div className="space-y-6">
@@ -137,21 +114,32 @@ export default function StockPage() {
                 <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center space-x-4 flex-1 min-w-[300px]">
                         <DebouncedSearch
-                            onSearch={setSearchQuery}
+                            onSearch={(val) => {
+                                setSearchQuery(val);
+                                setCurrentPage(1);
+                            }}
                             placeholder="Search Products..."
                             className="max-w-xs"
                         />
                         <SearchableSelect
                             options={categoryOptions}
                             value={selectedCategory}
-                            onChange={setSelectedCategory}
+                            onChange={(val) => {
+                                setSelectedCategory(val);
+                                setCurrentPage(1);
+                            }}
+                            onSearchChange={setCategorySearch}
+                            isLoading={isCategoriesLoading}
                             placeholder="All Categories"
                             className="w-48"
                         />
                         <SearchableSelect
                             options={statusOptions}
                             value={selectedStatus}
-                            onChange={setSelectedStatus}
+                            onChange={(val) => {
+                                setSelectedStatus(val);
+                                setCurrentPage(1);
+                            }}
                             placeholder="All Status"
                             className="w-48"
                         />
@@ -251,6 +239,19 @@ export default function StockPage() {
                         </div>
                     )}
                 </div>
+
+                {/* Pagination */}
+                {stockData?.pagination && stockData.pagination.total_pages > 1 && (
+                    <div className="p-4 border-t border-[#2a2a2a]">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={stockData.pagination.total_pages}
+                            onPageChange={setCurrentPage}
+                            hasNext={stockData.pagination.has_next}
+                            hasPrevious={stockData.pagination.has_previous}
+                        />
+                    </div>
+                )}
             </div>
 
             <StockAddModal
@@ -259,10 +260,7 @@ export default function StockPage() {
                     setIsAddModalOpen(false);
                     setSelectedProductForAdd(undefined);
                 }}
-                handleSubmit={handleAddStock}
-                availableProducts={availableProducts}
                 defaultProductId={selectedProductForAdd}
-                isLoading={createMutation.isPending}
             />
         </div>
     );

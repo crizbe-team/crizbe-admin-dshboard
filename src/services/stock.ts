@@ -8,8 +8,8 @@ export const getStockList = async (params: any = {}) => {
     const url = new ApiBuilder(GET_STOCK_LIST)
         .query('page', params.page)
         .query('q', params.q)
-        .query('sortBy', params.sortBy)
-        .query('sortOrder', params.sortOrder)
+        .query('category', params.category)
+        .query('status', params.status)
         .build();
 
     const response = await api.get(url);

@@ -1,63 +1,88 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
-
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { stockSchema, type StockFormData } from '@/validations/stock';
+import { useCreateStock } from '@/queries/use-stock';
+import { useFetchProducts } from '@/queries/use-products';
 import SearchableSelect from '@/components/ui/SearchableSelect';
-
-interface Product {
-    id: string;
-    name: string;
-    product_id_code: string;
-}
 
 interface Props {
     isModalOpen: boolean;
     handleCloseModal: () => void;
-    handleSubmit: (data: any) => void;
-    availableProducts: Product[];
     defaultProductId?: string;
-    isLoading?: boolean;
 }
 
-export default function StockAddModal({
-    isModalOpen,
-    handleCloseModal,
-    handleSubmit,
-    availableProducts,
-    defaultProductId,
-    isLoading = false,
-}: Props) {
-    const [formData, setFormData] = useState({
-        productId: '',
-        quantity: '',
-        type: 'add',
-        notes: '',
+export default function StockAddModal({ isModalOpen, handleCloseModal, defaultProductId }: Props) {
+    const [productSearch, setProductSearch] = useState('');
+    const { data: productsData, isLoading: isProductsLoading } = useFetchProducts({
+        q: productSearch,
+    });
+    const productsList = productsData?.data || [];
+
+    const { mutate: createStockMutation, isPending: isCreating } = useCreateStock();
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        reset,
+        setValue,
+        setError,
+        formState: { errors },
+    } = useForm<StockFormData>({
+        resolver: zodResolver(stockSchema),
+        defaultValues: {
+            product: '',
+            quantity: '',
+            type: 'Addition',
+            notes: '',
+        },
     });
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isModalOpen) {
-            setFormData((prev) => ({
-                ...prev,
-                productId: defaultProductId || '',
-            }));
+            reset({
+                product: defaultProductId || '',
+                quantity: '',
+                type: 'Addition',
+                notes: '',
+            });
         }
-    }, [isModalOpen, defaultProductId]);
+    }, [isModalOpen, defaultProductId, reset]);
 
     if (!isModalOpen) return null;
 
-    const onFormSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        handleSubmit({
-            ...formData,
-            quantity: parseFloat(formData.quantity) || 0,
-            date: new Date().toISOString(),
-        });
-        setFormData({ productId: '', quantity: '', type: 'add', notes: '' });
+    const onFormSubmit = (data: StockFormData) => {
+        createStockMutation(
+            {
+                ...data,
+                quantity: parseFloat(data.quantity) || 0,
+            },
+            {
+                onSuccess: () => {
+                    handleCloseModal();
+                },
+                onError: (error: any) => {
+                    if (error?.errors) {
+                        Object.keys(error.errors).forEach((field) => {
+                            setError(field as any, {
+                                type: 'server',
+                                message: error.errors[field][0],
+                            });
+                        });
+                    }
+                },
+            }
+        );
     };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-lg mx-4">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
+                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between bg-[#212121]">
                     <h2 className="text-xl font-semibold text-gray-100">Add Stock</h2>
                     <button
                         onClick={handleCloseModal}
@@ -67,40 +92,51 @@ export default function StockAddModal({
                     </button>
                 </div>
 
-                <form onSubmit={onFormSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                             Select Product
                         </label>
-                        <SearchableSelect
-                            options={availableProducts.map((p) => ({
-                                label: `${p.name} (${p.product_id_code})`,
-                                value: p.id,
-                            }))}
-                            value={formData.productId}
-                            onChange={(value) => setFormData({ ...formData, productId: value })}
-                            placeholder="Select a Product"
+                        <Controller
+                            control={control}
+                            name="product"
+                            render={({ field }) => (
+                                <SearchableSelect
+                                    options={productsList.map((p: any) => ({
+                                        label: p.name,
+                                        value: p.id,
+                                    }))}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    onSearchChange={setProductSearch}
+                                    isLoading={isProductsLoading}
+                                    placeholder="Search for a Product..."
+                                />
+                            )}
                         />
+                        {errors.product && (
+                            <p className="mt-1 text-xs text-red-500">{errors.product.message}</p>
+                        )}
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Quantity (kg)
-                            </label>
-                            <input
-                                type="number"
-                                required
-                                step="0.01"
-                                min="0.01"
-                                value={formData.quantity}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, quantity: e.target.value })
-                                }
-                                placeholder="e.g. 10"
-                                className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500"
-                            />
-                        </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Quantity (kg)
+                        </label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            {...register('quantity')}
+                            placeholder="e.g. 10"
+                            className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
+                                errors.quantity
+                                    ? 'border-red-500'
+                                    : 'border-[#3a3a3a] focus:border-purple-500'
+                            }`}
+                        />
+                        {errors.quantity && (
+                            <p className="mt-1 text-xs text-red-500">{errors.quantity.message}</p>
+                        )}
                     </div>
 
                     <div>
@@ -108,31 +144,30 @@ export default function StockAddModal({
                             Notes (Optional)
                         </label>
                         <textarea
-                            value={formData.notes}
-                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                            {...register('notes')}
                             placeholder="Add any notes..."
                             className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 h-24"
                         />
                     </div>
 
-                    <div className="flex justify-end space-x-3 pt-4">
+                    <div className="flex justify-end space-x-3 pt-4 border-t border-[#2a2a2a]">
                         <button
                             type="button"
                             onClick={handleCloseModal}
-                            className="px-4 py-2 bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a] rounded-lg transition-colors"
+                            className="px-4 py-2 bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a] rounded-lg transition-colors border border-[#3a3a3a]"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            disabled={isLoading}
-                            className="px-4 py-2  min-h-[40px] w-[160px]  bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 "
+                            disabled={isCreating}
+                            className="px-6 py-2 min-h-[40px] bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold shadow-lg shadow-purple-600/20"
                         >
-                            {isLoading ? (
+                            {isCreating ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
-                            ) : ('Add Stock')}
-
-
+                            ) : (
+                                'Add Stock'
+                            )}
                         </button>
                     </div>
                 </form>

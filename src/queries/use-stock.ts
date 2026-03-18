@@ -9,6 +9,7 @@ import {
     deleteStockHistory,
 } from '../services/stock';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
+import { toast } from '@/components/ui/Toast';
 
 const {
     GET_STOCK_LIST,
@@ -42,6 +43,10 @@ export const useDeleteStockHistory = () => {
             queryClient.invalidateQueries({ queryKey: [GET_VARIANT_STOCK] });
             queryClient.invalidateQueries({ queryKey: [GET_STOCK_HISTORY] });
             queryClient.invalidateQueries({ queryKey: [GET_STOCK_HISTORY_LIST] });
+            toast.success('Stock history deleted successfully');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to delete stock history');
         },
     });
 };
@@ -52,6 +57,10 @@ export const useCreateStock = () => {
         mutationFn: (data: any) => createStock(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_STOCK_LIST] });
+            toast.success('Stock added successfully');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to add stock');
         },
     });
 };
