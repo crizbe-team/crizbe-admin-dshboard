@@ -1,48 +1,22 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Search, Loader2 } from 'lucide-react';
 import OrderCard, { Order } from './OrderCard';
-
-const orders: Order[] = [
-    {
-        id: '000004085',
-        date: 'Jan 10, 2024',
-        status: 'Delivered',
-        total: '₹949.00',
-        items: [
-            {
-                title: 'Crunch Stick Almond',
-                weight: '100 g',
-                qty: 1,
-                price: '₹250.00',
-                image: '/images/product1.png', // Just dummy url, but we need something that works
-            },
-        ],
-    },
-    {
-        id: '000004086',
-        date: 'Jan 10, 2024',
-        status: 'Delivered',
-        total: '₹949.00',
-        items: [
-            {
-                title: 'Crunch Stick Almond',
-                weight: '100 g',
-                qty: 1,
-                price: '₹250.00',
-                image: '/images/product1.png',
-            },
-            {
-                title: 'Crunch Stick Almond, Pistachio, chocolate hamber',
-                weight: '200 g',
-                qty: 1,
-                price: '₹699.00',
-                image: '/images/product2.png',
-            },
-        ],
-    },
-];
-
-import { Search } from 'lucide-react';
+import { useFetchOrders } from '@/queries/use-orders';
 
 export default function OrdersList() {
+    const { data: ordersResponse, isLoading } = useFetchOrders();
+    const [searchTerm, setSearchTerm] = useState('');
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[50vh]">
+                <Loader2 className="w-10 h-10 animate-spin text-[#4E3325]" />
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-1">
@@ -60,6 +34,8 @@ export default function OrdersList() {
                     <input
                         id="order-search"
                         type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search orders"
                         className="h-[44px] w-full sm:w-[480px] rounded-[10px] border border-[#EEEEEE] bg-white pl-[42px] pr-4 text-[13px] text-[#333333] outline-none placeholder:text-[#999999] focus:border-[#E8BF7A] focus:ring-1 focus:ring-[#E8BF7A]"
                     />
@@ -67,9 +43,13 @@ export default function OrdersList() {
             </div>
 
             <div className="grid gap-[22px]">
-                {orders.map((order) => (
-                    <OrderCard key={order.id} order={order} />
-                ))}
+                {ordersResponse?.data?.length > 0 ? (
+                    ordersResponse?.data?.map((order) => <OrderCard key={order.id} order={order} />)
+                ) : (
+                    <div className="text-center py-[50px] rounded-[20px] border border-[#EEEEEE] bg-white text-[#555555]">
+                        <p className="mb-4">No orders found.</p>
+                    </div>
+                )}
             </div>
         </div>
     );

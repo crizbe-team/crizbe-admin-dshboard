@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { formatDate } from '@/utils/date-utils';
 
 export type OrderItem = {
     title: string;
@@ -28,8 +29,8 @@ export default function OrderCard({ order }: OrderCardProps) {
     return (
         <article className="rounded-[20px] border border-[#EEEEEE] bg-white overflow-hidden shadow-sm">
             <header className="flex items-center justify-between border-b border-[#EEEEEE] px-6 py-[18px] text-[13px] text-[#555555]">
-                <span>Order no &nbsp;&nbsp;{order.id}</span>
-                <span>Ordered on : {order.date}</span>
+                <span>Order id :- {order.id}</span>
+                <span>Ordered on : {formatDate(order.created_at)}</span>
             </header>
 
             <div className="flex flex-col">
@@ -42,25 +43,29 @@ export default function OrderCard({ order }: OrderCardProps) {
                             <div className="relative">
                                 <div className="flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-xl bg-[#F4F4F4]">
                                     <img
-                                        src={item.image}
-                                        alt={item.title}
+                                        src={item.product_image}
+                                        alt={item.product_name}
                                         className="h-full w-full object-cover mix-blend-multiply"
                                     />
                                 </div>
                             </div>
                             <div className="flex flex-col pt-1">
-                                <h2 className="text-[15px] font-medium text-black">{item.title}</h2>
+                                <h2 className="text-[15px] font-medium text-black">
+                                    {item.product_name}
+                                </h2>
                                 <div className="mt-2 text-[13px] text-gray-500">
-                                    Weight : {item.weight}
+                                    Weight : {item.variant_size}
                                 </div>
                                 <div className="mt-0.5 text-[13px] text-gray-500">
-                                    QTY : {String(item.qty).padStart(2, '0')}
+                                    QTY : {String(item.quantity).padStart(2, '0')}
                                 </div>
                             </div>
                         </div>
 
                         <div className="flex flex-col items-start gap-1 text-right md:items-end pt-1">
-                            <div className="text-[17px] font-medium text-black">{item.price}</div>
+                            <div className="text-[17px] font-medium text-black">
+                                {item.subtotal}
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -120,7 +125,7 @@ export default function OrderCard({ order }: OrderCardProps) {
 
                     <div className="flex items-center gap-2 text-[13px]">
                         <span className="text-[#555555]">Order total :</span>
-                        <span className="text-black font-medium">{order.total}</span>
+                        <span className="text-black font-medium">{order.total_amount}</span>
                     </div>
                 </div>
 
