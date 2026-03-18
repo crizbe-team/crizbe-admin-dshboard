@@ -17,16 +17,16 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
         pathname?.startsWith('/bd6b-6ced/dashboard/login');
 
     const [isMounted, setIsMounted] = useState(false);
-    const [role, setRole] = useState<string | null>(null);
 
     useEffect(() => {
         setIsMounted(true);
-        setRole(authUtils.getRole());
     }, []);
 
     if (!isMounted) {
         return null; // Prevent hydration mismatch
     }
+
+    const role = authUtils.getRole();
 
     const isDashboard = pathname?.startsWith('/bd6b-6ced/dashboard');
     const isDashboardLogin = pathname === '/bd6b-6ced/dashboard/login';
