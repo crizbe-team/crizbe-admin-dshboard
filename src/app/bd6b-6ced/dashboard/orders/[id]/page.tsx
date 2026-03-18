@@ -1,16 +1,9 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, ShoppingCart, Edit, CheckCircle, Loader2, Truck, PackageCheck, XCircle, Clock } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import { useFetchAdminOrderDetail, useUpdateOrderStatus } from '@/queries/use-orders';
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-    Pending: { label: 'Pending', color: 'bg-yellow-500', icon: Clock },
-    Confirmed: { label: 'Confirmed', color: 'bg-blue-500', icon: CheckCircle },
-    Shipped: { label: 'Shipped', color: 'bg-purple-500', icon: Truck },
-    Delivered: { label: 'Delivered', color: 'bg-green-500', icon: PackageCheck },
-    Cancelled: { label: 'Cancelled', color: 'bg-red-500', icon: XCircle },
-};
+import { STATUS_CONFIG } from '@/constants/constants';
 
 export default function AdminOrderDetailPage() {
     const params = useParams();
@@ -96,12 +89,16 @@ export default function AdminOrderDetailPage() {
                                             {item.product_name || 'Product'}
                                         </p>
                                         <p className="text-xs text-gray-500">
-                                            {item.variant_size || item.variant_name || 'Standard'} × {item.quantity}
+                                            {item.variant_size || item.variant_name || 'Standard'} ×{' '}
+                                            {item.quantity}
                                         </p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-sm font-bold text-gray-100">
-                                            ₹{parseFloat(item.subtotal || (item.price * item.quantity)).toFixed(2)}
+                                            ₹
+                                            {parseFloat(
+                                                item.subtotal || item.price * item.quantity
+                                            ).toFixed(2)}
                                         </p>
                                         <p className="text-xs text-gray-500">
                                             ₹{parseFloat(item.price).toFixed(2)}/unit
@@ -120,8 +117,8 @@ export default function AdminOrderDetailPage() {
                             </h3>
                             <div className="space-y-2 text-sm">
                                 <p className="text-gray-200 font-medium">
-                                    {order.first_name && order.last_name 
-                                        ? `${order.first_name} ${order.last_name}` 
+                                    {order.first_name && order.last_name
+                                        ? `${order.first_name} ${order.last_name}`
                                         : order.full_name || 'N/A'}
                                 </p>
                                 <p className="text-gray-400">
@@ -132,9 +129,7 @@ export default function AdminOrderDetailPage() {
                                     {order.city && `${order.city}, `}
                                     {order.state && order.state}
                                 </p>
-                                <p className="text-gray-400">
-                                    {order.zip_code || ''}
-                                </p>
+                                <p className="text-gray-400">{order.zip_code || ''}</p>
                                 <p className="text-gray-400 pt-2">
                                     📞 {order.phone_number || 'N/A'}
                                 </p>
@@ -159,11 +154,14 @@ export default function AdminOrderDetailPage() {
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-gray-500">Payment Status:</span>
-                                    <span className={`text-xs font-bold ${
-                                        order.payment_status === 'Paid' || order.payment_status === 'Success' 
-                                            ? 'text-green-500' 
-                                            : 'text-orange-500'
-                                    }`}>
+                                    <span
+                                        className={`text-xs font-bold ${
+                                            order.payment_status === 'Paid' ||
+                                            order.payment_status === 'Success'
+                                                ? 'text-green-500'
+                                                : 'text-orange-500'
+                                        }`}
+                                    >
                                         {order.payment_status || 'Pending'}
                                     </span>
                                 </div>
@@ -209,11 +207,9 @@ export default function AdminOrderDetailPage() {
                                         <config.icon
                                             className={`w-4 h-4 ${statusPending && order.status === status ? 'animate-spin' : ''}`}
                                         />
-                                        <span className="text-xs font-bold">{status}</span>
+                                        <span className="text-xs font-bold">{config.label}</span>
                                     </div>
-                                    {order.status === status && (
-                                        <CheckCircle className="w-4 h-4" />
-                                    )}
+                                    {order.status === status && <CheckCircle className="w-4 h-4" />}
                                 </button>
                             ))}
                         </div>
@@ -273,9 +269,7 @@ export default function AdminOrderDetailPage() {
                             </div>
                             <div className="flex justify-between">
                                 <span>Order ID:</span>
-                                <span className="text-gray-200 font-mono text-xs">
-                                    {order.id}
-                                </span>
+                                <span className="text-gray-200 font-mono text-xs">{order.id}</span>
                             </div>
                         </div>
                     </div>
