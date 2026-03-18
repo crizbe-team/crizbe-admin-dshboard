@@ -12,35 +12,36 @@ import {
     Package,
     Filter,
 } from 'lucide-react';
-import CategoryAddEditModal, {
-    Category,
-    CategoryFormData,
-} from '@/components/Modals/CategoryAddEditModal';
+import CategoryAddEditModal, { Category } from '@/components/Modals/CategoryAddEditModal';
 import CategoryDeleteModal from '@/components/Modals/CategoryDeleteModal';
 import { useFetchCategories, useDeleteCategory } from '@/queries/use-categories';
 import UserLoaders from '@/components/ui/UserLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
+import Pagination from '@/components/ui/Pagination';
+import { useEffect } from 'react';
 
 export default function CategoriesPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const { data, isLoading } = useFetchCategories({
         q: searchQuery,
         is_active: statusFilter === 'all' ? undefined : statusFilter === 'active',
+        page: currentPage,
     });
 
     const deleteMutation = useDeleteCategory();
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, statusFilter]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-    const [formData, setFormData] = useState<CategoryFormData>({
-        name: '',
-        description: '',
-        is_active: true,
-    });
 
     const stats = [
         {
@@ -72,22 +73,12 @@ export default function CategoriesPage() {
     // Open modal for adding new category
     const handleAddCategory = () => {
         setEditingCategory(null);
-        setFormData({
-            name: '',
-            description: '',
-            is_active: true,
-        });
         setIsModalOpen(true);
     };
 
     // Open modal for editing category
     const handleEditCategory = (category: Category) => {
         setEditingCategory(category);
-        setFormData({
-            name: category.name,
-            description: category.description,
-            is_active: category.is_active,
-        });
         setIsModalOpen(true);
     };
 
@@ -120,11 +111,6 @@ export default function CategoriesPage() {
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setEditingCategory(null);
-        setFormData({
-            name: '',
-            description: '',
-            is_active: true,
-        });
     };
 
     return (
@@ -218,29 +204,30 @@ export default function CategoriesPage() {
                                                 <div className="w-8 h-8 rounded-lg bg-purple-900 bg-opacity-30 flex items-center justify-center text-purple-400">
                                                     <Layers className="w-4 h-4" />
                                                 </div>
-                                                <span className="text-gray-100 font-medium">
+                                                <span className="text-gray-100 font-medium max-w-[200px] truncate">
                                                     {category.name}
                                                 </span>
                                             </div>
                                         </td>
                                         <td
                                             className="p-4 text-gray-300 max-w-xs truncate"
-                                            title={category.description}
+                                            title={category.description || '--'}
                                         >
-                                            {category.description}
+                                            {category?.description || '--'}
                                         </td>
                                         <td className="p-4">
                                             <span
-                                                className={`px-2 py-1 rounded text-xs font-medium border ${category.is_active
-                                                    ? 'bg-green-900 bg-opacity-20 text-green-400 border-green-900'
-                                                    : 'bg-red-900 bg-opacity-20 text-red-400 border-red-900'
-                                                    }`}
+                                                className={`px-2 py-1 rounded text-xs font-medium border ${
+                                                    category.is_active
+                                                        ? 'bg-green-900 bg-opacity-20 text-green-400 border-green-900'
+                                                        : 'bg-red-900 bg-opacity-20 text-red-400 border-red-900'
+                                                }`}
                                             >
                                                 {category.is_active ? 'Active' : 'Inactive'}
                                             </span>
                                         </td>
                                         <td className="p-4 text-gray-300">
-                                            {category.productCount} products
+                                            {category.productCount ?? 0} products
                                         </td>
                                         <td className="p-4">
                                             <div className="flex items-center space-x-2">
@@ -270,6 +257,19 @@ export default function CategoriesPage() {
                         </div>
                     )}
                 </div>
+
+                {/* Pagination */}
+                {data?.pagination && data.pagination.total_pages > 1 && (
+                    <div className="p-4 border-t border-[#2a2a2a]">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={data.pagination.total_pages}
+                            onPageChange={setCurrentPage}
+                            hasNext={data.pagination.has_next}
+                            hasPrevious={data.pagination.has_previous}
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Add/Edit Category Modal */}
@@ -277,8 +277,6 @@ export default function CategoriesPage() {
                 isModalOpen={isModalOpen}
                 editingCategory={editingCategory}
                 handleCloseModal={handleCloseModal}
-                formData={formData}
-                setFormData={setFormData}
             />
 
             {/* Delete Confirmation Modal */}
