@@ -37,6 +37,7 @@ export type Order = {
     city?: string;
     zip_code?: string;
     phone_number?: string;
+    status_history?: { status: string; date: string }[];
 };
 
 export type OrderCardProps = {
@@ -198,6 +199,19 @@ export default function OrderCard({ order }: OrderCardProps) {
                                             'delivered',
                                         ].indexOf((order.status || '').toLowerCase());
                                         const isCompleted = index <= statusIndex;
+
+                                        // History timestamp resolution
+                                        const historyNode = (order.status_history || []).find(
+                                            (historyRecord) =>
+                                                historyRecord.status.toLowerCase() ===
+                                                step.backendRef
+                                        );
+                                        const stepDate =
+                                            historyNode?.date ||
+                                            (step.backendRef === 'pending'
+                                                ? order.created_at
+                                                : null);
+
                                         return (
                                             <div
                                                 key={step.label}
@@ -218,7 +232,9 @@ export default function OrderCard({ order }: OrderCardProps) {
                                                     )}
                                                 </div>
                                                 <span className="absolute top-full mt-[16px] text-[13px] text-[#888888] whitespace-nowrap">
-                                                    {formatDate(order.created_at)}
+                                                    {isCompleted && stepDate
+                                                        ? formatDate(stepDate)
+                                                        : ''}
                                                 </span>
                                             </div>
                                         );
