@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ProfileSidebar from './components/ProfileSidebar';
+import { useFetchMinimalDetails } from '@/queries/use-account';
 import { usePathname } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 
@@ -20,6 +21,9 @@ export default function ProfileLayout({
 }>) {
     const pathname = usePathname();
 
+    const { data: minimalDetailsRes } = useFetchMinimalDetails();
+    const userName = minimalDetailsRes?.data?.first_name || 'Customer';
+
     const breadcrumbItems = [
         { label: 'Home', href: '/' },
         { label: 'Profile', href: pathname === '/profile' ? undefined : '/profile' },
@@ -37,7 +41,7 @@ export default function ProfileLayout({
                 </div>
                 <div className="flex flex-col gap-[30px] lg:flex-row lg:items-start">
                     <div className="sticky top-[100px] shrink-0 w-full lg:w-[280px]">
-                        <ProfileSidebar userName="Aromal" />
+                        <ProfileSidebar userName={userName} />
                     </div>
                     <div className="flex-1 w-full pr-2 pb-10">{children}</div>
                 </div>

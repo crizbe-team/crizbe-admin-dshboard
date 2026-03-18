@@ -31,5 +31,6 @@ export type Order = {
     city?: string;
     zip_code?: string;
     phone_number?: string;
+    address_type?: string;
     status_history?: { status: string; date: string }[];
 };

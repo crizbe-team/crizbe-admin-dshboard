@@ -92,7 +92,7 @@ export default function OrderCard({ order }: OrderCardProps) {
                                         {order.last_name || 'Sajeevan'}
                                     </p>
                                     <span className="text-[12px] bg-[#EEEEEE] px-3 py-1 rounded-full text-[#555555]">
-                                        Office
+                                        {order.address_type || 'Office'}
                                     </span>
                                 </div>
                                 <p className="mt-3 text-[14px] text-[#555555] leading-relaxed max-w-[320px]">
