@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import { SidebarProvider } from '@/contexts/SidebarContext';
 import MainContent from '@/components/MainContent';
+import { ToastContainer } from '@/components/ui/Toast';
 
 export default function AuthWrapper({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -48,7 +49,12 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
     }
 
     if (isAuthPage) {
-        return <>{children}</>;
+        return (
+            <>
+                {children}
+                <ToastContainer />
+            </>
+        );
     }
 
     return (
@@ -57,6 +63,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
                 <Sidebar />
                 <MainContent>{children}</MainContent>
             </div>
+            <ToastContainer />
         </SidebarProvider>
     );
 }

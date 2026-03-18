@@ -66,19 +66,12 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
                 reset();
             },
             onError: (error: any) => {
-                if (error?.errors && Object.keys(error.errors).length > 0) {
-                    // Map field-specific errors from API
+                if (error?.errors) {
                     Object.keys(error.errors).forEach((field) => {
-                        setError(field as keyof CategoryFormData, {
+                        setError(field as any, {
                             type: 'server',
                             message: error.errors[field][0],
                         });
-                    });
-                } else {
-                    // Global error
-                    setError('root.serverError' as any, {
-                        type: 'server',
-                        message: error?.message || 'Something went wrong. Please try again.',
                     });
                 }
             },

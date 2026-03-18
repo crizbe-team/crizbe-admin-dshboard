@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { getCategories, getCategory } from '../services/categories';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
+import { toast } from '@/components/ui/Toast';
 
 const { GET_CATEGORIES, GET_CATEGORY } = API_ENDPOINTS;
 
@@ -26,6 +27,10 @@ export const useCreateCategory = () => {
         mutationFn: (data: any) => getCategories(data, 'post'),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CATEGORIES] });
+            toast.success('Category created successfully');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to create category');
         },
     });
 };
@@ -37,6 +42,10 @@ export const useUpdateCategory = () => {
             getCategory(id, 'put', data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CATEGORIES] });
+            toast.success('Category updated successfully');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to update category');
         },
     });
 };
@@ -47,6 +56,10 @@ export const useDeleteCategory = () => {
         mutationFn: (id: string | number) => getCategory(id, 'delete'),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CATEGORIES] });
+            toast.success('Category deleted successfully');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to delete category');
         },
     });
 };

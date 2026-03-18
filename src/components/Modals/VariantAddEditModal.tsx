@@ -157,11 +157,6 @@ function VariantAddEditModal({
                             message: error.errors[field][0],
                         });
                     });
-                } else {
-                    setError('root.serverError' as any, {
-                        type: 'server',
-                        message: error?.message || 'Failed to save variants.',
-                    });
                 }
             },
         };

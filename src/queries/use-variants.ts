@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getVariants, getVariant } from '../services/variants';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
+import { toast } from '@/components/ui/Toast';
 
 const { GET_VARIANTS, GET_VARIANT } = API_ENDPOINTS;
 
@@ -25,6 +26,10 @@ export const useCreateVariant = () => {
         mutationFn: (data: any) => getVariants(data, 'post'),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_VARIANTS] });
+            toast.success('Variants created successfully');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to create variants');
         },
     });
 };
@@ -36,6 +41,10 @@ export const useUpdateVariant = () => {
             getVariant(id, 'put', data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_VARIANTS] });
+            toast.success('Variant updated successfully');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to update variant');
         },
     });
 };
@@ -46,6 +55,10 @@ export const useDeleteVariant = () => {
         mutationFn: (id: string | number) => getVariant(id, 'delete'),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_VARIANTS] });
+            toast.success('Variant deleted successfully');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to delete variant');
         },
     });
 };
