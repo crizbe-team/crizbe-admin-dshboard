@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
     ShoppingCart,
@@ -17,6 +17,9 @@ import {
     Loader2,
 } from 'lucide-react';
 import { useFetchAdminOrders, useUpdateOrderStatus } from '@/queries/use-orders';
+import DebouncedSearch from '@/components/ui/DebouncedSearch';
+import SearchableSelect from '@/components/ui/SearchableSelect';
+import Pagination from '@/components/ui/Pagination';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
     Pending: { label: 'Pending', color: 'bg-yellow-500', icon: Clock },
@@ -28,8 +31,19 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }>
 
 export default function OrdersPage() {
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState<string>('All');
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const { data: ordersData, isLoading } = useFetchAdminOrders();
+    const { data: ordersData, isLoading } = useFetchAdminOrders({
+        q: searchQuery,
+        status: selectedStatus === 'All' ? undefined : selectedStatus,
+        page: currentPage,
+    });
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, selectedStatus]);
     const { mutate: updateStatus, isPending: statusPending } = useUpdateOrderStatus();
 
     const orders = ordersData?.data || [];
@@ -61,15 +75,17 @@ export default function OrdersPage() {
         },
     ];
 
-    const filteredOrders = orders.filter(
-        (order: any) =>
-            (order.order_id || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (order.user?.username || '').toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
     const handleStatusUpdate = (id: string, newStatus: string) => {
         updateStatus({ id, status: newStatus });
     };
+
+    const statusOptions = [
+        { label: 'All Status', value: 'All' },
+        ...Object.keys(STATUS_CONFIG).map((status) => ({
+            label: status,
+            value: status,
+        })),
+    ];
 
     return (
         <div className="space-y-6 relative min-h-screen pb-20">
@@ -102,16 +118,20 @@ export default function OrdersPage() {
 
             {/* Orders Table */}
             <div className="bg-[#1a1a1a] rounded-xl border border-[#2a2a2a] overflow-hidden">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
+                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between flex-wrap gap-4">
                     <h2 className="text-xl font-semibold text-gray-100">Recent Orders</h2>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
-                        <input
-                            type="text"
+                    <div className="flex items-center gap-4">
+                        <DebouncedSearch
                             placeholder="Search by ID or Username..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="bg-[#2a2a2a] text-gray-100 pl-10 pr-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 w-72 text-sm transition-all"
+                            onSearch={setSearchQuery}
+                            className="w-72"
+                        />
+                        <SearchableSelect
+                            options={statusOptions}
+                            value={selectedStatus}
+                            onChange={setSelectedStatus}
+                            placeholder="Filter by Status"
+                            className="w-48"
                         />
                     </div>
                 </div>
@@ -122,7 +142,7 @@ export default function OrdersPage() {
                             <Loader2 className="w-10 h-10 animate-spin text-purple-500" />
                             <p>Loading your orders...</p>
                         </div>
-                    ) : filteredOrders.length === 0 ? (
+                    ) : orders.length === 0 ? (
                         <div className="p-20 text-center text-gray-500">
                             No orders found matching your criteria.
                         </div>
@@ -151,7 +171,7 @@ export default function OrdersPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[#2a2a2a]">
-                                {filteredOrders.map((order: any) => (
+                                {orders.map((order: any) => (
                                     <tr
                                         key={order.id}
                                         className="hover:bg-[#212121] transition-colors group"
@@ -203,6 +223,19 @@ export default function OrdersPage() {
                         </table>
                     )}
                 </div>
+
+                {/* Pagination */}
+                {ordersData?.pagination && ordersData.pagination.total_pages > 1 && (
+                    <div className="p-4 border-t border-[#2a2a2a]">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={ordersData.pagination.total_pages}
+                            onPageChange={setCurrentPage}
+                            hasNext={ordersData.pagination.has_next}
+                            hasPrevious={ordersData.pagination.has_previous}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );
