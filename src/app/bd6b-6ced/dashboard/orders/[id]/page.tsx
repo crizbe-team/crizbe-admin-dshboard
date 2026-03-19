@@ -1,9 +1,15 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
-import { useFetchAdminOrderDetail, useUpdateOrderStatus } from '@/queries/use-orders';
+import { ArrowLeft, CheckCircle, Loader2, Truck, Save } from 'lucide-react';
+import {
+    useFetchAdminOrderDetail,
+    useUpdateOrderStatus,
+    useUpdateOrderTracking,
+} from '@/queries/use-orders';
 import { STATUS_CONFIG } from '@/constants/constants';
+import { useState, useEffect } from 'react';
+import { toast } from '@/components/ui/Toast';
 
 export default function AdminOrderDetailPage() {
     const params = useParams();
@@ -12,16 +18,47 @@ export default function AdminOrderDetailPage() {
 
     const { data: orderData, isLoading } = useFetchAdminOrderDetail(orderId);
     const { mutate: updateStatus, isPending: statusPending } = useUpdateOrderStatus();
+    const { mutate: updateTracking, isPending: trackingPending } = useUpdateOrderTracking();
+
+    const [postalTrackId, setPostalTrackId] = useState('');
 
     // The API returns data directly, not nested in base_data
     const order = orderData?.data || {};
+
+    useEffect(() => {
+        if (order?.tracking_number) {
+            setPostalTrackId(order.tracking_number);
+        }
+    }, [order?.tracking_number]);
 
     const handleStatusUpdate = (id: string, newStatus: string) => {
         updateStatus(
             { id, status: newStatus },
             {
                 onSuccess: () => {
-                    // Refetch to get updated data
+                    toast.success(`Order status updated to ${newStatus}`);
+                },
+                onError: (error: any) => {
+                    toast.error(error?.message || 'Failed to update order status');
+                },
+            }
+        );
+    };
+
+    const handleTrackingUpdate = () => {
+        if (!postalTrackId.trim()) {
+            toast.error('Please enter a tracking ID');
+            return;
+        }
+
+        updateTracking(
+            { id: order.id, tracking_number: postalTrackId },
+            {
+                onSuccess: () => {
+                    toast.success('Tracking ID updated successfully');
+                },
+                onError: (error: any) => {
+                    toast.error(error?.message || 'Failed to update tracking ID');
                 },
             }
         );
@@ -215,6 +252,41 @@ export default function AdminOrderDetailPage() {
                         </div>
                     </div>
 
+                    {/* Postal Tracking */}
+                    <div className="bg-[#1a1a1a] rounded-xl p-6 border border-[#2a2a2a]">
+                        <h3 className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <Truck className="w-4 h-4" />
+                            Postal Tracking
+                        </h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs text-gray-500 mb-1.5 ml-1">
+                                    Postal Track ID
+                                </label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Tracking ID"
+                                        value={postalTrackId}
+                                        onChange={(e) => setPostalTrackId(e.target.value)}
+                                        className="flex-1 bg-[#2a2a2a] border border-[#3a3a3a] rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-purple-500 transition-colors"
+                                    />
+                                    <button
+                                        onClick={handleTrackingUpdate}
+                                        disabled={trackingPending}
+                                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        <Save className="w-4 h-4" />
+                                        <span className="hidden sm:inline">Save</span>
+                                    </button>
+                                </div>
+                                <p className="mt-2 text-[10px] text-gray-500 italic">
+                                    Update this after sending the package through postal service.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Order Summary */}
                     <div className="bg-[#252525] rounded-xl p-6 border border-[#3a3a3a]">
                         <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
@@ -264,13 +336,22 @@ export default function AdminOrderDetailPage() {
                             <div className="flex justify-between">
                                 <span>Customer:</span>
                                 <span className="text-gray-200">
-                                    {order.user?.username || order.user?.first_name || 'N/A'}
+                                    {order.user_details?.username ||
+                                        order.user_details?.first_name ||
+                                        'N/A'}
                                 </span>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Order ID:</span>
-                                <span className="text-gray-200 font-mono text-xs">{order.id}</span>
-                            </div>
+
+                            {order.tracking_number && (
+                                <div className="flex justify-between pt-2 border-t border-[#2a2a2a] mt-2">
+                                    <span className="text-blue-400 font-bold uppercase text-[10px]">
+                                        Tracking ID:
+                                    </span>
+                                    <span className="text-gray-100 font-bold font-mono text-xs">
+                                        {order.tracking_number}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

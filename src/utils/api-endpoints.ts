@@ -36,6 +36,7 @@ export const API_ENDPOINTS = {
     ADMIN_ORDER_LIST: 'orders/admin/list/',
     ADMIN_ORDER_DETAIL: 'orders/admin/:pk/',
     UPDATE_ORDER_STATUS: 'orders/admin/:pk/status/',
+    UPDATE_ORDER_TRACKING: 'orders/admin/:pk/tracking/',
 
     // Cart endpoints
     GET_CART: 'orders/cart/',

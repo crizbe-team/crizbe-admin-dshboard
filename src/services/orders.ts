@@ -56,3 +56,10 @@ export const updateOrderStatus = async (id: string, status: string): Promise<any
     const response = await api.patch(url, { status });
     return handleApiResponse(response);
 };
+
+export const updateOrderTracking = async (id: string, tracking_number: string): Promise<any> => {
+    const { UPDATE_ORDER_TRACKING } = API_ENDPOINTS;
+    const url = new ApiBuilder(UPDATE_ORDER_TRACKING).path('pk', id).build();
+    const response = await api.patch(url, { tracking_number });
+    return handleApiResponse(response);
+};

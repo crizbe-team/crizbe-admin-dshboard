@@ -6,6 +6,7 @@ import {
     getAdminOrderList,
     updateOrderStatus,
     getAdminOrderDetail,
+    updateOrderTracking,
 } from '../services/orders';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
@@ -53,9 +54,20 @@ export const useFetchAdminOrderDetail = (id: string) => {
 
 export const useUpdateOrderStatus = () => {
     const queryClient = useQueryClient();
-    return useMutation<any, any, any>({
-        mutationFn: ({ id, status }: { id: string; status: string }) =>
-            updateOrderStatus(id, status),
+    return useMutation<any, any, { id: string; status: string }>({
+        mutationFn: ({ id, status }) => updateOrderStatus(id, status),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [ADMIN_ORDER_LIST] });
+            queryClient.invalidateQueries({ queryKey: [ORDER_DETAIL] });
+            queryClient.invalidateQueries({ queryKey: [ADMIN_ORDER_DETAIL] });
+        },
+    });
+};
+
+export const useUpdateOrderTracking = () => {
+    const queryClient = useQueryClient();
+    return useMutation<any, any, { id: string; tracking_number: string }>({
+        mutationFn: ({ id, tracking_number }) => updateOrderTracking(id, tracking_number),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [ADMIN_ORDER_LIST] });
             queryClient.invalidateQueries({ queryKey: [ORDER_DETAIL] });
