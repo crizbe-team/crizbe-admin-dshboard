@@ -109,7 +109,7 @@ export default function ProductSalesDetailPage() {
                     },
                     {
                         title: 'Total KG Sold',
-                        value: `${(overview.total_kg_sold || 0).toFixed(2)} kg`,
+                        value: `${(overview.total_weight_sold || 0).toFixed(2)} kg`,
                         icon: Scale,
                         color: 'text-pink-400',
                     },
@@ -196,7 +196,7 @@ export default function ProductSalesDetailPage() {
                     <div className="space-y-6">
                         <div className="space-y-2">
                             <div className="flex justify-between text-xs text-gray-400 uppercase font-bold">
-                                <span>Packed & Ready</span>
+                                <span>READY TO SHIP</span>
                                 <span className="text-gray-100 font-mono">
                                     {overview.packed_ready || 0} /{' '}
                                     {(overview.packed_ready || 0) +

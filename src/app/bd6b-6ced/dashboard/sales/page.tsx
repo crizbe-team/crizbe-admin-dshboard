@@ -48,9 +48,8 @@ export default function SalesPage() {
     const overview = salesData?.data?.overview || {};
     const revenueAmount = overview?.total_sales_revenue || 0;
     const ordersCount = overview?.total_orders || 0;
-    const itemsCount = overview?.items_sold || 0;
-    const kgCount = overview?.total_kg_sold || 0;
-    const avgOrderValue = revenueAmount / (ordersCount || 1);
+    const itemsCount = overview?.units_sold_qty || 0;
+    const kgCount = overview?.total_weight_sold || 0;
 
     const stats = [
         {
@@ -74,20 +73,10 @@ export default function SalesPage() {
             glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(74,222,128,0.3)]',
         },
         {
-            title: 'Avg. Order Value',
-            value: `₹${avgOrderValue.toFixed(2)}`,
-            change: '0%',
-            isPositive: true,
-            icon: TrendingUp,
-            color: 'text-purple-400',
-            bg: 'bg-purple-500/10',
-            glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]',
-        },
-        {
             title: 'Items Sold',
             value: itemsCount.toLocaleString(),
-            change: `${overview?.items_sold_change >= 0 ? '+' : ''}${overview?.items_sold_change || 0}%`,
-            isPositive: (overview?.items_sold_change || 0) >= 0,
+            change: `${overview?.units_sold_change >= 0 ? '+' : ''}${overview?.units_sold_change || 0}%`,
+            isPositive: (overview?.units_sold_change || 0) >= 0,
             icon: Package,
             color: 'text-orange-400',
             bg: 'bg-orange-500/10',
@@ -96,8 +85,8 @@ export default function SalesPage() {
         {
             title: 'Total KG Sold',
             value: `${kgCount.toLocaleString()} kg`,
-            change: `${overview?.kg_sold_change >= 0 ? '+' : ''}${overview?.kg_sold_change || 0}%`,
-            isPositive: (overview?.kg_sold_change || 0) >= 0,
+            change: `${overview?.weight_sold_change >= 0 ? '+' : ''}${overview?.weight_sold_change || 0}%`,
+            isPositive: (overview?.weight_sold_change || 0) >= 0,
             icon: Scale,
             color: 'text-pink-400',
             bg: 'bg-pink-500/10',
@@ -161,7 +150,7 @@ export default function SalesPage() {
             </motion.div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                 {stats.map((stat) => (
                     <motion.div
                         key={stat.title}
