@@ -8,11 +8,23 @@ import {
     getAdminOrderDetail,
     updateOrderTracking,
     getUserOrdersAdmin,
+    getAdminSalesOverview,
+    getAdminProductPerformance,
+    getAdminVariantPerformance,
 } from '../services/orders';
+
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
-const { ORDER_LIST, ADMIN_ORDER_LIST, ORDER_DETAIL, ADMIN_ORDER_DETAIL, GET_USER_ORDERS_ADMIN } =
-    API_ENDPOINTS;
+const {
+    ORDER_LIST,
+    ADMIN_ORDER_LIST,
+    ORDER_DETAIL,
+    ADMIN_ORDER_DETAIL,
+    GET_USER_ORDERS_ADMIN,
+    GET_ADMIN_SALES_OVERVIEW,
+    GET_ADMIN_PRODUCT_PERFORMANCE,
+    GET_ADMIN_VARIANT_PERFORMANCE,
+} = API_ENDPOINTS;
 
 export const useCreateOrder = () => {
     const queryClient = useQueryClient();
@@ -83,5 +95,28 @@ export const useUpdateOrderTracking = () => {
             queryClient.invalidateQueries({ queryKey: [ORDER_DETAIL] });
             queryClient.invalidateQueries({ queryKey: [ADMIN_ORDER_DETAIL] });
         },
+    });
+};
+
+export const useFetchAdminSalesOverview = (params?: any) => {
+    return useQuery<any>({
+        queryKey: [GET_ADMIN_SALES_OVERVIEW, params],
+        queryFn: () => getAdminSalesOverview(params),
+    });
+};
+
+export const useFetchProductPerformance = (productId: string, params?: any) => {
+    return useQuery<any>({
+        queryKey: [GET_ADMIN_PRODUCT_PERFORMANCE, productId, params],
+        queryFn: () => getAdminProductPerformance(productId, params),
+        enabled: !!productId,
+    });
+};
+
+export const useFetchVariantPerformance = (variantId: string, params?: any) => {
+    return useQuery<any>({
+        queryKey: [GET_ADMIN_VARIANT_PERFORMANCE, variantId, params],
+        queryFn: () => getAdminVariantPerformance(variantId, params),
+        enabled: !!variantId,
     });
 };

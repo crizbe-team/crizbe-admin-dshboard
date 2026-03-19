@@ -76,3 +76,42 @@ export const updateOrderTracking = async (id: string, tracking_number: string): 
     const response = await api.patch(url, { tracking_number });
     return handleApiResponse(response);
 };
+
+export const getAdminSalesOverview = async (params?: any): Promise<any> => {
+    const { GET_ADMIN_SALES_OVERVIEW } = API_ENDPOINTS;
+    const builder = new ApiBuilder(GET_ADMIN_SALES_OVERVIEW);
+    if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+            builder.query(key, value as any);
+        });
+    }
+    const url = builder.build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
+
+export const getAdminProductPerformance = async (id: string, params?: any): Promise<any> => {
+    const { GET_ADMIN_PRODUCT_PERFORMANCE } = API_ENDPOINTS;
+    const builder = new ApiBuilder(GET_ADMIN_PRODUCT_PERFORMANCE).path('pk', id);
+    if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+            builder.query(key, value as any);
+        });
+    }
+    const url = builder.build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
+
+export const getAdminVariantPerformance = async (id: string, params?: any): Promise<any> => {
+    const { GET_ADMIN_VARIANT_PERFORMANCE } = API_ENDPOINTS;
+    const builder = new ApiBuilder(GET_ADMIN_VARIANT_PERFORMANCE).path('pk', id);
+    if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+            builder.query(key, value as any);
+        });
+    }
+    const url = builder.build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
