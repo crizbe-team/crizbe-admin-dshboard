@@ -7,10 +7,12 @@ import {
     updateOrderStatus,
     getAdminOrderDetail,
     updateOrderTracking,
+    getUserOrdersAdmin,
 } from '../services/orders';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
-const { ORDER_LIST, ADMIN_ORDER_LIST, ORDER_DETAIL, ADMIN_ORDER_DETAIL } = API_ENDPOINTS;
+const { ORDER_LIST, ADMIN_ORDER_LIST, ORDER_DETAIL, ADMIN_ORDER_DETAIL, GET_USER_ORDERS_ADMIN } =
+    API_ENDPOINTS;
 
 export const useCreateOrder = () => {
     const queryClient = useQueryClient();
@@ -49,6 +51,14 @@ export const useFetchAdminOrderDetail = (id: string) => {
         queryKey: [ADMIN_ORDER_DETAIL, id],
         queryFn: () => getAdminOrderDetail(id),
         enabled: !!id,
+    });
+};
+
+export const useFetchUserOrdersAdmin = (userId: string, params?: any) => {
+    return useQuery<any>({
+        queryKey: [GET_USER_ORDERS_ADMIN, userId, params],
+        queryFn: () => getUserOrdersAdmin(userId, params),
+        enabled: !!userId,
     });
 };
 

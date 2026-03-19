@@ -50,6 +50,19 @@ export const getAdminOrderList = async (params?: any): Promise<any> => {
     return handleApiResponse(response);
 };
 
+export const getUserOrdersAdmin = async (userId: string, params?: any): Promise<any> => {
+    const { GET_USER_ORDERS_ADMIN } = API_ENDPOINTS;
+    const builder = new ApiBuilder(GET_USER_ORDERS_ADMIN).path('pk', userId);
+    if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+            builder.query(key, value as any);
+        });
+    }
+    const url = builder.build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
+
 export const updateOrderStatus = async (id: string, status: string): Promise<any> => {
     const { UPDATE_ORDER_STATUS } = API_ENDPOINTS;
     const url = new ApiBuilder(UPDATE_ORDER_STATUS).path('pk', id).build();

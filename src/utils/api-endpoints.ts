@@ -35,6 +35,7 @@ export const API_ENDPOINTS = {
     ORDER_DETAIL: 'orders/orders/:id/',
     ADMIN_ORDER_LIST: 'orders/admin/list/',
     ADMIN_ORDER_DETAIL: 'orders/admin/:pk/',
+    GET_USER_ORDERS_ADMIN: 'orders/admin/user/:pk/',
     UPDATE_ORDER_STATUS: 'orders/admin/:pk/status/',
     UPDATE_ORDER_TRACKING: 'orders/admin/:pk/tracking/',
 
@@ -56,6 +57,7 @@ export const API_ENDPOINTS = {
 
     // Client endpoints
     GET_CLIENTS: 'accounts/clients/',
+    GET_CLIENT_DETAIL: 'accounts/clients/:pk/',
 
     // Payment endpoints
     GET_RAZORPAY_KEY_ID: 'payments/key-id/',

@@ -76,7 +76,7 @@ export const useFetchClients = (filters: any = {}) => {
 
 export const useFetchClient = (id: string) => {
     return useQuery<any>({
-        queryKey: [API_ENDPOINTS.GET_CLIENTS, id],
+        queryKey: [API_ENDPOINTS.GET_CLIENT_DETAIL, id],
         queryFn: () => getClient(id),
         enabled: !!id, // Only run query if id is provided
     });

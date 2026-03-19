@@ -71,8 +71,8 @@ export const getClient = async (
     method: 'get' | 'delete' | 'put' = 'get',
     data?: any
 ) => {
-    const { GET_CLIENTS } = API_ENDPOINTS;
-    const url = new ApiBuilder(GET_CLIENTS).path('id', id).build();
+    const { GET_CLIENT_DETAIL } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_CLIENT_DETAIL).path('pk', id).build();
 
     if (method === 'put') {
         const config =

@@ -29,7 +29,6 @@ const menuItems = [
     { icon: Tags, label: 'Variants', path: '/bd6b-6ced/dashboard/variants' },
     { icon: Box, label: 'Stock', path: '/bd6b-6ced/dashboard/stock' },
     { icon: ShoppingCart, label: 'Orders', path: '/bd6b-6ced/dashboard/orders' },
-    { icon: DollarSign, label: 'Sales', path: '/bd6b-6ced/dashboard/sales' },
     { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients' },
     { icon: Settings, label: 'Settings', path: '/bd6b-6ced/dashboard/settings' },
     { icon: Mail, label: 'Messages', path: '/bd6b-6ced/dashboard/messages' },
