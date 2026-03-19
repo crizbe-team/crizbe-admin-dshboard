@@ -5,6 +5,9 @@ import { X, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { variantStockSchema, type VariantStockFormData } from '@/validations/stock';
+import { useCreateStock } from '@/queries/use-stock';
+import { useQueryClient } from '@tanstack/react-query';
+import { API_ENDPOINTS } from '@/utils/api-endpoints';
 
 interface Variant {
     id: string;
@@ -14,30 +17,33 @@ interface Variant {
 interface Props {
     isModalOpen: boolean;
     handleCloseModal: () => void;
-    handleSubmit: (data: any) => void;
     variants: Variant[];
     productName: string;
-    isLoading?: boolean;
+    productId: string;
 }
 
 export default function VariantStockAddModal({
     isModalOpen,
     handleCloseModal,
-    handleSubmit,
     variants,
     productName,
-    isLoading = false,
+    productId,
 }: Props) {
+    const queryClient = useQueryClient();
+    const { mutate: addStock, isPending: isLoading } = useCreateStock();
+
     const {
         register,
         handleSubmit: handleFormSubmit,
         reset,
+        setError,
         formState: { errors },
     } = useForm<VariantStockFormData>({
         resolver: zodResolver(variantStockSchema),
         defaultValues: {
             variantId: '',
             quantity: '',
+            purchase_price: '',
             notes: '',
         },
     });
@@ -47,6 +53,7 @@ export default function VariantStockAddModal({
             reset({
                 variantId: variants.length === 1 ? variants[0].id : '',
                 quantity: '',
+                purchase_price: '',
                 notes: '',
             });
         }
@@ -55,12 +62,48 @@ export default function VariantStockAddModal({
     if (!isModalOpen) return null;
 
     const onFormSubmit = (data: VariantStockFormData) => {
-        handleSubmit({
-            ...data,
-            quantity: parseFloat(data.quantity) || 0,
-            date: new Date().toISOString(),
-        });
+        addStock(
+            {
+                variant: data.variantId,
+                quantity: parseFloat(data.quantity) || 0,
+                purchase_price: parseFloat(data.purchase_price || '0') || 0,
+                notes: data.notes,
+                type: 'Addition',
+            },
+            {
+                onSuccess: () => {
+                    // Invalidate queries to refresh data
+                    queryClient.invalidateQueries({
+                        queryKey: [API_ENDPOINTS.GET_STOCK_HISTORY_LIST, { product: productId }],
+                    });
+                    queryClient.invalidateQueries({
+                        queryKey: [API_ENDPOINTS.GET_PRODUCT_STOCK, productId],
+                    });
+                    handleCloseModal();
+                    reset();
+                },
+                onError: (error: any) => {
+                    if (error?.errors && Object.keys(error.errors).length > 0) {
+                        // Map field-specific errors
+                        Object.keys(error.errors).forEach((field) => {
+                            setError(field as any, {
+                                type: 'server',
+                                message: error.errors[field][0],
+                            });
+                        });
+                    } else {
+                        // Fallback to global error
+                        setError('root.serverError' as any, {
+                            type: 'server',
+                            message: error?.message || 'Something went wrong. Please try again.',
+                        });
+                    }
+                },
+            }
+        );
     };
+
+    const globalError = (errors.root as any)?.serverError?.message;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -79,6 +122,11 @@ export default function VariantStockAddModal({
                 </div>
 
                 <form onSubmit={handleFormSubmit(onFormSubmit)} className="p-6 space-y-4">
+                    {globalError && (
+                        <div className="bg-red-900 bg-opacity-20 border border-red-900 text-red-500 text-sm p-3 rounded-lg">
+                            {globalError}
+                        </div>
+                    )}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                             Select Variant (Size)

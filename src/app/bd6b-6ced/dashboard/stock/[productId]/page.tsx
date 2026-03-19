@@ -74,28 +74,6 @@ export default function ProductStockPage() {
         },
     ];
 
-    const handleAddVariantStock = async (data: any) => {
-        try {
-            await createMutation.mutateAsync({
-                variant: data.variantId,
-                quantity: data.quantity,
-                purchase_price: data.purchase_price,
-                notes: data.notes,
-                type: 'Addition',
-            });
-            // Invalidate queries to refresh data
-            queryClient.invalidateQueries({
-                queryKey: [API_ENDPOINTS.GET_STOCK_HISTORY_LIST, { product: productId }],
-            });
-            queryClient.invalidateQueries({
-                queryKey: [API_ENDPOINTS.GET_PRODUCT_STOCK, productId],
-            });
-            setIsVariantModalOpen(false);
-        } catch (error) {
-            console.error('Failed to add variant stock:', error);
-        }
-    };
-
     if (isProductLoading) {
         return (
             <div className="p-12">
@@ -301,10 +279,9 @@ export default function ProductStockPage() {
             <VariantStockAddModal
                 isModalOpen={isVariantModalOpen}
                 handleCloseModal={() => setIsVariantModalOpen(false)}
-                handleSubmit={handleAddVariantStock}
                 variants={variants}
                 productName={product.name}
-                isLoading={createMutation.isPending}
+                productId={productId}
             />
 
             <StockAddModal

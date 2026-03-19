@@ -66,18 +66,25 @@ export default function StockAddModal({ isModalOpen, handleCloseModal, defaultPr
                     handleCloseModal();
                 },
                 onError: (error: any) => {
-                    if (error?.errors) {
+                    if (error?.errors && Object.keys(error.errors).length > 0) {
                         Object.keys(error.errors).forEach((field) => {
                             setError(field as any, {
                                 type: 'server',
                                 message: error.errors[field][0],
                             });
                         });
+                    } else {
+                        setError('root.serverError' as any, {
+                            type: 'server',
+                            message: error?.message || 'Something went wrong.',
+                        });
                     }
                 },
             }
         );
     };
+
+    const globalError = (errors.root as any)?.serverError?.message;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -93,6 +100,11 @@ export default function StockAddModal({ isModalOpen, handleCloseModal, defaultPr
                 </div>
 
                 <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 space-y-4">
+                    {globalError && (
+                        <div className="bg-red-900 bg-opacity-20 border border-red-900 text-red-500 text-sm p-3 rounded-lg">
+                            {globalError}
+                        </div>
+                    )}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                             Select Product

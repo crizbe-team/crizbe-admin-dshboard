@@ -66,12 +66,17 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
                 reset();
             },
             onError: (error: any) => {
-                if (error?.errors) {
+                if (error?.errors && Object.keys(error.errors).length > 0) {
                     Object.keys(error.errors).forEach((field) => {
                         setError(field as any, {
                             type: 'server',
                             message: error.errors[field][0],
                         });
+                    });
+                } else {
+                    setError('root.serverError' as any, {
+                        type: 'server',
+                        message: error?.message || 'Something went wrong.',
                     });
                 }
             },

@@ -20,6 +20,7 @@ export const variantStockSchema = z.object({
         .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
             message: 'Quantity must be a positive number',
         }),
+    purchase_price: z.string().optional(),
     notes: z.string().optional(),
 });
 
