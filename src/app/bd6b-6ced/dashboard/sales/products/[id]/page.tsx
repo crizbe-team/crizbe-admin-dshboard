@@ -103,7 +103,7 @@ export default function ProductSalesDetailPage() {
                     },
                     {
                         title: 'Items Sold',
-                        value: overview.items_sold || 0,
+                        value: overview.successfully_delivered || 0,
                         icon: Package,
                         color: 'text-orange-400',
                     },
@@ -198,14 +198,16 @@ export default function ProductSalesDetailPage() {
                             <div className="flex justify-between text-xs text-gray-400 uppercase font-bold">
                                 <span>Packed & Ready</span>
                                 <span className="text-gray-100 font-mono">
-                                    {overview.packed_ready || 0} / {overview.items_sold || 0}
+                                    {overview.packed_ready || 0} /{' '}
+                                    {(overview.packed_ready || 0) +
+                                        (overview.successfully_delivered || 0)}
                                 </span>
                             </div>
                             <div className="w-full bg-[#2a2a2a] rounded-full h-2.5">
                                 <div
                                     className="bg-blue-500 h-2.5 rounded-full transition-all duration-1000 shadow-lg shadow-blue-500/20"
                                     style={{
-                                        width: `${((overview.packed_ready || 0) / (overview.items_sold || 1)) * 100}%`,
+                                        width: `${((overview.packed_ready || 0) / ((overview.packed_ready || 0) + (overview.successfully_delivered || 1))) * 100}%`,
                                     }}
                                 />
                             </div>
@@ -216,17 +218,41 @@ export default function ProductSalesDetailPage() {
                                 <span>Successfully Delivered (Selled)</span>
                                 <span className="text-gray-100 font-mono">
                                     {overview.successfully_delivered || 0} /{' '}
-                                    {overview.items_sold || 0}
+                                    {(overview.packed_ready || 0) +
+                                        (overview.successfully_delivered || 0)}
                                 </span>
                             </div>
                             <div className="w-full bg-[#2a2a2a] rounded-full h-2.5">
                                 <div
                                     className="bg-green-500 h-2.5 rounded-full transition-all duration-1000 shadow-lg shadow-green-500/20"
                                     style={{
-                                        width: `${((overview.successfully_delivered || 0) / (overview.items_sold || 1)) * 100}%`,
+                                        width: `${((overview.successfully_delivered || 0) / ((overview.packed_ready || 0) + (overview.successfully_delivered || 1))) * 100}%`,
                                     }}
                                 />
                             </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 p-4 bg-purple-500/5 border border-purple-500/10 rounded-xl">
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+                                Total Revenue
+                            </span>
+                            <span className="text-lg font-black text-purple-400 font-mono">
+                                ₹{(overview.total_revenue || 0).toLocaleString()}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-1 mt-1">
+                            <span
+                                className={`text-xs font-bold ${
+                                    (overview.revenue_change || 0) >= 0
+                                        ? 'text-green-400'
+                                        : 'text-red-400'
+                                }`}
+                            >
+                                {(overview.revenue_change || 0) >= 0 ? '▲' : '▼'}{' '}
+                                {Math.abs(overview.revenue_change || 0)}% vs previous period
+                            </span>
                         </div>
                     </div>
                 </div>
