@@ -15,7 +15,7 @@ import {
 import CategoryAddEditModal, { Category } from '@/components/Modals/CategoryAddEditModal';
 import CategoryDeleteModal from '@/components/Modals/CategoryDeleteModal';
 import { useFetchCategories, useDeleteCategory } from '@/queries/use-categories';
-import UserLoaders from '@/components/ui/UserLoader';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import Pagination from '@/components/ui/Pagination';
 import { useEffect } from 'react';
@@ -171,7 +171,7 @@ export default function CategoriesPage() {
 
                 <div className="overflow-x-auto">
                     {isLoading ? (
-                        <UserLoaders />
+                        <DashboardLoader text="Loading Categories" />
                     ) : data?.data?.length > 0 ? (
                         <table className="w-full">
                             <thead>

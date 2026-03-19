@@ -6,7 +6,7 @@ import VariantAddEditModal, { VariantFormData } from '@/components/Modals/Varian
 import VariantDeleteModal from '@/components/Modals/VariantDeleteModal';
 import { useFetchVariants, useDeleteVariant } from '@/queries/use-variants';
 import { useFetchProducts } from '@/queries/use-products';
-import UserLoaders from '@/components/ui/UserLoader';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 import Pagination from '@/components/ui/Pagination';
@@ -178,7 +178,7 @@ export default function VariantsPage() {
                 <div className="overflow-x-auto">
                     {isVariantsLoading ? (
                         <div className="p-12 border-t border-[#2a2a2a]">
-                            <UserLoaders />
+                            <DashboardLoader text="Loading Variants" />
                         </div>
                     ) : variants.length > 0 ? (
                         <table className="w-full">

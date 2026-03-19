@@ -16,7 +16,7 @@ import VariantStockAddModal from '@/components/Modals/VariantStockAddModal';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFetchVariantStock, useCreateStock, useDeleteStockHistory } from '@/queries/use-stock';
 import { API_ENDPOINTS } from '@/utils/api-endpoints';
-import UserLoaders from '@/components/ui/UserLoader';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 import { formatDateTime } from '@/utils/date-utils';
 import Pagination from '@/components/ui/Pagination';
 
@@ -82,7 +82,7 @@ export default function VariantStockDetailPage() {
     if (isLoading) {
         return (
             <div className="p-12">
-                <UserLoaders />
+                <DashboardLoader text="Loading Variant Details" />
             </div>
         );
     }

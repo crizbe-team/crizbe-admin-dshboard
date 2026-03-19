@@ -20,6 +20,7 @@ import { useFetchAdminOrders, useUpdateOrderStatus } from '@/queries/use-orders'
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 import Pagination from '@/components/ui/Pagination';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
     Pending: { label: 'Pending', color: 'bg-yellow-500', icon: Clock },
@@ -138,9 +139,8 @@ export default function OrdersPage() {
 
                 <div className="overflow-x-auto">
                     {isLoading ? (
-                        <div className="flex flex-col items-center justify-center p-20 gap-3 text-gray-400">
-                            <Loader2 className="w-10 h-10 animate-spin text-purple-500" />
-                            <p>Loading your orders...</p>
+                        <div className="p-20">
+                            <DashboardLoader text="Loading your orders..." />
                         </div>
                     ) : orders.length === 0 ? (
                         <div className="p-20 text-center text-gray-500">

@@ -9,7 +9,7 @@ import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 import { useFetchProducts, useDeleteProduct } from '@/queries/use-products';
 import { useFetchCategories } from '@/queries/use-categories';
-import UserLoaders from '@/components/ui/UserLoader';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 import Pagination from '@/components/ui/Pagination';
 import { useEffect } from 'react';
 
@@ -181,7 +181,7 @@ export default function ProductsPage() {
                 <div className="overflow-x-auto">
                     {isProductsLoading ? (
                         <div className="p-12 border-t border-[#2a2a2a]">
-                            <UserLoaders />
+                            <DashboardLoader text="Loading Products" />
                         </div>
                     ) : products.length > 0 ? (
                         <table className="w-full">

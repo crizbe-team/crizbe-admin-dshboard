@@ -6,7 +6,7 @@ import Link from 'next/link';
 import StockAddModal from '@/components/Modals/StockAddModal';
 import { useFetchStockList } from '@/queries/use-stock';
 import { useFetchCategories } from '@/queries/use-categories';
-import UserLoaders from '@/components/ui/UserLoader';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 import Pagination from '@/components/ui/Pagination';
@@ -156,7 +156,7 @@ export default function StockPage() {
                 <div className="overflow-x-auto">
                     {isStockLoading ? (
                         <div className="p-12 border-t border-[#2a2a2a]">
-                            <UserLoaders />
+                            <DashboardLoader text="Loading Stock" />
                         </div>
                     ) : products.length > 0 ? (
                         <table className="w-full">

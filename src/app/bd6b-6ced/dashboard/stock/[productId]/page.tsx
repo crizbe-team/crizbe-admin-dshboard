@@ -22,7 +22,7 @@ import {
     useCreateStock,
 } from '@/queries/use-stock';
 import { API_ENDPOINTS } from '@/utils/api-endpoints';
-import UserLoaders from '@/components/ui/UserLoader';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 import { formatDateTime } from '@/utils/date-utils';
 import Pagination from '@/components/ui/Pagination';
 
@@ -99,7 +99,7 @@ export default function ProductStockPage() {
     if (isProductLoading) {
         return (
             <div className="p-12">
-                <UserLoaders />
+                <DashboardLoader text="Loading Product Stock" />
             </div>
         );
     }
@@ -224,7 +224,7 @@ export default function ProductStockPage() {
                         <div className="overflow-x-auto">
                             {isHistoryLoading ? (
                                 <div className="p-12">
-                                    <UserLoaders />
+                                    <DashboardLoader text="Loading History" />
                                 </div>
                             ) : history.length > 0 ? (
                                 <table className="w-full">

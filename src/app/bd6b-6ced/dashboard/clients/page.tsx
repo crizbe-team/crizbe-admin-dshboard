@@ -1,17 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import {
-    Users,
-    UserPlus,
-    UserCheck,
-    UserCog,
-    Search,
-    Edit,
-    Trash2,
-    Loader2
-} from 'lucide-react';
+import { Users, UserPlus, UserCheck, UserCog, Search, Edit, Trash2 } from 'lucide-react';
 import { useFetchClients } from '@/queries/use-account';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 
 interface Client {
     id: string;
@@ -26,7 +18,12 @@ interface Client {
 
 export default function ClientsPage() {
     const [searchQuery, setSearchQuery] = useState('');
-    const { data: clientsResponse, isLoading, isError, error } = useFetchClients({ q: searchQuery });
+    const {
+        data: clientsResponse,
+        isLoading,
+        isError,
+        error,
+    } = useFetchClients({ q: searchQuery });
 
     // Extract clients data from response
     const clients: Client[] = clientsResponse?.data || [];
@@ -60,13 +57,12 @@ export default function ClientsPage() {
             icon: UserCheck,
             color: 'text-purple-400',
         },
-        
     ];
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+            <div className="flex items-center justify-center p-20">
+                <DashboardLoader text="Loading Clients" />
             </div>
         );
     }
@@ -74,7 +70,9 @@ export default function ClientsPage() {
     if (isError) {
         return (
             <div className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a] text-center">
-                <p className="text-red-400">Error loading clients: {error?.message || 'Unknown error'}</p>
+                <p className="text-red-400">
+                    Error loading clients: {error?.message || 'Unknown error'}
+                </p>
             </div>
         );
     }
@@ -124,11 +122,21 @@ export default function ClientsPage() {
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-[#2a2a2a]">
-                                <th className="text-left p-4 text-gray-400 font-medium text-sm">NAME</th>
-                                <th className="text-left p-4 text-gray-400 font-medium text-sm">EMAIL</th>
-                                <th className="text-left p-4 text-gray-400 font-medium text-sm">PHONE NUMBERS</th>
-                                <th className="text-left p-4 text-gray-400 font-medium text-sm">COUNTRY</th>
-                                <th className="text-left p-4 text-gray-400 font-medium text-sm">ACTIONS</th>
+                                <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                    NAME
+                                </th>
+                                <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                    EMAIL
+                                </th>
+                                <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                    PHONE NUMBERS
+                                </th>
+                                <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                    COUNTRY
+                                </th>
+                                <th className="text-left p-4 text-gray-400 font-medium text-sm">
+                                    ACTIONS
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -140,15 +148,23 @@ export default function ClientsPage() {
                                     >
                                         <td className="p-4">
                                             <div className="flex items-center space-x-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-lg">
+                                                <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-lg">
                                                     {client.name?.charAt(0)?.toUpperCase() || 'U'}
                                                 </div>
-                                                <span className="text-gray-100">{client.name || 'N/A'}</span>
+                                                <span className="text-gray-100">
+                                                    {client.name || 'N/A'}
+                                                </span>
                                             </div>
                                         </td>
-                                        <td className="p-4 text-gray-300">{client.email || 'N/A'}</td>
-                                        <td className="p-4 text-gray-300">{client.phone || 'N/A'}</td>
-                                        <td className="p-4 text-gray-300">{client.country || 'N/A'}</td>
+                                        <td className="p-4 text-gray-300">
+                                            {client.email || 'N/A'}
+                                        </td>
+                                        <td className="p-4 text-gray-300">
+                                            {client.phone || 'N/A'}
+                                        </td>
+                                        <td className="p-4 text-gray-300">
+                                            {client.country || 'N/A'}
+                                        </td>
                                         <td className="p-4">
                                             <div className="flex items-center space-x-2">
                                                 <button className="p-2 bg-blue-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors">
@@ -164,7 +180,9 @@ export default function ClientsPage() {
                             ) : (
                                 <tr>
                                     <td colSpan={5} className="p-4 text-center text-gray-400">
-                                        {searchQuery ? 'No clients found matching your search.' : 'No clients available.'}
+                                        {searchQuery
+                                            ? 'No clients found matching your search.'
+                                            : 'No clients available.'}
                                     </td>
                                 </tr>
                             )}
@@ -175,4 +193,3 @@ export default function ClientsPage() {
         </div>
     );
 }
-

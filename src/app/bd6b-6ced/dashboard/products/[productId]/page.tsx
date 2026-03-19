@@ -14,7 +14,7 @@ import {
     Clock,
 } from 'lucide-react';
 import { useFetchSingleProduct } from '@/queries/use-products';
-import UserLoaders from '@/components/ui/UserLoader';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 import { useState } from 'react';
 
 const formatDateTime = (dateString: string) => {
@@ -44,8 +44,8 @@ export default function ProductDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <UserLoaders />
+            <div className="flex items-center justify-center min-h-[60vh] w-full">
+                <DashboardLoader text="Loading Product Details" />
             </div>
         );
     }
