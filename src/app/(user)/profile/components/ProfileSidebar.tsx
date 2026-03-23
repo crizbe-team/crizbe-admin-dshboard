@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 import { ChevronRight, LogOut } from 'lucide-react';
+import { useLogout } from '@/queries/use-auth';
+import ConfirmationModal from '@/components/Modals/ConfirmationModal';
 
 const NAV_ITEMS = [
     { href: '/profile', label: 'Profile' },
@@ -16,47 +18,68 @@ const NAV_ITEMS = [
 
 export default function ProfileSidebar({ userName = 'Customer' }: { userName?: string }) {
     const pathname = usePathname();
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const { mutate: logout, isPending } = useLogout();
+
+    const handleLogout = () => {
+        logout();
+    };
 
     return (
-        <aside className="w-full rounded-[20px] border border-[#EEEEEE] bg-white p-[24px] shadow-sm flex flex-col ">
-            <div className="mx-0 mb-[16px] border-b border-[#EEEEEE] pb-[16px] flex items-center px-2">
-                <p className="text-[20px] text-[#555555]">Hello,</p>
-                <h2 className="ml-1.5 text-[20px] text-[#191919]">{userName}</h2>
-            </div>
+        <>
+            <aside className="w-full rounded-[20px] border border-[#EEEEEE] bg-white p-[24px] shadow-sm flex flex-col ">
+                <div className="mx-0 mb-[16px] border-b border-[#EEEEEE] pb-[16px] flex items-center px-2">
+                    <p className="text-[20px] text-[#555555]">Hello,</p>
+                    <h2 className="ml-1.5 text-[20px] text-[#191919]">{userName}</h2>
+                </div>
 
-            <nav className="flex flex-col">
-                {NAV_ITEMS.map((item) => {
-                    const isActive = pathname === item.href;
-                    return (
-                        <React.Fragment key={item.href}>
-                            <Link
-                                href={item.href}
-                                className={`flex items-center justify-between rounded-xl px-2 mb-[16px] text-[18px] transition-colors ${
-                                    isActive
-                                        ? 'text-[#007DDC]'
-                                        : 'text-[#191919] hover:text-[#007DDC]'
-                                }`}
-                            >
-                                <span>{item.label}</span>
-                                {isActive && (
-                                    <ChevronRight className="h-[18px] w-[18px] stroke-[1.5px]" />
+                <nav className="flex flex-col">
+                    {NAV_ITEMS.map((item) => {
+                        const isActive = pathname === item.href;
+                        return (
+                            <React.Fragment key={item.href}>
+                                <Link
+                                    href={item.href}
+                                    className={`flex items-center justify-between rounded-xl px-2 mb-[16px] text-[18px] transition-colors ${
+                                        isActive
+                                            ? 'text-[#007DDC]'
+                                            : 'text-[#191919] hover:text-[#007DDC]'
+                                    }`}
+                                >
+                                    <span>{item.label}</span>
+                                    {isActive && (
+                                        <ChevronRight className="h-[18px] w-[18px] stroke-[1.5px]" />
+                                    )}
+                                </Link>
+                                {item.dividerAfter && (
+                                    <div className="mb-[16px] h-px bg-[#EEEEEE]" />
                                 )}
-                            </Link>
-                            {item.dividerAfter && <div className="mb-[16px] h-px bg-[#EEEEEE]" />}
-                        </React.Fragment>
-                    );
-                })}
-            </nav>
+                            </React.Fragment>
+                        );
+                    })}
+                </nav>
 
-            <div className="">
-                <button
-                    type="button"
-                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 text-[18px] text-red-500 hover:text-red-600 transition-colors group"
-                >
-                    <LogOut className="h-[22px] w-[22px] rotate-180 stroke-[1.5px] text-red-500 group-hover:text-red-600 transition-colors" />
-                    <span>Logout</span>
-                </button>
-            </div>
-        </aside>
+                <div className="">
+                    <button
+                        type="button"
+                        onClick={() => setShowLogoutModal(true)}
+                        className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 text-[18px] text-red-500 hover:text-red-600 transition-colors group"
+                    >
+                        <LogOut className="h-[22px] w-[22px] rotate-180 stroke-[1.5px] text-red-500 group-hover:text-red-600 transition-colors" />
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </aside>
+
+            <ConfirmationModal
+                open={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={handleLogout}
+                title="Logout?"
+                description="Are you sure you want to log out of your account?"
+                confirmText="Logout"
+                isPending={isPending}
+            />
+        </>
     );
 }

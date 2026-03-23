@@ -69,6 +69,7 @@ export const useLogout = () => {
         mutationFn: () => logout(),
         onSuccess: () => {
             authUtils.removeTokens();
+            authUtils.removeRole();
             if (typeof window !== 'undefined') {
                 window.location.href = '/login';
             }
