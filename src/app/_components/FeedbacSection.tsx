@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useFetchLandingPageReviews } from '@/queries/use-products';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const FeedbacSection = () => {
     const { data: reviewsData, isLoading } = useFetchLandingPageReviews();
@@ -11,8 +13,17 @@ const FeedbacSection = () => {
 
     const feedbackItems = reviewsData?.data || [];
 
+    React.useEffect(() => {
+        if (feedbackItems.length > 0) {
+            // Give the DOM a moment to render before refreshing scroll
+            setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 100);
+        }
+    }, [feedbackItems.length]);
+
     if (isLoading || feedbackItems.length === 0) {
-        return null; // Or a skeleton/loading placeholder
+        return null;
     }
 
     const handleNext = () => {
