@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { ButtonLink } from '@/components/ui/LinkButton';
 import Header from '@/components/user/Header';
 import { ImageParticles } from '@/components/user/ImageParticles';
 import Image from 'next/image';
@@ -19,14 +20,17 @@ export default function Hero() {
                         <br />
                         Taste the Luxury.
                     </h1>
-                    <Button style={{
-                        background:
-                            'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
-                    }}
-                        className="transition-all duration-300 ease-out hover:scale-[1.02] whitespace-nowrap py-3 group relative overflow-hidden mb-[16px] shadow-sm hover:opacity-95 active:opacity-90  h-[54px] w-[195px] font-medium">
+                    <ButtonLink
+                        href="/products"
+                        style={{
+                            background:
+                                'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
+                        }}
+                        className="transition-all z-1 duration-300 ease-out hover:scale-[1.02] whitespace-nowrap py-3 group relative overflow-hidden mb-[16px] shadow-sm hover:opacity-95 active:opacity-90  h-[54px] w-[195px] font-medium"
+                    >
                         <span className="pointer-events-none absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
                         Discover the Crunch
-                    </Button>
+                    </ButtonLink>
                 </div>
                 <p className="text-[#4E3325] text-[18px] font-normal">
                     A slender, perfectly layered crunch stick crafted with <br /> real hazelnut,
