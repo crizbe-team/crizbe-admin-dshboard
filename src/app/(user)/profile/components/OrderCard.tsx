@@ -212,10 +212,6 @@ export default function OrderCard({ order }: OrderCardProps) {
 
                             {/* Tracker Side Actions */}
                             <div className="flex-1 flex flex-col gap-5 justify-center mt-8 lg:mt-0">
-                                <button className="flex items-center justify-center gap-2 rounded-[12px] border border-[#d6e9f8] bg-[#f2f8fc] text-[#007DDC] px-6 py-[14px] text-[15px] font-medium transition hover:bg-[#e4f1fa] w-full lg:w-max min-w-[240px]">
-                                    <Star className="w-[18px] h-[18px] text-[#007DDC] stroke-[2px]" />
-                                    Rate & Review product
-                                </button>
                                 <div className="flex flex-col w-full lg:w-max min-w-[240px]">
                                     <a
                                         href="#"
