@@ -53,3 +53,12 @@ export const getRelatedProducts = async (id: string | number) => {
     const response = await api.get(url);
     return handleApiResponse(response);
 };
+
+export const createProductReview = async (slug: string, data: FormData | Record<string, any>) => {
+    const { CREATE_PRODUCT_REVIEW } = API_ENDPOINTS;
+    const url = new ApiBuilder(CREATE_PRODUCT_REVIEW).path('slug', slug).build();
+    const config =
+        data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
+    const response = await api.post(url, data, config);
+    return handleApiResponse(response);
+};

@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProducts, getProduct, getRelatedProducts } from '../services/products';
+import {
+    getProducts,
+    getProduct,
+    getRelatedProducts,
+    createProductReview,
+} from '../services/products';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { toast } from '@/components/ui/Toast';
 
@@ -68,5 +73,20 @@ export const useFetchRelatedProducts = (id: string | number) => {
         queryKey: [API_ENDPOINTS.GET_RELATED_PRODUCTS, id],
         queryFn: () => getRelatedProducts(id),
         enabled: !!id,
+    });
+};
+
+export const useCreateProductReview = (productSlug: string) => {
+    const queryClient = useQueryClient();
+
+    return useMutation<any, any, FormData | Record<string, any>>({
+        mutationFn: (data) => createProductReview(productSlug, data),
+        onSuccess: () => {
+            toast.success('Review submitted successfully!');
+            queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.GET_PRODUCT] });
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to submit review. Please try again.');
+        },
     });
 };

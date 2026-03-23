@@ -48,6 +48,8 @@ export const metadata: Metadata = {
     },
 };
 
+import { ToastContainer } from '@/components/ui/Toast';
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -59,6 +61,7 @@ export default function RootLayout({
                 className={`${interTight.variable} ${geistMono.variable} ${bricolage.variable} antialiased`}
             >
                 <TanstackProvider>{children}</TanstackProvider>
+                <ToastContainer />
             </body>
         </html>
     );

@@ -11,6 +11,8 @@ import AccordionItem from '@/components/ui/Accordion';
 import ProductCard from '@/app/_components/ui/ProductCard';
 import { ArrowLeft, Star, Plus } from 'lucide-react';
 import ReviewAddModal from '@/components/Modals/ReviewAddModal';
+import AuthActionWrapper from '@/components/AuthActionWrapper';
+import Image from 'next/image';
 
 const ProductDetailsPage = () => {
     const { id } = useParams();
@@ -117,24 +119,26 @@ const ProductDetailsPage = () => {
                                         <span className="font-[var(--font-inter-tight)] font-medium text-[18px] tracking-[0.02em] text-[#191919] lining-nums proportional-nums">
                                             Ratings &amp; Reviews
                                         </span>
-                                        <div
-                                            role="button"
-                                            tabIndex={0}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setReviewModalOpen(true);
-                                            }}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' || e.key === ' ') {
+                                        <AuthActionWrapper>
+                                            <div
+                                                role="button"
+                                                tabIndex={0}
+                                                onClick={(e) => {
                                                     e.stopPropagation();
                                                     setReviewModalOpen(true);
-                                                }
-                                            }}
-                                            className="flex items-center gap-1.5 border border-[#191919] rounded-full px-4 py-1.5 text-[13px] font-medium text-[#191919] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer select-none"
-                                        >
-                                            <Plus className="w-3.5 h-3.5" />
-                                            Add review
-                                        </div>
+                                                }}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.stopPropagation();
+                                                        setReviewModalOpen(true);
+                                                    }
+                                                }}
+                                                className="flex items-center gap-1.5 border border-[#191919] rounded-full px-4 py-1.5 text-[13px] font-medium text-[#191919] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer select-none"
+                                            >
+                                                <Plus className="w-3.5 h-3.5" />
+                                                Add review
+                                            </div>
+                                        </AuthActionWrapper>
                                     </div>
                                 }
                             >
@@ -239,10 +243,32 @@ const ProductDetailsPage = () => {
                                                                 })}
                                                             </p>
                                                             {review.comment && (
-                                                                <p className="font-inter-tight font-normal text-[16px] leading-[22px] text-[#525252] max-w-2xl">
+                                                                <p className="font-inter-tight font-normal text-[16px] leading-[22px] text-[#525252] max-w-2xl mb-4">
                                                                     {review.comment}
                                                                 </p>
                                                             )}
+                                                            {review.images &&
+                                                                review.images.length > 0 && (
+                                                                    <div className="flex flex-wrap gap-2 mt-4">
+                                                                        {review.images.map(
+                                                                            (imgObj: any) => (
+                                                                                <div
+                                                                                    key={imgObj.id}
+                                                                                    className="relative w-[150px] h-[150px] rounded-xl overflow-hidden border border-[#EAEAEA]"
+                                                                                >
+                                                                                    <Image
+                                                                                        src={
+                                                                                            imgObj.image
+                                                                                        }
+                                                                                        alt="Review photo"
+                                                                                        fill
+                                                                                        className="object-cover"
+                                                                                    />
+                                                                                </div>
+                                                                            )
+                                                                        )}
+                                                                    </div>
+                                                                )}
                                                         </div>
                                                     ))}
                                                     {product.reviews.length > 4 &&
@@ -290,6 +316,7 @@ const ProductDetailsPage = () => {
             <ReviewAddModal
                 open={reviewModalOpen}
                 onClose={() => setReviewModalOpen(false)}
+                productSlug={product?.slug || productId || ''}
                 productName={product?.name}
             />
         </>
