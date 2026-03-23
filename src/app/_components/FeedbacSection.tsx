@@ -40,7 +40,7 @@ const FeedbacSection = () => {
     const feedbackText = currentFeedback.comment || '';
     const userName = currentFeedback.user_name || 'Verified Customer';
     const rating = currentFeedback.rating || 0;
-    const userImage = currentFeedback.images?.[0]?.image || '/images/user/feeback.jpg';
+    const userImage = currentFeedback.images?.[0]?.image || '/images/user/default-avatar.png';
     const designation = currentFeedback.designation || 'Happy Customer';
 
     return (
