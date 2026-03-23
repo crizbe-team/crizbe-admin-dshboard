@@ -70,9 +70,15 @@ export const getLandingPageReviews = async () => {
     return handleApiResponse(response);
 };
 
-export const getProductReviews = async (slug: string) => {
+export const getProductReviews = async (slug: string, params: any = {}) => {
     const { GET_PRODUCT_REVIEWS } = API_ENDPOINTS;
-    const url = new ApiBuilder(GET_PRODUCT_REVIEWS).path('slug', slug).build();
+    const url = new ApiBuilder(GET_PRODUCT_REVIEWS)
+        .path('slug', slug)
+        .query('page', params.page)
+        .query('q', params.q)
+        .query('sortBy', params.sortBy)
+        .query('sortOrder', params.sortOrder)
+        .build();
     const response = await api.get(url);
     return handleApiResponse(response);
 };

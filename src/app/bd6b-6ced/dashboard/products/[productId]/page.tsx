@@ -2,9 +2,10 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Package, Box, Layers, Info, List, Star, MessageSquare } from 'lucide-react';
-import { useFetchSingleProduct, useFetchProductReviews } from '@/queries/use-products';
+import { useFetchSingleProduct } from '@/queries/use-products';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import { useState } from 'react';
+import Link from 'next/link';
 
 const formatDateTime = (dateString: string) => {
     if (!dateString) return 'N/A';
@@ -30,10 +31,6 @@ export default function ProductDetailPage() {
 
     const { data: productData, isLoading, error } = useFetchSingleProduct(productId);
     const product = productData?.data || {};
-
-    const { data: reviewsData, isLoading: isReviewsLoading } = useFetchProductReviews(
-        product?.slug || ''
-    );
 
     const [activeImage, setActiveImage] = useState<string | null>(null);
 
@@ -61,7 +58,6 @@ export default function ProductDetailPage() {
 
     const images = product.images || [];
     const mainImage = activeImage || (images.length > 0 ? images[0].image : null);
-    const reviews = reviewsData?.data || [];
 
     const stats = [
         {
@@ -149,94 +145,75 @@ export default function ProductDetailPage() {
             </div>
 
             {/* REVIEW SECTION - NEW */}
-            {reviews?.length > 0 && (
+            {product?.reviews?.length > 0 && (
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-bold text-gray-100 flex items-center space-x-3">
                             <MessageSquare className="w-6 h-6 text-yellow-500" />
                             <span>Customer Reviews</span>
                             <span className="text-sm font-normal text-gray-500 ml-2">
-                                ({reviews.length})
+                                ({product?.reviews.length})
                             </span>
                         </h2>
-                        <button
-                            onClick={() => {}}
-                            className="text-sm font-medium text-purple-500 hover:text-purple-400 transition-colors"
+                        <Link
+                            href={`/bd6b-6ced/dashboard/products/${productId}/reviews`}
+                            className="text-sm font-medium text-purple-500 hover:text-purple-400 transition-colors cursor-pointer"
                         >
                             View All
-                        </button>
+                        </Link>
                     </div>
 
-                    {isReviewsLoading ? (
-                        <div className="p-12 bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] flex justify-center">
-                            <div className="flex items-center space-x-3 text-gray-400">
-                                <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-                                <span>Loading reviews...</span>
-                            </div>
-                        </div>
-                    ) : reviews.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {reviews.slice(0, 3).map((review: any, idx: number) => (
-                                <div
-                                    key={idx}
-                                    className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] p-6 shadow-lg flex flex-col justify-between hover:border-[#3a3a3a] transition-all"
-                                >
-                                    <div>
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center space-x-1">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <Star
-                                                        key={i}
-                                                        className={`w-4 h-4 ${
-                                                            i < (review.rating || 0)
-                                                                ? 'fill-yellow-500 text-yellow-500'
-                                                                : 'text-gray-600'
-                                                        }`}
-                                                    />
-                                                ))}
-                                            </div>
-                                            <span className="text-[10px] text-gray-500 font-medium px-2 py-0.5 bg-[#2a2a2a] rounded">
-                                                {formatDateTime(review.created_at)}
-                                            </span>
-                                        </div>
-                                        <h4 className="font-bold text-gray-200 mb-2 truncate">
-                                            {review.user_name || 'Verified Customer'}
-                                        </h4>
-                                        <p className="text-gray-400 text-sm italic leading-relaxed line-clamp-4">
-                                            "{review.comment}"
-                                        </p>
-                                    </div>
-
-                                    {review.images && review.images.length > 0 && (
-                                        <div className="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                                            {review.images.map((img: any, imgIdx: number) => (
-                                                <div
-                                                    key={imgIdx}
-                                                    className="relative w-12 h-12 rounded-lg border border-[#333] overflow-hidden shrink-0"
-                                                >
-                                                    <img
-                                                        src={img.image}
-                                                        alt=""
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {product?.reviews.slice(0, 3).map((review: any, idx: number) => (
+                            <div
+                                key={idx}
+                                className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] p-6 shadow-lg flex flex-col justify-between hover:border-[#3a3a3a] transition-all"
+                            >
+                                <div>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center space-x-1">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star
+                                                    key={i}
+                                                    className={`w-4 h-4 ${
+                                                        i < (review.rating || 0)
+                                                            ? 'fill-yellow-500 text-yellow-500'
+                                                            : 'text-gray-600'
+                                                    }`}
+                                                />
                                             ))}
                                         </div>
-                                    )}
+                                        <span className="text-[10px] text-gray-500 font-medium px-2 py-0.5 bg-[#2a2a2a] rounded">
+                                            {formatDateTime(review.created_at)}
+                                        </span>
+                                    </div>
+                                    <h4 className="font-bold text-gray-200 mb-2 truncate">
+                                        {review.user_name || 'Verified Customer'}
+                                    </h4>
+                                    <p className="text-gray-400 text-sm italic leading-relaxed line-clamp-4">
+                                        "{review.comment}"
+                                    </p>
                                 </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="p-20 bg-[#1a1a1a] rounded-3xl border border-[#2a2a2a] border-dashed text-center">
-                            <div className="inline-flex p-6 bg-[#2a2a2a] rounded-full text-gray-600 mb-4">
-                                <Star className="w-10 h-10" />
+
+                                {review.images && review.images.length > 0 && (
+                                    <div className="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                                        {review.images.map((img: any, imgIdx: number) => (
+                                            <div
+                                                key={imgIdx}
+                                                className="relative w-12 h-12 rounded-lg border border-[#333] overflow-hidden shrink-0"
+                                            >
+                                                <img
+                                                    src={img.image}
+                                                    alt=""
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
-                            <h3 className="text-gray-300 font-bold text-lg">No reviews yet</h3>
-                            <p className="text-gray-500 max-w-xs mx-auto mt-2">
-                                This product hasn't been reviewed by any customers yet.
-                            </p>
-                        </div>
-                    )}
+                        ))}
+                    </div>
                 </div>
             )}
 

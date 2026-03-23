@@ -99,10 +99,10 @@ export const useFetchLandingPageReviews = () => {
         queryFn: getLandingPageReviews,
     });
 };
-export const useFetchProductReviews = (slug: string) => {
+export const useFetchProductReviews = (slug: string, params: any = {}) => {
     return useQuery<any>({
-        queryKey: ['product-reviews', slug],
-        queryFn: () => getProductReviews(slug),
+        queryKey: ['product-reviews', slug, params],
+        queryFn: () => getProductReviews(slug, params),
         enabled: !!slug,
     });
 };
