@@ -4,6 +4,7 @@ import {
     getProduct,
     getRelatedProducts,
     createProductReview,
+    getLandingPageReviews,
 } from '../services/products';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { toast } from '@/components/ui/Toast';
@@ -88,5 +89,12 @@ export const useCreateProductReview = (productSlug: string) => {
         onError: (error: any) => {
             toast.error(error?.message || 'Failed to submit review. Please try again.');
         },
+    });
+};
+
+export const useFetchLandingPageReviews = () => {
+    return useQuery<any>({
+        queryKey: [API_ENDPOINTS.GET_LANDING_PAGE_REVIEWS],
+        queryFn: getLandingPageReviews,
     });
 };

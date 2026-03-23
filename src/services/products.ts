@@ -62,3 +62,10 @@ export const createProductReview = async (slug: string, data: FormData | Record<
     const response = await api.post(url, data, config);
     return handleApiResponse(response);
 };
+
+export const getLandingPageReviews = async () => {
+    const { GET_LANDING_PAGE_REVIEWS } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_LANDING_PAGE_REVIEWS).build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
