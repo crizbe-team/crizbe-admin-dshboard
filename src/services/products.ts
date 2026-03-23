@@ -55,8 +55,8 @@ export const getRelatedProducts = async (id: string | number) => {
 };
 
 export const createProductReview = async (slug: string, data: FormData | Record<string, any>) => {
-    const { CREATE_PRODUCT_REVIEW } = API_ENDPOINTS;
-    const url = new ApiBuilder(CREATE_PRODUCT_REVIEW).path('slug', slug).build();
+    const { GET_PRODUCT_REVIEWS } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_PRODUCT_REVIEWS).path('slug', slug).build();
     const config =
         data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
     const response = await api.post(url, data, config);
@@ -66,6 +66,13 @@ export const createProductReview = async (slug: string, data: FormData | Record<
 export const getLandingPageReviews = async () => {
     const { GET_LANDING_PAGE_REVIEWS } = API_ENDPOINTS;
     const url = new ApiBuilder(GET_LANDING_PAGE_REVIEWS).build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
+
+export const getProductReviews = async (slug: string) => {
+    const { GET_PRODUCT_REVIEWS } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_PRODUCT_REVIEWS).path('slug', slug).build();
     const response = await api.get(url);
     return handleApiResponse(response);
 };

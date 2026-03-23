@@ -5,6 +5,7 @@ import {
     getRelatedProducts,
     createProductReview,
     getLandingPageReviews,
+    getProductReviews,
 } from '../services/products';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { toast } from '@/components/ui/Toast';
@@ -96,5 +97,12 @@ export const useFetchLandingPageReviews = () => {
     return useQuery<any>({
         queryKey: [API_ENDPOINTS.GET_LANDING_PAGE_REVIEWS],
         queryFn: getLandingPageReviews,
+    });
+};
+export const useFetchProductReviews = (slug: string) => {
+    return useQuery<any>({
+        queryKey: ['product-reviews', slug],
+        queryFn: () => getProductReviews(slug),
+        enabled: !!slug,
     });
 };
