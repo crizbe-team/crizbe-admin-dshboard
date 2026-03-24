@@ -9,6 +9,7 @@ import {
     useUpdateAddress,
     useDeleteAddress,
 } from '@/queries/use-account';
+import ConfirmationModal from '@/components/Modals/ConfirmationModal';
 
 type Address = {
     id: string;
@@ -44,6 +45,8 @@ export default function MyAddressesPage() {
     const [selected, setSelected] = useState<string>('');
     const [open, setOpen] = useState(false);
     const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
 
     React.useEffect(() => {
         if (addresses.length > 0 && !selected) {
@@ -53,8 +56,18 @@ export default function MyAddressesPage() {
     }, [addresses, selected]);
 
     const handleDeleteAddress = (addressId: string) => {
-        if (window.confirm('Are you sure you want to delete this address?')) {
-            deleteAddress(addressId);
+        setAddressToDelete(addressId);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (addressToDelete) {
+            deleteAddress(addressToDelete, {
+                onSuccess: () => {
+                    setIsDeleteDialogOpen(false);
+                    setAddressToDelete(null);
+                },
+            });
         }
     };
 
@@ -236,6 +249,19 @@ export default function MyAddressesPage() {
                 onSubmit={handleAddressSubmit}
                 editingAddress={editingAddress}
                 isLoading={isCreating || isUpdating}
+            />
+
+            <ConfirmationModal
+                open={isDeleteDialogOpen}
+                onClose={() => {
+                    setIsDeleteDialogOpen(false);
+                    setAddressToDelete(null);
+                }}
+                onConfirm={handleConfirmDelete}
+                title="Delete address?"
+                description="Are you sure you want to delete the selected address?"
+                confirmText="Delete"
+                isPending={isDeleting}
             />
         </div>
     );

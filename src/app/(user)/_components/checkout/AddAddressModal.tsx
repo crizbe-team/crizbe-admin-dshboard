@@ -1,20 +1,15 @@
-"use client";
+'use client';
 
-import React, { useId, useState, useEffect } from "react";
-import { X } from "lucide-react";
-import {
-    useFetchCountries,
-    useFetchCountriesInfinite,
-    useFetchStates,
-    useFetchStatesInfinite,
-} from "@/queries/use-core";
-import FormSelect from "@/components/ui/FormSelect";
-import FormInput from "@/components/ui/FormInput";
-import PhoneInput from "@/components/ui/PhoneInput";
-import GoldenButton from "@/components/ui/GoldenButton";
-import { addressFormSchema, type AddressFormValues } from "./addressSchema";
+import React, { useId, useState, useEffect } from 'react';
+import { useFetchCountries, useFetchStates } from '@/queries/use-core';
+import FormSelect from '@/components/ui/FormSelect';
+import FormInput from '@/components/ui/FormInput';
+import PhoneInput from '@/components/ui/PhoneInput';
+import GoldenButton from '@/components/ui/GoldenButton';
+import { addressFormSchema, type AddressFormValues } from './addressSchema';
+import { ModalWrapper } from '@/components/ui/ModalWrapper';
 
-type SaveAs = "home" | "work" | "other";
+type SaveAs = 'home' | 'work' | 'other';
 
 type Address = {
     id: string;
@@ -33,7 +28,7 @@ type Address = {
     country_name?: string;
     state: string | { id: string; name: string }; // Can be either UUID string or object
     state_name?: string;
-    address_type: "home" | "work" | "other";
+    address_type: 'home' | 'work' | 'other';
     is_default: boolean;
     is_active?: boolean;
     is_deleted?: boolean;
@@ -45,18 +40,18 @@ type Address = {
 type AddressFormErrors = Partial<Record<keyof AddressFormValues, string>>;
 
 const createEmptyForm = (): AddressFormValues => ({
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    phoneCountryCode: "+91",
-    zipCode: "",
-    addressLine1: "",
-    street: "",
-    city: "",
-    landmark: "",
-    countryId: "",
-    stateId: "",
-    addressType: "home",
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    phoneCountryCode: '+91',
+    zipCode: '',
+    addressLine1: '',
+    street: '',
+    city: '',
+    landmark: '',
+    countryId: '',
+    stateId: '',
+    addressType: 'home',
     isDefault: false,
 });
 
@@ -73,8 +68,8 @@ export default function AddAddressModal({
     editingAddress: Address | null;
     isLoading: boolean;
 }) {
-    const [countrySearchQuery, setCountrySearchQuery] = useState("");
-    const [stateSearchQuery, setStateSearchQuery] = useState("");
+    const [countrySearchQuery, setCountrySearchQuery] = useState('');
+    const [stateSearchQuery, setStateSearchQuery] = useState('');
 
     // Form state as a single object
     const [form, setForm] = useState<AddressFormValues>(createEmptyForm);
@@ -100,14 +95,16 @@ export default function AddAddressModal({
     useEffect(() => {
         if (editingAddress) {
             // Extract country ID from either string or object format
-            const countryId = typeof editingAddress.country === 'string'
-                ? editingAddress.country
-                : editingAddress.country?.id || "";
+            const countryId =
+                typeof editingAddress.country === 'string'
+                    ? editingAddress.country
+                    : editingAddress.country?.id || '';
 
             // Extract state ID from either string or object format
-            const stateId = typeof editingAddress.state === 'string'
-                ? editingAddress.state
-                : editingAddress.state?.id || "";
+            const stateId =
+                typeof editingAddress.state === 'string'
+                    ? editingAddress.state
+                    : editingAddress.state?.id || '';
 
             setForm({
                 firstName: editingAddress.first_name,
@@ -116,21 +113,21 @@ export default function AddAddressModal({
                 phoneCountryCode: editingAddress.phone_country_code,
                 zipCode: editingAddress.zip_code,
                 addressLine1: editingAddress.address_line1,
-                street: editingAddress.street || editingAddress.city || "", // fallback to city if street is empty
+                street: editingAddress.street || editingAddress.city || '', // fallback to city if street is empty
                 city: editingAddress.city,
-                landmark: editingAddress.landmark || "",
+                landmark: editingAddress.landmark || '',
                 countryId: countryId,
                 stateId: stateId,
                 addressType: editingAddress.address_type,
                 isDefault: editingAddress.is_default,
             });
-            setCountrySearchQuery("");
-            setStateSearchQuery("");
+            setCountrySearchQuery('');
+            setStateSearchQuery('');
             setErrors({});
         } else {
             setForm(createEmptyForm());
-            setCountrySearchQuery("");
-            setStateSearchQuery("");
+            setCountrySearchQuery('');
+            setStateSearchQuery('');
             setErrors({});
         }
     }, [editingAddress, open]);
@@ -164,37 +161,30 @@ export default function AddAddressModal({
             city: values.city,
             landmark: values.landmark || undefined,
             country: values.countryId,
-            state: values.stateId || "",
+            state: values.stateId || '',
             address_type: values.addressType,
             is_default: values.isDefault,
         };
 
         try {
             await onSubmit(addressData);
-
         } catch (error) {
             // Optionally handle submission errors here
-            console.error("Submission error:", error);
+            console.error('Submission error:', error);
         } finally {
         }
     };
 
-    if (!open) return null;
-
     return (
-        <div className="fixed inset-0 z-999 flex items-start sm:items-center justify-center p-4">
-            <button
-                type="button"
-                aria-label="Close overlay"
-                onClick={onClose}
-                className="absolute inset-0 bg-black/30"
-            />
-
+        <ModalWrapper open={open} onClose={onClose}>
             <div
+                style={{
+                    willChange: 'transform, opacity', // Hardware acceleration hint
+                }}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={titleId}
-                className="relative w-full max-w-[860px] rounded-[24px] bg-white shadow-xl border border-[#EEE7DB] max-h-[90vh] overflow-y-auto"
+                className="relative w-[800px] rounded-[24px] bg-white shadow-xl border border-[#EEE7DB] overflow-hidden"
             >
                 <div className="sticky top-0 z-10 flex items-start justify-between px-[24px] pt-[24px] pb-[20px] bg-white">
                     <div>
@@ -205,17 +195,9 @@ export default function AddAddressModal({
                             Enter the address details and continue.
                         </p>
                     </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="rounded-full hover:bg-black/5 focus-visible:ring-2 focus-visible:ring-[#C4994A] focus-visible:ring-offset-2 outline-none transition"
-                        aria-label="Close"
-                    >
-                        <X className="w-4 h-4 text-[#A4A7AE]" />
-                    </button>
                 </div>
                 <hr className="border-t border-[#E7E4DD]" />
-                <div className="px-[24px] pt-[30px] pb-[24px]">
+                <div className="px-[24px] pt-[30px] pb-[24px] max-h-[calc(100vh-230px)] overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                         <FormInput
                             label="First name"
@@ -226,7 +208,6 @@ export default function AddAddressModal({
                                 setForm((prev) => ({ ...prev, firstName: e.target.value }))
                             }
                             error={errors.firstName}
-
                         />
                         <FormInput
                             label="Last name"
@@ -243,9 +224,7 @@ export default function AddAddressModal({
                             label="Phone number"
                             required
                             value={form.phoneNumber}
-                            onChange={(val) =>
-                                setForm((prev) => ({ ...prev, phoneNumber: val }))
-                            }
+                            onChange={(val) => setForm((prev) => ({ ...prev, phoneNumber: val }))}
                             enableCodeSelect
                             codes={countries as any}
                             selectedCode={form.phoneCountryCode}
@@ -297,15 +276,13 @@ export default function AddAddressModal({
                             required
                             placeholder="Enter your city"
                             value={form.city}
-                            onChange={(e) =>
-                                setForm((prev) => ({ ...prev, city: e.target.value }))
-                            }
+                            onChange={(e) => setForm((prev) => ({ ...prev, city: e.target.value }))}
                             error={errors.city}
                         />
                         <FormInput
                             label="Landmark (Optional)"
                             placeholder="eg: opposite municipal office"
-                            value={form.landmark ?? ""}
+                            value={form.landmark ?? ''}
                             onChange={(e) =>
                                 setForm((prev) => ({ ...prev, landmark: e.target.value }))
                             }
@@ -317,8 +294,8 @@ export default function AddAddressModal({
                             options={countries}
                             value={form.countryId}
                             onChange={(id) => {
-                                setForm((prev) => ({ ...prev, countryId: id, stateId: "" }));
-                                setStateSearchQuery("");
+                                setForm((prev) => ({ ...prev, countryId: id, stateId: '' }));
+                                setStateSearchQuery('');
                             }}
                             enableSearch
                             searchPlaceholder="Search countries..."
@@ -331,9 +308,7 @@ export default function AddAddressModal({
                             required
                             options={states}
                             value={form.stateId}
-                            onChange={(id) =>
-                                setForm((prev) => ({ ...prev, stateId: id }))
-                            }
+                            onChange={(id) => setForm((prev) => ({ ...prev, stateId: id }))}
                             enableSearch
                             searchPlaceholder="Search states..."
                             onSearchChange={setStateSearchQuery}
@@ -348,7 +323,7 @@ export default function AddAddressModal({
                                 Save address as:
                             </span>
                             <div className="flex items-center gap-4 text-sm text-[#4E3325]">
-                                {(["home", "work", "other"] as SaveAs[]).map((v) => (
+                                {(['home', 'work', 'other'] as SaveAs[]).map((v) => (
                                     <label
                                         key={v}
                                         className="flex items-center gap-2 cursor-pointer"
@@ -372,7 +347,7 @@ export default function AddAddressModal({
                         </div>
                     </div>
                 </div>
-                <div className="sticky bottom-0 z-10 mt-7 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 px-[24px] pt-[16px] pb-[20px] bg-white border-t border-[#E7E4DD]">
+                <div className="sticky bottom-0 z-10 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 px-[24px] pt-[16px] pb-[20px] bg-white border-t border-[#E7E4DD]">
                     <label className="flex items-center gap-2 text-xs text-[#6B635A] cursor-pointer">
                         <input
                             type="checkbox"
@@ -405,6 +380,6 @@ export default function AddAddressModal({
                     </div>
                 </div>
             </div>
-        </div>
+        </ModalWrapper>
     );
 }

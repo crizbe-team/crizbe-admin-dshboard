@@ -36,15 +36,13 @@ export default function ConfirmationModal({
                 style={{
                     willChange: 'transform, opacity', // Hardware acceleration hint
                 }}
-                className="relative w-full max-w-[440px] bg-white rounded-[20px] overflow-hidden shadow-2xl p-8"
+                className="relative w-full max-w-[400px] bg-white rounded-[20px] overflow-hidden shadow-2xl p-8"
             >
                 <div className="mb-4">
-                    <h2 className="text-[28px] font-bold text-[#191919] font-bricolage tracking-tight">
-                        {title}
-                    </h2>
+                    <h2 className="text-[20px] font-bold text-[#191919]">{title}</h2>
                 </div>
 
-                <p className="text-[17px] text-[#4E3325CC] leading-relaxed mb-10 font-medium">
+                <p className="text-[16px] text-[#474747] leading-relaxed mb-10 font-medium">
                     {description}
                 </p>
 

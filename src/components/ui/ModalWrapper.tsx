@@ -70,7 +70,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
                     exit="from"
                     variants={fadeInOut(0.25)}
                     className={cn(
-                        'flex items-center justify-center fixed bg-[#000000b3] inset-0 z-999 cursor-pointer',
+                        'flex items-center justify-center fixed bg-[#000000b3] inset-0 z-999',
                         'p-4 md:p-5'
                     )}
                 >
