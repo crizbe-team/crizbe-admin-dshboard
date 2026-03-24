@@ -14,7 +14,20 @@ interface ProductInfoProps {
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     const router = useRouter();
     const [quantity, setQuantity] = useState(1);
-    const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null);
+    const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
+        product.variants?.[0]?.id || null
+    );
+
+    React.useEffect(() => {
+        if (product.variants?.length > 0) {
+            setSelectedVariantId(product.variants[0].id);
+        }
+    }, [product.id]);
+
+    const selectedVariant =
+        product.variants?.find((v: any) => v.id === selectedVariantId) ||
+        product.variants?.[0] ||
+        null;
 
     const handleQuantityChange = (type: 'inc' | 'dec') => {
         if (type === 'dec' && quantity > 1) {
@@ -29,7 +42,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     const hasVariants = product.variants && product.variants.length > 0;
     const isInStock = hasVariants
         ? selectedVariant && selectedVariant.stock > 0 && selectedVariant.in_stock !== false
-        : false; // If no variants are present, consider it not purchasable for now
+        : false;
     const isLowStock = selectedVariant && selectedVariant.stock > 0 && selectedVariant.stock < 10;
 
     const { mutate: addToCart, isPending } = useAddToCart();
@@ -165,7 +178,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                 <button
                                     key={v.id}
                                     onClick={() => {
-                                        setSelectedVariant(v);
+                                        setSelectedVariantId(v.id);
                                         if (quantity > (v.stock || 0)) {
                                             setQuantity(Math.max(1, v.stock || 0));
                                         }
