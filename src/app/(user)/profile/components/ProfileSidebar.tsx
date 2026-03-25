@@ -27,10 +27,10 @@ export default function ProfileSidebar({ userName = 'Customer' }: { userName?: s
 
     return (
         <>
-            <aside className="w-full rounded-[20px] border border-[#EEEEEE] bg-white p-[24px] shadow-sm flex flex-col ">
-                <div className="mx-0 mb-[16px] border-b border-[#EEEEEE] pb-[16px] flex items-center px-2">
-                    <p className="text-[20px] text-[#555555]">Hello,</p>
-                    <h2 className="ml-1.5 text-[20px] text-[#191919]">{userName}</h2>
+            <aside className="w-full rounded-[24px] border border-[#EEEEEE] bg-white p-[24px] shadow-sm flex flex-col ">
+                <div className="border-b border-[#EEEEEE] flex items-center pb-[16px] mb-[20px]">
+                    <p className="text-[18px] text-[#555555]">Hello,</p>
+                    <h2 className="ml-1.5 text-[18px] text-[#191919]">{userName}</h2>
                 </div>
 
                 <nav className="flex flex-col">
@@ -40,19 +40,18 @@ export default function ProfileSidebar({ userName = 'Customer' }: { userName?: s
                             <React.Fragment key={item.href}>
                                 <Link
                                     href={item.href}
-                                    className={`flex items-center justify-between rounded-xl px-2 mb-[16px] text-[18px] transition-colors ${
-                                        isActive
-                                            ? 'text-[#007DDC]'
-                                            : 'text-[#191919] hover:text-[#007DDC]'
-                                    }`}
+                                    className={`flex items-center justify-between rounded-xl  mb-[24px] last:mb-0 text-[18px] transition-colors ${isActive
+                                        ? 'text-[#007DDC]'
+                                        : 'text-[#191919] hover:text-[#007DDC]'
+                                        }`}
                                 >
                                     <span>{item.label}</span>
                                     {isActive && (
-                                        <ChevronRight className="h-[18px] w-[18px] stroke-[1.5px]" />
+                                        <ChevronRight className="h-[20px] w-[20px] stroke-[1.5px]" />
                                     )}
                                 </Link>
                                 {item.dividerAfter && (
-                                    <div className="mb-[16px] h-px bg-[#EEEEEE]" />
+                                    <div className="mb-[24px] h-px bg-[#EEEEEE]" />
                                 )}
                             </React.Fragment>
                         );
@@ -63,9 +62,9 @@ export default function ProfileSidebar({ userName = 'Customer' }: { userName?: s
                     <button
                         type="button"
                         onClick={() => setShowLogoutModal(true)}
-                        className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 text-[18px] text-red-500 hover:text-red-600 transition-colors group"
+                        className="flex w-full cursor-pointer items-center gap-3 rounded-xl  text-[18px] text-[#75150e] "
                     >
-                        <LogOut className="h-[22px] w-[22px] rotate-180 stroke-[1.5px] text-red-500 group-hover:text-red-600 transition-colors" />
+                        <LogOut className="h-[22px] w-[22px] rotate-180 stroke-[1.5px]  transition-colors" />
                         <span>Logout</span>
                     </button>
                 </div>

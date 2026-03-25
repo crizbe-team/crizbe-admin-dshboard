@@ -184,20 +184,19 @@ export default function AddAddressModal({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={titleId}
-                className="relative w-[800px] rounded-[24px] bg-white shadow-xl border border-[#EEE7DB] overflow-hidden"
+                className="relative w-full md:w-[800px]  rounded-[24px] bg-white shadow-xl border border-[#EEE7DB] overflow-hidden flex flex-col"
             >
+
                 <div className="sticky top-0 z-10 flex items-start justify-between px-[24px] pt-[24px] pb-[20px] bg-white">
                     <div>
                         <h2 id={titleId} className="text-base font-semibold text-[#191919]">
                             {editingAddress ? 'Edit address' : 'Add address'}
                         </h2>
-                        <p className="text-sm font-normal text-[#474747] mt-1">
-                            Enter the address details and continue.
-                        </p>
+                        <p className="text-sm font-normal text-[#474747] mt-1">Enter the address details and continue.</p>
                     </div>
                 </div>
                 <hr className="border-t border-[#E7E4DD]" />
-                <div className="px-[24px] pt-[30px] pb-[24px] max-h-[calc(100vh-230px)] overflow-y-auto">
+                <div className="flex-1 min-h-0 px-[24px] pt-[30px] pb-[24px] overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                         <FormInput
                             label="First name"
@@ -347,7 +346,7 @@ export default function AddAddressModal({
                         </div>
                     </div>
                 </div>
-                <div className="sticky bottom-0 z-10 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 px-[24px] pt-[16px] pb-[20px] bg-white border-t border-[#E7E4DD]">
+                <div className="flex-none z-10 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 px-[24px] pt-[16px] pb-[20px] bg-white border-t border-[#E7E4DD]">
                     <label className="flex items-center gap-2 text-xs text-[#6B635A] cursor-pointer">
                         <input
                             type="checkbox"
