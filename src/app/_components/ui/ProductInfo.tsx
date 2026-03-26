@@ -11,8 +11,11 @@ interface ProductInfoProps {
     product: any; // Using any for now to match flexible backend data
 }
 
+import { useCartToast } from '@/contexts/CartToastContext';
+
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     const router = useRouter();
+    const { showToast } = useCartToast();
     const [quantity, setQuantity] = useState(1);
     const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
         product.variants?.[0]?.id || null
@@ -58,11 +61,23 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             return;
         }
 
-        addToCart({
-            variant: selectedVariant?.id,
-            product: product.id,
-            quantity: quantity,
-        });
+        addToCart(
+            {
+                variant: selectedVariant?.id,
+                product: product.id,
+                quantity: quantity,
+            },
+            {
+                onSuccess: () => {
+                    showToast({
+                        name: product.name,
+                        image: product.images?.[0]?.image || product.image,
+                        weight: selectedVariant?.size || 'Standard',
+                        qty: quantity,
+                    });
+                },
+            }
+        );
     };
 
     const { convertPrice, isLoading } = useCurrency();
