@@ -65,14 +65,20 @@ export const useSetPassword = () => {
 };
 
 export const useLogout = () => {
+    const clearCredentials = () => {
+        authUtils.removeTokens();
+        authUtils.removeRole();
+        if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+        }
+    };
     return useMutation({
         mutationFn: () => logout(),
         onSuccess: () => {
-            authUtils.removeTokens();
-            authUtils.removeRole();
-            if (typeof window !== 'undefined') {
-                window.location.href = '/login';
-            }
+            clearCredentials();
+        },
+        onError: () => {
+            clearCredentials();
         },
     });
 };
