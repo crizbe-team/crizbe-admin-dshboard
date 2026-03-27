@@ -65,9 +65,11 @@ function ProductAddEditModal({
         reset,
         control,
         setError,
+        watch,
         formState: { errors },
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
+        mode: 'onChange',
         defaultValues: {
             name: '',
             category: '',
@@ -75,6 +77,10 @@ function ProductAddEditModal({
             ingredients: '',
         },
     });
+
+    // Debugging logs to verify form state in production
+    console.log('DEBUG: Product Form Values:', watch());
+    console.log('DEBUG: Product Form Errors:', errors);
 
     // Reset when modal opens or editingProduct changes
     useEffect(() => {
@@ -252,11 +258,15 @@ function ProductAddEditModal({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Name */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label
+                                className="block text-sm font-medium text-gray-300 mb-2"
+                                htmlFor="product_name"
+                            >
                                 Product Name
                             </label>
                             <input
                                 {...register('name')}
+                                id="product_name"
                                 type="text"
                                 className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
                                     errors.name
@@ -302,11 +312,15 @@ function ProductAddEditModal({
 
                     {/* Description */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <label
+                            className="block text-sm font-medium text-gray-300 mb-2"
+                            htmlFor="product_description"
+                        >
                             Description
                         </label>
                         <textarea
                             {...register('description')}
+                            id="product_description"
                             className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
                                 errors.description
                                     ? 'border-red-500'
@@ -324,11 +338,15 @@ function ProductAddEditModal({
 
                     {/* Ingredients */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <label
+                            className="block text-sm font-medium text-gray-300 mb-2"
+                            htmlFor="product_ingredients"
+                        >
                             Ingredients
                         </label>
                         <textarea
                             {...register('ingredients')}
+                            id="product_ingredients"
                             className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
                                 errors.ingredients
                                     ? 'border-red-500'
