@@ -43,8 +43,8 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
     });
 
     // Log the current state of the form on every render for debugging
-    // console.log('DEBUG: Registered Values:', watch());
-    // console.log('DEBUG: Form Errors:', errors);
+    console.log('DEBUG: Registered Values:', watch());
+    console.log('DEBUG: Form Errors:', errors);
 
     // Reset form only when modal specifically opens
     useEffect(() => {
