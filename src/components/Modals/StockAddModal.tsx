@@ -51,7 +51,7 @@ export default function StockAddModal({ isModalOpen, handleCloseModal, defaultPr
                 notes: '',
             });
         }
-    }, [isModalOpen, defaultProductId, reset]);
+    }, [isModalOpen, defaultProductId]);
 
     if (!isModalOpen) return null;
 

@@ -101,7 +101,7 @@ function ProductAddEditModal({
                 setImageFiles([]);
             }
         }
-    }, [isModalOpen, editingProduct, reset]);
+    }, [isModalOpen, editingProduct]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);

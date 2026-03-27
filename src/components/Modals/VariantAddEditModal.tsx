@@ -105,7 +105,7 @@ function VariantAddEditModal({
                 setCustomSizeStates({});
             }
         }
-    }, [isModalOpen, currentVariantData, reset]);
+    }, [isModalOpen, currentVariantData]);
 
     const calculateWeight = (size: string): string | null => {
         const lowerSize = size.toLowerCase().trim();
