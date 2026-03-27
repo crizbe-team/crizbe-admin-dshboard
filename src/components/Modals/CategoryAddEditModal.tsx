@@ -60,6 +60,7 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
     }, [isModalOpen, editingCategory, reset]);
 
     const onSubmit = (data: CategoryFormData) => {
+        console.log('onSubmitdata', data);
         const mutationOptions = {
             onSuccess: () => {
                 handleCloseModal();
