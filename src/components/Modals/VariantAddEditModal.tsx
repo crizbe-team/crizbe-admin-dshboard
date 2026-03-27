@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { variantSchema, type VariantFieldValues } from '@/validations/variant';
 import { useFetchProducts } from '@/queries/use-products';
 import { useCreateVariant, useUpdateVariant } from '@/queries/use-variants';
+import { DashboardInput, DashboardSelect } from '@/components/ui/DashboardFields';
 
 export interface VariantItem {
     id?: string;
@@ -54,16 +55,15 @@ function VariantAddEditModal({
     const [customSizeStates, setCustomSizeStates] = useState<Record<number, boolean>>({});
 
     const {
-        register,
-        handleSubmit,
         control,
+        handleSubmit,
         reset,
-        watch,
         setValue,
         setError,
         formState: { errors },
     } = useForm<VariantFieldValues>({
         resolver: zodResolver(variantSchema),
+        mode: 'onChange',
         defaultValues: {
             productId: '',
             variants: [{ size: '', price: '', weight_per_unit: '' }],
@@ -289,143 +289,77 @@ function VariantAddEditModal({
                                                     Size
                                                 </label>
                                                 {customSizeStates[index] ? (
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-center space-x-2">
-                                                            <input
-                                                                type="text"
-                                                                {...register(
-                                                                    `variants.${index}.size`
-                                                                )}
-                                                                onChange={(e) =>
-                                                                    handleCustomSizeChange(
-                                                                        index,
-                                                                        e.target.value
-                                                                    )
-                                                                }
-                                                                placeholder="e.g. 750gm"
-                                                                className={`w-full bg-[#1a1a1a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border focus:outline-none transition-colors ${
-                                                                    errors.variants?.[index]?.size
-                                                                        ? 'border-red-500'
-                                                                        : 'border-[#3a3a3a] focus:border-purple-500'
-                                                                }`}
-                                                                autoFocus
-                                                            />
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setCustomSizeStates((prev) => {
-                                                                        const next = { ...prev };
-                                                                        delete next[index];
-                                                                        return next;
-                                                                    });
-                                                                    setValue(
-                                                                        `variants.${index}.size`,
-                                                                        ''
-                                                                    );
-                                                                }}
-                                                                className="text-[10px] font-bold text-gray-500 uppercase hover:text-white bg-[#333] px-2 py-1 rounded"
-                                                            >
-                                                                Standard
-                                                            </button>
-                                                        </div>
-                                                        {errors.variants?.[index]?.size && (
-                                                            <p className="mt-1 text-[10px] text-red-500 font-medium">
-                                                                {
-                                                                    errors.variants[index]?.size
-                                                                        ?.message
-                                                                }
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <div>
-                                                        <select
-                                                            className={`w-full bg-[#1a1a1a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border focus:outline-none transition-colors ${
-                                                                errors.variants?.[index]?.size
-                                                                    ? 'border-red-500'
-                                                                    : 'border-[#3a3a3a] focus:border-purple-500'
-                                                            }`}
-                                                            value={
-                                                                watch(`variants.${index}.size`) ||
-                                                                ''
-                                                            }
+                                                    <div className="flex items-center space-x-2">
+                                                        <DashboardInput
+                                                            name={`variants.${index}.size`}
+                                                            control={control}
+                                                            placeholder="e.g. 750gm"
+                                                            className="h-[42px] text-sm bg-[#1a1a1a]"
                                                             onChange={(e) =>
-                                                                handleSizeChange(
+                                                                handleCustomSizeChange(
                                                                     index,
                                                                     e.target.value
                                                                 )
                                                             }
+                                                            autoFocus
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setCustomSizeStates((prev) => {
+                                                                    const next = { ...prev };
+                                                                    delete next[index];
+                                                                    return next;
+                                                                });
+                                                                setValue(
+                                                                    `variants.${index}.size`,
+                                                                    ''
+                                                                );
+                                                            }}
+                                                            className="text-[10px] font-bold text-gray-500 uppercase hover:text-white bg-[#333] px-2 py-1 rounded h-[42px] shrink-0"
                                                         >
-                                                            <option value="">Select Size</option>
-                                                            {commonSizes.map((s) => (
-                                                                <option key={s} value={s}>
-                                                                    {s}
-                                                                </option>
-                                                            ))}
-                                                            <option value="custom">
-                                                                Custom Size...
-                                                            </option>
-                                                        </select>
-                                                        {errors.variants?.[index]?.size && (
-                                                            <p className="mt-1 text-[10px] text-red-500 font-medium">
-                                                                {
-                                                                    errors.variants[index]?.size
-                                                                        ?.message
-                                                                }
-                                                            </p>
-                                                        )}
+                                                            Standard
+                                                        </button>
                                                     </div>
+                                                ) : (
+                                                    <DashboardSelect
+                                                        name={`variants.${index}.size`}
+                                                        control={control}
+                                                        className="h-[42px] text-sm bg-[#1a1a1a]"
+                                                        onChange={(e: any) =>
+                                                            handleSizeChange(index, e.target.value)
+                                                        }
+                                                    >
+                                                        <option value="">Select Size</option>
+                                                        {commonSizes.map((s) => (
+                                                            <option key={s} value={s}>
+                                                                {s}
+                                                            </option>
+                                                        ))}
+                                                        <option value="custom">
+                                                            Custom Size...
+                                                        </option>
+                                                    </DashboardSelect>
                                                 )}
                                             </div>
 
                                             {/* Price */}
-                                            <div>
-                                                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase">
-                                                    Price (₹)
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    {...register(`variants.${index}.price`)}
-                                                    className={`w-full bg-[#1a1a1a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border focus:outline-none transition-colors ${
-                                                        errors.variants?.[index]?.price
-                                                            ? 'border-red-500'
-                                                            : 'border-[#3a3a3a] focus:border-purple-500'
-                                                    }`}
-                                                    placeholder="0.00"
-                                                />
-                                                {errors.variants?.[index]?.price && (
-                                                    <p className="mt-1 text-[10px] text-red-500 font-medium">
-                                                        {errors.variants[index]?.price?.message}
-                                                    </p>
-                                                )}
-                                            </div>
+                                            <DashboardInput
+                                                name={`variants.${index}.price`}
+                                                control={control}
+                                                label="Price (₹)"
+                                                placeholder="0.00"
+                                                className="h-[42px] text-sm bg-[#1a1a1a]"
+                                            />
 
                                             {/* Weight */}
-                                            <div>
-                                                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase">
-                                                    Weight (kg)
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    {...register(
-                                                        `variants.${index}.weight_per_unit`
-                                                    )}
-                                                    className={`w-full bg-[#1a1a1a] text-gray-100 px-4 py-2 h-[42px] text-sm rounded-lg border focus:outline-none transition-colors ${
-                                                        errors.variants?.[index]?.weight_per_unit
-                                                            ? 'border-red-500'
-                                                            : 'border-[#3a3a3a] focus:border-purple-500'
-                                                    }`}
-                                                    placeholder="0.100"
-                                                />
-                                                {errors.variants?.[index]?.weight_per_unit && (
-                                                    <p className="mt-1 text-[10px] text-red-500 font-medium">
-                                                        {
-                                                            errors.variants[index]?.weight_per_unit
-                                                                ?.message
-                                                        }
-                                                    </p>
-                                                )}
-                                            </div>
+                                            <DashboardInput
+                                                name={`variants.${index}.weight_per_unit`}
+                                                control={control}
+                                                label="Weight (kg)"
+                                                placeholder="0.100"
+                                                className="h-[42px] text-sm bg-[#1a1a1a]"
+                                            />
                                         </div>
                                     </div>
                                 ))}

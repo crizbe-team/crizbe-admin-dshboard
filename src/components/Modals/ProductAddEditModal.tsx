@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { productSchema, type ProductFormData } from '@/validations/product';
 import { useCreateProduct, useUpdateProduct } from '@/queries/use-products';
 import { useFetchCategories } from '@/queries/use-categories';
+import { DashboardInput, DashboardTextarea } from '@/components/ui/DashboardFields';
 
 export interface SizeVariant {
     size: string;
@@ -60,12 +61,10 @@ function ProductAddEditModal({
     const [existingImagesList, setExistingImagesList] = useState<string[]>([]);
 
     const {
-        register,
+        control,
         handleSubmit,
         reset,
-        control,
         setError,
-        watch,
         formState: { errors },
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
@@ -77,10 +76,6 @@ function ProductAddEditModal({
             ingredients: '',
         },
     });
-
-    // Debugging logs to verify form state in production
-    console.log('DEBUG: Product Form Values:', watch());
-    console.log('DEBUG: Product Form Errors:', errors);
 
     // Reset when modal opens or editingProduct changes
     useEffect(() => {
@@ -256,29 +251,12 @@ function ProductAddEditModal({
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Name */}
-                        <div>
-                            <label
-                                className="block text-sm font-medium text-gray-300 mb-2"
-                                htmlFor="product_name"
-                            >
-                                Product Name
-                            </label>
-                            <input
-                                {...register('name')}
-                                id="product_name"
-                                type="text"
-                                className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
-                                    errors.name
-                                        ? 'border-red-500'
-                                        : 'border-[#3a3a3a] focus:border-purple-500'
-                                }`}
-                                placeholder="Enter product name"
-                            />
-                            {errors.name && (
-                                <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
-                            )}
-                        </div>
+                        <DashboardInput
+                            name="name"
+                            control={control}
+                            label="Product Name"
+                            placeholder="Enter product name"
+                        />
 
                         {/* Category */}
                         <div>
@@ -310,57 +288,19 @@ function ProductAddEditModal({
                         </div>
                     </div>
 
-                    {/* Description */}
-                    <div>
-                        <label
-                            className="block text-sm font-medium text-gray-300 mb-2"
-                            htmlFor="product_description"
-                        >
-                            Description
-                        </label>
-                        <textarea
-                            {...register('description')}
-                            id="product_description"
-                            className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
-                                errors.description
-                                    ? 'border-red-500'
-                                    : 'border-[#3a3a3a] focus:border-purple-500'
-                            }`}
-                            placeholder="Enter product description"
-                            rows={4}
-                        />
-                        {errors.description && (
-                            <p className="mt-1 text-xs text-red-500">
-                                {errors.description.message}
-                            </p>
-                        )}
-                    </div>
+                    <DashboardTextarea
+                        name="description"
+                        control={control}
+                        label="Description"
+                        placeholder="Enter product description"
+                    />
 
-                    {/* Ingredients */}
-                    <div>
-                        <label
-                            className="block text-sm font-medium text-gray-300 mb-2"
-                            htmlFor="product_ingredients"
-                        >
-                            Ingredients
-                        </label>
-                        <textarea
-                            {...register('ingredients')}
-                            id="product_ingredients"
-                            className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
-                                errors.ingredients
-                                    ? 'border-red-500'
-                                    : 'border-[#3a3a3a] focus:border-purple-500'
-                            }`}
-                            placeholder="Enter product ingredients"
-                            rows={4}
-                        />
-                        {errors.ingredients && (
-                            <p className="mt-1 text-xs text-red-500">
-                                {errors.ingredients.message}
-                            </p>
-                        )}
-                    </div>
+                    <DashboardTextarea
+                        name="ingredients"
+                        control={control}
+                        label="Ingredients"
+                        placeholder="Enter product ingredients"
+                    />
 
                     <div className="flex justify-end space-x-3 pt-4">
                         <button

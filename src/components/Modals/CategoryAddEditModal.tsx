@@ -4,6 +4,11 @@ import { useCreateCategory, useUpdateCategory } from '@/queries/use-categories';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { categorySchema, type CategoryFormData } from '@/validations/category';
+import {
+    DashboardInput,
+    DashboardTextarea,
+    DashboardCheckbox,
+} from '@/components/ui/DashboardFields';
 
 export type Category = {
     id: string;
@@ -25,26 +30,20 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
     const isSubmitting = isCreating || isUpdating;
 
     const {
-        register,
+        control,
         handleSubmit,
         reset,
         setError,
-        clearErrors,
-        watch,
         formState: { errors },
     } = useForm<CategoryFormData>({
         resolver: zodResolver(categorySchema),
-        mode: 'onChange', // Validate on every change for better responsiveness
+        mode: 'onChange',
         defaultValues: {
             name: '',
             description: '',
             is_active: true,
         },
     });
-
-    // Log the current state of the form on every render for debugging
-    console.log('DEBUG: Registered Values:', watch());
-    console.log('DEBUG: Form Errors:', errors);
 
     // Reset form only when modal specifically opens
     useEffect(() => {
@@ -65,7 +64,6 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
     }, [isModalOpen, editingCategory, reset]);
 
     const onSubmit = (data: CategoryFormData) => {
-        console.log('Form Submitted Successfully:', data);
         const mutationOptions = {
             onSuccess: () => {
                 handleCloseModal();
@@ -127,68 +125,21 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
                         </div>
                     )}
 
-                    <div>
-                        <label
-                            className="block text-sm font-medium text-gray-300 mb-2"
-                            htmlFor="category_name"
-                        >
-                            Category Name
-                        </label>
-                        <input
-                            id="category_name"
-                            type="text"
-                            {...register('name')}
-                            className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
-                                errors.name
-                                    ? 'border-red-500'
-                                    : 'border-[#3a3a3a] focus:border-purple-500'
-                            }`}
-                            placeholder="Enter category name"
-                        />
-                        {errors.name && (
-                            <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
-                        )}
-                    </div>
+                    <DashboardInput
+                        name="name"
+                        control={control}
+                        label="Category Name"
+                        placeholder="Enter category name"
+                    />
 
-                    <div>
-                        <label
-                            className="block text-sm font-medium text-gray-300 mb-2"
-                            htmlFor="category_description"
-                        >
-                            Description
-                        </label>
-                        <textarea
-                            id="category_description"
-                            {...register('description')}
-                            className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
-                                errors.description
-                                    ? 'border-red-500'
-                                    : 'border-[#3a3a3a] focus:border-purple-500'
-                            }`}
-                            placeholder="Enter category description"
-                            rows={4}
-                        />
-                        {errors.description && (
-                            <p className="mt-1 text-xs text-red-500">
-                                {errors.description.message}
-                            </p>
-                        )}
-                    </div>
+                    <DashboardTextarea
+                        name="description"
+                        control={control}
+                        label="Description"
+                        placeholder="Enter category description"
+                    />
 
-                    <div className="flex items-center space-x-3">
-                        <input
-                            type="checkbox"
-                            id="is_active"
-                            {...register('is_active')}
-                            className="w-4 h-4 rounded border-gray-600 bg-[#2a2a2a] text-purple-600 focus:ring-purple-500 cursor-pointer"
-                        />
-                        <label
-                            htmlFor="is_active"
-                            className="text-sm font-medium text-gray-300 cursor-pointer"
-                        >
-                            Active
-                        </label>
-                    </div>
+                    <DashboardCheckbox name="is_active" control={control} label="Active" />
 
                     <div className="flex justify-end space-x-3 pt-4">
                         <button
