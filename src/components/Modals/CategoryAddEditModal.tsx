@@ -30,6 +30,7 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
         reset,
         setError,
         clearErrors,
+        watch,
         formState: { errors },
     } = useForm<CategoryFormData>({
         resolver: zodResolver(categorySchema),
@@ -40,6 +41,10 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
             is_active: true,
         },
     });
+
+    // Log the current state of the form on every render for debugging
+    console.log('DEBUG: Registered Values:', watch());
+    console.log('DEBUG: Form Errors:', errors);
 
     // Reset form only when modal specifically opens
     useEffect(() => {
@@ -57,10 +62,10 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
                   };
             reset(defaultValues);
         }
-    }, [isModalOpen, editingCategory]); // Removed 'reset' from dependencies to avoid loop if unstable
+    }, [isModalOpen, editingCategory, reset]);
 
-    console.log('onSubmiterrors', errors);
     const onSubmit = (data: CategoryFormData) => {
+        console.log('Form Submitted Successfully:', data);
         const mutationOptions = {
             onSuccess: () => {
                 handleCloseModal();
