@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useLogin } from '@/queries/use-auth';
+import { useLogin, useGoogleLogin } from '@/queries/use-auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/FormInput';
@@ -12,6 +12,7 @@ import PhoneInput from '@/components/ui/PhoneInput';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '@/validations/auth';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -19,6 +20,7 @@ export default function LoginPage() {
     const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
 
     const { mutate: login, isPending } = useLogin();
+    const { mutate: googleLogin, isPending: isGooglePending } = useGoogleLogin();
 
     // Refs for maintaining focus during input switches
     const emailInputRef = useRef<HTMLInputElement>(null);
@@ -143,7 +145,9 @@ export default function LoginPage() {
 
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-bricolage font-semibold text-[#191919] mb-3">Welcome back</h1>
+                <h1 className="text-2xl font-bricolage font-semibold text-[#191919] mb-3">
+                    Welcome back
+                </h1>
                 <p className="text-sm text-[#474747] leading-relaxed">
                     Welcome back! Please enter your details.
                 </p>
@@ -156,7 +160,6 @@ export default function LoginPage() {
                         {globalError}
                     </div>
                 )}
-
                 {/* Email / Mobile Field */}
                 {isPhoneInput ? (
                     <PhoneInput
@@ -171,7 +174,6 @@ export default function LoginPage() {
                         enableCodeSearch
                         placeholder="Enter your mobile number"
                         error={errors.phone?.message || errors.username?.message}
-
                     />
                 ) : (
                     <FormInput
@@ -183,10 +185,8 @@ export default function LoginPage() {
                         onChange={(e) => handleInputChange(e.target.value)}
                         placeholder="Enter your email id / mobile number"
                         error={errors.email?.message || errors.username?.message || ''}
-
                     />
                 )}
-
                 {/* Password Field */}
                 <div className="flex flex-col gap-1">
                     <label className="text-xs font-medium text-[#404040]">
@@ -203,8 +203,9 @@ export default function LoginPage() {
                                 },
                             })}
                             placeholder="Enter your password"
-                            className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#474747] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${errors.password ? 'border-red-500' : 'border-[#E7E4DD]'
-                                }`}
+                            className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 pr-10 text-sm text-[#474747] outline-none placeholder:text-[#B7AFA5] hover:border-[#C4994A] focus-visible:border-[#C4994A] transition-colors ${
+                                errors.password ? 'border-red-500' : 'border-[#E7E4DD]'
+                            }`}
                         />
                         <button
                             type="button"
@@ -222,7 +223,6 @@ export default function LoginPage() {
                         <p className="text-xs text-red-500">{errors.password.message}</p>
                     )}
                 </div>
-
                 {/* Forgot Password */}
                 <div className="flex justify-end">
                     <Link
@@ -232,7 +232,6 @@ export default function LoginPage() {
                         Forgot password?
                     </Link>
                 </div>
-
                 {/* Continue Button */}
                 <Button
                     type="submit"
@@ -253,9 +252,8 @@ export default function LoginPage() {
                         'Login'
                     )}
                 </Button>
-
                 {/* Google Login Button */}
-                <button
+                {/* <button
                     type="button"
                     onClick={handleGoogleLogin}
                     className="w-full  mb-[32px] flex font-[var(--font-inter-tight)] items-center justify-center gap-3  text-[#404040] cursor-pointer   rounded-full transition-colors"
@@ -279,7 +277,36 @@ export default function LoginPage() {
                         />
                     </svg>
                     Sign in with Google
-                </button>
+                </button> */}
+                <div className="flex justify-center w-full">
+                    <GoogleLogin
+                        onSuccess={(credentialResponse) => {
+                            if (credentialResponse.credential) {
+                                googleLogin(credentialResponse.credential, {
+                                    onSuccess: () => {
+                                        router.push('/');
+                                    },
+                                    onError: (error: any) => {
+                                        setError('root.serverError', {
+                                            type: 'server',
+                                            message: error?.message || 'Google Login failed',
+                                        });
+                                    },
+                                });
+                            }
+                        }}
+                        onError={() => {
+                            setError('root.serverError', {
+                                type: 'server',
+                                message: 'Google Login Failed',
+                            });
+                        }}
+                        useOneTap
+                        theme="outline"
+                        shape="pill"
+                        width="100%"
+                    />
+                </div>
             </form>
 
             {/* Register Link */}

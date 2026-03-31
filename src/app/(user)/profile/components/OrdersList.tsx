@@ -38,7 +38,7 @@ export default function OrdersList() {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search orders"
-                        className="h-[44px] w-full sm:w-[480px] rounded-[10px] border border-[#EEEEEE] bg-white pl-[42px] pr-4 text-[13px] text-[#333333] outline-none placeholder:text-[#999999] focus:border-[#E8BF7A] focus:ring-1 focus:ring-[#E8BF7A]"
+                        className="h-[44px] w-full sm:w-[300px] rounded-[10px] border border-[#EEEEEE] bg-white pl-[42px] pr-4 text-[13px] text-[#333333] outline-none placeholder:text-[#999999] focus:border-[#E8BF7A] focus:ring-1 focus:ring-[#E8BF7A]"
                     />
                 </div>
             </div>

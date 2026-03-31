@@ -34,6 +34,8 @@ export const metadata: Metadata = {
     },
 };
 
+import { CartToastProvider } from '@/contexts/CartToastContext';
+
 export default function HomedLayout({
     children,
 }: Readonly<{
@@ -41,10 +43,12 @@ export default function HomedLayout({
 }>) {
     return (
         <CurrencyProvider>
-            <div>
-                <Header />
-                {children}
-            </div>
+            <CartToastProvider>
+                <div>
+                    <Header />
+                    {children}
+                </div>
+            </CartToastProvider>
         </CurrencyProvider>
     );
 }
