@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
     SET_PASSWORD: 'accounts/set-password/',
     FORGOT_PASSWORD: 'accounts/forgot-password/',
     LOGIN: 'accounts/login/',
+    GOOGLE_LOGIN: 'accounts/google/login/',
     REFRESH_TOKEN: 'accounts/token/refresh/',
     LOGOUT: 'accounts/logout/',
 
