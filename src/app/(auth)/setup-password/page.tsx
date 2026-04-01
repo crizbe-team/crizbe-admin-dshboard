@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Eye, EyeOff, Check, X } from 'lucide-react';
+import { Eye, EyeOff, Check, X, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import GoldenButton from '@/components/ui/GoldenButton';
 import { useSetPassword } from '@/queries/use-auth';
@@ -12,6 +12,7 @@ import { signupSessionUtils } from '@/utils/signup-session';
 import Cookies from 'js-cookie';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
 
 export default function SetupPasswordPage() {
     const router = useRouter();
@@ -182,8 +183,8 @@ export default function SetupPasswordPage() {
                             <div
                                 key={level}
                                 className={`flex-1 rounded-full ${passwordValue && strengthScore >= level
-                                        ? getStrengthColor()
-                                        : 'bg-[#E7E4DD]'
+                                    ? getStrengthColor()
+                                    : 'bg-[#E7E4DD]'
                                     } transition-colors duration-300`}
                             />
                         ))}
@@ -246,15 +247,25 @@ export default function SetupPasswordPage() {
                 </div>
 
                 {/* Submit Button */}
-                <GoldenButton
+                <Button
                     type="submit"
-                    isLoading={isPending}
-                    loadingText="Setting up..."
-                    fullWidth
-                    className="rounded-full py-3 mt-6"
+                    disabled={isPending}
+                    style={{
+                        background:
+                            'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
+                    }}
+                    className="group relative overflow-hidden w-full mb-[16px] shadow-sm hover:opacity-95 active:opacity-90 transition-all duration-300 py-3 rounded-[12px] h-[48px] cursor-pointer font-[var(--font-inter-tight)]"
                 >
-                    Submit
-                </GoldenButton>
+                    {/* Shine Effect */}
+                    <span className="pointer-events-none absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
+                    {isPending ? (
+                        <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        </>
+                    ) : (
+                        'Submit'
+                    )}
+                </Button>
             </form>
 
             {/* Back to Login Link */}
