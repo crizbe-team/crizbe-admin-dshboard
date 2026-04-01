@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
@@ -19,6 +20,7 @@ export default function ForgotPasswordPage() {
     const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
 
     const { mutate: forgotPassword, isPending } = useForgotPassword();
+    const { executeRecaptcha } = useGoogleReCaptcha();
 
     // Refs for maintaining focus during input switches
     const emailInputRef = useRef<HTMLInputElement>(null);
@@ -85,48 +87,67 @@ export default function ForgotPasswordPage() {
     }, [isPhoneInput, emailValue, phoneValue]);
 
     const onSubmit = async (data: SignupFormData) => {
+        if (!executeRecaptcha) {
+            setError('email', {
+                type: 'server',
+                message: 'Recaptcha not ready',
+            });
+            return;
+        }
+
         const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email || '';
 
-        forgotPassword(
-            { username },
-            {
-                onError: (error: any) => {
-                    if (error.errors) {
-                        const apiErrors = error.errors;
-                        Object.keys(apiErrors).forEach((field) => {
-                            setError(field as keyof SignupFormData, {
-                                type: 'server',
-                                message: apiErrors[field][0],
+        try {
+            const token = await executeRecaptcha('forgot_password');
+
+            forgotPassword(
+                { username, recaptcha_token: token },
+                {
+                    onError: (error: any) => {
+                        if (error.errors) {
+                            const apiErrors = error.errors;
+                            Object.keys(apiErrors).forEach((field) => {
+                                setError(field as keyof SignupFormData, {
+                                    type: 'server',
+                                    message: apiErrors[field][0],
+                                });
                             });
-                        });
-                    } else {
-                        setError('email', {
-                            type: 'server',
-                            message: error?.message || 'Something went wrong. Please try again.',
-                        });
-                    }
-                },
-                onSuccess: (response) => {
-                    console.log('Forgot password request successful:', response);
+                        } else {
+                            setError('email', {
+                                type: 'server',
+                                message:
+                                    error?.message || 'Something went wrong. Please try again.',
+                            });
+                        }
+                    },
+                    onSuccess: (response) => {
+                        console.log('Forgot password request successful:', response);
 
-                    // Store the username and purpose in session for the OTP page
-                    const sessionData: {
-                        username: string;
-                        countryCode?: string;
-                        purpose: 'reset_password';
-                    } = {
-                        username,
-                        purpose: 'reset_password',
-                    };
-                    if (isPhoneInput) {
-                        sessionData.countryCode = phoneCountryCode;
-                    }
-                    signupSessionUtils.setSignupData(sessionData);
+                        // Store the username and purpose in session for the OTP page
+                        const sessionData: {
+                            username: string;
+                            countryCode?: string;
+                            purpose: 'reset_password';
+                        } = {
+                            username,
+                            purpose: 'reset_password',
+                        };
+                        if (isPhoneInput) {
+                            sessionData.countryCode = phoneCountryCode;
+                        }
+                        signupSessionUtils.setSignupData(sessionData);
 
-                    router.push('/enter-otp');
-                },
-            }
-        );
+                        router.push('/enter-otp');
+                    },
+                }
+            );
+        } catch (error) {
+            console.error('Recaptcha error:', error);
+            setError('email', {
+                type: 'server',
+                message: 'Security check failed. Please try again.',
+            });
+        }
     };
 
     return (
@@ -193,7 +214,6 @@ export default function ForgotPasswordPage() {
                             'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
                     }}
                     className="transition-all duration-300 ease-out hover:scale-[1.02] whitespace-nowrap py-3 group relative overflow-hidden w-full mb-[16px] shadow-sm hover:opacity-95 active:opacity-90  rounded-[12px] h-[48px] cursor-pointer font-[var(--font-inter-tight)]"
-
                 >
                     <span className="pointer-events-none absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
                     Reset Password

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -21,6 +22,7 @@ export default function EnterOtpPage() {
 
     const { mutate: verifyOtp, isPending } = useVerifyOtp();
     const { mutate: resendOtp, isPending: isResendPending } = useSignupResendOtp();
+    const { executeRecaptcha } = useGoogleReCaptcha();
 
     const {
         handleSubmit,
@@ -148,32 +150,42 @@ export default function EnterOtpPage() {
         });
     };
 
-    const handleResendCode = () => {
-        if (resendTimer > 0 || isResendPending) return;
+    const handleResendCode = async () => {
+        if (resendTimer > 0 || isResendPending || !executeRecaptcha) return;
 
-        // Get stored signup data from cookies
-        const signupData = signupSessionUtils.getSignupData();
+        try {
+            const token = await executeRecaptcha('resend_otp');
 
-        // Username is already formatted (phone with country code or email)
-        const username = signupData.username;
+            // Get stored signup data from cookies
+            const signupData = signupSessionUtils.getSignupData();
 
-        resendOtp(
-            { username },
-            {
-                onSuccess: () => {
-                    setResendTimer(30); // 30 second cooldown
-                    setOtp(['', '', '', '']);
-                    clearErrors('otp');
-                    inputRefs.current[0]?.focus();
-                },
-                onError: (error: any) => {
-                    setError('otp', {
-                        type: 'server',
-                        message: error?.message || 'Failed to resend OTP. Please try again.',
-                    });
-                },
-            }
-        );
+            // Username is already formatted (phone with country code or email)
+            const username = signupData.username;
+
+            resendOtp(
+                { username, recaptcha_token: token },
+                {
+                    onSuccess: () => {
+                        setResendTimer(30); // 30 second cooldown
+                        setOtp(['', '', '', '']);
+                        clearErrors('otp');
+                        inputRefs.current[0]?.focus();
+                    },
+                    onError: (error: any) => {
+                        setError('otp', {
+                            type: 'server',
+                            message: error?.message || 'Failed to resend OTP. Please try again.',
+                        });
+                    },
+                }
+            );
+        } catch (error) {
+            console.error('Recaptcha error:', error);
+            setError('otp', {
+                type: 'server',
+                message: 'Security check failed. Please try again.',
+            });
+        }
     };
 
     // To handle global / root errors without breaking if field isn't explicitly otp
