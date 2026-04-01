@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Link from 'next/link';
 import Image from 'next/image';
+import AuthLogo from '@/components/auth/AuthLogo';
 import { useRouter } from 'next/navigation';
 import GoldenButton from '@/components/ui/GoldenButton';
 import { useVerifyOtp, useSignupResendOtp } from '@/queries/use-auth';
@@ -194,15 +195,7 @@ export default function EnterOtpPage() {
     return (
         <div className="w-full max-w-md">
             {/* Logo */}
-            <div className="flex justify-center mb-8">
-                <Image
-                    src="/images/user/crizbe-logo.svg"
-                    alt="Crizbe"
-                    width={150}
-                    height={60}
-                    priority
-                />
-            </div>
+            <AuthLogo />
 
             {/* Header */}
             <div className="text-center mb-8">

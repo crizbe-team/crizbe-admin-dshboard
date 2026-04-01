@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSignupInitiate } from '@/queries/use-auth';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
+import AuthLogo from '@/components/auth/AuthLogo';
 import { useRouter } from 'next/navigation';
 import { FormInput } from '@/components/ui/FormInput';
 import PhoneInput from '@/components/ui/PhoneInput';
@@ -148,15 +149,7 @@ export default function RegisterPage() {
     return (
         <div className="w-full max-w-md">
             {/* Logo */}
-            <div className="flex justify-center mb-8">
-                <Image
-                    src="/images/user/crizbe-logo.svg"
-                    alt="Crizbe"
-                    width={150}
-                    height={60}
-                    priority
-                />
-            </div>
+            <AuthLogo />
 
             {/* Header */}
             <div className="text-center mb-8">
