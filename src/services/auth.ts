@@ -16,9 +16,9 @@ export const login = async (userData: any): Promise<AuthApiResponse> => {
     return handleApiResponse(response);
 };
 
-export const googleLogin = async (credential: string): Promise<AuthApiResponse> => {
+export const googleLogin = async (access_token: string): Promise<AuthApiResponse> => {
     const { GOOGLE_LOGIN } = API_ENDPOINTS;
-    const response = await axios.post(GOOGLE_LOGIN, { credential });
+    const response = await axios.post(GOOGLE_LOGIN, { access_token });
     return handleApiResponse(response);
 };
 
