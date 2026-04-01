@@ -40,8 +40,6 @@ export default function RegisterPage() {
         },
     });
 
-    console.log('Signup Form errors', errors);
-
     const emailValue = watch('email');
     const phoneValue = watch('phone');
     const emailOrPhone = emailValue || phoneValue;

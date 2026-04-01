@@ -243,7 +243,7 @@ export default function EnterOtpPage() {
                 </div>
 
                 {/* Resend Code */}
-                <div className="flex justify-between items-center text-sm">
+                <div className="flex justify-between items-start flex-col text-sm">
                     {errorMessage && (
                         <p className="text-red-500 text-sm text-center ">{errorMessage}</p>
                     )}
@@ -251,7 +251,7 @@ export default function EnterOtpPage() {
                         type="button"
                         onClick={handleResendCode}
                         disabled={resendTimer > 0 || isResendPending}
-                        className={`font-medium transition-colors ${
+                        className={`font-medium transition-colors ml-auto ${
                             resendTimer > 0 || isResendPending
                                 ? 'text-[#B7AFA5] cursor-not-allowed'
                                 : 'text-[#C4994A] hover:text-[#B38840] cursor-pointer'
