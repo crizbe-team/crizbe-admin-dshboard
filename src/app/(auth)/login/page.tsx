@@ -2,8 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { useLogin } from '@/queries/use-auth';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import AuthLogo from '@/components/auth/AuthLogo';

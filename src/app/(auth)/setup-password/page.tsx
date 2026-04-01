@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Link from 'next/link';
-import Image from 'next/image';
 import AuthLogo from '@/components/auth/AuthLogo';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
