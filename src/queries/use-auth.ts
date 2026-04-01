@@ -7,12 +7,28 @@ import {
     signupResendOtp,
     setPassword,
     logout,
+    googleLogin,
 } from '../services/auth';
 import { authUtils } from '../utils/auth';
 
 export const useLogin = () => {
     return useMutation({
         mutationFn: (userData: any) => login(userData),
+        onSuccess: (data: any) => {
+            if (data.data && data.data.access && data.data.refresh) {
+                authUtils.setTokens({
+                    access_token: data.data.access,
+                    refresh_token: data.data.refresh,
+                });
+                authUtils.setRole(data.data.role);
+            }
+        },
+    });
+};
+
+export const useGoogleLogin = () => {
+    return useMutation({
+        mutationFn: (credential: string) => googleLogin(credential),
         onSuccess: (data: any) => {
             if (data.data && data.data.access && data.data.refresh) {
                 authUtils.setTokens({
@@ -65,14 +81,20 @@ export const useSetPassword = () => {
 };
 
 export const useLogout = () => {
+    const clearCredentials = () => {
+        authUtils.removeTokens();
+        authUtils.removeRole();
+        if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+        }
+    };
     return useMutation({
         mutationFn: () => logout(),
         onSuccess: () => {
-            authUtils.removeTokens();
-            authUtils.removeRole();
-            if (typeof window !== 'undefined') {
-                window.location.href = '/login';
-            }
+            clearCredentials();
+        },
+        onError: () => {
+            clearCredentials();
         },
     });
 };

@@ -16,6 +16,12 @@ export const login = async (userData: any): Promise<AuthApiResponse> => {
     return handleApiResponse(response);
 };
 
+export const googleLogin = async (credential: string): Promise<AuthApiResponse> => {
+    const { GOOGLE_LOGIN } = API_ENDPOINTS;
+    const response = await axios.post(GOOGLE_LOGIN, { credential });
+    return handleApiResponse(response);
+};
+
 export const signupInitiate = async (userData: any): Promise<AuthApiResponse> => {
     const { SIGNUP_INITIATE } = API_ENDPOINTS;
     const response = await axios.post(SIGNUP_INITIATE, userData);

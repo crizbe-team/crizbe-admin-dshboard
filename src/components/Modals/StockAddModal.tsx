@@ -8,6 +8,7 @@ import { stockSchema, type StockFormData } from '@/validations/stock';
 import { useCreateStock } from '@/queries/use-stock';
 import { useFetchProducts } from '@/queries/use-products';
 import SearchableSelect from '@/components/ui/SearchableSelect';
+import { DashboardInput, DashboardTextarea } from '@/components/ui/DashboardFields';
 
 interface Props {
     isModalOpen: boolean;
@@ -25,15 +26,14 @@ export default function StockAddModal({ isModalOpen, handleCloseModal, defaultPr
     const { mutate: createStockMutation, isPending: isCreating } = useCreateStock();
 
     const {
-        register,
-        handleSubmit,
         control,
+        handleSubmit,
         reset,
-        setValue,
         setError,
         formState: { errors },
     } = useForm<StockFormData>({
         resolver: zodResolver(stockSchema),
+        mode: 'onChange',
         defaultValues: {
             product: '',
             quantity: '',
@@ -51,7 +51,7 @@ export default function StockAddModal({ isModalOpen, handleCloseModal, defaultPr
                 notes: '',
             });
         }
-    }, [isModalOpen, defaultProductId, reset]);
+    }, [isModalOpen, defaultProductId]);
 
     if (!isModalOpen) return null;
 
@@ -131,36 +131,21 @@ export default function StockAddModal({ isModalOpen, handleCloseModal, defaultPr
                         )}
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Quantity (kg)
-                        </label>
-                        <input
-                            type="number"
-                            step="0.01"
-                            {...register('quantity')}
-                            placeholder="e.g. 10"
-                            className={`w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors ${
-                                errors.quantity
-                                    ? 'border-red-500'
-                                    : 'border-[#3a3a3a] focus:border-purple-500'
-                            }`}
-                        />
-                        {errors.quantity && (
-                            <p className="mt-1 text-xs text-red-500">{errors.quantity.message}</p>
-                        )}
-                    </div>
+                    <DashboardInput
+                        name="quantity"
+                        control={control}
+                        type="number"
+                        step="0.01"
+                        label="Quantity (kg)"
+                        placeholder="e.g. 10"
+                    />
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Notes (Optional)
-                        </label>
-                        <textarea
-                            {...register('notes')}
-                            placeholder="Add any notes..."
-                            className="w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 h-24"
-                        />
-                    </div>
+                    <DashboardTextarea
+                        name="notes"
+                        control={control}
+                        label="Notes (Optional)"
+                        placeholder="Add any notes..."
+                    />
 
                     <div className="flex justify-end space-x-3 pt-4 border-t border-[#2a2a2a]">
                         <button
