@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import AuthLogo from '@/components/auth/AuthLogo';
 import { Eye, EyeOff, Check, X, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import GoldenButton from '@/components/ui/GoldenButton';
@@ -111,15 +111,7 @@ export default function SetupPasswordPage() {
     return (
         <div className="w-full max-w-md">
             {/* Logo */}
-            <div className="flex justify-center mb-8">
-                <Image
-                    src="/images/user/crizbe-logo.svg"
-                    alt="Crizbe"
-                    width={150}
-                    height={60}
-                    priority
-                />
-            </div>
+            <AuthLogo />
 
             {/* Header */}
             <div className="text-center mb-8">

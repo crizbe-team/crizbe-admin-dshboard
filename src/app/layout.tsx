@@ -4,7 +4,7 @@ import './globals.css';
 import 'locomotive-scroll/dist/locomotive-scroll.css';
 import Image from 'next/image';
 import TanstackProvider from '@/providers/TanstackProvider';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import AuthProviders from '@/providers/AuthProviders';
 
 const interTight = Inter_Tight({
     variable: '--font-inter-tight',
@@ -61,9 +61,9 @@ export default function RootLayout({
             <body
                 className={`${interTight.variable} ${geistMono.variable} ${bricolage.variable} antialiased`}
             >
-                <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
+                <AuthProviders>
                     <TanstackProvider>{children}</TanstackProvider>
-                </GoogleOAuthProvider>
+                </AuthProviders>
                 <ToastContainer />
             </body>
         </html>

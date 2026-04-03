@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Link from 'next/link';
 import Image from 'next/image';
+import AuthLogo from '@/components/auth/AuthLogo';
 import { useRouter } from 'next/navigation';
 import GoldenButton from '@/components/ui/GoldenButton';
 import { useVerifyOtp, useSignupResendOtp } from '@/queries/use-auth';
@@ -21,6 +23,7 @@ export default function EnterOtpPage() {
 
     const { mutate: verifyOtp, isPending } = useVerifyOtp();
     const { mutate: resendOtp, isPending: isResendPending } = useSignupResendOtp();
+    const { executeRecaptcha } = useGoogleReCaptcha();
 
     const {
         handleSubmit,
@@ -148,32 +151,42 @@ export default function EnterOtpPage() {
         });
     };
 
-    const handleResendCode = () => {
-        if (resendTimer > 0 || isResendPending) return;
+    const handleResendCode = async () => {
+        if (resendTimer > 0 || isResendPending || !executeRecaptcha) return;
 
-        // Get stored signup data from cookies
-        const signupData = signupSessionUtils.getSignupData();
+        try {
+            const token = await executeRecaptcha('resend_otp');
 
-        // Username is already formatted (phone with country code or email)
-        const username = signupData.username;
+            // Get stored signup data from cookies
+            const signupData = signupSessionUtils.getSignupData();
 
-        resendOtp(
-            { username },
-            {
-                onSuccess: () => {
-                    setResendTimer(30); // 30 second cooldown
-                    setOtp(['', '', '', '']);
-                    clearErrors('otp');
-                    inputRefs.current[0]?.focus();
-                },
-                onError: (error: any) => {
-                    setError('otp', {
-                        type: 'server',
-                        message: error?.message || 'Failed to resend OTP. Please try again.',
-                    });
-                },
-            }
-        );
+            // Username is already formatted (phone with country code or email)
+            const username = signupData.username;
+
+            resendOtp(
+                { username, recaptcha_token: token },
+                {
+                    onSuccess: () => {
+                        setResendTimer(30); // 30 second cooldown
+                        setOtp(['', '', '', '']);
+                        clearErrors('otp');
+                        inputRefs.current[0]?.focus();
+                    },
+                    onError: (error: any) => {
+                        setError('otp', {
+                            type: 'server',
+                            message: error?.message || 'Failed to resend OTP. Please try again.',
+                        });
+                    },
+                }
+            );
+        } catch (error) {
+            console.error('Recaptcha error:', error);
+            setError('otp', {
+                type: 'server',
+                message: 'Security check failed. Please try again.',
+            });
+        }
     };
 
     // To handle global / root errors without breaking if field isn't explicitly otp
@@ -182,15 +195,7 @@ export default function EnterOtpPage() {
     return (
         <div className="w-full max-w-md">
             {/* Logo */}
-            <div className="flex justify-center mb-8">
-                <Image
-                    src="/images/user/crizbe-logo.svg"
-                    alt="Crizbe"
-                    width={150}
-                    height={60}
-                    priority
-                />
-            </div>
+            <AuthLogo />
 
             {/* Header */}
             <div className="text-center mb-8">
@@ -231,7 +236,7 @@ export default function EnterOtpPage() {
                 </div>
 
                 {/* Resend Code */}
-                <div className="flex justify-between items-center text-sm">
+                <div className="flex justify-between items-start flex-col text-sm">
                     {errorMessage && (
                         <p className="text-red-500 text-sm text-center ">{errorMessage}</p>
                     )}
@@ -239,7 +244,7 @@ export default function EnterOtpPage() {
                         type="button"
                         onClick={handleResendCode}
                         disabled={resendTimer > 0 || isResendPending}
-                        className={`font-medium transition-colors ${
+                        className={`font-medium transition-colors ml-auto ${
                             resendTimer > 0 || isResendPending
                                 ? 'text-[#B7AFA5] cursor-not-allowed'
                                 : 'text-[#C4994A] hover:text-[#B38840] cursor-pointer'

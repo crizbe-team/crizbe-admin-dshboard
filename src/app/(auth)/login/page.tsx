@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useLogin, useGoogleLogin } from '@/queries/use-auth';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { useLogin } from '@/queries/use-auth';
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
+import AuthLogo from '@/components/auth/AuthLogo';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/FormInput';
@@ -12,7 +13,6 @@ import PhoneInput from '@/components/ui/PhoneInput';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '@/validations/auth';
-import { GoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -20,7 +20,6 @@ export default function LoginPage() {
     const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
 
     const { mutate: login, isPending } = useLogin();
-    const { mutate: googleLogin, isPending: isGooglePending } = useGoogleLogin();
 
     // Refs for maintaining focus during input switches
     const emailInputRef = useRef<HTMLInputElement>(null);
@@ -121,11 +120,6 @@ export default function LoginPage() {
         );
     };
 
-    const handleGoogleLogin = () => {
-        // TODO: Implement Google OAuth
-        console.log('Google login clicked');
-    };
-
     // Account for global non-field API errors
     const globalError =
         errors.root?.serverError?.message || (errors as any).non_field_errors?.message;
@@ -133,15 +127,7 @@ export default function LoginPage() {
     return (
         <div className="w-full max-w-md">
             {/* Logo */}
-            <div className="flex justify-center mb-8">
-                <Image
-                    src="/images/user/crizbe-logo.svg"
-                    alt="Crizbe"
-                    width={150}
-                    height={60}
-                    priority
-                />
-            </div>
+            <AuthLogo />
 
             {/* Header */}
             <div className="text-center mb-8">
@@ -253,60 +239,12 @@ export default function LoginPage() {
                     )}
                 </Button>
                 {/* Google Login Button */}
-                {/* <button
-                    type="button"
-                    onClick={handleGoogleLogin}
-                    className="w-full  mb-[32px] flex font-[var(--font-inter-tight)] items-center justify-center gap-3  text-[#404040] cursor-pointer   rounded-full transition-colors"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                        <path
-                            fill="#4285F4"
-                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        />
-                        <path
-                            fill="#34A853"
-                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        />
-                        <path
-                            fill="#FBBC05"
-                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                        />
-                        <path
-                            fill="#EA4335"
-                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                        />
-                    </svg>
-                    Sign in with Google
-                </button> */}
-                <div className="flex justify-center w-full">
-                    <GoogleLogin
-                        onSuccess={(credentialResponse) => {
-                            if (credentialResponse.credential) {
-                                googleLogin(credentialResponse.credential, {
-                                    onSuccess: () => {
-                                        router.push('/');
-                                    },
-                                    onError: (error: any) => {
-                                        setError('root.serverError', {
-                                            type: 'server',
-                                            message: error?.message || 'Google Login failed',
-                                        });
-                                    },
-                                });
-                            }
-                        }}
-                        onError={() => {
-                            setError('root.serverError', {
-                                type: 'server',
-                                message: 'Google Login Failed',
-                            });
-                        }}
-                        useOneTap
-                        theme="outline"
-                        shape="pill"
-                        width="100%"
-                    />
-                </div>
+                <GoogleAuthButton
+                    label="Sign in with Google"
+                    onError={(msg) =>
+                        setError('root.serverError', { type: 'server', message: msg })
+                    }
+                />
             </form>
 
             {/* Register Link */}

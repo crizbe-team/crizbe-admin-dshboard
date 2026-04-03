@@ -28,7 +28,7 @@ export const useLogin = () => {
 
 export const useGoogleLogin = () => {
     return useMutation({
-        mutationFn: (credential: string) => googleLogin(credential),
+        mutationFn: (data: any) => googleLogin(data),
         onSuccess: (data: any) => {
             if (data.data && data.data.access && data.data.refresh) {
                 authUtils.setTokens({
