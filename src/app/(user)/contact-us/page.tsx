@@ -31,7 +31,7 @@ export default function ContactUsPage() {
         defaultValues: {
             name: '',
             email: '',
-            phone: '',
+            phone_number: '',
             phone_country_code: '+91',
             location: '',
             message: '',
@@ -41,12 +41,8 @@ export default function ContactUsPage() {
     const onSubmit = (data: ContactFormData) => {
         submitForm(data, {
             onSuccess: (response) => {
-                if (response.status_code === 200 || response.status_code === 201) {
-                    toast.success('Thank you for contacting us! We will get back to you soon.');
-                    reset();
-                } else {
-                    toast.error(response.message || 'Something went wrong. Please try again.');
-                }
+                toast.success('Thank you for contacting us! We will get back to you soon.');
+                reset();
             },
             onError: (error: any) => {
                 toast.error(
@@ -91,7 +87,7 @@ export default function ContactUsPage() {
                                     error={errors.email?.message}
                                 />
                                 <Controller
-                                    name="phone"
+                                    name="phone_number"
                                     control={control}
                                     render={({ field }) => (
                                         <PhoneInput
@@ -107,7 +103,7 @@ export default function ContactUsPage() {
                                             codeSearchPlaceholder="Search country code..."
                                             placeholder="000 0000 000"
                                             className="rounded-[10px] border-gray-100"
-                                            error={errors.phone?.message}
+                                            error={errors.phone_number?.message}
                                         />
                                     )}
                                 />

@@ -2,72 +2,62 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { MessageSquare, User, Mail, Phone, MapPin, Calendar, Eye, Search } from 'lucide-react';
-import { useFetchEnquiries } from '@/queries/use-contact';
+import { User, Mail, Phone, MapPin, Eye, Trash2, Search } from 'lucide-react';
+import { useFetchEnquiries, useDeleteEnquiry } from '@/queries/use-contact';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import Pagination from '@/components/ui/Pagination';
 import DashboardLoader from '@/components/ui/DashboardLoader';
+import { toast } from '@/components/ui/Toast';
+import EnquiryDeleteModal from '@/components/Modals/EnquiryDeleteModal';
 
 export default function EnquiriesPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
-    const { data: enquiriesData, isLoading } = useFetchEnquiries({
+    const {
+        data: enquiriesData,
+        isLoading,
+        refetch,
+    } = useFetchEnquiries({
         q: searchQuery,
         page: currentPage,
     });
+
+    const { mutateAsync: deleteEnquiry, isPending: isDeleting } = useDeleteEnquiry();
+
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [enquiryToDelete, setEnquiryToDelete] = useState<any | null>(null);
+
+    const handleDeleteClick = (enquiry: any) => {
+        setEnquiryToDelete(enquiry);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDeleteEnquiry = async () => {
+        if (enquiryToDelete) {
+            try {
+                await deleteEnquiry(enquiryToDelete.id);
+                toast.success('Enquiry deleted successfully');
+                refetch();
+                setIsDeleteModalOpen(false);
+                setEnquiryToDelete(null);
+            } catch (error) {
+                toast.error('Failed to delete enquiry');
+            }
+        }
+    };
+
+    const cancelDelete = () => {
+        setIsDeleteModalOpen(false);
+        setEnquiryToDelete(null);
+    };
 
     // Reset page when search changes
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery]);
 
-    const enquiries = enquiriesData?.data?.length
-        ? enquiriesData.data
-        : [
-              {
-                  id: '1',
-                  name: 'Ahammad Salim',
-                  email: 'salim@example.com',
-                  phone: '+91 9061000000',
-                  location: 'Calicut',
-                  message: 'I want to know about the bulk pricing for Pista sticks.',
-                  created_at: new Date().toISOString(),
-              },
-              {
-                  id: '2',
-                  name: 'John Doe',
-                  email: 'john@example.com',
-                  phone: '+91 9876543210',
-                  location: 'Dubai',
-                  message: 'Is international shipping available for UAE?',
-                  created_at: new Date(Date.now() - 86400000).toISOString(),
-              },
-              {
-                  id: '3',
-                  name: 'Sarah Wilson',
-                  email: 'sarah@domain.com',
-                  phone: '+91 9544000000',
-                  location: 'Kochi',
-                  message: 'The packaging quality was excellent! Just wanted to share my feedback.',
-                  created_at: new Date(Date.now() - 172800000).toISOString(),
-              },
-          ];
-
-    const stats = [
-        {
-            title: 'Total Enquiries',
-            value: enquiriesData?.base_data?.total_count || enquiries.length,
-            icon: MessageSquare,
-            color: 'text-blue-400',
-        },
-        {
-            title: 'New Today',
-            value: 2,
-            icon: Calendar,
-            color: 'text-green-400',
-        },
-    ];
+    const enquiries = enquiriesData?.data || [];
 
     return (
         <div className="space-y-6 relative min-h-screen pb-20">
@@ -79,31 +69,6 @@ export default function EnquiriesPage() {
                 <p className="text-gray-400">
                     View and manage messages submitted via the contact form.
                 </p>
-            </div>
-
-            {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat) => {
-                    const Icon = stat.icon;
-                    return (
-                        <div
-                            key={stat.title}
-                            className="bg-[#1a1a1a] rounded-xl p-6 border border-[#2a2a2a] shadow-sm hover:shadow-md transition-shadow"
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-gray-400 text-xs mb-1 uppercase tracking-wider font-medium">
-                                        {stat.title}
-                                    </p>
-                                    <p className="text-2xl font-bold text-gray-100">{stat.value}</p>
-                                </div>
-                                <div className={`${stat.color} bg-opacity-10 p-3 rounded-xl`}>
-                                    <Icon className="w-6 h-6" />
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
             </div>
 
             {/* Enquiries Table */}
@@ -178,7 +143,9 @@ export default function EnquiriesPage() {
                                                 </div>
                                                 <div className="flex items-center gap-2 text-xs text-gray-400">
                                                     <Phone className="w-3 h-3" />
-                                                    {enquiry.phone}
+                                                    {enquiry.phone_number
+                                                        ? `${enquiry.phone_country_code} ${enquiry.phone_number}`
+                                                        : 'N/A'}
                                                 </div>
                                             </div>
                                         </td>
@@ -202,6 +169,14 @@ export default function EnquiriesPage() {
                                                 >
                                                     <Eye className="w-4 h-4 text-purple-400" />
                                                 </Link>
+                                                <button
+                                                    onClick={() => handleDeleteClick(enquiry)}
+                                                    disabled={isDeleting}
+                                                    className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all group-hover:scale-110 disabled:opacity-50"
+                                                    title="Delete Enquiry"
+                                                >
+                                                    <Trash2 className="w-4 h-4 text-red-400" />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -224,6 +199,15 @@ export default function EnquiriesPage() {
                     </div>
                 )}
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <EnquiryDeleteModal
+                isDeleteModalOpen={isDeleteModalOpen}
+                enquiryToDelete={enquiryToDelete}
+                cancelDelete={cancelDelete}
+                confirmDeleteEnquiry={confirmDeleteEnquiry}
+                isDeleting={isDeleting}
+            />
         </div>
     );
 }

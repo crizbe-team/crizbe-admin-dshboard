@@ -1,6 +1,8 @@
 export const handleApiResponse = <T = any>(response: any): T => {
     const { status_code, message, data, errors } = response?.data || {};
 
+    console.log('status_code', status_code);
+
     if (status_code === 6000 || status_code === 200 || status_code === 201) {
         return response.data;
     }

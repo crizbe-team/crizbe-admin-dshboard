@@ -47,7 +47,36 @@ export const submitEnquiry = async (
     data: any;
     errors: Record<string, any> | null;
 }> => {
-    const { ENQUIRY } = API_ENDPOINTS;
-    const response = await api.post(ENQUIRY, data);
+    const { GET_ENQUIRIES } = API_ENDPOINTS;
+    const response = await api.post(GET_ENQUIRIES, data);
+    return handleApiResponse(response);
+};
+
+export const updateEnquiry = async (
+    id: string,
+    data: Partial<ContactFormData>
+): Promise<{
+    status_code: number;
+    status: string;
+    message: string;
+    data: any;
+    errors: Record<string, any> | null;
+}> => {
+    const { GET_ENQUIRY_DETAIL } = API_ENDPOINTS;
+    const response = await api.patch(GET_ENQUIRY_DETAIL.replace(':id', id), data);
+    return handleApiResponse(response);
+};
+
+export const deleteEnquiry = async (
+    id: string
+): Promise<{
+    status_code: number;
+    status: string;
+    message: string;
+    data: any;
+    errors: Record<string, any> | null;
+}> => {
+    const { GET_ENQUIRY_DETAIL } = API_ENDPOINTS;
+    const response = await api.delete(GET_ENQUIRY_DETAIL.replace(':id', id));
     return handleApiResponse(response);
 };
