@@ -41,7 +41,7 @@ export const loginSchema = z.object({
 
 // dashboard login validation schema
 export const dashboardLoginSchema = z.object({
-    email: z.string().min(1, 'Email is required').email('Invalid email address'),
+    username: z.string().min(1, 'Username is required'),
     password: z.string().min(1, 'Password is required'),
 });
 

@@ -56,6 +56,8 @@ export const API_ENDPOINTS = {
     GET_COUNTRIES: 'core/countries/',
     GET_STATES: 'core/states/',
     ENQUIRY: 'core/enquiry/',
+    GET_ENQUIRIES: 'core/enquiry/',
+    GET_ENQUIRY_DETAIL: 'core/enquiry/:id/',
 
     // Account/Profile endpoints
     GET_ADDRESSES: 'accounts/addresses/',

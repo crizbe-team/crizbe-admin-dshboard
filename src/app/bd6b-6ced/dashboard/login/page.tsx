@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
     const { mutate: login, isPending } = useLogin();
 
     // Ref for maintaining focus
-    const emailInputRef = useRef<HTMLInputElement>(null);
+    const usernameInputRef = useRef<HTMLInputElement>(null);
 
     const {
         register,
@@ -32,22 +32,22 @@ export default function AdminLoginPage() {
     } = useForm<DashboardLoginFormData>({
         resolver: zodResolver(dashboardLoginSchema),
         defaultValues: {
-            email: '',
+            username: '',
             password: '',
         },
     });
 
-    const emailValue = watch('email');
+    const usernameValue = watch('username');
 
     // Handle input change
     const handleInputChange = (value: string) => {
-        clearErrors('email');
+        clearErrors('username');
         clearErrors('root.serverError');
-        setValue('email', value, { shouldValidate: true });
+        setValue('username', value, { shouldValidate: true });
     };
 
     const onSubmit = (data: DashboardLoginFormData) => {
-        const username = data.email;
+        const username = data.username;
 
         login(
             { username, password: data.password, role: 'admin' },
@@ -107,18 +107,18 @@ export default function AdminLoginPage() {
                         </div>
                     )}
 
-                    {/* Email Field */}
+                    {/* Username Field */}
                     <div className="admin-input">
                         <FormInput
-                            ref={emailInputRef}
-                            label="Admin Email"
+                            ref={usernameInputRef}
+                            label="Admin Username"
                             labelClassName="text-gray-400"
                             required
-                            type="email"
-                            value={emailValue || ''}
+                            type="text"
+                            value={usernameValue || ''}
                             onChange={(e) => handleInputChange(e.target.value)}
-                            placeholder="Enter your admin email"
-                            error={errors.email?.message}
+                            placeholder="Enter your admin username"
+                            error={errors.username?.message}
                             className="bg-[#1f1f1f]! border-[#262626]! text-white! placeholder:text-gray-500!"
                         />
                     </div>

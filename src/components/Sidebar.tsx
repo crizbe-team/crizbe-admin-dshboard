@@ -32,7 +32,7 @@ const menuItems = [
     { icon: DollarSign, label: 'Sales', path: '/bd6b-6ced/dashboard/sales' },
     { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients' },
     { icon: Settings, label: 'Settings', path: '/bd6b-6ced/dashboard/settings' },
-    { icon: Mail, label: 'Messages', path: '/bd6b-6ced/dashboard/messages' },
+    { icon: Mail, label: 'Enquiries', path: '/bd6b-6ced/dashboard/enquiries' },
     { icon: Bell, label: 'Notifications', path: '/bd6b-6ced/dashboard/notifications' },
     { icon: HelpCircle, label: 'Help', path: '/bd6b-6ced/dashboard/help' },
 ];
