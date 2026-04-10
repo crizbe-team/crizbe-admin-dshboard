@@ -54,7 +54,6 @@ const Footer = () => {
                                 height={100}
                                 priority
                                 quality={100}
-
                             />
                         </Link>
                     </motion.div>
@@ -76,24 +75,25 @@ const Footer = () => {
                     </motion.nav>
 
                     {/* Divider */}
-                    <motion.div
-                        variants={itemVariants}
-                        className="w-full h-px bg-gray-200 mb-8"
-                    />
+                    <motion.div variants={itemVariants} className="w-full h-px bg-gray-200 mb-8" />
 
                     {/* Bottom Section */}
                     <motion.div
                         variants={itemVariants}
                         className="w-full flex flex-col md:flex-row justify-between items-center text-sm text-[#373737]"
                     >
-                        <p>
-                            © {new Date().getFullYear()} crizbe. All rights reserved.
-                        </p>
+                        <p>© {new Date().getFullYear()} crizbe. All rights reserved.</p>
                         <div className="flex gap-6">
-                            <Link href="/terms" className="hover:text-[#4E3325] text-[#373737] transition-colors">
+                            <Link
+                                href="/terms-and-conditions"
+                                className="hover:text-[#4E3325] text-[#373737] transition-colors"
+                            >
                                 Terms and Conditions
                             </Link>
-                            <Link href="/privacy" className="hover:text-[#4E3325] text-[#373737] transition-colors">
+                            <Link
+                                href="/privacy"
+                                className="hover:text-[#4E3325] text-[#373737] transition-colors"
+                            >
                                 Privacy Policy
                             </Link>
                         </div>
