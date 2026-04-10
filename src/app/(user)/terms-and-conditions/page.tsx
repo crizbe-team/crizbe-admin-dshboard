@@ -66,7 +66,7 @@ const TermsPage = () => {
             />
 
             <main className="wrapper py-16 md:py-24">
-                <div className="space-y-12">
+                <div className="space-y-12 max-w-5xl mx-auto">
                     {sections.map((section) => (
                         <div key={section.id} className="space-y-4">
                             <h2 className="text-xl md:text-2xl font-bold text-[#191919] uppercase tracking-wide">

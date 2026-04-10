@@ -91,7 +91,7 @@ const Footer = () => {
                                 Terms and Conditions
                             </Link>
                             <Link
-                                href="/privacy"
+                                href="/privacy-policy"
                                 className="hover:text-[#4E3325] text-[#373737] transition-colors"
                             >
                                 Privacy Policy
