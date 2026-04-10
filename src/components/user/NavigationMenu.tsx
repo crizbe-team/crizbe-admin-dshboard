@@ -18,7 +18,7 @@ export default function NavigationMenu({ isOpen, onClose }: NavigationMenuProps)
     const links = [
         { href: '/our-story', label: 'Our story' },
         { href: '/privacy-policy', label: 'Privacy Policy' },
-        { href: '/terms-conditions', label: 'Terms & Conditions' },
+        { href: '/terms-and-conditions', label: 'Terms & Conditions' },
     ];
 
     return (

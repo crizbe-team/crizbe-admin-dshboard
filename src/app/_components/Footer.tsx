@@ -7,11 +7,11 @@ import Image from 'next/image';
 const Footer = () => {
     const navLinks = [
         { name: 'Home', href: '/' },
-        { name: 'Our story', href: '/story' }, // Assuming these routes exist or will exist
+        { name: 'Our story', href: '/our-story' },
         { name: 'Products', href: '/products' },
         { name: 'Careers', href: '/careers' },
         { name: 'Help', href: '/help' },
-        { name: 'Privacy', href: '/privacy' },
+        { name: 'Privacy', href: '/privacy-policy' },
     ];
 
     const containerVariants = {
