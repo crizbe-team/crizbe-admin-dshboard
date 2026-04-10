@@ -10,7 +10,7 @@ const Footer = () => {
         { name: 'Our story', href: '/our-story' },
         { name: 'Products', href: '/products' },
         { name: 'Careers', href: '/careers' },
-        { name: 'Help', href: '/help' },
+        { name: 'Help', href: '/contact-us' },
         { name: 'Privacy', href: '/privacy-policy' },
     ];
 

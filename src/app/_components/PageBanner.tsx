@@ -5,9 +5,10 @@ import { motion } from 'framer-motion';
 interface PageBannerProps {
     title: string;
     subtitle?: string;
+    showWatermark?: boolean;
 }
 
-const PageBanner: React.FC<PageBannerProps> = ({ title, subtitle }) => {
+const PageBanner: React.FC<PageBannerProps> = ({ title, subtitle, showWatermark }) => {
     return (
         <section className="relative w-full py-20 md:py-32 flex flex-col items-center justify-center overflow-hidden bg-[#F9F2E0]">
             {/* Subtle organic shapes in background - similar to the image */}
@@ -24,6 +25,14 @@ const PageBanner: React.FC<PageBannerProps> = ({ title, subtitle }) => {
                     transition={{ duration: 1.5, ease: 'easeOut', delay: 0.2 }}
                     className="absolute bottom-[-30%] right-[-5%] w-[50%] h-[120%] bg-[#C4994A] rounded-full blur-[100px] transform rotate-45"
                 />
+
+                {showWatermark && (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] select-none pointer-events-none overflow-hidden">
+                        <span className="text-[20vw] font-bricolage font-bold text-[#4E3325] whitespace-nowrap -rotate-12">
+                            Crizbe
+                        </span>
+                    </div>
+                )}
             </div>
 
             <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
