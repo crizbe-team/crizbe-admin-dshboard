@@ -1,27 +1,11 @@
 import { z } from 'zod';
 
 // Signup validation schema
-export const signupSchema = z
-    .object({
-        email: z.string().email('Invalid email address').optional().or(z.literal('')),
-        phone: z
-            .string()
-            .regex(/^\+?\d+$/, 'Phone number must contain only digits')
-            .optional()
-            .or(z.literal('')),
-        // username is used for API errors only, not form validation
-        username: z.string().optional(),
-    })
-    .refine(
-        (data) => {
-            // Either email or phone must be provided
-            return (data.email && data.email.length > 0) || (data.phone && data.phone.length > 0);
-        },
-        {
-            message: 'Please provide either email or phone number',
-            path: ['email'],
-        }
-    );
+export const signupSchema = z.object({
+    email: z.string().min(1, 'Email is required').email('Invalid email address'),
+    // username is used for API errors only, not form validation
+    username: z.string().optional(),
+});
 
 // OTP validation schema
 export const otpSchema = z.object({
@@ -49,31 +33,15 @@ export const passwordSchema = z
     });
 
 // Login validation schema
-export const loginSchema = z
-    .object({
-        email: z.string().email('Invalid email address').optional().or(z.literal('')),
-        phone: z
-            .string()
-            .regex(/^\+?\d+$/, 'Phone number must contain only digits')
-            .optional()
-            .or(z.literal('')),
-        username: z.string().optional(),
-        password: z.string().min(1, 'Password is required'),
-    })
-    .refine(
-        (data) => {
-            // Either email or phone must be provided
-            return (data.email && data.email.length > 0) || (data.phone && data.phone.length > 0);
-        },
-        {
-            message: 'Please provide either email or phone number',
-            path: ['email'],
-        }
-    );
+export const loginSchema = z.object({
+    email: z.string().min(1, 'Email is required').email('Invalid email address'),
+    username: z.string().optional(),
+    password: z.string().min(1, 'Password is required'),
+});
 
 // dashboard login validation schema
 export const dashboardLoginSchema = z.object({
-    username: z.string().min(1, 'Username is required'),
+    email: z.string().min(1, 'Email is required').email('Invalid email address'),
     password: z.string().min(1, 'Password is required'),
 });
 

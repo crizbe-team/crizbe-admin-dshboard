@@ -1,15 +1,13 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRef } from 'react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Link from 'next/link';
-import Image from 'next/image';
 import AuthLogo from '@/components/auth/AuthLogo';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForgotPassword } from '@/queries/use-auth';
 import { FormInput } from '@/components/ui/FormInput';
-import PhoneInput from '@/components/ui/PhoneInput';
 import GoldenButton from '@/components/ui/GoldenButton';
 import { signupSessionUtils } from '@/utils/signup-session';
 import { useForm } from 'react-hook-form';
@@ -18,15 +16,12 @@ import { signupSchema, type SignupFormData } from '@/validations/auth';
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
-    const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
 
     const { mutate: forgotPassword, isPending } = useForgotPassword();
     const { executeRecaptcha } = useGoogleReCaptcha();
 
-    // Refs for maintaining focus during input switches
+    // Ref for maintaining focus
     const emailInputRef = useRef<HTMLInputElement>(null);
-    const phoneInputRef = useRef<HTMLInputElement>(null);
-    const prevIsPhoneInput = useRef<boolean | null>(null);
 
     const {
         handleSubmit,
@@ -39,53 +34,17 @@ export default function ForgotPasswordPage() {
         resolver: zodResolver(signupSchema),
         defaultValues: {
             email: '',
-            phone: '',
         },
     });
 
     const emailValue = watch('email');
-    const phoneValue = watch('phone');
-    const emailOrPhone = emailValue || phoneValue;
 
-    // Detect if input looks like a phone number (starts with digit)
-    const isPhoneInput = emailOrPhone ? /^\d/.test(emailOrPhone.trim()) : false;
-
-    // Handle input change for both email and phone
+    // Handle input change for email
     const handleInputChange = (value: string) => {
         // Clear any API errors when the user starts typing
         clearErrors('username' as keyof SignupFormData);
-
-        if (/^\d/.test(value.trim())) {
-            // User is typing a phone number
-            setValue('phone', value, { shouldValidate: true });
-            setValue('email', '', { shouldValidate: false });
-            clearErrors('email');
-        } else {
-            // User is typing an email
-            setValue('email', value, { shouldValidate: true });
-            setValue('phone', '', { shouldValidate: false });
-            clearErrors('phone');
-        }
+        setValue('email', value, { shouldValidate: true });
     };
-
-    // Maintain focus when switching between input types
-    useEffect(() => {
-        if (prevIsPhoneInput.current !== null && prevIsPhoneInput.current !== isPhoneInput) {
-            // Input type changed, restore focus on next render
-            requestAnimationFrame(() => {
-                if (isPhoneInput && phoneInputRef.current) {
-                    phoneInputRef.current.focus();
-                    const len = (phoneValue || '').length;
-                    phoneInputRef.current.setSelectionRange(len, len);
-                } else if (!isPhoneInput && emailInputRef.current) {
-                    emailInputRef.current.focus();
-                    const len = (emailValue || '').length;
-                    emailInputRef.current.setSelectionRange(len, len);
-                }
-            });
-        }
-        prevIsPhoneInput.current = isPhoneInput;
-    }, [isPhoneInput, emailValue, phoneValue]);
 
     const onSubmit = async (data: SignupFormData) => {
         if (!executeRecaptcha) {
@@ -96,7 +55,7 @@ export default function ForgotPasswordPage() {
             return;
         }
 
-        const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email || '';
+        const username = data.email || '';
 
         try {
             const token = await executeRecaptcha('forgot_password');
@@ -127,15 +86,11 @@ export default function ForgotPasswordPage() {
                         // Store the username and purpose in session for the OTP page
                         const sessionData: {
                             username: string;
-                            countryCode?: string;
                             purpose: 'reset_password';
                         } = {
                             username,
                             purpose: 'reset_password',
                         };
-                        if (isPhoneInput) {
-                            sessionData.countryCode = phoneCountryCode;
-                        }
                         signupSessionUtils.setSignupData(sessionData);
 
                         router.push('/enter-otp');
@@ -160,7 +115,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center mb-8">
                 <h1 className="text-2xl font-semibold text-[#4E3325] mb-3">Forgot Password?</h1>
                 <p className="text-sm text-[#7A7A7A] leading-relaxed">
-                    No worries, enter your details and we&apos;ll
+                    No worries, enter your email address and we&apos;ll
                     <br />
                     send you reset instructions.
                 </p>
@@ -168,33 +123,17 @@ export default function ForgotPasswordPage() {
 
             {/* Forgot Password Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                {/* Email / Mobile Field */}
-                {isPhoneInput ? (
-                    <PhoneInput
-                        ref={phoneInputRef}
-                        label="Email / Mobile number"
-                        required
-                        value={phoneValue || ''}
-                        onChange={(value) => handleInputChange(value)}
-                        enableCodeSelect
-                        selectedCode={phoneCountryCode}
-                        onCodeChange={(code) => setPhoneCountryCode(code)}
-                        enableCodeSearch
-                        placeholder="Enter your mobile number"
-                        error={errors.phone?.message || errors.username?.message}
-                    />
-                ) : (
-                    <FormInput
-                        ref={emailInputRef}
-                        label="Email / Mobile number"
-                        required
-                        type="text"
-                        value={emailValue || ''}
-                        onChange={(e) => handleInputChange(e.target.value)}
-                        placeholder="Enter your email id / mobile number"
-                        error={errors.email?.message || errors.username?.message || ''}
-                    />
-                )}
+                {/* Email Field */}
+                <FormInput
+                    ref={emailInputRef}
+                    label="Email address"
+                    required
+                    type="email"
+                    value={emailValue || ''}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    placeholder="Enter your email address"
+                    error={errors.email?.message || errors.username?.message || ''}
+                />
 
                 {/* Submit Button */}
                 <GoldenButton

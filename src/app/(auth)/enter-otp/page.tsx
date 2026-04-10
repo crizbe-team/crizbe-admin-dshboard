@@ -203,9 +203,7 @@ export default function EnterOtpPage() {
                     Login with OTP
                 </h1>
                 <p className="text-sm text-[#474747] leading-relaxed">
-                    Enter the otp received on your email or
-                    <br />
-                    mobile number & continue
+                    Enter the otp received on your email & continue
                 </p>
             </div>
 
@@ -275,7 +273,7 @@ export default function EnterOtpPage() {
                 </GoldenButton>
             </form>
 
-            {/* Change Email/Phone Link */}
+            {/* Change Email Link */}
             <p className="mt-[16px] text-center">
                 <Link
                     href={
@@ -285,7 +283,7 @@ export default function EnterOtpPage() {
                     }
                     className="text-sm text-[#C4994A] hover:text-[#B38840] font-medium transition-colors"
                 >
-                    Login with another account
+                    Login with another email
                 </Link>
             </p>
         </div>

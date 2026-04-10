@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -8,7 +8,6 @@ import { useLogin } from '@/queries/use-auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/FormInput';
-import PhoneInput from '@/components/ui/PhoneInput';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { dashboardLoginSchema, type DashboardLoginFormData } from '@/validations/auth';
@@ -16,14 +15,11 @@ import { dashboardLoginSchema, type DashboardLoginFormData } from '@/validations
 export default function AdminLoginPage() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
-    const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
 
     const { mutate: login, isPending } = useLogin();
 
-    // Refs for maintaining focus during input switches
-    const usernameInputRef = useRef<HTMLInputElement>(null);
-    const phoneInputRef = useRef<HTMLInputElement>(null);
-    const prevIsPhoneInput = useRef<boolean | null>(null);
+    // Ref for maintaining focus
+    const emailInputRef = useRef<HTMLInputElement>(null);
 
     const {
         register,
@@ -36,44 +32,22 @@ export default function AdminLoginPage() {
     } = useForm<DashboardLoginFormData>({
         resolver: zodResolver(dashboardLoginSchema),
         defaultValues: {
-            username: '',
+            email: '',
             password: '',
         },
     });
 
-    const usernameValue = watch('username');
-
-    // Detect if input looks like a phone number (starts with digit and is only digits so far)
-    // We only switch to PhoneInput if it's strictly digits to allow usernames like "9admin" to stay in FormInput
-    const isPhoneInput = usernameValue ? /^\d+$/.test(usernameValue.trim()) : false;
+    const emailValue = watch('email');
 
     // Handle input change
     const handleInputChange = (value: string) => {
-        clearErrors('username');
+        clearErrors('email');
         clearErrors('root.serverError');
-        setValue('username', value, { shouldValidate: true });
+        setValue('email', value, { shouldValidate: true });
     };
 
-    // Maintain focus when switching between input types
-    useEffect(() => {
-        if (prevIsPhoneInput.current !== null && prevIsPhoneInput.current !== isPhoneInput) {
-            requestAnimationFrame(() => {
-                if (isPhoneInput && phoneInputRef.current) {
-                    phoneInputRef.current.focus();
-                    const len = (usernameValue || '').length;
-                    phoneInputRef.current.setSelectionRange(len, len);
-                } else if (!isPhoneInput && usernameInputRef.current) {
-                    usernameInputRef.current.focus();
-                    const len = (usernameValue || '').length;
-                    usernameInputRef.current.setSelectionRange(len, len);
-                }
-            });
-        }
-        prevIsPhoneInput.current = isPhoneInput;
-    }, [isPhoneInput, usernameValue]);
-
     const onSubmit = (data: DashboardLoginFormData) => {
-        const username = isPhoneInput ? `${phoneCountryCode}${data.username}` : data.username;
+        const username = data.email;
 
         login(
             { username, password: data.password, role: 'admin' },
@@ -133,38 +107,20 @@ export default function AdminLoginPage() {
                         </div>
                     )}
 
-                    {/* Username / Email / Mobile Field */}
+                    {/* Email Field */}
                     <div className="admin-input">
-                        {isPhoneInput ? (
-                            <PhoneInput
-                                ref={phoneInputRef}
-                                label="Username / Email / Mobile"
-                                labelClassName="text-gray-400"
-                                required
-                                value={usernameValue || ''}
-                                onChange={(value) => handleInputChange(value)}
-                                enableCodeSelect
-                                selectedCode={phoneCountryCode}
-                                onCodeChange={(code) => setPhoneCountryCode(code)}
-                                enableCodeSearch
-                                placeholder="Enter admin mobile number"
-                                error={errors.username?.message}
-                                className="bg-[#1f1f1f]! border-[#262626]! text-white!"
-                            />
-                        ) : (
-                            <FormInput
-                                ref={usernameInputRef}
-                                label="Username / Email / Mobile"
-                                labelClassName="text-gray-400"
-                                required
-                                type="text"
-                                value={usernameValue || ''}
-                                onChange={(e) => handleInputChange(e.target.value)}
-                                placeholder="Enter your admin ID or email"
-                                error={errors.username?.message}
-                                className="bg-[#1f1f1f]! border-[#262626]! text-white! placeholder:text-gray-500!"
-                            />
-                        )}
+                        <FormInput
+                            ref={emailInputRef}
+                            label="Admin Email"
+                            labelClassName="text-gray-400"
+                            required
+                            type="email"
+                            value={emailValue || ''}
+                            onChange={(e) => handleInputChange(e.target.value)}
+                            placeholder="Enter your admin email"
+                            error={errors.email?.message}
+                            className="bg-[#1f1f1f]! border-[#262626]! text-white! placeholder:text-gray-500!"
+                        />
                     </div>
 
                     {/* Password Field */}

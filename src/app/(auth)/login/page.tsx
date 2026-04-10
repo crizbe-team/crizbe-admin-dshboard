@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { useLogin } from '@/queries/use-auth';
@@ -9,7 +9,6 @@ import AuthLogo from '@/components/auth/AuthLogo';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/ui/FormInput';
-import PhoneInput from '@/components/ui/PhoneInput';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '@/validations/auth';
@@ -17,14 +16,11 @@ import { loginSchema, type LoginFormData } from '@/validations/auth';
 export default function LoginPage() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
-    const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
 
     const { mutate: login, isPending } = useLogin();
 
-    // Refs for maintaining focus during input switches
+    // Ref for maintaining focus
     const emailInputRef = useRef<HTMLInputElement>(null);
-    const phoneInputRef = useRef<HTMLInputElement>(null);
-    const prevIsPhoneInput = useRef<boolean | null>(null);
 
     const {
         register,
@@ -38,60 +34,22 @@ export default function LoginPage() {
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: '',
-            phone: '',
             password: '',
         },
     });
 
     const emailValue = watch('email');
-    const phoneValue = watch('phone');
-    const emailOrPhone = emailValue || phoneValue;
 
-    // Detect if input looks like a phone number (starts with digit)
-    const isPhoneInput = emailOrPhone ? /^\d/.test(emailOrPhone.trim()) : false;
-
-    // Handle input change for both email and phone
+    // Handle input change for email
     const handleInputChange = (value: string) => {
         // Clear any API errors when the user starts typing
         clearErrors('username' as keyof LoginFormData);
         clearErrors('root.serverError');
-
-        if (/^\d/.test(value.trim())) {
-            // User is typing a phone number
-            setValue('phone', value, { shouldValidate: true });
-            setValue('email', '', { shouldValidate: false });
-            clearErrors('email');
-        } else {
-            // User is typing an email
-            setValue('email', value, { shouldValidate: true });
-            setValue('phone', '', { shouldValidate: false });
-            clearErrors('phone');
-        }
+        setValue('email', value, { shouldValidate: true });
     };
 
-    // Maintain focus when switching between input types
-    useEffect(() => {
-        if (prevIsPhoneInput.current !== null && prevIsPhoneInput.current !== isPhoneInput) {
-            // Input type changed, restore focus on next render
-            requestAnimationFrame(() => {
-                if (isPhoneInput && phoneInputRef.current) {
-                    phoneInputRef.current.focus();
-                    // Move cursor to end
-                    const len = (phoneValue || '').length;
-                    phoneInputRef.current.setSelectionRange(len, len);
-                } else if (!isPhoneInput && emailInputRef.current) {
-                    emailInputRef.current.focus();
-                    // Move cursor to end
-                    const len = (emailValue || '').length;
-                    emailInputRef.current.setSelectionRange(len, len);
-                }
-            });
-        }
-        prevIsPhoneInput.current = isPhoneInput;
-    }, [isPhoneInput, emailValue, phoneValue]);
-
     const onSubmit = (data: LoginFormData) => {
-        const username = isPhoneInput ? `${phoneCountryCode}${data.phone}` : data.email || '';
+        const username = data.email || '';
 
         login(
             { username, password: data.password, role: 'user' },
@@ -146,33 +104,17 @@ export default function LoginPage() {
                         {globalError}
                     </div>
                 )}
-                {/* Email / Mobile Field */}
-                {isPhoneInput ? (
-                    <PhoneInput
-                        ref={phoneInputRef}
-                        label="Email / Mobile number"
-                        required
-                        value={phoneValue || ''}
-                        onChange={(value) => handleInputChange(value)}
-                        enableCodeSelect
-                        selectedCode={phoneCountryCode}
-                        onCodeChange={(code) => setPhoneCountryCode(code)}
-                        enableCodeSearch
-                        placeholder="Enter your mobile number"
-                        error={errors.phone?.message || errors.username?.message}
-                    />
-                ) : (
-                    <FormInput
-                        ref={emailInputRef}
-                        label="Email / Mobile number"
-                        required
-                        type="text"
-                        value={emailValue || ''}
-                        onChange={(e) => handleInputChange(e.target.value)}
-                        placeholder="Enter your email id / mobile number"
-                        error={errors.email?.message || errors.username?.message || ''}
-                    />
-                )}
+                {/* Email Field */}
+                <FormInput
+                    ref={emailInputRef}
+                    label="Email address"
+                    required
+                    type="email"
+                    value={emailValue || ''}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    placeholder="Enter your email address"
+                    error={errors.email?.message || errors.username?.message || ''}
+                />
                 {/* Password Field */}
                 <div className="flex flex-col gap-1">
                     <label className="text-xs font-medium text-[#404040]">
