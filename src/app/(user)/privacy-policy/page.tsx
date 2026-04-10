@@ -1,6 +1,8 @@
+'use client';
 import React from 'react';
 import PageBanner from '../../_components/PageBanner';
 import Footer from '../../_components/Footer';
+import { motion } from 'framer-motion';
 
 const PrivacyPolicyPage = () => {
     const sections = [
@@ -76,7 +78,14 @@ const PrivacyPolicyPage = () => {
             <main className="wrapper py-16 md:py-24">
                 <div className="space-y-12 max-w-5xl mx-auto">
                     {sections.map((section, index) => (
-                        <div key={index} className="space-y-4">
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, ease: 'easeOut' }}
+                            className="space-y-4"
+                        >
                             <h2 className="text-xl md:text-2xl font-bold text-[#191919] uppercase tracking-wide">
                                 {section.title}
                             </h2>
@@ -99,7 +108,7 @@ const PrivacyPolicyPage = () => {
                                     </p>
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </main>
