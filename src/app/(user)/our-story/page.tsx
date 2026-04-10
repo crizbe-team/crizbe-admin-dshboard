@@ -23,14 +23,12 @@ export default function StoryPage() {
 
                 <div className="relative z-10 wrapper h-full flex flex-col justify-center pt-20">
                     <div className="max-w-3xl">
-                        <h1 className="text-white text-5xl md:text-7xl font-bricolage font-bold mb-4 drop-shadow-xl animate-in slide-in-from-left duration-700">
-                            Get to know
-                        </h1>
-                        <div className="inline-block px-4 py-1 md:px-8 md:py-2 bg-[#E3D1A5]/90 rounded-xl mb-8 shadow-2xl backdrop-blur-sm animate-in slide-in-from-left delay-150 duration-700">
-                            <span className="text-5xl md:text-7xl font-bricolage font-bold text-[#4E3325]">
+                        <h1 className="text-[#F9F1DF] text-5xl md:text-7xl font-bricolage font-bold mb-4 drop-shadow-xl animate-in slide-in-from-left duration-700">
+                            Get to know <br />
+                            <span className="text-5xl md:text-7xl font-bricolage font-bold text-[#4E3325] title-highlight after:py-[6px] px-12">
                                 Our story.
                             </span>
-                        </div>
+                        </h1>
                         <br />
                         <div className="animate-in fade-in delay-300 duration-1000">
                             <ButtonLink
@@ -63,7 +61,7 @@ export default function StoryPage() {
             {/* Story Content Section */}
             <main className="relative z-10 bg-white pt-10 pb-20">
                 <div className="wrapper">
-                    <div className="max-w-4xl mx-auto md:mx-0">
+                    <div className="mx-auto md:mx-0">
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
