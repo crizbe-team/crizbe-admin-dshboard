@@ -459,4 +459,9 @@ button {
     .group:hover .ingredient-orbit-6 {
         transform: translate(170px, 150px) rotate(-5deg);
     }
+
+    /* Hide reCAPTCHA badge */
+    .grecaptcha-badge {
+        visibility: hidden !important;
+    }
 }
