@@ -65,7 +65,7 @@ const TermsPage = () => {
         <div className="bg-white min-h-screen">
             <PageBanner
                 title="Terms and Conditions"
-                subtitle="Please read these terms and conditions carefully before using our service."
+                showWatermark={true}
             />
 
             <main className="wrapper py-16 md:py-24">
@@ -79,11 +79,11 @@ const TermsPage = () => {
                             transition={{ duration: 0.6, ease: 'easeOut' }}
                             className="space-y-4"
                         >
-                            <h2 className="text-xl md:text-2xl font-bold text-[#191919] uppercase tracking-wide">
+                            <h2 className="text-xl md:text-2xl font-medium text-[#030303] uppercase tracking-wide">
                                 {section.id}. {section.title}
                             </h2>
                             {section.content && (
-                                <p className="text-[#474747] leading-relaxed text-base md:text-lg whitespace-pre-line text-justify">
+                                <p className="text-[#373737] text-[18px] leading-relaxed text-base md:text-lg whitespace-pre-line text-justify">
                                     {section.content}
                                 </p>
                             )}

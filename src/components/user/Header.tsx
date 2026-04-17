@@ -55,7 +55,7 @@ export default function Header() {
 
     return (
         <>
-            <header className="fixed  top-0 left-0 right-0 z-50 w-full h-[80px] backdrop-blur-md bg-white/10 border-b border-white/20">
+            <header className="fixed  top-0 left-0 right-0 z-50 w-full h-[80px] backdrop-blur-md ">
                 <div className="mx-auto wrapper flex h-full max-w-7xl items-center justify-between ">
                     <h1 className="text-lg font-semibold text-white w-[150px]">
                         <Link href="/">
@@ -82,9 +82,8 @@ export default function Header() {
                                 <span className="font-medium">{currentCurrency.symbol}</span>
                                 <span className="text-sm">{currentCurrency.code}</span>
                                 <ChevronDown
-                                    className={`w-4 h-4 transition-transform duration-200 ${
-                                        isCurrencyOpen ? 'rotate-180' : ''
-                                    }`}
+                                    className={`w-4 h-4 transition-transform duration-200 ${isCurrencyOpen ? 'rotate-180' : ''
+                                        }`}
                                 />
                             </button>
 
@@ -97,11 +96,10 @@ export default function Header() {
                                                 setCurrency(curr.code);
                                                 setIsCurrencyOpen(false);
                                             }}
-                                            className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between ${
-                                                currency === curr.code
-                                                    ? 'bg-blue-50 text-blue-600'
-                                                    : 'text-gray-700'
-                                            }`}
+                                            className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between ${currency === curr.code
+                                                ? 'bg-blue-50 text-blue-600'
+                                                : 'text-gray-700'
+                                                }`}
                                         >
                                             <div className="flex items-center gap-3">
                                                 <span className="font-medium">{curr.symbol}</span>
@@ -126,11 +124,10 @@ export default function Header() {
                             <AuthActionWrapper>
                                 <Link
                                     href="/cart"
-                                    className={`relative flex h-[44px] w-[44px] items-center justify-center rounded-full transition-all duration-300 ${
-                                        isCartActive
-                                            ? 'bg-white text-[#4E3325] shadow-lg scale-110'
-                                            : 'bg-white/15 hover:bg-white text-[#4E3325] hover:shadow-lg hover:scale-110'
-                                    }`}
+                                    className={`relative flex h-[44px] w-[44px] items-center justify-center rounded-full transition-all duration-300 ${isCartActive
+                                        ? 'bg-white text-[#4E3325] shadow-lg scale-110'
+                                        : 'bg-white/15 hover:bg-white text-[#4E3325] hover:shadow-lg hover:scale-110'
+                                        }`}
                                     aria-label="Cart"
                                 >
                                     <ShoppingCart className="w-[22px] h-[22px]" />
@@ -146,11 +143,10 @@ export default function Header() {
                                 <AuthActionWrapper>
                                     <button
                                         onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                        className={`flex h-[44px] w-[44px] items-center justify-center rounded-full transition-all duration-300 ${
-                                            isProfileActive || isProfileOpen
-                                                ? 'bg-white text-[#4E3325] shadow-lg scale-110'
-                                                : 'bg-white/15 hover:bg-white text-[#4E3325] hover:shadow-lg hover:scale-110'
-                                        }`}
+                                        className={`flex h-[44px] w-[44px] items-center justify-center rounded-full transition-all duration-300 ${isProfileActive || isProfileOpen
+                                            ? 'bg-white text-[#4E3325] shadow-lg scale-110'
+                                            : 'bg-white/15 hover:bg-white text-[#4E3325] hover:shadow-lg hover:scale-110'
+                                            }`}
                                         aria-label="Profile"
                                     >
                                         <User className="w-[22px] h-[22px]" />
@@ -163,31 +159,28 @@ export default function Header() {
                                             <Link
                                                 href="/profile"
                                                 onClick={() => setIsProfileOpen(false)}
-                                                className={`flex items-center justify-between w-full h-[52px] rounded-[16px] px-5 py-3 transition-all group ${
-                                                    isProfilePage
-                                                        ? 'bg-[#4E3325] text-white shadow-md'
-                                                        : 'bg-gray-50 text-[#1A1A1A] hover:bg-gray-100'
-                                                }`}
+                                                className={`flex items-center justify-between w-full h-[52px] rounded-[16px] px-5 py-3 transition-all group ${isProfilePage
+                                                    ? 'bg-[#4E3325] text-white shadow-md'
+                                                    : 'bg-gray-50 text-[#1A1A1A] hover:bg-gray-100'
+                                                    }`}
                                             >
                                                 <span className="text-[17px] font-medium font-inter-tight">
                                                     Go to profile
                                                 </span>
                                                 <ChevronRight
-                                                    className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${
-                                                        isProfilePage
-                                                            ? 'text-white'
-                                                            : 'text-[#A4A7AE]'
-                                                    }`}
+                                                    className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${isProfilePage
+                                                        ? 'text-white'
+                                                        : 'text-[#A4A7AE]'
+                                                        }`}
                                                 />
                                             </Link>
                                             <Link
                                                 href="/profile/my-orders"
                                                 onClick={() => setIsProfileOpen(false)}
-                                                className={`flex items-center justify-between w-full h-[52px] rounded-[16px] px-5 py-3 transition-all group ${
-                                                    isOrdersPage
-                                                        ? 'bg-[#4E3325] text-white shadow-md'
-                                                        : 'bg-white text-[#1A1A1A] hover:bg-gray-50'
-                                                }`}
+                                                className={`flex items-center justify-between w-full h-[52px] rounded-[16px] px-5 py-3 transition-all group ${isOrdersPage
+                                                    ? 'bg-[#4E3325] text-white shadow-md'
+                                                    : 'bg-white text-[#1A1A1A] hover:bg-gray-50'
+                                                    }`}
                                             >
                                                 <span className="text-[17px] font-medium font-inter-tight">
                                                     My orders
