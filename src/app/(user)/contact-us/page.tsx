@@ -54,11 +54,7 @@ export default function ContactUsPage() {
 
     return (
         <div className="bg-white min-h-screen">
-            <PageBanner
-                title="Help"
-                subtitle="We're here to assist you with any questions or concerns."
-                showWatermark={true}
-            />
+            <PageBanner title="Help" showWatermark={true} />
 
             <main className="relative -mt-10 z-10">
                 <div className="">

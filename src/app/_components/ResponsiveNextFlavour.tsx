@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import pistaBottle from '../../../public/images/user/pista-bottle.png';
 import almondBottle from '../../../public/images/user/almond-bottle.png';
 import hazelnutBottle from '../../../public/images/user/hazelnut-bottle.png';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 const flavors = [
     {
@@ -30,7 +30,7 @@ const flavors = [
 export default function ResponsiveNextFlavour() {
     const [selectedFlavor, setSelectedFlavor] = useState(flavors[1]); // Default to Pistachio
 
-    const containerVariants = {
+    const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -40,7 +40,7 @@ export default function ResponsiveNextFlavour() {
         },
     };
 
-    const itemVariants = {
+    const itemVariants: Variants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
             opacity: 1,
@@ -49,7 +49,7 @@ export default function ResponsiveNextFlavour() {
         },
     };
 
-    const pointerVariantsLeft = {
+    const pointerVariantsLeft: Variants = {
         hidden: { opacity: 0, x: -20 },
         visible: {
             opacity: 1,
@@ -58,7 +58,7 @@ export default function ResponsiveNextFlavour() {
         },
     };
 
-    const pointerVariantsRight = {
+    const pointerVariantsRight: Variants = {
         hidden: { opacity: 0, x: 20 },
         visible: {
             opacity: 1,
