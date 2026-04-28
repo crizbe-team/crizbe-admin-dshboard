@@ -29,17 +29,29 @@ export default function ResponsiveQuoteSection() {
             />
 
             <div className="wrapper relative z-10 text-center px-4 w-full">
-                <h2 className="text-[#F9F2E0] text-[56px] font-bricolage font-bold leading-[1.2]">
+                <motion.h2 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                    viewport={{ once: true }}
+                    className="text-[#F9F2E0] text-[56px] font-bricolage font-bold leading-[1.2]"
+                >
                     &ldquo;We won&apos;t
                     <br />
                     say much.
                     <br />
                     The{' '}
-                    <span className="title-qoutes-highlights text-[#CDAB78] bg-[#F9F2E0] px-2 py-1 inline-block rotate-[-2deg]">
+                    <motion.span 
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.4, duration: 0.5 }}
+                        viewport={{ once: true }}
+                        className="title-qoutes-highlights text-[#CDAB78] bg-[#F9F2E0] px-2 py-1 inline-block rotate-[-2deg]"
+                    >
                         crunch
-                    </span>
+                    </motion.span>
                     <br /> will.&rdquo;
-                </h2>
+                </motion.h2>
             </div>
 
             <ImageParticles
