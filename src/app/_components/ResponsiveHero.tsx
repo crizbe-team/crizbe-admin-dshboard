@@ -41,7 +41,7 @@ export default function ResponsiveHero() {
                 className="wrapper relative z-10 text-center flex flex-col items-center"
             >
                 <div className="mb-[40px]">
-                    <motion.h1 variants={itemVariants} className="text-[#4E3325] text-[48px] leading-[1.1] font-bricolage font-bold mb-[24px]">
+                    <motion.h1 variants={itemVariants} className="text-[#4E3325] text-[40px] sm:text-[48px] leading-[1.1] font-bricolage font-bold mb-[24px]">
                         Feel the{' '}
                         <span className="title-highlight after:bg-[#c2a065] text-[#f9f1df] px-2">
                             Crunch.
@@ -50,7 +50,7 @@ export default function ResponsiveHero() {
                         Taste the Luxury.
                     </motion.h1>
 
-                    <motion.p variants={itemVariants} className="text-[#4E3325] text-[14px] font-normal mb-[32px] max-w-[320px] mx-auto leading-relaxed">
+                    <motion.p variants={itemVariants} className="text-[#4E3325] text-[14px] sm:text-[16px] font-normal mb-[32px] max-w-[320px] sm:max-w-[400px] mx-auto leading-relaxed">
                         A slender, perfectly layered crunch stick crafted with real hazelnut,
                         pistachio, and almond—where texture meets indulgence in every bite.
                     </motion.p>

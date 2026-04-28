@@ -60,7 +60,7 @@ export default function SmoothScroll() {
 
             const mm = gsap.matchMedia();
 
-            mm.add('(min-width: 1024px)', () => {
+            mm.add('(min-width: 980px)', () => {
                 const almondBottle = document.querySelector('#almond-bottle');
                 const hazelnutBottle = document.querySelector('#hazelnut-bottle');
                 const pistaBottle = document.querySelector('#pista-bottle');

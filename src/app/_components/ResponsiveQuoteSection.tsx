@@ -34,7 +34,7 @@ export default function ResponsiveQuoteSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                     viewport={{ once: true }}
-                    className="text-[#F9F2E0] text-[56px] font-bricolage font-bold leading-[1.2]"
+                    className="text-[#F9F2E0] text-[42px] sm:text-[56px] font-bricolage font-bold leading-[1.2]"
                 >
                     &ldquo;We won&apos;t
                     <br />

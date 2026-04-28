@@ -77,7 +77,7 @@ export default function ResponsiveNextFlavour() {
                 variants={containerVariants}
                 className="text-center mb-[40px] px-4 z-10"
             >
-                <motion.h2 variants={itemVariants} className="text-[#4E3325] text-[42px] leading-[1.1] font-bricolage font-bold">
+                <motion.h2 variants={itemVariants} className="text-[#4E3325] text-[36px] sm:text-[42px] leading-[1.1] font-bricolage font-bold">
                     Find your <br />
                     next{' '}
                     <span className="title-highlights relative text-[#f9f1df] px-2 py-1 inline-block rotate-[-2deg] bg-[#C2A065]">
@@ -128,9 +128,9 @@ export default function ResponsiveNextFlavour() {
                 {/* Left Top Text */}
                 <motion.div 
                     variants={pointerVariantsLeft}
-                    className="absolute left-[5%] top-[25%] max-w-[100px] flex items-center z-10"
+                    className="absolute left-[2%] sm:left-[5%] top-[25%] max-w-[90px] sm:max-w-[120px] flex items-center z-10"
                 >
-                    <p className="text-[#4E3325] text-[12px] leading-[1.2] font-normal text-right mr-2">
+                    <p className="text-[#4E3325] text-[11px] sm:text-[13px] leading-[1.2] font-normal text-right mr-2">
                         Golden crunch shell encasing velvety caramel.
                     </p>
                     <div className="w-[20px] h-[1px] bg-[#C2A065] relative">
@@ -141,9 +141,9 @@ export default function ResponsiveNextFlavour() {
                 {/* Left Bottom Text */}
                 <motion.div 
                     variants={pointerVariantsLeft}
-                    className="absolute left-[5%] bottom-[25%] max-w-[100px] flex items-center z-10"
+                    className="absolute left-[2%] sm:left-[5%] bottom-[25%] max-w-[90px] sm:max-w-[120px] flex items-center z-10"
                 >
-                    <p className="text-[#4E3325] text-[12px] leading-[1.2] font-normal text-right mr-2">
+                    <p className="text-[#4E3325] text-[11px] sm:text-[13px] leading-[1.2] font-normal text-right mr-2">
                         Premium nuts wrapped in Belgian chocolate
                     </p>
                     <div className="w-[20px] h-[1px] bg-[#C2A065] relative">
@@ -154,12 +154,12 @@ export default function ResponsiveNextFlavour() {
                 {/* Right Top Text */}
                 <motion.div 
                     variants={pointerVariantsRight}
-                    className="absolute right-[5%] top-[35%] max-w-[100px] flex items-center z-10"
+                    className="absolute right-[2%] sm:right-[5%] top-[35%] max-w-[90px] sm:max-w-[120px] flex items-center z-10"
                 >
                     <div className="w-[20px] h-[1px] bg-[#C2A065] relative mr-2">
                         <div className="absolute left-[-2px] top-1/2 -translate-y-1/2 w-[4px] h-[4px] rounded-full bg-[#C2A065]"></div>
                     </div>
-                    <p className="text-[#4E3325] text-[12px] leading-[1.2] font-normal text-left">
+                    <p className="text-[#4E3325] text-[11px] sm:text-[13px] leading-[1.2] font-normal text-left">
                         Crunchy outside, premium cream inside
                     </p>
                 </motion.div>
@@ -167,12 +167,12 @@ export default function ResponsiveNextFlavour() {
                 {/* Right Bottom Text */}
                 <motion.div 
                     variants={pointerVariantsRight}
-                    className="absolute right-[5%] bottom-[15%] max-w-[100px] flex items-center z-10"
+                    className="absolute right-[2%] sm:right-[5%] bottom-[15%] max-w-[90px] sm:max-w-[120px] flex items-center z-10"
                 >
                     <div className="w-[20px] h-[1px] bg-[#C2A065] relative mr-2">
                         <div className="absolute left-[-2px] top-1/2 -translate-y-1/2 w-[4px] h-[4px] rounded-full bg-[#C2A065]"></div>
                     </div>
-                    <p className="text-[#4E3325] text-[12px] leading-[1.2] font-normal text-left">
+                    <p className="text-[#4E3325] text-[11px] sm:text-[13px] leading-[1.2] font-normal text-left">
                         Deliciously crispy exterior with rich{' '}
                         {selectedFlavor.id === 'pista' ? 'pista' : selectedFlavor.id} filling.
                     </p>
