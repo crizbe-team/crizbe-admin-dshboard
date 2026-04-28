@@ -28,17 +28,22 @@ export default function ResponsiveFlavours() {
     };
 
     return (
-        <section className="flavours-section-mobile py-[80px] px-4 flex flex-col items-center relative z-10 overflow-hidden bg-[#D9B981]">
-            {/* Enhanced Background Layers matching Figma */}
-            <div className="absolute inset-0 z-0 bg-[url(/images/user/flavours-bg.png)] bg-[length:100%_auto] bg-top bg-no-repeat" />
-            <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 via-transparent to-[#D9B981]/40" />
+        <section className="flavours-section-mobile py-[80px] px-4 flex flex-col items-center relative isolate">
+            {/* Wavy Top Transition Layer */}
+            <div className="absolute top-0 left-0 w-full h-[40px] z-[-1] bg-[url(/images/user/flavours-bg.png)] bg-[length:100%_auto] bg-top bg-no-repeat pointer-events-none" />
+
+            {/* Main Tan Background (Starts after the wave) */}
+            <div className="absolute top-[40px] inset-x-0 bottom-0 z-[-2] bg-[#ceab78]" />
+
+            {/* Optional: Bottom Wavy Transition */}
+            <div className="absolute bottom-[-40px] left-0 w-full h-[40px] z-[-1] bg-[url(/images/user/flavours-bg.png)] bg-[length:100%_auto] bg-bottom bg-no-repeat pointer-events-none" />
 
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
-                className="w-full flex flex-col items-center"
+                className="w-full flex flex-col items-center relative z-10"
             >
                 <motion.div
                     variants={cardVariants}
