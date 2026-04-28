@@ -1,10 +1,13 @@
-
-"use client"
+'use client';
 import { ImageParticles } from '@/components/user/ImageParticles';
 import Hero from '../_components/Hero';
+import ResponsiveHero from '../_components/ResponsiveHero';
 import QuoteSection from '../_components/QuoteSection';
+import ResponsiveQuoteSection from '../_components/ResponsiveQuoteSection';
 import Flavours from '../_components/Flavours';
+import ResponsiveFlavours from '../_components/ResponsiveFlavours';
 import NextFlavour from '../_components/NextFlavour';
+import ResponsiveNextFlavour from '../_components/ResponsiveNextFlavour';
 import SmoothScroll from '@/components/SmoothScroll';
 import StructuredData from '../_components/StructuredData';
 import FeedbacSection from '../_components/FeedbacSection';
@@ -21,11 +24,11 @@ export default function Home() {
             setLoading(false);
         };
 
-        if (document.readyState === "complete") {
+        if (document.readyState === 'complete') {
             setLoading(false);
         } else {
-            window.addEventListener("load", handleLoad);
-            return () => window.removeEventListener("load", handleLoad);
+            window.addEventListener('load', handleLoad);
+            return () => window.removeEventListener('load', handleLoad);
         }
     }, []);
     return (
@@ -50,10 +53,30 @@ export default function Home() {
             <main className="smooth-scroll relative z-[2] bg-transparent">
                 <StructuredData />
                 <SmoothScroll />
-                <Hero />
-                <Flavours />
-                <NextFlavour />
-                <QuoteSection />
+                <div className="hidden min-[980px]:block">
+                    <Hero />
+                </div>
+                <div className="block min-[980px]:hidden">
+                    <ResponsiveHero />
+                </div>
+                <div className="hidden min-[980px]:block">
+                    <Flavours />
+                </div>
+                <div className="block min-[980px]:hidden">
+                    <ResponsiveFlavours />
+                </div>
+                <div className="hidden min-[980px]:block">
+                    <NextFlavour />
+                </div>
+                <div className="block min-[980px]:hidden">
+                    <ResponsiveNextFlavour />
+                </div>
+                <div className="hidden min-[980px]:block">
+                    <QuoteSection />
+                </div>
+                <div className="block min-[980px]:hidden">
+                    <ResponsiveQuoteSection />
+                </div>
                 <FeedbacSection />
                 <Footer />
             </main>

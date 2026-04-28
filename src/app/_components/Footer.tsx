@@ -59,13 +59,13 @@ const Footer = () => {
                     </motion.div>
 
                     {/* Navigation Links */}
-                    <motion.nav variants={itemVariants} className="mb-16">
-                        <ul className="flex flex-wrap justify-center gap-8 md:gap-12">
+                    <motion.nav variants={itemVariants} className="mb-10 md:mb-16">
+                        <ul className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-12">
                             {navLinks.map((link) => (
                                 <li key={link.name}>
                                     <Link
                                         href={link.href}
-                                        className="text-[#373737] hover:bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] hover:bg-clip-text hover:text-transparent text-base transition-colors duration-300 font-medium"
+                                        className="text-[#373737] hover:bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] hover:bg-clip-text hover:text-transparent text-[15px] md:text-base transition-colors duration-300 font-medium"
                                     >
                                         {link.name}
                                     </Link>
@@ -75,24 +75,24 @@ const Footer = () => {
                     </motion.nav>
 
                     {/* Divider */}
-                    <motion.div variants={itemVariants} className="w-full h-px bg-gray-200 mb-8" />
+                    <motion.div variants={itemVariants} className="w-full h-px bg-gray-200 mb-6 md:mb-8" />
 
                     {/* Bottom Section */}
                     <motion.div
                         variants={itemVariants}
-                        className="w-full flex flex-col md:flex-row justify-between items-center text-sm text-[#373737]"
+                        className="w-full flex flex-row justify-between items-start md:items-center text-[13px] md:text-sm text-[#373737]"
                     >
-                        <p>© {new Date().getFullYear()} crizbe. All rights reserved.</p>
-                        <div className="flex gap-6">
+                        <p className="text-left w-[50%] md:w-auto pr-2 md:pr-0 leading-relaxed md:leading-normal mt-1 md:mt-0">© {new Date().getFullYear()} crizbe. All rights reserved.</p>
+                        <div className="flex flex-col md:flex-row gap-2 md:gap-6 text-right items-end md:items-center">
                             <Link
                                 href="/terms-and-conditions"
-                                className="hover:text-[#4E3325] text-[#373737] transition-colors"
+                                className="hover:text-[#4E3325] text-[#373737] transition-colors whitespace-nowrap"
                             >
                                 Terms and Conditions
                             </Link>
                             <Link
                                 href="/privacy-policy"
-                                className="hover:text-[#4E3325] text-[#373737] transition-colors"
+                                className="hover:text-[#4E3325] text-[#373737] transition-colors whitespace-nowrap"
                             >
                                 Privacy Policy
                             </Link>
