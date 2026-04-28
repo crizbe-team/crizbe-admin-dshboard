@@ -198,11 +198,10 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                             setQuantity(Math.max(1, v.stock || 0));
                                         }
                                     }}
-                                    className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-inter-tight font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${
-                                        selectedVariant?.id === v.id
+                                    className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-inter-tight font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${selectedVariant?.id === v.id
                                             ? 'border-[#4E3325] bg-[#4E3325] text-white shadow-md transform scale-105'
                                             : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
-                                    }`}
+                                        }`}
                                 >
                                     {v.size}
                                 </button>
@@ -266,14 +265,15 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     <div className="flex flex-col sm:flex-row gap-3 mb-[32px]">
                         <AuthActionWrapper>
                             <button
+                                disabled={isPending || !isInStock}
                                 style={{
                                     background:
                                         'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
                                 }}
-                                className="group w-full sm:flex-1 relative overflow-hidden h-[44px] py-[12px] px-[24px] rounded-[12px] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#FFFFFF] hover:text-white transition-all duration-300 cursor-pointer"
+                                className="group relative flex h-[44px] w-full items-center justify-center gap-[8px] overflow-hidden rounded-[12px] px-[24px] py-[12px] font-inter-tight text-[16px] leading-[150%] font-medium text-[#FFFFFF] transition-all duration-300 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 sm:flex-1"
                             >
                                 {/* Shine Effect */}
-                                <div className="pointer-events-none absolute inset-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
+                                <div className="pointer-events-none absolute inset-0 -left-full h-full w-full -skew-x-12 bg-linear-to-r from-transparent via-white/30 to-transparent transition-all duration-1000 ease-in-out group-hover:left-full group-disabled:hidden" />
                                 <span className="relative z-10">Buy Now</span>
                             </button>
                         </AuthActionWrapper>
@@ -282,24 +282,24 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                             <button
                                 onClick={handleAddToCart}
                                 disabled={isPending || !isInStock}
-                                className="w-full sm:flex-1 h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer"
+                                className="flex h-[44px] w-full items-center justify-center gap-[8px] rounded-[12px] border border-[#4E3325] px-[24px] py-[12px] font-inter-tight text-[16px] leading-[150%] font-medium text-[#4E3325] transition-all duration-300 hover:bg-[#4E3325] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent disabled:hover:text-[#4E3325] sm:flex-1"
                             >
                                 {isPending ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
                                 ) : selectedVariant &&
-                                  !selectedVariant.in_stock ? null : selectedVariant?.is_in_cart ? (
-                                    <ArrowRight className="w-5 h-5" />
-                                ) : (
+                                    !selectedVariant.in_stock ? null : selectedVariant?.is_in_cart ? (
+                                        <ArrowRight className="w-5 h-5" />
+                                    ) : (
                                     <ShoppingCart className="w-5 h-5" />
                                 )}
                                 <span>
                                     {isPending
                                         ? ''
                                         : !isInStock
-                                          ? 'Out of Stock'
-                                          : selectedVariant?.is_in_cart
-                                            ? 'Go to Cart'
-                                            : 'Add to Cart'}
+                                            ? 'Out of Stock'
+                                            : selectedVariant?.is_in_cart
+                                                ? 'Go to Cart'
+                                                : 'Add to Cart'}
                                 </span>
                             </button>
                         </AuthActionWrapper>

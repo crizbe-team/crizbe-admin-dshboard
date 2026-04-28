@@ -16,9 +16,11 @@ export default function NavigationMenu({ isOpen, onClose }: NavigationMenuProps)
     const pathname = usePathname();
 
     const links = [
+        { href: '/', label: 'Home' },
         { href: '/our-story', label: 'Our story' },
         { href: '/privacy-policy', label: 'Privacy Policy' },
         { href: '/terms-and-conditions', label: 'Terms & Conditions' },
+        { href: '/contact-us', label: 'Contact Us' },
     ];
 
     return (
@@ -56,11 +58,10 @@ export default function NavigationMenu({ isOpen, onClose }: NavigationMenuProps)
                                         key={link.href}
                                         href={link.href}
                                         onClick={onClose}
-                                        className={`relative transition-all duration-300 text-center ${
-                                            isActive
-                                                ? 'title-highlight text-[#f9f1df] px-14'
-                                                : 'opacity-80 hover:opacity-100 hover:scale-105'
-                                        }`}
+                                        className={`relative transition-all duration-300 text-center ${isActive
+                                            ? 'title-highlight text-[#f9f1df] px-14'
+                                            : 'opacity-80 hover:opacity-100 hover:scale-105'
+                                            }`}
                                     >
                                         <span
                                             className={`relative z-10 font-bricolage font-bold tracking-tight text-[38px]`}

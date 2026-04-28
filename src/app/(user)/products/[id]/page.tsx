@@ -133,9 +133,9 @@ const ProductDetailsPage = () => {
                                                         setReviewModalOpen(true);
                                                     }
                                                 }}
-                                                className="flex items-center gap-1.5 border border-[#191919] rounded-full px-4 py-1.5 text-[13px] font-medium text-[#191919] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer select-none"
+                                                className="flex items-center gap-1.5 border border-[#4E3325] rounded-[8px] px-4 py-1.5 text-[13px] font-medium text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer select-none"
                                             >
-                                                <Plus className="w-3.5 h-3.5" />
+                                                <Plus className="w-3.5 h-3.5 text-[#4E3325]" />
                                                 Add review
                                             </div>
                                         </AuthActionWrapper>
@@ -169,12 +169,12 @@ const ProductDetailsPage = () => {
                                                     rating === 5
                                                         ? 'Excellent'
                                                         : rating === 4
-                                                          ? 'Very good'
-                                                          : rating === 3
-                                                            ? 'Good'
-                                                            : rating === 2
-                                                              ? 'Average'
-                                                              : 'Poor';
+                                                            ? 'Very good'
+                                                            : rating === 3
+                                                                ? 'Good'
+                                                                : rating === 2
+                                                                    ? 'Average'
+                                                                    : 'Poor';
 
                                                 return (
                                                     <div
@@ -223,9 +223,15 @@ const ProductDetailsPage = () => {
                                                                     {review.rating}
                                                                 </span>
                                                                 <h4 className="font-inter-tight font-medium text-[20px] leading-[32px] tracking-[0.02em] text-[#191919]">
-                                                                    {review.rating >= 4
+                                                                    {review.rating >= 5
                                                                         ? 'Excellent product!!'
-                                                                        : 'Good product'}
+                                                                        : review.rating >= 4
+                                                                            ? 'Worth It'
+                                                                            : review.rating >= 3
+                                                                                ? 'Good product'
+                                                                                : review.rating >= 2
+                                                                                    ? 'Average product'
+                                                                                    : 'Poor product'}
                                                                 </h4>
                                                             </div>
                                                             <p className="font-inter-tight font-normal text-[16px] leading-[24px] tracking-[0.02em] text-[#747474] mb-2">

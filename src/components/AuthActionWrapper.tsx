@@ -14,8 +14,15 @@ interface AuthActionWrapperProps {
 export default function AuthActionWrapper({ children, onClick }: AuthActionWrapperProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const pathname = usePathname();
+    const isDisabled = Boolean(children.props?.disabled);
 
     const handleClick = (e: MouseEvent<HTMLElement>) => {
+        if (isDisabled) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+
         if (!authUtils.isAuthenticated()) {
             e.preventDefault();
             e.stopPropagation();

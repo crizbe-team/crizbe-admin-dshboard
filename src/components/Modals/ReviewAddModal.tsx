@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Star, ImagePlus, X } from 'lucide-react';
+import { Star, ImagePlus, X, Loader2 } from 'lucide-react';
 import { ModalWrapper } from '@/components/ui/ModalWrapper';
 import { useCreateProductReview } from '@/queries/use-products';
 import { useForm, Controller } from 'react-hook-form';
@@ -106,14 +106,14 @@ export default function ReviewAddModal({
                 role="dialog"
                 aria-modal="true"
                 aria-label="Rate & Review"
-                className="relative w-[800px] bg-white md:rounded-2xl overflow-hidden flex flex-col shadow-2xl"
+                className="relative flex w-full flex-col overflow-hidden bg-white shadow-2xl sm:w-[640px] md:w-[720px] md:rounded-2xl lg:w-[800px]"
                 style={{ willChange: 'transform, opacity' }}
             >
                 {/* Header */}
-                <div className="px-6 pt-6 pb-4 border-b border-[#F0F0F0]">
+                <div className="border-b border-[#F0F0F0] px-4 pb-4 pt-10 sm:px-6 sm:pt-8 md:px-8 md:pb-5 md:pt-8">
                     <div>
                         <h2 className="font-semibold text-[18px] text-[#191919]">Rate & Review</h2>
-                        <p className="text-[13px] text-[#747474] mt-0.5">
+                        <p className="text-[13px] text-[#474747] mt-0.5">
                             Add your review &amp; rating
                             {productName ? ` for ${productName}` : ''}
                         </p>
@@ -123,7 +123,7 @@ export default function ReviewAddModal({
                 {/* Body */}
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div
-                        className="px-6 py-5 space-y-5 overflow-y-auto"
+                        className="space-y-5 overflow-y-auto p-4 sm:p-6 md:p-8"
                         style={{ maxHeight: 'calc(100vh - 220px)' }}
                     >
                         {/* Global / server error */}
@@ -139,13 +139,12 @@ export default function ReviewAddModal({
                             control={control}
                             name="rating"
                             render={({ field }) => (
-                                <div className="flex items-start gap-6">
-                                    <label className="text-[14px] font-medium text-[#191919] pt-1 w-32 shrink-0">
+                                <div className="flex flex-col gap-3 md:flex-row md:items-start md:gap-6">
+                                    <label className="w-full text-[14px] font-inter text-[#747474] md:w-32 md:pt-1">
                                         Rate this product
-                                        <span className="text-red-500 ml-0.5">*</span>
                                     </label>
                                     <div>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex flex-wrap items-center gap-2">
                                             {[1, 2, 3, 4, 5].map((star) => (
                                                 <button
                                                     key={star}
@@ -172,8 +171,8 @@ export default function ReviewAddModal({
                                                             star <= (hovered || field.value)
                                                                 ? '#239B44'
                                                                 : errors.rating
-                                                                  ? '#EF4444'
-                                                                  : '#D1D5DB'
+                                                                    ? '#EF4444'
+                                                                    : '#D1D5DB'
                                                         }
                                                         strokeWidth={1.5}
                                                     />
@@ -191,21 +190,20 @@ export default function ReviewAddModal({
                         />
 
                         {/* Review Textarea */}
-                        <div className="flex items-start gap-6">
-                            <label className="text-[14px] font-medium text-[#191919] pt-2 w-32 shrink-0">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:gap-6">
+                            <label className="w-full shrink-0 text-[14px] font-inter text-[#747474] md:w-32 md:pt-2">
                                 Add review
-                                <span className="text-red-500 ml-0.5">*</span>
+
                             </label>
                             <div className="flex-1">
                                 <textarea
                                     {...register('comment')}
                                     rows={4}
                                     placeholder="Share your delightful journey with us! How did our sweet creation make you feel? We'd love to hear your thoughts!"
-                                    className={`w-full border rounded-xl px-4 py-3 text-[14px] text-[#191919] placeholder-[#ABABAB] focus:outline-none transition-colors bg-white resize-none leading-relaxed ${
-                                        errors.comment
-                                            ? 'border-red-400 focus:border-red-400'
-                                            : 'border-[#E8E8E8] focus:border-[#C4994A]'
-                                    }`}
+                                    className={`w-full border rounded-xl px-4 py-3 text-[14px] text-[#191919] placeholder-[#ABABAB] focus:outline-none transition-colors bg-white resize-none leading-relaxed ${errors.comment
+                                        ? 'border-red-400 focus:border-red-400'
+                                        : 'border-[#E8E8E8] focus:border-[#C4994A]'
+                                        }`}
                                 />
                                 {errors.comment ? (
                                     <p className="mt-1.5 text-xs text-red-500">
@@ -220,8 +218,8 @@ export default function ReviewAddModal({
                         </div>
 
                         {/* Photo Upload */}
-                        <div className="flex items-start gap-6">
-                            <label className="text-[14px] font-medium text-[#191919] pt-1 w-32 shrink-0">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:gap-6">
+                            <label className="w-full shrink-0 text-[14px] font-inter text-[#747474] md:w-32 md:pt-1">
                                 Add photos
                             </label>
                             <div className="flex items-center gap-2 flex-wrap">
@@ -268,27 +266,31 @@ export default function ReviewAddModal({
                     </div>
 
                     {/* Footer */}
-                    <div className="px-6 py-4 border-t border-[#F0F0F0] flex items-center justify-end gap-3">
+                    <div className="flex flex-col-reverse gap-3 border-t border-[#F0F0F0] px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-end">
                         <button
                             type="button"
                             onClick={handleClose}
                             disabled={isPending}
-                            className="px-6 py-2.5 rounded-full border border-[#E7E4DD] text-[14px] font-medium text-[#474747] hover:border-[#191919] hover:text-[#191919] transition-all duration-200 disabled:opacity-50"
+                            className=" rounded-[12px] border border-[#404040] px-6 py-2.5 text-[14px] font-medium text-[#474747] transition-all duration-200 hover:border-[#191919] hover:text-[#191919] disabled:opacity-50 md:w-auto"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="relative overflow-hidden px-8 py-2.5 rounded-full text-[14px] font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_4px_12px_rgba(196,153,74,0.3)] hover:shadow-[0_6px_16px_rgba(196,153,74,0.4)]"
+                            className="relative w-full overflow-hidden rounded-[12px] px-8 py-2.5 text-[14px] font-medium text-white shadow-[0_4px_12px_rgba(196,153,74,0.3)] transition-all duration-200 hover:shadow-[0_6px_16px_rgba(196,153,74,0.4)] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
                             style={{
                                 background:
                                     'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
                             }}
                         >
                             <div className="pointer-events-none absolute inset-0 -left-full w-full h-full bg-linear-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-700 hover:left-full ease-out" />
-                            <span className="relative z-10">
-                                {isPending ? 'Submitting...' : 'Submit'}
+                            <span className="relative z-10 flex min-w-[52px] items-center justify-center">
+                                {isPending ? (
+                                    <Loader2 className="w-5 h-5 animate-spin text-white" aria-hidden />
+                                ) : (
+                                    'Submit'
+                                )}
                             </span>
                         </button>
                     </div>
