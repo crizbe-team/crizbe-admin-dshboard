@@ -68,16 +68,19 @@ export default function ResponsiveNextFlavour() {
     };
 
     return (
-        <section className="next-flavour-mobile py-[60px] relative overflow-hidden bg-transparent flex flex-col items-center">
+        <section className="next-flavour-mobile py-[80px] relative overflow-hidden bg-transparent flex flex-col items-center">
             {/* Title */}
-            <motion.div 
+            <motion.div
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={containerVariants}
-                className="text-center mb-[40px] px-4 z-10"
+                className="text-center mb-[50px] px-4 z-10"
             >
-                <motion.h2 variants={itemVariants} className="text-[#4E3325] text-[36px] sm:text-[42px] leading-[1.1] font-bricolage font-bold">
+                <motion.h2
+                    variants={itemVariants}
+                    className="text-[#4E3325] text-[38px] sm:text-[46px] leading-[1.1] font-bricolage font-bold"
+                >
                     Find your <br />
                     next{' '}
                     <span className="title-highlights relative text-[#f9f1df] px-2 py-1 inline-block rotate-[-2deg] bg-[#C2A065]">
@@ -89,19 +92,19 @@ export default function ResponsiveNextFlavour() {
             </motion.div>
 
             {/* Bottle and Pointers Container */}
-            <motion.div 
+            <motion.div
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                className="relative w-full max-w-[400px] h-[400px] flex justify-center items-center mb-[40px] z-10"
+                className="relative w-full max-w-[450px] h-[450px] flex justify-center items-center mb-[60px] z-10"
             >
                 {/* Bottle */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, type: 'spring' }}
                     viewport={{ once: true }}
-                    className="w-[140px] relative h-[320px] z-20 flex justify-center items-center"
+                    className="w-[160px] relative h-[360px] z-20 flex justify-center items-center"
                 >
                     <AnimatePresence mode="wait">
                         <motion.div
@@ -126,61 +129,85 @@ export default function ResponsiveNextFlavour() {
                 </motion.div>
 
                 {/* Left Top Text */}
-                <motion.div 
+                <motion.div
                     variants={pointerVariantsLeft}
-                    className="absolute left-[2%] sm:left-[5%] top-[25%] max-w-[90px] sm:max-w-[120px] flex items-center z-10"
+                    className="absolute left-[0%] sm:left-[2%] top-[20%] max-w-[100px] sm:max-w-[130px] flex items-center z-10"
                 >
-                    <p className="text-[#4E3325] text-[11px] sm:text-[13px] leading-[1.2] font-normal text-right mr-2">
-                        Golden crunch shell encasing velvety caramel.
-                    </p>
-                    <div className="w-[20px] h-[1px] bg-[#C2A065] relative">
-                        <div className="absolute right-[-2px] top-1/2 -translate-y-1/2 w-[4px] h-[4px] rounded-full bg-[#C2A065]"></div>
+                    <div className="flex flex-col items-end">
+                        <p className="text-[#4E3325] text-[14px] leading-[1.2] font-normal text-right mb-1">
+                            Golden crunch shell encasing velvety caramel.
+                        </p>
+                        <Image
+                            src="/images/user/line.svg"
+                            alt=""
+                            width={60}
+                            height={10}
+                            className="w-[50px] sm:w-[70px] rotate-180"
+                        />
                     </div>
                 </motion.div>
 
                 {/* Left Bottom Text */}
-                <motion.div 
+                <motion.div
                     variants={pointerVariantsLeft}
-                    className="absolute left-[2%] sm:left-[5%] bottom-[25%] max-w-[90px] sm:max-w-[120px] flex items-center z-10"
+                    className="absolute left-[0%] sm:left-[2%] bottom-[25%] max-w-[100px] sm:max-w-[130px] flex items-center z-10"
                 >
-                    <p className="text-[#4E3325] text-[11px] sm:text-[13px] leading-[1.2] font-normal text-right mr-2">
-                        Premium nuts wrapped in Belgian chocolate
-                    </p>
-                    <div className="w-[20px] h-[1px] bg-[#C2A065] relative">
-                        <div className="absolute right-[-2px] top-1/2 -translate-y-1/2 w-[4px] h-[4px] rounded-full bg-[#C2A065]"></div>
+                    <div className="flex flex-col items-end">
+                        <p className="text-[#4E3325] text-[14px] leading-[1.2] font-normal text-right mb-1">
+                            Premium nuts wrapped in Belgian chocolate
+                        </p>
+                        <Image
+                            src="/images/user/line.svg"
+                            alt=""
+                            width={60}
+                            height={10}
+                            className="w-[50px] sm:w-[70px] rotate-180"
+                        />
                     </div>
                 </motion.div>
 
                 {/* Right Top Text */}
-                <motion.div 
+                <motion.div
                     variants={pointerVariantsRight}
-                    className="absolute right-[2%] sm:right-[5%] top-[35%] max-w-[90px] sm:max-w-[120px] flex items-center z-10"
+                    className="absolute right-[0%] sm:right-[2%] top-[30%] max-w-[100px] sm:max-w-[130px] flex items-center z-10"
                 >
-                    <div className="w-[20px] h-[1px] bg-[#C2A065] relative mr-2">
-                        <div className="absolute left-[-2px] top-1/2 -translate-y-1/2 w-[4px] h-[4px] rounded-full bg-[#C2A065]"></div>
+                    <div className="flex flex-col items-start">
+                        <p className="text-[#4E3325] text-[14px] leading-[1.2] font-normal text-left mb-1">
+                            Crunchy outside, premium cream inside
+                        </p>
+                        <Image
+                            src="/images/user/line.svg"
+                            alt=""
+                            width={60}
+                            height={10}
+                            className="w-[50px] sm:w-[70px]"
+                        />
                     </div>
-                    <p className="text-[#4E3325] text-[11px] sm:text-[13px] leading-[1.2] font-normal text-left">
-                        Crunchy outside, premium cream inside
-                    </p>
                 </motion.div>
 
                 {/* Right Bottom Text */}
-                <motion.div 
+                <motion.div
                     variants={pointerVariantsRight}
-                    className="absolute right-[2%] sm:right-[5%] bottom-[15%] max-w-[90px] sm:max-w-[120px] flex items-center z-10"
+                    className="absolute right-[0%] sm:right-[2%] bottom-[15%] max-w-[100px] sm:max-w-[130px] flex items-center z-10"
                 >
-                    <div className="w-[20px] h-[1px] bg-[#C2A065] relative mr-2">
-                        <div className="absolute left-[-2px] top-1/2 -translate-y-1/2 w-[4px] h-[4px] rounded-full bg-[#C2A065]"></div>
+                    <div className="flex flex-col items-start">
+                        <p className="text-[#4E3325] text-[14px] leading-[1.2] font-normal text-left mb-1">
+                            Deliciously crispy exterior with rich{' '}
+                            {selectedFlavor.id === 'pista' ? 'pista' : selectedFlavor.id} filling.
+                        </p>
+                        <Image
+                            src="/images/user/line.svg"
+                            alt=""
+                            width={60}
+                            height={10}
+                            className="w-[50px] sm:w-[70px]"
+                        />
                     </div>
-                    <p className="text-[#4E3325] text-[11px] sm:text-[13px] leading-[1.2] font-normal text-left">
-                        Deliciously crispy exterior with rich{' '}
-                        {selectedFlavor.id === 'pista' ? 'pista' : selectedFlavor.id} filling.
-                    </p>
                 </motion.div>
             </motion.div>
 
             {/* Flavor Selection Buttons */}
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
@@ -191,19 +218,19 @@ export default function ResponsiveNextFlavour() {
                     <button
                         key={flavor.id}
                         onClick={() => setSelectedFlavor(flavor)}
-                        className={`w-[40px] h-[40px] rounded-full bg-white flex items-center justify-center p-1 transition-all duration-300 shadow-lg cursor-pointer ${
+                        className={`w-[48px] h-[48px] rounded-full bg-white flex items-center justify-center p-2 transition-all duration-300 shadow-xl cursor-pointer ${
                             selectedFlavor.id === flavor.id
-                                ? 'ring-2 ring-[#C2A065] scale-110 shadow-[0_0_15px_rgba(194,160,101,0.4)] w-[48px] h-[48px]'
-                                : 'hover:ring-2 hover:ring-[#C2A065]/50 grayscale-[0.3] hover:grayscale-0'
+                                ? 'ring-2 ring-[#C2A065] scale-110 shadow-[0_0_20px_rgba(194,160,101,0.3)]'
+                                : 'hover:ring-2 hover:ring-[#C2A065]/30 grayscale-[0.2] hover:grayscale-0'
                         }`}
                     >
                         <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
                             <Image
                                 src={flavor.image}
                                 alt={flavor.name}
-                                width={30}
-                                height={50}
-                                className="object-contain h-full w-auto scale-125"
+                                width={40}
+                                height={60}
+                                className="object-contain h-full w-auto"
                             />
                         </div>
                     </button>
