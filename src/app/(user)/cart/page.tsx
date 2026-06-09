@@ -11,6 +11,7 @@ import CartSummaryCard from '../_components/checkout/CartSummaryCard';
 import { useFetchCart, useUpdateCartItem, useRemoveFromCart } from '@/queries/use-cart';
 import { useDebouncedCallback } from '@/hooks/use-debounce';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import EmptyCart from '@/components/ui/EmptyCart';
 
 export default function CartPage() {
     const router = useRouter();
@@ -77,23 +78,7 @@ export default function CartPage() {
             <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
                 <div className="wrapper mx-auto pt-[110px] pb-16">
                     <CheckoutSteps active="Cart" />
-                    <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-3xl border border-[#E7E1D6] mt-8">
-                        <div className="w-20 h-20 bg-[#F6F0E6] rounded-full flex items-center justify-center mx-auto mb-6">
-                            <ShoppingBag className="w-10 h-10 text-[#4E3325]" />
-                        </div>
-                        <h1 className="text-2xl font-medium text-[#191919] mb-4">
-                            Your cart is empty
-                        </h1>
-                        <p className="text-[#747474] mb-8">
-                            Looks like you haven't added anything to your cart yet.
-                        </p>
-                        <button
-                            onClick={() => router.push('/products')}
-                            className="bg-[#4E3325] text-white px-8 py-3 rounded-full font-medium hover:bg-[#3d281d] transition-colors"
-                        >
-                            Start Shopping
-                        </button>
-                    </div>
+                    <EmptyCart />
                 </div>
                 <Footer />
             </main>
@@ -147,8 +132,8 @@ export default function CartPage() {
                                                     {isLoading
                                                         ? 'Loading...'
                                                         : convertPrice(
-                                                            it.variant_details?.price || 0
-                                                        )}
+                                                              it.variant_details?.price || 0
+                                                          )}
                                                 </span>
                                             </div>
 
@@ -167,7 +152,7 @@ export default function CartPage() {
                                                                     handleUpdateQuantity(
                                                                         it.id,
                                                                         localQuantities[it.id] ??
-                                                                        it.quantity,
+                                                                            it.quantity,
                                                                         -1,
                                                                         it.available_stock ?? 999
                                                                     )
@@ -195,13 +180,13 @@ export default function CartPage() {
                                                                     updatingId === it.id ||
                                                                     (localQuantities[it.id] ??
                                                                         it.quantity) >=
-                                                                    (it.available_stock ?? 999)
+                                                                        (it.available_stock ?? 999)
                                                                 }
                                                                 onClick={() =>
                                                                     handleUpdateQuantity(
                                                                         it.id,
                                                                         localQuantities[it.id] ??
-                                                                        it.quantity,
+                                                                            it.quantity,
                                                                         1,
                                                                         it.available_stock ?? 999
                                                                     )
@@ -215,7 +200,7 @@ export default function CartPage() {
                                                             it.available_stock < 10 &&
                                                             (localQuantities[it.id] ??
                                                                 it.quantity) <=
-                                                            it.available_stock && (
+                                                                it.available_stock && (
                                                                 <span className="text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
                                                                     🔥 Only {it.available_stock}{' '}
                                                                     left!
@@ -223,7 +208,7 @@ export default function CartPage() {
                                                             )}
                                                     </div>
                                                     {(localQuantities[it.id] ?? it.quantity) >
-                                                        (it.available_stock ?? 0) ? (
+                                                    (it.available_stock ?? 0) ? (
                                                         <p className="mt-2 text-[11px] font-medium text-red-600">
                                                             <span className="font-bold">
                                                                 Reduce quantity!
@@ -238,7 +223,7 @@ export default function CartPage() {
                                                             available — please lower your quantity.
                                                         </p>
                                                     ) : it.available_stock > 0 &&
-                                                        it.available_stock < 10 ? (
+                                                      it.available_stock < 10 ? (
                                                         <p className="mt-2 text-[11px] font-medium text-orange-700">
                                                             <span className="font-bold">
                                                                 Hurry!
