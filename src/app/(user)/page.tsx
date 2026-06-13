@@ -3,6 +3,7 @@
 import { ImageParticles } from '@/components/user/ImageParticles';
 import Hero from '../_components/Hero';
 import QuoteSection from '../_components/QuoteSection';
+import ExploreBytes from '../_components/ExploreBytes';
 import Flavours from '../_components/Flavours';
 import NextFlavour from '../_components/NextFlavour';
 import SmoothScroll from '@/components/SmoothScroll';
@@ -54,6 +55,7 @@ export default function Home() {
                 <Flavours />
                 <NextFlavour />
                 <QuoteSection />
+                <ExploreBytes />
                 <FeedbacSection />
                 <Footer />
             </main>
