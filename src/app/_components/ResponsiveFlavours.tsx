@@ -52,7 +52,7 @@ export default function ResponsiveFlavours() {
                     <h2 className="text-[#4E3325] text-[36px] sm:text-[42px] leading-[1.1] font-bricolage font-bold mb-6">
                         3 Flavours. One <br />
                         Perfect{' '}
-                        <span className="relative inline-block px-4 py-1 bg-[#f9f2e0] text-[#4E3325] rounded-[4px] rotate-[-2deg] ml-1 shadow-sm">
+                        <span className="title-highlighter after:bg-[#c2a065] text-[#CDAB78] relative">
                             Crunch.
                         </span>
                     </h2>

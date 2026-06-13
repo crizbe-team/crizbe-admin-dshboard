@@ -69,15 +69,14 @@ export default function CartSummaryCard({
             <button
                 type="button"
                 onClick={onContinue}
-                disabled={isProcessing}
+
                 className="mt-[16px] w-full rounded-[12px] py-3 text-sm font-medium text-white cursor-pointer
           bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)]
           shadow-sm hover:opacity-95 active:opacity-90 transition text-[14px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
                 {isProcessing ? (
                     <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Processing...
+                        <Loader2 className="w-5 h-5 animate-spin" />
                     </>
                 ) : (
                     'Continue'
