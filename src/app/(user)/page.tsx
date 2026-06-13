@@ -4,6 +4,7 @@ import Hero from '../_components/Hero';
 import ResponsiveHero from '../_components/ResponsiveHero';
 import QuoteSection from '../_components/QuoteSection';
 import ResponsiveQuoteSection from '../_components/ResponsiveQuoteSection';
+import ExploreBytes from '../_components/ExploreBytes';
 import Flavours from '../_components/Flavours';
 import ResponsiveFlavours from '../_components/ResponsiveFlavours';
 import NextFlavour from '../_components/NextFlavour';
@@ -77,6 +78,7 @@ export default function Home() {
                 <div className="block min-[980px]:hidden">
                     <ResponsiveQuoteSection />
                 </div>
+                <ExploreBytes />
                 <FeedbacSection />
                 <Footer />
             </main>
