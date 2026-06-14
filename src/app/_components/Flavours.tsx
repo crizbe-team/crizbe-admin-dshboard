@@ -6,7 +6,6 @@ import React from 'react';
 import pistaBottle from '../../../public/images/user/pista-bottle.png';
 import { useRouter } from 'next/navigation';
 
-
 const ingredientsConfig = [
     { size: 50, blur: 'blur-[4px]', z: 'z-1', delay: '0.1s' }, // Back far
     { size: 35, blur: 'blur-none', z: 'z-1', delay: '0.05s' }, // Front sharp
@@ -14,6 +13,15 @@ const ingredientsConfig = [
     { size: 30, blur: 'blur-[2px]', z: 'z-1', delay: '0.2s' }, // Back small
     { size: 55, blur: 'blur-[1px]', z: 'z-1', delay: '0.12s' }, // Front large
     { size: 40, blur: 'blur-none', z: 'z-1', delay: '0.18s' }, // Mid sharp
+];
+
+const mixIngredients = [
+    '/images/user/pista-1.png',
+    '/images/user/almond-2.png',
+    '/images/user/hazelnut-3.png',
+    '/images/user/pista-4.png',
+    '/images/user/almond-5.png',
+    '/images/user/hazelnut-6.png',
 ];
 
 export default function Flavours() {
@@ -36,7 +44,6 @@ export default function Flavours() {
                         >
                             Shop Now
                         </span>
-
                     </Button>
                 </div>
 
@@ -129,6 +136,50 @@ export default function Flavours() {
                         </div>
                     </article>
 
+                    {/* Mixed Card */}
+                    <article className="group relative w-[600px] h-[360px] shrink-0">
+                        <div className="bg-[url(/images/user/mix-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
+                        <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
+                            <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                Magic Mix
+                            </h2>
+                            <p className="text-[#FFFFFF] text-[16px] font-normal">
+                                Feel the premium pista, almond <br />& hazelnut crunch in every
+                                byte.
+                            </p>
+                        </div>
+                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] mix-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
+                            {/* Ingredient Orbits */}
+                            {ingredientsConfig.map((config, i) => (
+                                <Image
+                                    key={i}
+                                    src={mixIngredients[i]}
+                                    alt="Mixed piece for Crizbe Mixed Crunch Stick"
+                                    width={config.size}
+                                    height={config.size}
+                                    quality={100}
+                                    style={{
+                                        transitionDelay: config.delay,
+                                        transitionTimingFunction:
+                                            'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                    }}
+                                    className={`absolute pointer-events-none transition-all duration-700 opacity-0 scale-0 ingredient-orbit-${i + 1} group-hover:opacity-100 group-hover:scale-100 ${config.blur} ${config.z} drop-shadow-2xl`}
+                                />
+                            ))}
+
+                            <Image
+                                id="mix-bottle-target"
+                                src="/images/user/mix-bottle.png"
+                                alt="Crizbe Mixed Premium Crunch Stick Bottle"
+                                width={230}
+                                height={100}
+                                priority
+                                quality={100}
+                                className="w-full h-full relative z-10"
+                            />
+                        </div>
+                    </article>
+
                     {/* Pista Card */}
                     <article className="group relative w-[600px] h-[360px] shrink-0">
                         <div className="bg-[url(/images/user/pista-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
@@ -186,6 +237,6 @@ export default function Flavours() {
                     />
                 </Button>
             </div>
-        </section >
+        </section>
     );
 }
