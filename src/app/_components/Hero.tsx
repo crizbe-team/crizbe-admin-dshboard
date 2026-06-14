@@ -46,7 +46,7 @@ export default function Hero() {
                 priority
                 quality={100}
                 id="almond-bottle"
-                className="absolute z-[9999]  bottom-0 -rotate-[28.55deg] left-[45%] top-[60%]"
+                className="absolute z-[9999]  bottom-0 -rotate-[28.55deg] left-[45%] top-[60%] max-[1280px]:w-[175px] max-[1280px]:top-[50%] max-[1280px]:left-[50%]"
             />
             <Image
                 src="/images/user/hazelnut-bottle.png"
@@ -56,7 +56,7 @@ export default function Hero() {
                 priority
                 quality={100}
                 id="hazelnut-bottle"
-                className="absolute z-[9999]  bottom-0 -rotate-[17.64deg] left-[65%] top-[50%]"
+                className="absolute z-[9999]  bottom-0 -rotate-[17.64deg] left-[65%] top-[50%] max-[1280px]:w-[175px] max-[1280px]:top-[40%] max-[1280px]:left-[68%]"
             />
             <Image
                 src={pistaBottle}
@@ -66,7 +66,7 @@ export default function Hero() {
                 priority
                 quality={100}
                 id="pista-bottle"
-                className="absolute z-[999]  bottom-0 -rotate-[7.5deg] left-[83%] top-[25%]"
+                className="absolute z-[999]  bottom-0 -rotate-[7.5deg] left-[83%] top-[25%] max-[1280px]:w-[175px] max-[1280px]:top-[30%] max-[1280px]:left-[85%]"
             />
             {/* <Image
                 src="/images/user/crizbe-bg.png"

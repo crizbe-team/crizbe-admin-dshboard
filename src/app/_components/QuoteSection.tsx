@@ -1,4 +1,3 @@
-"use client"
 import { ImageParticles } from '@/components/user/ImageParticles';
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
@@ -6,23 +5,23 @@ import { motion, useInView } from 'framer-motion';
 export default function QuoteSection() {
     const sectionRef = useRef<HTMLElement>(null);
     const isInView = useInView(sectionRef, {
-        margin: "-20% 0px -20% 0px",
-        amount: 0.3
+        margin: '-20% 0px -20% 0px',
+        amount: 0.3,
+        once: true,
     });
-
     return (
         <section
             ref={sectionRef}
-            className="quote-section relative min-h-[1200px] flex items-center overflow-hidden"
+            className="quote-section relative bg-[url(/images/user/Vector.png)] bg-cover bg-no-repeat min-h-screen flex items-center overflow-visible"
         >
             <motion.div
                 initial={{ scale: 1.3 }}
                 animate={{
-                    scale: isInView ? 1 : 1.3
+                    scale: isInView ? 1 : 1.3,
                 }}
                 transition={{
                     duration: 1.2,
-                    ease: [0.25, 0.1, 0.25, 1]
+                    ease: [0.25, 0.1, 0.25, 1],
                 }}
                 className="absolute inset-0 bg-[url(/images/user/Vector.png)] bg-contain bg-center bg-no-repeat"
             />
