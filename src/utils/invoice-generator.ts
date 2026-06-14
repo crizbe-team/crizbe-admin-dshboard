@@ -110,9 +110,9 @@ export const generateInvoicePDF = async (order: any, convertPrice: (val: number)
 
     const companyLines = [
         'Crizbe Foods Private Limited',
-        'Pit Solutions, Yamuna building',
-        'Technopark Phase 03, Kazhakkoottam',
-        'Kerala, India - 685555',
+        'Door : 773',
+        'Crizbe Junction, Venchempu PO Punalur',
+        'Kollam, Kerala, India - 691333',
         'Phone: +91 95624 79175',
         'Email: info@crizbe.com',
     ];
