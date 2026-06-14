@@ -48,7 +48,7 @@ export default function Header() {
         callback: () => setIsProfileOpen(false),
     });
 
-    const isCartActive = pathname === '/cart';
+    const isCartActive = pathname === '/checkout/cart';
     const isProfileActive = pathname.startsWith('/profile');
     const isProfilePage = pathname === '/profile';
     const isOrdersPage = pathname === '/profile/my-orders';
@@ -123,7 +123,7 @@ export default function Header() {
                         <div className="flex items-center gap-4">
                             <AuthActionWrapper>
                                 <Link
-                                    href="/cart"
+                                    href="/checkout/cart"
                                     className={`relative flex h-[44px] w-[44px] items-center justify-center rounded-full transition-all duration-300 ${isCartActive
                                         ? 'bg-white text-[#4E3325] shadow-lg scale-110'
                                         : 'bg-white/15 hover:bg-white text-[#4E3325] hover:shadow-lg hover:scale-110'

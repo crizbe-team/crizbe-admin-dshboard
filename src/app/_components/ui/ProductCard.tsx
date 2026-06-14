@@ -128,7 +128,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <AuthActionWrapper>
                 {defaultVariant?.is_in_cart ? (
                     <Link
-                        href="/cart"
+                        href="/checkout/cart"
                         className="w-full max-w-full h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-normal text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer"
                     >
                         Go to Cart

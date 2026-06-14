@@ -117,7 +117,7 @@ function ProductCard({
                     <AuthActionWrapper>
                         {defaultVariant?.is_in_cart ? (
                             <Link
-                                href="/cart"
+                                href="/checkout/cart"
                                 className="w-fit h-[40px] px-5 rounded-full bg-[#4E3325] text-white flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[14px] hover:bg-[#3D281D] active:scale-[0.98] transition-all duration-300 cursor-pointer"
                             >
                                 <ArrowRight className="w-4 h-4" />

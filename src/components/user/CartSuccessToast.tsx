@@ -147,7 +147,7 @@ export default function CartSuccessToast({
                                     <span className="relative z-10">Check out</span>
                                 </Link>
                                 <Link
-                                    href="/cart"
+                                    href="/checkout/cart"
                                     onClick={onClose}
                                     className="flex-1 flex items-center justify-center h-[54px] rounded-[12px] border border-[#FAF3E2] backdrop-blur-sm text-white font-medium text-[16px] transition-all hover:bg-white/10 active:scale-95 whitespace-nowrap shadow-lg"
                                 >

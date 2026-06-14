@@ -57,7 +57,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         }
 
         if (selectedVariant?.is_in_cart) {
-            router.push('/cart');
+            router.push('/checkout/cart');
             return;
         }
 

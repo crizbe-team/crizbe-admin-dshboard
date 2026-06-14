@@ -7,7 +7,7 @@ import Footer from '@/app/_components/Footer';
 import CheckoutSteps from '@/app/(user)/_components/checkout/CheckoutSteps';
 
 import { useRouter } from 'next/navigation';
-import CartSummaryCard from '../_components/checkout/CartSummaryCard';
+import CartSummaryCard from '../../_components/checkout/CartSummaryCard';
 import { useFetchCart, useUpdateCartItem, useRemoveFromCart } from '@/queries/use-cart';
 import { useDebouncedCallback } from '@/hooks/use-debounce';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -298,7 +298,7 @@ export default function CartPage() {
                                     );
                                     return;
                                 }
-                                router.push('/shipping');
+                                router.push('/checkout/address');
                             }}
                         />
                     </div>
