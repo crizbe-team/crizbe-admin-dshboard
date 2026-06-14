@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Minus, Plus, Trash2, Loader2, ShoppingBag } from 'lucide-react';
+import { Minus, Plus, Trash2, Loader2 } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
 import CheckoutSteps from '@/app/(user)/_components/checkout/CheckoutSteps';
 
@@ -12,6 +12,7 @@ import { useFetchCart, useUpdateCartItem, useRemoveFromCart } from '@/queries/us
 import { useDebouncedCallback } from '@/hooks/use-debounce';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import EmptyCart from '@/components/ui/EmptyCart';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 
 export default function CartPage() {
     const router = useRouter();
@@ -40,8 +41,6 @@ export default function CartPage() {
     }, [items]);
 
     const itemsCount = cartData?.total_quantity || items.length;
-    const subTotal = cartData?.total_price || 0;
-    const totalTax = cartData?.total_tax || 0;
 
     const debouncedUpdate = useDebouncedCallback((id: string, quantity: number) => {
         setUpdatingId(id);
@@ -77,7 +76,7 @@ export default function CartPage() {
         return (
             <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
                 <div className="wrapper mx-auto pt-[110px] pb-16">
-                    <CheckoutSteps active="Cart" />
+                    <Breadcrumb items={breadcrumbItems} />
                     <EmptyCart />
                 </div>
                 <Footer />
@@ -88,7 +87,7 @@ export default function CartPage() {
     return (
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
             <div className="wrapper mx-auto pt-[110px] pb-16">
-                <CheckoutSteps active="Cart" />
+                <Breadcrumb items={breadcrumbItems} />
                 <h1 className="text-[28px]  font-medium text-[#191919] py-[32px] flex items-center">
                     Your cart{' '}
                     <span className="text-sm ml-[8px] md:text-base  lg:text-lg font-normal text-[#747474]">
@@ -280,12 +279,6 @@ export default function CartPage() {
 
                     <div className="w-full lg:w-auto text-[#1a1a1a]">
                         <CartSummaryCard
-                            itemsCount={itemsCount}
-                            subTotal={subTotal}
-                            packing={0}
-                            shippingLabel="Calculated at next step"
-                            discountLabel="--"
-                            totalTax={totalTax}
                             onContinue={() => {
                                 const hasInventoryIssue = items.some(
                                     (it: any) =>
@@ -309,3 +302,29 @@ export default function CartPage() {
         </main>
     );
 }
+
+const breadcrumbItems = [
+    {
+        label: (
+            <span className="font-[var(--font-inter-tight)] font-normal text-[#747474] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                Home
+            </span>
+        ),
+        href: '/',
+    },
+    {
+        label: (
+            <span className="font-[var(--font-inter-tight)] font-normal text-[#747474] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                Checkout
+            </span>
+        ),
+        href: '/checkout/cart',
+    },
+    {
+        label: (
+            <span className="font-[var(--font-inter-tight)] font-medium text-[#191919] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                Cart
+            </span>
+        ),
+    },
+];

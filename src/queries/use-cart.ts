@@ -1,13 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCart, addToCart, updateCartItem, removeFromCart, clearCart } from '../services/cart';
+import { getCart, addToCart, updateCartItem, removeFromCart, clearCart, getCartSummary } from '../services/cart';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
-const { GET_CART, GET_PRODUCT, GET_MINIMAL_DETAILS } = API_ENDPOINTS;
+const { GET_CART, GET_CART_SUMMARY, GET_PRODUCT, GET_MINIMAL_DETAILS } = API_ENDPOINTS;
 
 export const useFetchCart = () => {
     return useQuery<any>({
         queryKey: [GET_CART],
         queryFn: () => getCart(),
+    });
+};
+
+export const useFetchCartSummary = () => {
+    return useQuery<any>({
+        queryKey: [GET_CART_SUMMARY],
+        queryFn: () => getCartSummary(),
     });
 };
 
@@ -17,6 +24,7 @@ export const useAddToCart = () => {
         mutationFn: (data: any) => addToCart(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CART] });
+            queryClient.invalidateQueries({ queryKey: [GET_CART_SUMMARY] });
             queryClient.invalidateQueries({ queryKey: [GET_PRODUCT] });
             queryClient.invalidateQueries({ queryKey: [GET_MINIMAL_DETAILS] });
         },
@@ -29,6 +37,7 @@ export const useUpdateCartItem = () => {
         mutationFn: (data: any) => updateCartItem(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CART] });
+            queryClient.invalidateQueries({ queryKey: [GET_CART_SUMMARY] });
         },
     });
 };
@@ -39,6 +48,7 @@ export const useRemoveFromCart = () => {
         mutationFn: (id: string) => removeFromCart(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CART] });
+            queryClient.invalidateQueries({ queryKey: [GET_CART_SUMMARY] });
         },
     });
 };
@@ -49,6 +59,8 @@ export const useClearCart = () => {
         mutationFn: () => clearCart(),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CART] });
+            queryClient.invalidateQueries({ queryKey: [GET_CART_SUMMARY] });
         },
     });
 };
+

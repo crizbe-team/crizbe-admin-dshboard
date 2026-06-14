@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Pencil, Phone, Trash2, Loader2 } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
-import CheckoutSteps from '@/app/(user)/_components/checkout/CheckoutSteps';
 import CartSummaryCard from '@/app/(user)/_components/checkout/CartSummaryCard';
 import AddAddressModal from '@/app/(user)/_components/checkout/AddAddressModal';
 import { useRouter } from 'next/navigation';
@@ -13,6 +12,7 @@ import {
     useUpdateAddress,
     useDeleteAddress,
 } from '@/queries/use-account';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 
 type Address = {
     id: string;
@@ -128,10 +128,36 @@ export default function ShippingPage() {
         );
     }
 
+    const breadcrumbItems = [
+        {
+            label: (
+                <span className="font-[var(--font-inter-tight)] font-normal text-[#747474] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                    Home
+                </span>
+            ),
+            href: '/',
+        },
+        {
+            label: (
+                <span className="font-[var(--font-inter-tight)] font-normal text-[#747474] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                    Checkout
+                </span>
+            ),
+            href: '/checkout/cart',
+        },
+        {
+            label: (
+                <span className="font-[var(--font-inter-tight)] font-medium text-[#191919] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                    Address
+                </span>
+            ),
+        },
+    ];
+
     return (
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
             <div className="wrapper mx-auto pt-[110px] pb-16">
-                <CheckoutSteps active="Shipping" />
+                <Breadcrumb items={breadcrumbItems} />
                 <div className="flex justify-between py-[32px]">
                     <h1 className=" text-[22px] sm:text-[28px] font-medium text-[#191919]">
                         Shipping address
@@ -245,18 +271,12 @@ export default function ShippingPage() {
 
                     <div className="w-full lg:w-auto">
                         <CartSummaryCard
-                            itemsCount={2}
-                            subTotal={849}
-                            packing={50}
-                            shippingLabel="Free"
-                            discountLabel="--"
-                            totalTax={24}
                             onContinue={() => {
                                 if (!selected) {
                                     alert('Please select a shipping address');
                                     return;
                                 }
-                                router.push('/payment');
+                                router.push('/checkout/payment');
                             }}
                         />
                     </div>

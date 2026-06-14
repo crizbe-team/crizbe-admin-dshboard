@@ -47,6 +47,7 @@ export const API_ENDPOINTS = {
 
     // Cart endpoints
     GET_CART: 'orders/cart/',
+    GET_CART_SUMMARY: 'orders/cart/summary/',
     ADD_TO_CART: 'orders/cart/add/',
     UPDATE_CART_ITEM: 'orders/cart/update/',
     REMOVE_FROM_CART: 'orders/cart/remove/:id/',

@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
-import { Building2, CreditCard, Smartphone, Wallet, Loader2 } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { CreditCard, Wallet } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
-import CheckoutSteps from '@/app/(user)/_components/checkout/CheckoutSteps';
 import { useRouter } from 'next/navigation';
-import CartSummaryCard from '../_components/checkout/CartSummaryCard';
+import CartSummaryCard from '../../_components/checkout/CartSummaryCard';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useFetchAddresses } from '@/queries/use-account';
 import { useFetchCart } from '@/queries/use-cart';
 import { useRazorpay } from '@/hooks/useRazorpay';
 import { useCreatePaymentOrder, useVerifyPayment, useRazorpayKeyId } from '@/queries/use-payment';
 import { createOrder } from '@/services/orders';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 
 type PayMethod = 'bank' | 'phonepe' | 'upi' | 'card' | 'cod' | 'razorpay';
 
@@ -52,34 +52,42 @@ export default function PaymentPage() {
     );
 
     const handleRazorpayPayment = async () => {
+        console.log('handleRazorpayPayment called');
         if (!defaultAddress) {
+            console.log('Error: No default address');
             alert('Please add an address first');
             return;
         }
 
+        console.log('Setting isProcessing to true');
         setIsProcessing(true);
         try {
-            // Step 1: Create order
+            console.log('Step 1: Creating order with address:', defaultAddress.id);
             const orderResponse = await createOrder({
                 address_id: defaultAddress.id,
                 payment_method: 'Razorpay',
                 currency: currency || 'INR',
             });
+            console.log('Step 1 response:', orderResponse);
 
-            if (orderResponse.status_code !== 201) {
+            if (orderResponse.status_code !== 6000) {
                 throw new Error(orderResponse.message || 'Failed to create order');
             }
 
             const orderId = orderResponse.data.id;
+            console.log('Step 1 success. Order ID:', orderId);
 
             // Step 2: Create payment order
+            console.log('Step 2: Creating payment order for order ID:', orderId);
             const paymentOrderResponse = await createPaymentOrderMutation.mutateAsync(orderId);
+            console.log('Step 2 response:', paymentOrderResponse);
 
-            if (paymentOrderResponse.status_code !== 200) {
+            if (paymentOrderResponse.status_code !== 6000) {
                 throw new Error(paymentOrderResponse.message || 'Failed to create payment order');
             }
 
             const paymentData = paymentOrderResponse.data;
+            console.log('Step 2 success. Payment Data:', paymentData);
 
             // Step 3: Open Razorpay checkout
             const options = {
@@ -104,9 +112,11 @@ export default function PaymentPage() {
                             razorpaySignature: razorpayResponse.razorpay_signature,
                         });
 
-                        if (verifyResponse.status_code === 200) {
+                        if (verifyResponse.status_code === 6000) {
                             // Step 5: Redirect to success page
-                            router.push(`/order-success?orderId=${verifyResponse.data.order_id}`);
+                            router.push(
+                                `/profile/my-orders?orderId=${verifyResponse.data.order_id}`
+                            );
                         } else {
                             throw new Error(
                                 verifyResponse.message || 'Payment verification failed'
@@ -149,7 +159,7 @@ export default function PaymentPage() {
                 currency: currency || 'INR',
             });
 
-            if (orderResponse.status_code === 200) {
+            if (orderResponse.status_code === 6000) {
                 // Redirect to success page
                 router.push(`/order-success?orderId=${orderResponse.data.id}`);
             } else {
@@ -164,8 +174,15 @@ export default function PaymentPage() {
     };
 
     const handleCheckout = async () => {
+        console.log(
+            'handleCheckout triggered. selected:',
+            selected,
+            'isRazorpayLoaded:',
+            isRazorpayLoaded
+        );
         if (selected === 'razorpay') {
             if (!isRazorpayLoaded) {
+                console.log('Razorpay not loaded yet');
                 alert('Razorpay is still loading. Please wait...');
                 return;
             }
@@ -197,7 +214,7 @@ export default function PaymentPage() {
     return (
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
             <div className="wrapper mx-auto pt-[110px] pb-16">
-                <CheckoutSteps active="Payment" />
+                <Breadcrumb items={breadcrumbItems} />
                 <h1 className="text-2xl font-semibold text-[#4E3325] py-[32px]">
                     Choose payment method
                 </h1>
@@ -242,16 +259,7 @@ export default function PaymentPage() {
                     </section>
 
                     <div className="w-full lg:w-auto">
-                        <CartSummaryCard
-                            itemsCount={2}
-                            subTotal={849}
-                            packing={50}
-                            shippingLabel="Free"
-                            discountLabel="--"
-                            totalTax={24}
-                            onContinue={handleCheckout}
-                            isProcessing={isProcessing}
-                        />
+                        <CartSummaryCard onContinue={handleCheckout} isProcessing={isProcessing} />
                     </div>
                 </div>
             </div>
@@ -260,3 +268,29 @@ export default function PaymentPage() {
         </main>
     );
 }
+
+const breadcrumbItems = [
+    {
+        label: (
+            <span className="font-[var(--font-inter-tight)] font-normal text-[#747474] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                Home
+            </span>
+        ),
+        href: '/',
+    },
+    {
+        label: (
+            <span className="font-[var(--font-inter-tight)] font-normal text-[#747474] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                Checkout
+            </span>
+        ),
+        href: '/checkout/cart',
+    },
+    {
+        label: (
+            <span className="font-[var(--font-inter-tight)] font-medium text-[#191919] text-[16px] leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                Payment
+            </span>
+        ),
+    },
+];

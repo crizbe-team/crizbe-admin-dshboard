@@ -37,3 +37,11 @@ export const clearCart = async () => {
     const response = await api.post(url);
     return handleApiResponse(response);
 };
+
+export const getCartSummary = async () => {
+    const { GET_CART_SUMMARY } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_CART_SUMMARY).build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
+
