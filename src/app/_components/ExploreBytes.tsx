@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useMemo, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { ShoppingCart, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { ShoppingCart, Loader2, ArrowRight } from 'lucide-react';
 import { useFetchProducts } from '@/queries/use-products';
 import { useAddToCart } from '@/queries/use-cart';
 import { useCartToast } from '@/contexts/CartToastContext';
@@ -10,6 +10,7 @@ import AuthActionWrapper from '@/components/AuthActionWrapper';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { motion } from 'framer-motion';
+import { toast } from '@/components/ui/Toast';
 
 interface ProductCardProps {
     product: any;
@@ -28,7 +29,6 @@ function ProductCard({
     addingProductId,
     handleAddToCart,
 }: ProductCardProps) {
-    const router = useRouter();
     const [isHovered, setIsHovered] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -52,67 +52,101 @@ function ProductCard({
         return () => clearInterval(interval);
     }, [isHovered, images]);
 
+    const defaultVariant = product.variants?.[0];
+    const hasVariants = product.variants && product.variants.length > 0;
+    const isInStock = hasVariants
+        ? defaultVariant && defaultVariant.stock > 0 && defaultVariant.in_stock !== false
+        : false;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.08 }}
-            onClick={() => router.push(`/products/${product.slug}`)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group border-[#E6E6E6] border overflow-hidden flex flex-col h-full w-[370px] rounded-[28px] bg-[#FCFAF4] transition-all duration-300 hover:shadow-md cursor-pointer relative"
+            className="group border-[#E6E6E6] border overflow-hidden flex flex-col h-full w-[350px] rounded-[28px] bg-[#FCFAF4] transition-all duration-300 hover:shadow-md relative"
         >
-            {/* Image Container */}
-            <div className="relative w-full h-[320px] overflow-hidden transition-all duration-300">
-                <img
-                    src={images[currentImageIndex]?.image}
-                    alt={product.name}
-                    className="object-cover w-full h-full scale-100 group-hover:scale-105 transition-transform duration-500"
-                />
+            <Link
+                href={`/products/${product.slug}`}
+                className="flex flex-col flex-grow cursor-pointer"
+            >
+                {/* Image Container */}
+                <div className="relative w-full h-[320px] overflow-hidden transition-all duration-300">
+                    <img
+                        src={images[currentImageIndex]?.image}
+                        alt={product.name}
+                        className="object-cover w-full h-full scale-100 group-hover:scale-105 transition-transform duration-500"
+                    />
 
-                {/* Horizontal Indicators for Multiple Images (visible on hover) */}
-                {images.length > 1 && (
-                    <div
-                        className={`absolute bottom-3 left-4 right-4 flex gap-1.5 z-20 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
-                    >
-                        {images.map((_: any, i: any) => (
-                            <div
-                                key={i}
-                                className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${
-                                    i === currentImageIndex ? 'bg-white opacity-100' : 'bg-white/30'
-                                }`}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            <div className="p-[20px] bg-[#fff]">
-                <div className="flex justify-between items-start gap-3 mb-5 ">
-                    <h3 className="font-inter-tight font-semibold text-[16px] leading-[140%] text-[#191919] line-clamp-2">
-                        {product.name}
-                    </h3>
-                    <span className="font-inter-tight font-semibold text-[16px] leading-[140%] text-[#191919] whitespace-nowrap">
-                        {isCurrencyLoading ? '...' : convertPrice(product.price)}
-                    </span>
+                    {/* Horizontal Indicators for Multiple Images (visible on hover) */}
+                    {images.length > 1 && (
+                        <div
+                            className={`absolute bottom-3 left-4 right-4 flex gap-1.5 z-20 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+                        >
+                            {images.map((_: any, i: any) => (
+                                <div
+                                    key={i}
+                                    className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${
+                                        i === currentImageIndex
+                                            ? 'bg-white opacity-100'
+                                            : 'bg-white/30'
+                                    }`}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
 
-                {/* Add to Cart Button (Capsule, left-aligned) */}
-                <div className="mt-auto px-1">
+                <div className="p-[20px] pb-0 bg-[#fff] flex-grow">
+                    <div className="flex justify-between items-start gap-3">
+                        <h3 className="font-inter-tight font-semibold text-[16px] leading-[140%] text-[#191919] line-clamp-2">
+                            {product.name}
+                        </h3>
+                        <span className="font-inter-tight font-semibold text-[16px] leading-[140%] text-[#191919] whitespace-nowrap">
+                            {isCurrencyLoading ? '...' : convertPrice(product.price)}
+                        </span>
+                    </div>
+                </div>
+            </Link>
+
+            {/* Add to Cart Button (Capsule, left-aligned) - OUTSIDE the Link to avoid nested anchors */}
+            <div className="p-[20px] pt-5 bg-[#fff] mt-auto">
+                <div className="px-1">
                     <AuthActionWrapper>
-                        <button
-                            onClick={(e) => handleAddToCart(product, e)}
-                            disabled={addingProductId === product.id}
-                            className="w-fit h-[40px] px-5 rounded-full bg-[#4E3325] text-white flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[14px] hover:bg-[#3D281D] active:scale-[0.98] transition-all duration-300 cursor-pointer"
-                        >
-                            {addingProductId === product.id ? (
-                                <Loader2 className="w-4 h-4 animate-spin text-white" />
-                            ) : (
-                                <ShoppingCart className="w-4 h-4" />
-                            )}
-                            <span>Add to cart</span>
-                        </button>
+                        {defaultVariant?.is_in_cart ? (
+                            <Link
+                                href="/cart"
+                                className="w-fit h-[40px] px-5 rounded-full bg-[#4E3325] text-white flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[14px] hover:bg-[#3D281D] active:scale-[0.98] transition-all duration-300 cursor-pointer"
+                            >
+                                <ArrowRight className="w-4 h-4" />
+                                <span>Go to Cart</span>
+                            </Link>
+                        ) : (
+                            <button
+                                onClick={(e) => handleAddToCart(product, e)}
+                                disabled={
+                                    addingProductId === product.id || !hasVariants || !isInStock
+                                }
+                                className="w-fit h-[40px] px-5 rounded-full bg-[#4E3325] text-white flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[14px] hover:bg-[#3D281D] active:scale-[0.98] transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                {addingProductId === product.id ? (
+                                    <Loader2 className="w-4 h-4 animate-spin text-white" />
+                                ) : (
+                                    <ShoppingCart className="w-4 h-4" />
+                                )}
+                                <span>
+                                    {addingProductId === product.id
+                                        ? ''
+                                        : !hasVariants
+                                          ? 'Coming Soon'
+                                          : !isInStock
+                                            ? 'Out of Stock'
+                                            : 'Add to cart'}
+                                </span>
+                            </button>
+                        )}
                     </AuthActionWrapper>
                 </div>
             </div>
@@ -121,7 +155,6 @@ function ProductCard({
 }
 
 export default function ExploreBytes() {
-    const router = useRouter();
     const { convertPrice, isLoading: isCurrencyLoading } = useCurrency();
     const { mutate: addToCart } = useAddToCart();
     const { showToast } = useCartToast();
@@ -144,6 +177,28 @@ export default function ExploreBytes() {
 
     const handleAddToCart = (product: any, e: React.MouseEvent) => {
         e.stopPropagation();
+        e.preventDefault();
+
+        const defaultVariant = product.variants?.[0];
+        const hasVariants = product.variants && product.variants.length > 0;
+        const isInStock = hasVariants
+            ? defaultVariant && defaultVariant.stock > 0 && defaultVariant.in_stock !== false
+            : false;
+
+        if (!hasVariants) {
+            toast.error('This product is coming soon and cannot be added to cart.');
+            return;
+        }
+
+        if (!defaultVariant) {
+            toast.error('No variant is available for this product.');
+            return;
+        }
+
+        if (!isInStock) {
+            toast.error('This variant is currently out of stock.');
+            return;
+        }
 
         setAddingProductId(product.id);
 
@@ -153,7 +208,7 @@ export default function ExploreBytes() {
                 showToast({
                     name: product.name,
                     image: product.images?.[0]?.image || '/placeholder-image.png',
-                    weight: product.variants?.[0]?.size || '200g',
+                    weight: defaultVariant?.size || 'Standard',
                     qty: 1,
                 });
                 setAddingProductId(null);
@@ -162,24 +217,25 @@ export default function ExploreBytes() {
         }
 
         // Live API call for real products
-        const defaultVariant = product.variants?.[0]?.id;
         addToCart(
             {
                 product: product.id,
-                variant: defaultVariant,
+                variant: defaultVariant?.id,
                 quantity: 1,
             },
             {
                 onSuccess: () => {
                     showToast({
                         name: product.name,
-                        image: product.images?.[0]?.image || product.image,
-                        weight: product.variants?.[0]?.size || 'Standard',
+                        image:
+                            product.images?.[0]?.image || product.image || '/placeholder-image.png',
+                        weight: defaultVariant?.size || 'Standard',
                         qty: 1,
                     });
                     setAddingProductId(null);
                 },
-                onError: () => {
+                onError: (error: any) => {
+                    toast.error(error?.message || 'Failed to add item to cart');
                     setAddingProductId(null);
                 },
             }
@@ -206,8 +262,8 @@ export default function ExploreBytes() {
                         <Loader2 className="w-8 h-8 animate-spin text-[#C4994A]" />
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
-                        {apiProducts.map((product: any, index: number) => (
+                    <div className="flex flex-wrap justify-left gap-x-6 gap-y-10">
+                        {apiProducts?.map((product: any, index: number) => (
                             <ProductCard
                                 key={product.id}
                                 product={product}
@@ -223,12 +279,12 @@ export default function ExploreBytes() {
 
                 {/* View All Button */}
                 <div className="mt-16 flex justify-center">
-                    <button
-                        onClick={() => router.push('/products')}
+                    <Link
+                        href="/products"
                         className="font-inter-tight font-semibold text-[16px] text-[#8E8E8E] hover:text-[#4E3325] transition-colors duration-300 flex items-center gap-1 cursor-pointer"
                     >
                         View all <span className="text-lg">→</span>
-                    </button>
+                    </Link>
                 </div>
             </div>
         </section>

@@ -1,8 +1,12 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAddToCart } from '@/queries/use-cart';
+import { useCartToast } from '@/contexts/CartToastContext';
+import AuthActionWrapper from '@/components/AuthActionWrapper';
+import { Loader2 } from 'lucide-react';
+import { toast } from '@/components/ui/Toast';
 
 interface Product {
     id: string;
@@ -14,6 +18,7 @@ interface Product {
     price: string | number;
     images?: { image: string }[];
     icon?: string;
+    variants?: any[];
 }
 
 interface ProductCardProps {
@@ -21,7 +26,8 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-    const router = useRouter();
+    const { mutate: addToCart, isPending } = useAddToCart();
+    const { showToast } = useCartToast();
 
     // Format price
     const formattedPrice = new Intl.NumberFormat('en-IN', {
@@ -31,58 +37,121 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     const imageUrl = product.images?.[0]?.image || '/placeholder-image.png';
 
-    const handleClick = () => {
-        router.push(`/products/${product.slug}`);
+    const defaultVariant = product.variants?.[0];
+    const hasVariants = product.variants && product.variants.length > 0;
+    const isInStock = hasVariants
+        ? defaultVariant && defaultVariant.stock > 0 && defaultVariant.in_stock !== false
+        : false;
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (!hasVariants) {
+            toast.error('This product is coming soon and cannot be added to cart.');
+            return;
+        }
+
+        if (!defaultVariant) {
+            toast.error('No variant is available for this product.');
+            return;
+        }
+
+        if (!isInStock) {
+            toast.error('This variant is currently out of stock.');
+            return;
+        }
+
+        addToCart(
+            {
+                product: product.id,
+                variant: defaultVariant?.id,
+                quantity: 1,
+            },
+            {
+                onSuccess: () => {
+                    showToast({
+                        name: product.name,
+                        image: imageUrl,
+                        weight: defaultVariant?.size || 'Standard',
+                        qty: 1,
+                    });
+                },
+                onError: (error: any) => {
+                    toast.error(error?.message || 'Failed to add item to cart');
+                },
+            }
+        );
     };
 
     return (
-        <div
-            className="flex flex-col h-full transition-shadow duration-300 cursor-pointer"
-            onClick={handleClick}
-        >
-            {/* Image Container */}
-            <div className="relative w-full aspect-square mb-[16px] rounded-[12px] overflow-hidden bg-[#7C7C44]">
-                {product.images && product.images.length > 0 ? (
-                    <img
-                        src={imageUrl}
-                        alt={product.name}
-                        className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
-                    />
+        <div className="flex flex-col h-full transition-shadow duration-300">
+            <Link
+                href={`/products/${product.slug}`}
+                className="flex flex-col flex-grow group cursor-pointer"
+            >
+                {/* Image Container */}
+                <div className="relative w-full aspect-square mb-[16px] rounded-[12px] overflow-hidden bg-[#7C7C44]">
+                    {product.images && product.images.length > 0 ? (
+                        <img
+                            src={imageUrl}
+                            alt={product.name}
+                            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                        />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-4xl text-white/50">
+                            {product.icon || '📦'}
+                        </div>
+                    )}
+                </div>
+
+                {/* Content */}
+                <div className="flex flex-col flex-grow">
+                    {/* Category */}
+                    <p className="font-bricolage font-normal text-[12px] leading-[16px] text-[#747474] mb-2">
+                        {product.category?.name || 'Category'}
+                    </p>
+
+                    {/* Title */}
+                    <h3 className="font-inter-tight font-semibold text-[18px] leading-[150%] text-[#191919]  line-clamp-1">
+                        {product.name}
+                    </h3>
+
+                    {/* Price */}
+                    <p className="font-inter-tight font-semibold text-[16px] leading-[150%] text-[#373737] mb-[16px]">
+                        {formattedPrice}
+                    </p>
+                </div>
+            </Link>
+
+            {/* Add to Cart Button wrapper (outside the Link to prevent nested anchor tags) */}
+            <AuthActionWrapper>
+                {defaultVariant?.is_in_cart ? (
+                    <Link
+                        href="/cart"
+                        className="w-full max-w-full h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-normal text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer"
+                    >
+                        Go to Cart
+                    </Link>
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl text-white/50">
-                        {product.icon || '📦'}
-                    </div>
+                    <button
+                        className="w-full max-w-full h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-normal text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                        onClick={handleAddToCart}
+                        disabled={isPending || !hasVariants || !isInStock}
+                    >
+                        {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                        <span>
+                            {isPending
+                                ? ''
+                                : !hasVariants
+                                  ? 'Coming Soon'
+                                  : !isInStock
+                                    ? 'Out of Stock'
+                                    : 'Add to cart'}
+                        </span>
+                    </button>
                 )}
-            </div>
-
-            {/* Content */}
-            <div className="flex flex-col flex-grow">
-                {/* Category */}
-                <p className="font-bricolage font-normal text-[12px] leading-[16px] text-[#747474] mb-2">
-                    {product.category?.name || 'Category'}
-                </p>
-
-                {/* Title */}
-                <h3 className="font-inter-tight font-semibold text-[18px] leading-[150%] text-[#191919]  line-clamp-1">
-                    {product.name}
-                </h3>
-
-                {/* Price */}
-                <p className="font-inter-tight font-semibold text-[16px] leading-[150%] text-[#373737] mb-[16px]">
-                    {formattedPrice}
-                </p>
-
-                {/* Add to Cart Button */}
-                <button
-                    className="w-full max-w-full h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-normal text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        // Add to cart logic here
-                    }}
-                >
-                    Add to cart
-                </button>
-            </div>
+            </AuthActionWrapper>
         </div>
     );
 };
