@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Check, FileText, Star, Truck } from 'lucide-rea
 import { formatDate } from '@/utils/date-utils';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import type { Order } from '@/types/order';
+import { generateInvoicePDF } from '@/utils/invoice-generator';
 
 export type OrderCardProps = {
     order: Order;
@@ -110,6 +111,7 @@ export default function OrderCard({ order }: OrderCardProps) {
                             <div className="mt-5">
                                 <button
                                     type="button"
+                                    onClick={() => generateInvoicePDF(order, convertPrice)}
                                     className="inline-flex items-center gap-2 rounded-[10px] border border-[#d6e9f8] bg-[#f2f8fc] px-[18px] py-[10px] text-[14px] font-medium text-[#007DDC] transition hover:bg-[#e4f1fa]"
                                 >
                                     <FileText size={18} />
