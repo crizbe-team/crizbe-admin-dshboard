@@ -43,15 +43,11 @@ export default function CartSummaryCard({
                     </div>
                     <div className="flex items-center justify-between text-[#474747]">
                         <span>Packing</span>
-                        <span className="text-[#212121]">{formatMoney(packing)}</span>
+                        <span className="text-[#212121]">Free</span>
                     </div>
                     <div className="flex items-center justify-between text-[#474747]">
                         <span>Shipping</span>
-                        <span className="text-[#212121]">{shippingLabel}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-[#474747]">
-                        <span>Discount</span>
-                        <span className="text-[#212121]">{discountLabel}</span>
+                        <span className="text-[#212121]">Free</span>
                     </div>
                     <div className="flex items-center justify-between text-[#474747]">
                         <span>Total Tax</span>
@@ -69,7 +65,6 @@ export default function CartSummaryCard({
             <button
                 type="button"
                 onClick={onContinue}
-
                 className="mt-[16px] w-full rounded-[12px] py-3 text-sm font-medium text-white cursor-pointer
           bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)]
           shadow-sm hover:opacity-95 active:opacity-90 transition text-[14px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
