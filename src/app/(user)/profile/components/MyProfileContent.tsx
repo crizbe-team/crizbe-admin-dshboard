@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import MyProfileCard from './MyProfileCard';
 import EditProfileModal from '@/components/Modals/EditProfileModal';
+import UpdatePasswordModal from '@/components/Modals/UpdatePasswordModal';
 import { useFetchMinimalDetails, useUpdateProfile, useUploadProfilePicture } from '@/queries/use-account';
 
 export default function MyProfileContent() {
@@ -10,6 +11,7 @@ export default function MyProfileContent() {
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
     const { mutate: uploadPicture, isPending: isUploadingPic } = useUploadProfilePicture();
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showUpdatePasswordModal, setShowUpdatePasswordModal] = useState(false);
 
     const fullName = minimalDetailsRes?.data?.first_name
         ? minimalDetailsRes?.data?.first_name + ' ' + (minimalDetailsRes?.data?.last_name || '')
@@ -60,6 +62,7 @@ export default function MyProfileContent() {
                 onEditClick={() => setShowEditModal(true)}
                 onUploadAvatar={handleUploadAvatar}
                 isUploadingAvatar={isUploadingPic}
+                onUpdatePasswordClick={() => setShowUpdatePasswordModal(true)}
             />
 
             {/* Edit Profile Modal */}
@@ -69,6 +72,13 @@ export default function MyProfileContent() {
                 initialData={minimalDetailsRes?.data}
                 onSubmit={handleProfileUpdate}
                 isLoading={isUpdating}
+            />
+
+            {/* Update Password Modal */}
+            <UpdatePasswordModal
+                open={showUpdatePasswordModal}
+                onClose={() => setShowUpdatePasswordModal(false)}
+                email={minimalDetailsRes?.data?.email || ''}
             />
         </>
     );

@@ -16,6 +16,7 @@ interface MyProfileCardProps {
     onEditClick?: () => void;
     onUploadAvatar?: (file: File) => Promise<void> | void;
     isUploadingAvatar?: boolean;
+    onUpdatePasswordClick?: () => void;
 }
 
 export default function MyProfileCard({
@@ -23,6 +24,7 @@ export default function MyProfileCard({
     onEditClick,
     onUploadAvatar,
     isUploadingAvatar,
+    onUpdatePasswordClick,
 }: MyProfileCardProps) {
     // Default avatar image matching the professional style in the screenshot
     const defaultAvatarUrl = '/images/user/default-avatar.png';
@@ -193,13 +195,13 @@ export default function MyProfileCard({
                         <span>Security</span>
                     </h3>
 
-                    <Link
-                        href="/profile/update-password"
+                    <button
+                        onClick={onUpdatePasswordClick}
                         className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#007DDC] hover:text-[#0056A8] transition-colors group"
                     >
                         <span>Update password</span>
                         <Key className="h-4 w-4 text-[#007DDC] stroke-[2.5] group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
+                    </button>
                 </div>
             </div>
         </div>
