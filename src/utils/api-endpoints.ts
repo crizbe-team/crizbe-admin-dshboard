@@ -63,6 +63,8 @@ export const API_ENDPOINTS = {
     GET_ADDRESSES: 'accounts/addresses/',
     GET_ADDRESS: 'accounts/addresses/:id/',
     GET_MINIMAL_DETAILS: 'accounts/minimal-details/',
+    UPDATE_PROFILE: 'accounts/profile/update/',
+    UPLOAD_PROFILE_PICTURE: 'accounts/profile/upload-picture/',
 
     // Client endpoints
     GET_CLIENTS: 'accounts/clients/',

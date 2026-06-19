@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Contact, Pencil, Shield, Key } from 'lucide-react';
+import { Contact, Pencil, Shield, Key, Check, X, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface ProfileData {
@@ -14,15 +14,74 @@ interface ProfileData {
 interface MyProfileCardProps {
     profileData: ProfileData;
     onEditClick?: () => void;
+    onUploadAvatar?: (file: File) => Promise<void> | void;
+    isUploadingAvatar?: boolean;
 }
 
 export default function MyProfileCard({
     profileData,
     onEditClick,
+    onUploadAvatar,
+    isUploadingAvatar,
 }: MyProfileCardProps) {
     // Default avatar image matching the professional style in the screenshot
-    const defaultAvatarUrl = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=256&h=256&q=80';
-    const avatarSrc = profileData.avatar || defaultAvatarUrl;
+    const defaultAvatarUrl = '/images/user/default-avatar.png';
+    
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
+    const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            const objectUrl = URL.createObjectURL(file);
+            setPreviewUrl(objectUrl);
+        }
+    };
+
+    const handleEditClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        fileInputRef.current?.click();
+    };
+
+    const handleSaveClick = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (selectedFile && onUploadAvatar) {
+            try {
+                await onUploadAvatar(selectedFile);
+                setSelectedFile(null);
+                if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl);
+                    setPreviewUrl(null);
+                }
+            } catch (error) {
+                console.error('Failed to upload avatar:', error);
+            }
+        }
+    };
+
+    const handleCancelClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setSelectedFile(null);
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+            setPreviewUrl(null);
+        }
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    React.useEffect(() => {
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
+
+    const avatarSrc = previewUrl || profileData.avatar || defaultAvatarUrl;
 
     return (
         <div className="w-full flex flex-col gap-6">
@@ -32,18 +91,48 @@ export default function MyProfileCard({
             </h1>
 
             {/* Avatar Section */}
-            <div className="relative w-[130px] h-[130px] rounded-[32px] overflow-hidden bg-gray-100 shadow-sm border border-gray-200">
-                <img
-                    src={avatarSrc}
-                    alt={profileData.fullName}
-                    className="h-full w-full object-cover"
+            <div className="relative w-[130px] h-[130px] rounded-[32px] bg-gray-100 shadow-sm border border-gray-200">
+                <div className="w-full h-full rounded-[32px] overflow-hidden">
+                    <img
+                        src={avatarSrc}
+                        alt={profileData.fullName}
+                        className="h-full w-full object-cover"
+                    />
+                </div>
+
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="hidden"
                 />
+
+                {selectedFile && !isUploadingAvatar && (
+                    <button
+                        type="button"
+                        onClick={handleCancelClick}
+                        className="absolute -top-1 -right-1 flex items-center justify-center bg-white hover:bg-red-50 text-red-500 w-7 h-7 rounded-full shadow-md border border-gray-200 transition-colors z-10"
+                        title="Cancel"
+                    >
+                        <X className="w-4 h-4 stroke-[2.5]" />
+                    </button>
+                )}
+
                 <button
-                    onClick={onEditClick}
-                    className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-white hover:bg-gray-50 text-[#007DDC] text-xs font-semibold px-3 py-1.5 rounded-full shadow-md border border-gray-100 transition-colors"
+                    type="button"
+                    onClick={selectedFile ? handleSaveClick : handleEditClick}
+                    disabled={isUploadingAvatar}
+                    className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-white hover:bg-gray-50 text-[#007DDC] text-xs font-semibold px-3 py-1.5 rounded-full shadow-md border border-gray-100 transition-colors disabled:opacity-50 z-10"
                 >
-                    <Pencil className="w-3 h-3 text-[#007DDC] stroke-[2.5]" />
-                    <span>Edit</span>
+                    {isUploadingAvatar ? (
+                        <Loader2 className="w-3 h-3 animate-spin text-[#007DDC]" />
+                    ) : selectedFile ? (
+                        <Check className="w-3 h-3 text-[#007DDC] stroke-[2.5]" />
+                    ) : (
+                        <Pencil className="w-3 h-3 text-[#007DDC] stroke-[2.5]" />
+                    )}
+                    <span>{selectedFile ? 'Save' : 'Edit'}</span>
                 </button>
             </div>
 

@@ -5,8 +5,9 @@ import {
     createAddress,
     getClients,
     getClient,
-    createClient,
     getMinimalDetails,
+    updateProfile,
+    uploadProfilePicture,
 } from '../services/account';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
@@ -17,6 +18,26 @@ export const useFetchMinimalDetails = (enabled: boolean = false) => {
         queryKey: [GET_MINIMAL_DETAILS],
         queryFn: () => getMinimalDetails(),
         enabled: enabled,
+    });
+};
+
+export const useUpdateProfile = () => {
+    const queryClient = useQueryClient();
+    return useMutation<any, any, any>({
+        mutationFn: (data: any) => updateProfile(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [GET_MINIMAL_DETAILS] });
+        },
+    });
+};
+
+export const useUploadProfilePicture = () => {
+    const queryClient = useQueryClient();
+    return useMutation<any, any, File>({
+        mutationFn: (file: File) => uploadProfilePicture(file),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [GET_MINIMAL_DETAILS] });
+        },
     });
 };
 

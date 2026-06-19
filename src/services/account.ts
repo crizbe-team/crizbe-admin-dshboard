@@ -17,6 +17,26 @@ export const getMinimalDetails = async () => {
     return handleApiResponse(response);
 };
 
+export const updateProfile = async (data: any) => {
+    const { UPDATE_PROFILE } = API_ENDPOINTS;
+    const url = new ApiBuilder(UPDATE_PROFILE).build();
+    const response = await api.patch(url, data);
+    return handleApiResponse(response);
+};
+
+export const uploadProfilePicture = async (file: File) => {
+    const { UPLOAD_PROFILE_PICTURE } = API_ENDPOINTS;
+    const url = new ApiBuilder(UPLOAD_PROFILE_PICTURE).build();
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+    const response = await api.post(url, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return handleApiResponse(response);
+};
+
 export const getAddress = async (
     id: string,
     method: 'get' | 'delete' | 'put' = 'get',
