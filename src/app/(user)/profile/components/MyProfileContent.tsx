@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import MyProfileCard from './MyProfileCard';
 import ConfirmationModal from '@/components/Modals/ConfirmationModal';
 
-export default function MyProfilePage() {
+export default function MyProfileContent() {
     const [showEditModal, setShowEditModal] = useState(false);
 
     const profileData = {
