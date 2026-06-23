@@ -14,6 +14,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import Cookies from 'js-cookie';
 import { useFetchCartSummary } from '@/queries/use-cart';
 import RedirectingModal from '@/components/Modals/RedirectingModal';
+import { toast } from '@/components/ui/Toast';
 
 type PayMethod = 'upi' | 'card' | 'netbanking' | 'wallet';
 
@@ -79,7 +80,7 @@ export default function PaymentPage() {
         console.log('handleRazorpayPayment called with method:', method);
         if (!selectedAddress) {
             console.log('Error: No selected address');
-            alert('Please add an address first');
+            toast.error('Please add an address first');
             return;
         }
 
@@ -150,7 +151,7 @@ export default function PaymentPage() {
                         }
                     } catch (error) {
                         console.error('Payment verification failed:', error);
-                        alert('Payment verification failed. Please contact support.');
+                        toast.error('Payment verification failed. Please contact support.');
                     }
                 },
                 modal: {
@@ -164,7 +165,9 @@ export default function PaymentPage() {
             openCheckout(options);
         } catch (error) {
             console.error('Razorpay payment failed:', error);
-            alert(error instanceof Error ? error.message : 'Payment failed. Please try again.');
+            toast.error(
+                error instanceof Error ? error.message : 'Payment failed. Please try again.'
+            );
         } finally {
             setIsProcessing(false);
         }
@@ -179,16 +182,17 @@ export default function PaymentPage() {
         ) {
             if (!isRazorpayLoaded) {
                 console.log('Razorpay not loaded yet');
-                alert('Razorpay is still loading. Please wait...');
+                toast.error('Razorpay is still loading. Please wait...');
                 return;
             }
             await handleRazorpayPayment(selected);
         } else {
-            alert('Please select a payment method');
+            toast.error('Please select a payment method');
         }
     };
 
-    const showRedirect = !isAddressesLoading && !isSummaryLoading && (!targetAddressId || !selectedAddress);
+    const showRedirect =
+        !isAddressesLoading && !isSummaryLoading && (!targetAddressId || !selectedAddress);
 
     return (
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">

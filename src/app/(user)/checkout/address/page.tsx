@@ -14,6 +14,7 @@ import {
     useDeleteAddress,
 } from '@/queries/use-account';
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import { toast } from '@/components/ui/Toast';
 
 type Address = {
     id: string;
@@ -274,7 +275,7 @@ export default function ShippingPage() {
                         <CartSummaryCard
                             onContinue={() => {
                                 if (!selected) {
-                                    alert('Please select a shipping address');
+                                    toast.error('Please select a shipping address');
                                     return;
                                 }
                                 Cookies.set('selected_address_id', selected, { expires: 1 });
@@ -297,6 +298,7 @@ export default function ShippingPage() {
                 editingAddress={editingAddress}
                 isLoading={isCreating || isUpdating}
             />
+
         </main>
     );
 }
