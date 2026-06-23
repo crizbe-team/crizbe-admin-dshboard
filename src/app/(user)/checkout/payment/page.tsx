@@ -7,11 +7,12 @@ import { useRouter } from 'next/navigation';
 import CartSummaryCard from '../../_components/checkout/CartSummaryCard';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useFetchAddresses } from '@/queries/use-account';
-import { useFetchCart } from '@/queries/use-cart';
 import { useRazorpay } from '@/hooks/useRazorpay';
-import { useCreatePaymentOrder, useVerifyPayment, useRazorpayKeyId } from '@/queries/use-payment';
+import { useCreatePaymentOrder, useVerifyPayment } from '@/queries/use-payment';
 import { createOrder } from '@/services/orders';
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import Cookies from 'js-cookie';
+import { useFetchCartSummary } from '@/queries/use-cart';
 
 type PayMethod = 'bank' | 'phonepe' | 'upi' | 'card' | 'cod' | 'razorpay';
 
@@ -22,18 +23,30 @@ export default function PaymentPage() {
     const [selected, setSelected] = useState<PayMethod>('razorpay'); // Default to Razorpay
 
     // Fetch cart and addresses
-    const { data: cartData } = useFetchCart();
-    const { data: addressesData } = useFetchAddresses();
+    const { data: addressesData, isLoading: isAddressesLoading } = useFetchAddresses();
+    const { data: summaryResponse, isLoading: isSummaryLoading } = useFetchCartSummary();
 
     // Payment hooks
     const { isLoaded: isRazorpayLoaded, openCheckout } = useRazorpay();
-    const { data: keyIdData } = useRazorpayKeyId();
     const createPaymentOrderMutation = useCreatePaymentOrder();
     const verifyPaymentMutation = useVerifyPayment();
 
-    // Find default or first address
-    const defaultAddress =
-        addressesData?.data?.find((addr: any) => addr.is_default) || addressesData?.data?.[0];
+    // Find the correct address ID (cookie first, then default address from cart summary)
+    const targetAddressId = useMemo(() => {
+        const cookieId = Cookies.get('selected_address_id');
+        if (cookieId) return cookieId;
+
+        const defaultId = summaryResponse?.data?.default_address;
+        if (defaultId) return defaultId;
+
+        return null;
+    }, [summaryResponse]);
+
+    // Find the selected address from addressesData
+    const selectedAddress = useMemo(() => {
+        if (!targetAddressId || !addressesData?.data) return null;
+        return addressesData.data.find((addr: any) => addr.id === targetAddressId);
+    }, [addressesData, targetAddressId]);
 
     const methods = useMemo(
         () => [
@@ -42,19 +55,14 @@ export default function PaymentPage() {
                 label: 'Razorpay',
                 icon: CreditCard,
             },
-            {
-                id: 'cod' as const,
-                label: 'Cash on Delivery',
-                icon: Wallet,
-            },
         ],
         []
     );
 
     const handleRazorpayPayment = async () => {
         console.log('handleRazorpayPayment called');
-        if (!defaultAddress) {
-            console.log('Error: No default address');
+        if (!selectedAddress) {
+            console.log('Error: No selected address');
             alert('Please add an address first');
             return;
         }
@@ -62,9 +70,9 @@ export default function PaymentPage() {
         console.log('Setting isProcessing to true');
         setIsProcessing(true);
         try {
-            console.log('Step 1: Creating order with address:', defaultAddress.id);
+            console.log('Step 1: Creating order with address:', selectedAddress.id);
             const orderResponse = await createOrder({
-                address_id: defaultAddress.id,
+                address_id: selectedAddress.id,
                 payment_method: 'Razorpay',
                 currency: currency || 'INR',
             });
@@ -98,9 +106,9 @@ export default function PaymentPage() {
                 description: 'Order Payment',
                 order_id: paymentData.razorpay_order_id,
                 prefill: {
-                    name: defaultAddress.first_name + ' ' + defaultAddress.last_name,
+                    name: selectedAddress.first_name + ' ' + selectedAddress.last_name,
                     email: '', // Get from user profile if available
-                    contact: defaultAddress.phone_number,
+                    contact: selectedAddress.phone_number,
                 },
                 theme: { color: '#C4994A' },
                 handler: async (razorpayResponse: any) => {
@@ -113,6 +121,7 @@ export default function PaymentPage() {
                         });
 
                         if (verifyResponse.status_code === 6000) {
+                            Cookies.remove('selected_address_id');
                             // Step 5: Redirect to success page
                             router.push(
                                 `/profile/my-orders?orderId=${verifyResponse.data.order_id}`
@@ -144,42 +153,7 @@ export default function PaymentPage() {
         }
     };
 
-    const handleCodPayment = async () => {
-        if (!defaultAddress) {
-            alert('Please add an address first');
-            return;
-        }
-
-        setIsProcessing(true);
-        try {
-            // Create order with COD method
-            const orderResponse = await createOrder({
-                address_id: defaultAddress.id,
-                payment_method: 'COD',
-                currency: currency || 'INR',
-            });
-
-            if (orderResponse.status_code === 6000) {
-                // Redirect to success page
-                router.push(`/order-success?orderId=${orderResponse.data.id}`);
-            } else {
-                throw new Error(orderResponse.message || 'Failed to create order');
-            }
-        } catch (error) {
-            console.error('COD payment failed:', error);
-            alert(error instanceof Error ? error.message : 'Payment failed. Please try again.');
-        } finally {
-            setIsProcessing(false);
-        }
-    };
-
     const handleCheckout = async () => {
-        console.log(
-            'handleCheckout triggered. selected:',
-            selected,
-            'isRazorpayLoaded:',
-            isRazorpayLoaded
-        );
         if (selected === 'razorpay') {
             if (!isRazorpayLoaded) {
                 console.log('Razorpay not loaded yet');
@@ -187,27 +161,8 @@ export default function PaymentPage() {
                 return;
             }
             await handleRazorpayPayment();
-        } else if (selected === 'cod') {
-            await handleCodPayment();
         } else {
-            // Other payment methods remain as they were
-            setIsProcessing(true);
-            try {
-                // Create order with selected currency
-                await createOrder({
-                    payment_method: selected,
-                    currency: currency, // Pass selected currency to API
-                    // Add other required order data here
-                });
-
-                // Redirect to success page or order confirmation
-                router.push('/order-success');
-            } catch (error) {
-                console.error('Checkout failed:', error);
-                // Handle error (show error message to user)
-            } finally {
-                setIsProcessing(false);
-            }
+            alert('Please select a payment method');
         }
     };
 

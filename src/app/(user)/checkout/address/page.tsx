@@ -6,6 +6,7 @@ import Footer from '@/app/_components/Footer';
 import CartSummaryCard from '@/app/(user)/_components/checkout/CartSummaryCard';
 import AddAddressModal from '@/app/(user)/_components/checkout/AddAddressModal';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 import {
     useFetchAddresses,
     useCreateAddress,
@@ -276,6 +277,7 @@ export default function ShippingPage() {
                                     alert('Please select a shipping address');
                                     return;
                                 }
+                                Cookies.set('selected_address_id', selected, { expires: 1 });
                                 router.push('/checkout/payment');
                             }}
                         />
