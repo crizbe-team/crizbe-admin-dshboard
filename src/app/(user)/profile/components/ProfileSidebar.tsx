@@ -11,9 +11,9 @@ const NAV_ITEMS = [
     { href: '/profile', label: 'Profile' },
     { href: '/profile/my-orders', label: 'My orders' },
     { href: '/profile/my-addresses', label: 'My addresses', dividerAfter: true },
-    { href: '/profile/about-us', label: 'About us' },
-    { href: '/profile/privacy-policy', label: 'Privacy policy' },
-    { href: '/profile/terms-and-conditions', label: 'Terms & conditions', dividerAfter: true },
+    { href: '/our-story', label: 'About us' },
+    { href: '/privacy-policy', label: 'Privacy policy' },
+    { href: '/terms-and-conditions', label: 'Terms & conditions', dividerAfter: true },
 ];
 
 export default function ProfileSidebar({ userName = 'Customer' }: { userName?: string }) {
@@ -40,10 +40,11 @@ export default function ProfileSidebar({ userName = 'Customer' }: { userName?: s
                             <React.Fragment key={item.href}>
                                 <Link
                                     href={item.href}
-                                    className={`flex items-center justify-between rounded-xl  mb-[24px] last:mb-0 text-[18px] transition-colors ${isActive
-                                        ? 'text-[#007DDC]'
-                                        : 'text-[#191919] hover:text-[#007DDC]'
-                                        }`}
+                                    className={`flex items-center justify-between rounded-xl  mb-[24px] last:mb-0 text-[18px] transition-colors ${
+                                        isActive
+                                            ? 'text-[#007DDC]'
+                                            : 'text-[#191919] hover:text-[#007DDC]'
+                                    }`}
                                 >
                                     <span>{item.label}</span>
                                     {isActive && (
