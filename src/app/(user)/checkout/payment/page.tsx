@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { CreditCard, Wallet } from 'lucide-react';
+import { CreditCard, Wallet, Smartphone, Landmark } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
 import { useRouter } from 'next/navigation';
 import CartSummaryCard from '../../_components/checkout/CartSummaryCard';
@@ -14,13 +14,13 @@ import Breadcrumb from '@/components/ui/Breadcrumb';
 import Cookies from 'js-cookie';
 import { useFetchCartSummary } from '@/queries/use-cart';
 
-type PayMethod = 'bank' | 'phonepe' | 'upi' | 'card' | 'cod' | 'razorpay';
+type PayMethod = 'upi' | 'card' | 'netbanking' | 'wallet';
 
 export default function PaymentPage() {
     const router = useRouter();
     const { currency } = useCurrency();
     const [isProcessing, setIsProcessing] = useState(false);
-    const [selected, setSelected] = useState<PayMethod>('razorpay'); // Default to Razorpay
+    const [selected, setSelected] = useState<PayMethod>('upi'); // Default to UPI
 
     // Fetch cart and addresses
     const { data: addressesData, isLoading: isAddressesLoading } = useFetchAddresses();
@@ -51,16 +51,31 @@ export default function PaymentPage() {
     const methods = useMemo(
         () => [
             {
-                id: 'razorpay' as const,
-                label: 'Razorpay',
+                id: 'upi' as const,
+                label: 'UPI (GPay, PhonePe, Paytm)',
+                icon: Smartphone,
+            },
+            {
+                id: 'card' as const,
+                label: 'Card (Credit/Debit)',
                 icon: CreditCard,
+            },
+            {
+                id: 'netbanking' as const,
+                label: 'Netbanking',
+                icon: Landmark,
+            },
+            {
+                id: 'wallet' as const,
+                label: 'Wallet',
+                icon: Wallet,
             },
         ],
         []
     );
 
-    const handleRazorpayPayment = async () => {
-        console.log('handleRazorpayPayment called');
+    const handleRazorpayPayment = async (method: 'card' | 'upi' | 'netbanking' | 'wallet') => {
+        console.log('handleRazorpayPayment called with method:', method);
         if (!selectedAddress) {
             console.log('Error: No selected address');
             alert('Please add an address first');
@@ -109,6 +124,7 @@ export default function PaymentPage() {
                     name: selectedAddress.first_name + ' ' + selectedAddress.last_name,
                     email: '', // Get from user profile if available
                     contact: selectedAddress.phone_number,
+                    method: method,
                 },
                 theme: { color: '#C4994A' },
                 handler: async (razorpayResponse: any) => {
@@ -154,13 +170,18 @@ export default function PaymentPage() {
     };
 
     const handleCheckout = async () => {
-        if (selected === 'razorpay') {
+        if (
+            selected === 'upi' ||
+            selected === 'card' ||
+            selected === 'netbanking' ||
+            selected === 'wallet'
+        ) {
             if (!isRazorpayLoaded) {
                 console.log('Razorpay not loaded yet');
                 alert('Razorpay is still loading. Please wait...');
                 return;
             }
-            await handleRazorpayPayment();
+            await handleRazorpayPayment(selected);
         } else {
             alert('Please select a payment method');
         }
