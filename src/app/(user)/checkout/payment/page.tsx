@@ -13,6 +13,7 @@ import { createOrder } from '@/services/orders';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Cookies from 'js-cookie';
 import { useFetchCartSummary } from '@/queries/use-cart';
+import RedirectingModal from '@/components/Modals/RedirectingModal';
 
 type PayMethod = 'upi' | 'card' | 'netbanking' | 'wallet';
 
@@ -187,8 +188,11 @@ export default function PaymentPage() {
         }
     };
 
+    const showRedirect = !isAddressesLoading && !isSummaryLoading && (!targetAddressId || !selectedAddress);
+
     return (
         <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
+            {showRedirect && <RedirectingModal open={true} />}
             <div className="wrapper mx-auto pt-[110px] pb-16">
                 <Breadcrumb items={breadcrumbItems} />
                 <h1 className="text-2xl font-semibold text-[#4E3325] py-[32px]">
