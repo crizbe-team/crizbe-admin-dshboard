@@ -44,7 +44,7 @@ const FeedbacSection = () => {
     const designation = currentFeedback.designation || 'Happy Customer';
 
     return (
-        <section className=" py-42 bg-[#F9F4E8] h-screen">
+        <section className=" py-42 bg-[#F9F4E8] min-h-screen">
             <div className="wrapper mx-auto px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                     <div className="order-2 lg:order-1 flex flex-col justify-center">
