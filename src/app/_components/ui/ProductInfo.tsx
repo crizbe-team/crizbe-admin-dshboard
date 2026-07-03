@@ -163,7 +163,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     )}
 
                     {/* Flavour Mock */}
-                    <div className="mb-[24px]">
+                    {/* <div className="mb-[24px]">
                         <h3 className="text-sm font-medium text-[#191919] mb-3">Flavour</h3>
                         <div className="flex gap-4">
                             {['Almond', 'Pistachio', 'Dark Choco'].map((flavour, i) => (
@@ -183,7 +183,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                 </button>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Variant Selection */}
                     <div className="mb-[24px]">
@@ -198,10 +198,11 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                             setQuantity(Math.max(1, v.stock || 0));
                                         }
                                     }}
-                                    className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-inter-tight font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${selectedVariant?.id === v.id
+                                    className={`w-[84px] h-[48px] py-[7px] px-[20px] rounded-[12px] border font-inter-tight font-medium text-[14px] leading-[150%] text-center transition-all duration-300 ${
+                                        selectedVariant?.id === v.id
                                             ? 'border-[#4E3325] bg-[#4E3325] text-white shadow-md transform scale-105'
                                             : 'border-[#EAEAEA] bg-white text-[#5A5A5A] hover:border-[#C19A5B] hover:bg-gray-50'
-                                        }`}
+                                    }`}
                                 >
                                     {v.size}
                                 </button>
@@ -287,19 +288,19 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                 {isPending ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
                                 ) : selectedVariant &&
-                                    !selectedVariant.in_stock ? null : selectedVariant?.is_in_cart ? (
-                                        <ArrowRight className="w-5 h-5" />
-                                    ) : (
+                                  !selectedVariant.in_stock ? null : selectedVariant?.is_in_cart ? (
+                                    <ArrowRight className="w-5 h-5" />
+                                ) : (
                                     <ShoppingCart className="w-5 h-5" />
                                 )}
                                 <span>
                                     {isPending
                                         ? ''
                                         : !isInStock
-                                            ? 'Out of Stock'
-                                            : selectedVariant?.is_in_cart
-                                                ? 'Go to Cart'
-                                                : 'Add to Cart'}
+                                          ? 'Out of Stock'
+                                          : selectedVariant?.is_in_cart
+                                            ? 'Go to Cart'
+                                            : 'Add to Cart'}
                                 </span>
                             </button>
                         </AuthActionWrapper>

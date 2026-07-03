@@ -23,5 +23,5 @@ export const toast = {
 };
 
 export const ToastContainer = () => {
-    return <Toaster position="top-right" richColors expand={false} closeButton />;
+    return <Toaster position="top-right" richColors expand={false} closeButton duration={5000} />;
 };
