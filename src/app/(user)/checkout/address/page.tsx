@@ -258,14 +258,25 @@ export default function ShippingPage() {
                             })}
 
                             {addresses.length === 0 && (
-                                <div className="text-center py-12 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">
-                                    <p className="text-[#474747] mb-4">No addresses found</p>
-                                    <button
-                                        onClick={handleAddAddress}
-                                        className="text-sm font-medium text-[#4E3325] hover:opacity-80 transition"
-                                    >
-                                        Add your first address
-                                    </button>
+                                <div className="text-center py-14 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">
+                                    <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
+                                        <img
+                                            src="https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-address.png"
+                                            alt="empty-address"
+                                        />
+                                    </div>
+                                    <p className="text-sm font-regular text-[#373737] mb-5">
+                                        Sorry, you don&apos;t have any <br /> shipping addresses saved yet!
+                                    </p>
+                                    <div className="flex justify-center">
+                                        <button
+                                            type="button"
+                                            onClick={handleAddAddress}
+                                            className="inline-flex items-center justify-center rounded-full bg-[#4E3325] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#3e291c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4E3325]/40"
+                                        >
+                                            Add your first address
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>

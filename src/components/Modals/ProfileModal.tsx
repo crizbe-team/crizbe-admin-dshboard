@@ -1,6 +1,4 @@
 import React from 'react'
-import admin from "../../../public/assets/images/admin.png"
-import Image from 'next/image'
 import { LogOut, User, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -35,13 +33,9 @@ function ProfileModal({ isOpen, ref }: props) {
                                 {/* User Header Section */}
                                 <div className='flex items-center p-5 bg-gradient-to-b from-[#2a2a2a] to-[#1e1e1e]'>
                                     <div className='relative'>
-                                        <Image
-                                            src={admin}
-                                            alt="admin"
-                                            width={45}
-                                            height={45}
-                                            className='rounded-full border-2 border-blue-500 p-[2px]'
-                                        />
+                                        <div className='w-[45px] h-[45px] rounded-full border-2 border-blue-500 p-[2px] flex items-center justify-center bg-gray-800 text-gray-300'>
+                                            <User size={20} />
+                                        </div>
                                         <div className='absolute bottom-0 right-1 w-3 h-3 bg-green-500 border-2 border-[#1e1e1e] rounded-full'></div>
                                     </div>
                                     <div className='ml-3 flex flex-col'>

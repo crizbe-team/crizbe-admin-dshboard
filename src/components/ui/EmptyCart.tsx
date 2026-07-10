@@ -10,7 +10,10 @@ function EmptyCart() {
     return (
         <section className="px-6 py-14">
             <div className="mx-auto flex h-36 w-36 items-center justify-center">
-                <img src="/images/user/frame.svg" alt="empty-cart" />
+                <img
+                    src="https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-cart.png"
+                    alt="empty-cart"
+                />
             </div>
 
             <p className=" text-center text-sm font-regular text-[#373737]">
