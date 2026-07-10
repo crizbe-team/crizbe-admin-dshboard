@@ -7,6 +7,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 export default function SmoothScroll() {
     useEffect(() => {
         let locoScroll;
+        let resizeObserver;
         let isMounted = true;
 
         const handleRefresh = () => {
@@ -463,6 +464,14 @@ export default function SmoothScroll() {
             });
 
             ScrollTrigger.refresh();
+
+            if (typeof ResizeObserver !== 'undefined' && scrollContainer) {
+                resizeObserver = new ResizeObserver(() => {
+                    handleRefresh();
+                    ScrollTrigger.refresh();
+                });
+                resizeObserver.observe(scrollContainer);
+            }
         };
 
         initScroll();
@@ -470,6 +479,10 @@ export default function SmoothScroll() {
         return () => {
             isMounted = false;
             ScrollTrigger.removeEventListener('refresh', handleRefresh);
+
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
 
             if (locoScroll) {
                 if (typeof locoScroll.destroy === 'function') {
