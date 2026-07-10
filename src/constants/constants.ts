@@ -7,3 +7,13 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; icon:
     Delivered: { label: 'Delivered', color: 'bg-green-500', icon: PackageCheck },
     Cancelled: { label: 'Cancelled', color: 'bg-red-500', icon: XCircle },
 };
+
+export const COMPANY_CONTACT = {
+    name: 'Crizbe Foods Private Limited',
+    door: 'Door : 773',
+    junction: 'Crizbe Junction, Venchempu PO Punalur',
+    location: 'Kollam, Kerala, India - 691333',
+    fullAddress: 'Crizbe Foods Private Limited, Door : 773, Crizbe Junction, Venchempu PO Punalur, Kollam, Kerala, India - 691333',
+    phone: '+91 95624 79175',
+    email: 'info@crizbe.com',
+};

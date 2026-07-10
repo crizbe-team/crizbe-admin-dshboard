@@ -32,7 +32,7 @@ export default function StoryPage() {
                         <br />
                         <div className="animate-in fade-in delay-300 duration-1000">
                             <ButtonLink
-                                href="#contact"
+                                href="/contact-us"
                                 style={{
                                     background:
                                         'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
@@ -59,9 +59,9 @@ export default function StoryPage() {
             </section>
 
             {/* Story Content Section */}
-            <main className="relative z-10 bg-white pt-10 pb-20">
+            <main className="relative z-10 bg-white py-16 md:py-24">
                 <div className="wrapper">
-                    <div className="mx-auto md:mx-0">
+                    <div className="max-w-5xl mx-auto">
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -72,22 +72,34 @@ export default function StoryPage() {
                             EXPLORE THE STORY OF OUR JOURNEY!
                         </motion.h2>
 
-                        <div className="space-y-8 text-[#474747] text-lg md:text-xl leading-relaxed text-justify font-inter-tight">
+                        <div className="space-y-12 text-[#474747] text-lg md:text-xl leading-relaxed text-justify font-inter-tight">
                             {[
-                                `Lorem ipsum dolor sit amet consectetur. Nibh et accumsan ac enim. Tortor non arcu condimentum aliquet lorem vitae ornare pulvinar mattis. Nisl gravida varius sed integer id fermentum suspendisse a. Amet mattis et quis mauris felis est. Amet lectus gravida eu fames faucibus sit. Egestas mattis pharetra semper arcu malesuada nisl. Arcu quam volutpat et condimentum imperdiet tellus tincidunt.`,
-                                `Laoreet pellentesque id sed elit. Sit viverra vitae in faucibus volutpat amet sit enim id. Sed in mollis purus dictum morbi blandit sed eu. Morbi sit ornare quis purus consectetur. Scelerisque duis viverra adipiscing pharetra lobortis pellentesque senectus. Nibh feugiat nunc quisque egestas aliquam egestas semper lacus. Lacus aenean sed arcu etiam. Augue velit lobortis elit tempus volutpat auctor. Netus feugiat odio egestas morbi consectetur pellentesque magnis adipiscing ultrices. In et volutpat eget penatibus justo ultricies. Amet amet enim velit suscipit vitae.`,
-                                `Tortor donec lacus eu sapien sed nisl venenatis elit. Placerat lectus pharetra massa accumsan augue. Diam nec ornare tortor posuere. Blandit amet ut quis augue magna vitae faucibus. Ultrices hendrerit viverra tellus viverra tincidunt tempor. Eu id etiam sollicitudin pharetra. Malesuada morbi volutpat turpis massa elit. Nunc elementum egestas augue integer ut sociis tellus. Uma justo adipiscing mattis et arcu odio orci sed. Sagittis vel urna at nunc enim nibh nunc feugiat sit. Faucibus felis varius sed sit. Nec aliquam amet diam non laoreet sit tortor tristique viverra. Sit nam velit sodales egestas nulla. Consectetur pellentesque vel tristique blandit non. Vivamus faucibus suspendisse blandit nec erat nam magna turpis egestas. Vitae urna sit nibh at.`,
-                                `Lorem dui enim sodales neque pellentesque orci maecenas. Lacus tempor sapien leo accumsan. Nec placerat nulla aliquet augue urna venenatis. Amet pulvinar pretium pretium mattis consectetur ultricies fermentum dolor. Risus felis bibendum elementum dictum dolor. Tempus porttitor ultricies sit in tincidunt. Ante sodales et odio sit tincidunt ornare rutrum morbi tellus. Ut scelerisque ac diam dolor dignissim amet. Volutpat sem orci iaculis luctus laoreet tempor sit mauris felis. Vel arcu orci sem adipiscing nisi elit integer. Donec nisi consectetur dictumst viverra augue sed id tristique ut. Nullam ut metus leo eget fusce turpis. Massa quam laoreet parturient habitant euismod amet lacus adipiscing ut. Diam scelerisque suspendisse elementum urna. Augue nunc commodo cursus justo mauris at aliquam lictus velit. Vestibulum posuere a in integer. Mauris amet facilisi velit pharetra. Lacus varius augue elementum nunc consectetur arcu elementum ullamcorper. Viverra sapien fringilla porta vulputate.`,
-                            ].map((para, i) => (
-                                <motion.p
+                                {
+                                    title: 'Crafting the Perfect Crunch',
+                                    text: "Crizbe was born out of a simple yet passionate pursuit: to redefine the art of snacking. We believed that a snack shouldn't just satisfy hunger—it should be a moment of pure luxury. Our journey began with a vision to combine the earthy goodness of premium nuts with the rich, indulgent texture of authentic Belgian chocolate.",
+                                },
+                                {
+                                    title: 'Real Ingredients, Uncompromised Quality',
+                                    text: 'Every single Crizbe Crunch Stick is a testament to culinary craftsmanship. We select only the finest almonds, pistachios, and hazelnuts, roasting them to golden perfection. Wrapped in crisp, delicate layers and generously dipped in premium Belgian chocolate, each stick is crafted to deliver the ultimate multi-textured taste experience.',
+                                },
+                                {
+                                    title: 'Elegance in Every Bite',
+                                    text: 'Whether it’s a mid-day office break, a quiet evening treat, or a shared celebration, Crizbe is made for those who appreciate the finer things. We commit to keeping our recipes simple, our ingredients genuine, and our crunch unmatched. Welcome to the Crizbe family, where luxury meets exception.',
+                                },
+                            ].map((section, i) => (
+                                <motion.div
                                     key={i}
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.6, delay: i * 0.1 }}
+                                    className="flex flex-col gap-3"
                                 >
-                                    {para}
-                                </motion.p>
+                                    <h3 className="text-xl md:text-2xl font-bricolage font-bold text-[#4E3325]">
+                                        {section.title}
+                                    </h3>
+                                    <p className="text-gray-700 leading-relaxed">{section.text}</p>
+                                </motion.div>
                             ))}
                         </div>
                     </div>

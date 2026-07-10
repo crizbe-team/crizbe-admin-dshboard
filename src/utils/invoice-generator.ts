@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { formatDate } from './date-utils';
+import { COMPANY_CONTACT } from '@/constants/constants';
 
 // Helper to load and convert SVG/Image to base64 PNG for jsPDF
 const getLogoBase64 = (url: string): Promise<string> => {
@@ -109,12 +110,12 @@ export const generateInvoicePDF = async (order: any, convertPrice: (val: number)
     doc.setTextColor(textColor[0], textColor[1], textColor[2]);
 
     const companyLines = [
-        'Crizbe Foods Private Limited',
-        'Door : 773',
-        'Crizbe Junction, Venchempu PO Punalur',
-        'Kollam, Kerala, India - 691333',
-        'Phone: +91 95624 79175',
-        'Email: info@crizbe.com',
+        COMPANY_CONTACT.name,
+        COMPANY_CONTACT.door,
+        COMPANY_CONTACT.junction,
+        COMPANY_CONTACT.location,
+        `Phone: ${COMPANY_CONTACT.phone}`,
+        `Email: ${COMPANY_CONTACT.email}`,
     ];
 
     let yCompany = 62;

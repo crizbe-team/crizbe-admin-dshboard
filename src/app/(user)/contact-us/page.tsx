@@ -14,6 +14,7 @@ import { useSubmitContactForm } from '@/queries/use-contact';
 import { FormInput } from '@/components/ui/FormInput';
 import { FormTextarea } from '@/components/ui/FormTextarea';
 import { toast } from '@/components/ui/Toast';
+import { COMPANY_CONTACT } from '@/constants/constants';
 
 export default function ContactUsPage() {
     const { mutate: submitForm, isPending } = useSubmitContactForm();
@@ -148,11 +149,13 @@ export default function ContactUsPage() {
                                     <span className="font-bold text-[#191919]">Address</span>
                                 </div>
                                 <p className="text-[#474747] text-sm leading-relaxed">
-                                    Office No: 7, 4th Floor Al Naboodah
+                                    {COMPANY_CONTACT.name}
                                     <br />
-                                    Al Shoala Building, Port Saeed,
+                                    {COMPANY_CONTACT.door}
                                     <br />
-                                    Deira, PO Box: 31923 Dubai, UAE
+                                    {COMPANY_CONTACT.junction}
+                                    <br />
+                                    {COMPANY_CONTACT.location}
                                 </p>
                                 <button className="mt-auto px-6 py-2 rounded-full border border-gray-200 text-sm font-semibold text-[#191919] hover:bg-gray-50 flex items-center gap-2 transition-colors">
                                     <span className="w-4 h-4 rounded-full bg-[#C4994A]/10 flex items-center justify-center">
@@ -177,8 +180,7 @@ export default function ContactUsPage() {
                                     <span className="font-bold text-[#191919]">Contact</span>
                                 </div>
                                 <div className="text-[#474747] text-sm space-y-1">
-                                    <p>+91 9109 622 697</p>
-                                    <p>+91 9109 622 698</p>
+                                    <p>{COMPANY_CONTACT.phone}</p>
                                 </div>
                                 <button className="mt-auto px-6 py-2 rounded-full border border-gray-200 text-sm font-semibold text-[#191919] hover:bg-gray-50 flex items-center gap-2 transition-colors">
                                     <span className="w-4 h-4 rounded-full bg-[#C4994A]/10 flex items-center justify-center">
@@ -202,7 +204,7 @@ export default function ContactUsPage() {
                                     </div>
                                     <span className="font-bold text-[#191919]">Email</span>
                                 </div>
-                                <p className="text-[#474747] text-sm">support@crizbe.com</p>
+                                <p className="text-[#474747] text-sm">{COMPANY_CONTACT.email}</p>
                                 <button className="mt-auto px-6 py-2 rounded-full border border-gray-200 text-sm font-semibold text-[#191919] hover:bg-gray-50 flex items-center gap-2 transition-colors">
                                     <Mail className="w-4 h-4 text-[#C4994A]" />
                                     Mail now
