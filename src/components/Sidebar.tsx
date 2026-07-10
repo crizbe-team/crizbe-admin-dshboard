@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSidebar } from '@/contexts/SidebarContext';
 import {
@@ -32,9 +33,9 @@ const menuItems = [
     { icon: DollarSign, label: 'Sales', path: '/bd6b-6ced/dashboard/sales' },
     { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients' },
     { icon: Mail, label: 'Enquiries', path: '/bd6b-6ced/dashboard/enquiries' },
-    { icon: Settings, label: 'Settings', path: '/bd6b-6ced/dashboard/settings' },
-    { icon: Bell, label: 'Notifications', path: '/bd6b-6ced/dashboard/notifications' },
-    { icon: HelpCircle, label: 'Help', path: '/bd6b-6ced/dashboard/help' },
+    // { icon: Settings, label: 'Settings', path: '/bd6b-6ced/dashboard/settings' },
+    // { icon: Bell, label: 'Notifications', path: '/bd6b-6ced/dashboard/notifications' },
+    // { icon: HelpCircle, label: 'Help', path: '/bd6b-6ced/dashboard/help' },
 ];
 
 export default function Sidebar() {
@@ -78,11 +79,17 @@ export default function Sidebar() {
                     transition-all duration-300 ease-in-out z-40
                 `}
             >
-                <div className="p-4 flex items-center justify-between">
+                <div className="p-4 flex items-center justify-between min-h-[64px]">
                     {!isCollapsed && (
-                        <h2 className="text-lg font-semibold text-gray-100 transition-opacity duration-300">
-                            Dashboard
-                        </h2>
+                        <Link href="/bd6b-6ced/dashboard" className="relative h-8 w-24 block">
+                            <Image
+                                src="/images/user/crizbe-logo.svg"
+                                alt="Crizbe Logo"
+                                fill
+                                className="object-contain filter brightness-0 invert"
+                                priority
+                            />
+                        </Link>
                     )}
                     <button
                         onClick={toggleSidebar}

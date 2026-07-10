@@ -27,6 +27,7 @@ import { useFetchClient } from '@/queries/use-account';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import { toast } from '@/components/ui/Toast';
 import Link from 'next/link';
+import Image from 'next/image';
 import { STATUS_CONFIG } from '@/constants/constants';
 
 export default function ClientDetailPage() {
@@ -169,8 +170,19 @@ export default function ClientDetailPage() {
                         <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 blur-3xl -mr-16 -mt-16 group-hover:bg-purple-500/10 transition-colors" />
 
                         <div className="flex flex-col items-center text-center relative z-10">
-                            <div className="w-24 h-24 rounded-3xl bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center text-white text-3xl font-bold shadow-2xl shadow-purple-500/20 mb-6 group-hover:scale-105 transition-transform">
-                                {fullName.charAt(0).toUpperCase()}
+                            <div className="w-24 h-24 rounded-3xl overflow-hidden mb-6 group-hover:scale-105 transition-transform relative shadow-2xl">
+                                {user.profile_picture ? (
+                                    <Image
+                                        src={user.profile_picture}
+                                        alt={fullName}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-linear-to-br from-purple-500 to-blue-600 flex items-center justify-center text-white text-3xl font-bold">
+                                        {fullName.charAt(0).toUpperCase()}
+                                    </div>
+                                )}
                             </div>
                             <h2 className="text-2xl font-bold text-white mb-1 font-bricolage">
                                 {fullName}
