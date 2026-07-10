@@ -22,6 +22,7 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
+    metadataBase: new URL('https://crizbe.com'),
     title: 'Crizbe | Premium Crunch Sticks - Hazelnut, Pista & Almond',
     description:
         'Experience the ultimate luxury with Crizbe crunch sticks. Crafted with real hazelnut, pistachio, and almond, dipped in premium Belgian chocolate.',

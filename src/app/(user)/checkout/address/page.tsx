@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Pencil, Phone, Trash2, Loader2 } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
 import CartSummaryCard from '@/app/(user)/_components/checkout/CartSummaryCard';
@@ -260,9 +261,11 @@ export default function ShippingPage() {
                             {addresses.length === 0 && (
                                 <div className="text-center py-14 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">
                                     <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
-                                        <img
+                                        <Image
                                             src="https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-address.png"
                                             alt="empty-address"
+                                            width={144}
+                                            height={144}
                                         />
                                     </div>
                                     <p className="text-sm font-regular text-[#373737] mb-5">

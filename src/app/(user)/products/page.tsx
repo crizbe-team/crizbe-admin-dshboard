@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import ProductCard from '@/app/_components/ui/ProductCard';
 import { useFetchProducts } from '@/queries/use-products';
 import UserLoaders from '@/components/ui/UserLoader';
@@ -74,9 +75,11 @@ const ProductsPage = () => {
                     ) : (
                         <div className="text-center w-full py-14">
                             <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
-                                <img
+                                <Image
                                     src="https://crizbe.s3.eu-north-1.amazonaws.com/static/out-of-stock.png"
                                     alt="out of stock"
+                                    width={144}
+                                    height={144}
                                 />
                             </div>
                             <p className="text-sm font-regular text-[#373737]">

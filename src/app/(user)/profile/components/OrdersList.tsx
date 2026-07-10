@@ -5,10 +5,12 @@ import { Search, Loader2 } from 'lucide-react';
 import OrderCard from './OrderCard';
 import type { Order } from '@/types/order';
 import { useFetchOrders } from '@/queries/use-orders';
+import Image from 'next/image';
 
 export default function OrdersList() {
     const { data: ordersResponse, isLoading } = useFetchOrders();
     const [searchTerm, setSearchTerm] = useState('');
+    const [ordersImgSrc, setOrdersImgSrc] = useState("https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-orders.png");
 
     if (isLoading) {
         return (
@@ -51,11 +53,13 @@ export default function OrdersList() {
                 ) : (
                     <div className="text-center py-14 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">
                         <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
-                            <img
-                                src="https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-orders.png"
+                            <Image
+                                src={ordersImgSrc}
                                 alt="empty-orders"
-                                onError={(e) => {
-                                    e.currentTarget.src = "https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-cart.png";
+                                width={144}
+                                height={144}
+                                onError={() => {
+                                    setOrdersImgSrc("https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-cart.png");
                                 }}
                             />
                         </div>

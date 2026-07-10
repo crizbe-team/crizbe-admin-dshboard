@@ -3,6 +3,7 @@
 import { ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import Image from 'next/image';
 
 function EmptyCart() {
     const router = useRouter();
@@ -10,9 +11,11 @@ function EmptyCart() {
     return (
         <section className="px-6 py-14">
             <div className="mx-auto flex h-36 w-36 items-center justify-center">
-                <img
+                <Image
                     src="https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-cart.png"
                     alt="empty-cart"
+                    width={144}
+                    height={144}
                 />
             </div>
 
