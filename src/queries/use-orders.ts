@@ -11,6 +11,7 @@ import {
     getAdminSalesOverview,
     getAdminProductPerformance,
     getAdminVariantPerformance,
+    getAdminDashboardOverview,
 } from '../services/orders';
 
 import { API_ENDPOINTS } from '../utils/api-endpoints';
@@ -24,6 +25,7 @@ const {
     GET_ADMIN_SALES_OVERVIEW,
     GET_ADMIN_PRODUCT_PERFORMANCE,
     GET_ADMIN_VARIANT_PERFORMANCE,
+    GET_ADMIN_DASHBOARD_OVERVIEW,
 } = API_ENDPOINTS;
 
 export const useCreateOrder = () => {
@@ -118,5 +120,12 @@ export const useFetchVariantPerformance = (variantId: string, params?: any) => {
         queryKey: [GET_ADMIN_VARIANT_PERFORMANCE, variantId, params],
         queryFn: () => getAdminVariantPerformance(variantId, params),
         enabled: !!variantId,
+    });
+};
+
+export const useFetchAdminDashboardOverview = (params?: any) => {
+    return useQuery<any>({
+        queryKey: [GET_ADMIN_DASHBOARD_OVERVIEW, params],
+        queryFn: () => getAdminDashboardOverview(params),
     });
 };

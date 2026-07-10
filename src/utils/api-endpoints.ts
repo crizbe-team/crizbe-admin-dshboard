@@ -42,6 +42,7 @@ export const API_ENDPOINTS = {
     UPDATE_ORDER_STATUS: 'orders/admin/:pk/status/',
     UPDATE_ORDER_TRACKING: 'orders/admin/:pk/tracking/',
     GET_ADMIN_SALES_OVERVIEW: 'orders/admin/sales-overview/',
+    GET_ADMIN_DASHBOARD_OVERVIEW: 'orders/admin/dashboard-overview/',
     GET_ADMIN_PRODUCT_PERFORMANCE: 'orders/admin/product-performance/:pk/',
     GET_ADMIN_VARIANT_PERFORMANCE: 'orders/admin/variant-performance/:pk/',
 

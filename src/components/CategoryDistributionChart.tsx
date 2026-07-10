@@ -1,12 +1,14 @@
 'use client';
 
-export default function CategoryDistributionChart() {
-    const categories = [
-        { name: 'Smartphones', percentage: 30, color: '#ef4444' },
-        { name: 'Laptops', percentage: 25, color: '#3b82f6' },
-        { name: 'Furniture', percentage: 18, color: '#eab308' },
-        { name: 'Beauty & Personal Care', percentage: 15, color: '#22c55e' },
-        { name: 'Gaming Accessories', percentage: 13, color: '#a855f7' },
+const COLORS = ['#ef4444', '#3b82f6', '#eab308', '#22c55e', '#a855f7', '#f97316', '#06b6d4', '#ec4899'];
+
+export default function CategoryDistributionChart({ data = [] }: { data?: { name: string; percentage: number }[] }) {
+    const categories = data.length > 0 ? data.map((d, index) => ({
+        name: d.name,
+        percentage: d.percentage,
+        color: COLORS[index % COLORS.length]
+    })) : [
+        { name: 'No Data Available', percentage: 100, color: '#6b7280' }
     ];
 
     // Calculate angles for pie chart segments

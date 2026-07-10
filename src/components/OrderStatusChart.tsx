@@ -1,10 +1,10 @@
 'use client';
 
-export default function OrderStatusChart() {
+export default function OrderStatusChart({ data = { completed: 0, pending: 0, canceled: 0 } }: { data?: { completed: number; pending: number; canceled: number } }) {
   const orderStatuses = [
-    { status: 'Completed', count: 13500, color: 'bg-green-500' },
-    { status: 'Pending', count: 1120, color: 'bg-yellow-500' },
-    { status: 'Canceled', count: 620, color: 'bg-red-500' },
+    { status: 'Completed', count: data.completed, color: 'bg-green-500' },
+    { status: 'Pending', count: data.pending, color: 'bg-yellow-500' },
+    { status: 'Canceled', count: data.canceled, color: 'bg-red-500' },
   ];
 
   const total = orderStatuses.reduce((sum, item) => sum + item.count, 0);
@@ -12,7 +12,7 @@ export default function OrderStatusChart() {
   return (
     <div className="space-y-4">
       {orderStatuses.map((item, index) => {
-        const percentage = (item.count / total) * 100;
+        const percentage = total > 0 ? (item.count / total) * 100 : 0;
         return (
           <div key={index}>
             <div className="flex justify-between items-center mb-2">

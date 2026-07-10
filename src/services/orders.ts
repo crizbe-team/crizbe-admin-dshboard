@@ -115,3 +115,16 @@ export const getAdminVariantPerformance = async (id: string, params?: any): Prom
     const response = await api.get(url);
     return handleApiResponse(response);
 };
+
+export const getAdminDashboardOverview = async (params?: any): Promise<any> => {
+    const { GET_ADMIN_DASHBOARD_OVERVIEW } = API_ENDPOINTS;
+    const builder = new ApiBuilder(GET_ADMIN_DASHBOARD_OVERVIEW);
+    if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+            builder.query(key, value as any);
+        });
+    }
+    const url = builder.build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};

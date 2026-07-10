@@ -1,23 +1,22 @@
 'use client';
 
-export default function SalesOverviewChart() {
-    // Sample data for the sales overview chart
-    const salesData = [
-        { month: 'Jan', sales: 3200 },
-        { month: 'Feb', sales: 4100 },
-        { month: 'Mar', sales: 3800 },
-        { month: 'Apr', sales: 5200 },
-        { month: 'May', sales: 6100 },
-        { month: 'Jun', sales: 7500 },
-        { month: 'Jul', sales: 6800 },
-        { month: 'Aug', sales: 5400 },
-        { month: 'Sep', sales: 6200 },
-        { month: 'Oct', sales: 7100 },
-        { month: 'Nov', sales: 7800 },
-        { month: 'Dec', sales: 8200 },
+export default function SalesOverviewChart({ data = [] }: { data?: { month: string; sales: number }[] }) {
+    const salesData = data.length > 0 ? data : [
+        { month: 'Jan', sales: 0 },
+        { month: 'Feb', sales: 0 },
+        { month: 'Mar', sales: 0 },
+        { month: 'Apr', sales: 0 },
+        { month: 'May', sales: 0 },
+        { month: 'Jun', sales: 0 },
+        { month: 'Jul', sales: 0 },
+        { month: 'Aug', sales: 0 },
+        { month: 'Sep', sales: 0 },
+        { month: 'Oct', sales: 0 },
+        { month: 'Nov', sales: 0 },
+        { month: 'Dec', sales: 0 },
     ];
 
-    const maxSales = 8000;
+    const maxSales = Math.max(...salesData.map(d => d.sales), 1000);
     const chartHeight = 200;
     const chartWidth = 100;
 
@@ -74,10 +73,10 @@ export default function SalesOverviewChart() {
             </div>
             <div className="flex justify-between text-xs text-gray-500 mt-2">
                 <span>0</span>
-                <span>2000</span>
-                <span>4000</span>
-                <span>6000</span>
-                <span>8000</span>
+                <span>{Math.round(maxSales * 0.25)}</span>
+                <span>{Math.round(maxSales * 0.5)}</span>
+                <span>{Math.round(maxSales * 0.75)}</span>
+                <span>{Math.round(maxSales)}</span>
             </div>
         </div>
     );
