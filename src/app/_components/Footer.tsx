@@ -9,7 +9,6 @@ const Footer = () => {
         { name: 'Home', href: '/' },
         { name: 'Our story', href: '/our-story' },
         { name: 'Products', href: '/products' },
-        { name: 'Careers', href: '/careers' },
         { name: 'Help', href: '/contact-us' },
         { name: 'Privacy', href: '/privacy-policy' },
     ];
@@ -75,14 +74,19 @@ const Footer = () => {
                     </motion.nav>
 
                     {/* Divider */}
-                    <motion.div variants={itemVariants} className="w-full h-px bg-gray-200 mb-6 md:mb-8" />
+                    <motion.div
+                        variants={itemVariants}
+                        className="w-full h-px bg-gray-200 mb-6 md:mb-8"
+                    />
 
                     {/* Bottom Section */}
                     <motion.div
                         variants={itemVariants}
                         className="w-full flex flex-row justify-between items-start md:items-center text-[13px] md:text-sm text-[#373737]"
                     >
-                        <p className="text-left w-[50%] md:w-auto pr-2 md:pr-0 leading-relaxed md:leading-normal mt-1 md:mt-0">© {new Date().getFullYear()} crizbe. All rights reserved.</p>
+                        <p className="text-left w-[50%] md:w-auto pr-2 md:pr-0 leading-relaxed md:leading-normal mt-1 md:mt-0">
+                            © {new Date().getFullYear()} crizbe. All rights reserved.
+                        </p>
                         <div className="flex flex-col md:flex-row gap-2 md:gap-6 text-right items-end md:items-center">
                             <Link
                                 href="/terms-and-conditions"
