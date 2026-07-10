@@ -66,13 +66,24 @@ const ProductsPage = () => {
                     <UserLoaders className="static" />
                 </div>
             ) : products.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
+                <div className="flex items-center justify-center min-h-[50vh]">
                     {isError ? (
-                        <div className="flex items-center justify-center min-h-[50vh] text-red-500">
+                        <div className="text-red-500">
                             Failed to load products. Please try again later.
                         </div>
                     ) : (
-                        'No products found.'
+                        <div className="text-center w-full py-14">
+                            <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
+                                <img
+                                    src="https://crizbe.s3.eu-north-1.amazonaws.com/static/out-of-stock.png"
+                                    alt="out of stock"
+                                />
+                            </div>
+                            <p className="text-sm font-regular text-[#373737]">
+                                Sorry, no products are available right now. <br /> Please check back
+                                later!
+                            </p>
+                        </div>
                     )}
                 </div>
             ) : (

@@ -49,8 +49,19 @@ export default function OrdersList() {
                         <OrderCard key={order.id} order={order} />
                     ))
                 ) : (
-                    <div className="text-center py-[50px] rounded-[20px] border border-[#EEEEEE] bg-white text-[#555555]">
-                        <p className="mb-4">No orders found.</p>
+                    <div className="text-center py-14 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">
+                        <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
+                            <img
+                                src="https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-orders.png"
+                                alt="empty-orders"
+                                onError={(e) => {
+                                    e.currentTarget.src = "https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-cart.png";
+                                }}
+                            />
+                        </div>
+                        <p className="text-sm font-regular text-[#373737]">
+                            You haven&apos;t placed any orders yet!
+                        </p>
                     </div>
                 )}
             </div>

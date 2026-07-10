@@ -266,7 +266,8 @@ export default function ShippingPage() {
                                         />
                                     </div>
                                     <p className="text-sm font-regular text-[#373737] mb-5">
-                                        Sorry, you don&apos;t have any <br /> shipping addresses saved yet!
+                                        Sorry, you don&apos;t have any <br /> shipping addresses
+                                        saved yet!
                                     </p>
                                     <div className="flex justify-center">
                                         <button
@@ -309,7 +310,6 @@ export default function ShippingPage() {
                 editingAddress={editingAddress}
                 isLoading={isCreating || isUpdating}
             />
-
         </main>
     );
 }

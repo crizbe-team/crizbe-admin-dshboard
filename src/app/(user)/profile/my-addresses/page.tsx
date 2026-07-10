@@ -228,14 +228,16 @@ export default function MyAddressesPage() {
                 })}
 
                 {addresses.length === 0 && !isLoading && (
-                    <div className="text-center py-[50px] rounded-[20px] border border-[#EEEEEE] bg-white text-[#555555]">
-                        <p className="mb-4">No addresses found</p>
-                        <button
-                            onClick={handleAddAddress}
-                            className="text-[15px] font-medium text-[#007DDC] hover:underline"
-                        >
-                            Add your first address
-                        </button>
+                    <div className="text-center py-14 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">
+                        <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
+                            <img
+                                src="https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-address.png"
+                                alt="empty-address"
+                            />
+                        </div>
+                        <p className="text-sm font-regular text-[#373737] mb-5">
+                            Sorry, you don&apos;t have any <br /> shipping addresses saved yet!
+                        </p>
                     </div>
                 )}
             </div>
