@@ -9,6 +9,26 @@ import Pagination from '@/components/ui/Pagination';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import { toast } from '@/components/ui/Toast';
 import EnquiryDeleteModal from '@/components/Modals/EnquiryDeleteModal';
+import { motion, Variants } from 'framer-motion';
+
+const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+        },
+    },
+};
+
+const itemVariants: Variants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: { type: 'spring', stiffness: 300, damping: 24 },
+    },
+};
 
 export default function EnquiriesPage() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -60,20 +80,25 @@ export default function EnquiriesPage() {
     const enquiries = enquiriesData?.data || [];
 
     return (
-        <div className="space-y-6 relative min-h-screen pb-20">
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-5 pb-12"
+        >
             {/* Page Header */}
-            <div>
-                <h1 className="text-3xl font-bold text-gray-100 mb-2 font-bricolage">
+            <motion.div variants={itemVariants} className="space-y-1">
+                <h1 className="text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none">
                     Contact Enquiries
                 </h1>
-                <p className="text-gray-400">
+                <p className="text-gray-400 text-base font-medium">
                     View and manage messages submitted via the contact form.
                 </p>
-            </div>
+            </motion.div>
 
             {/* Enquiries Table */}
-            <div className="bg-[#1a1a1a] rounded-xl border border-[#2a2a2a] overflow-hidden">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between flex-wrap gap-4">
+            <motion.div variants={itemVariants} className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+                <div className="p-6 border-b border-white/5 flex items-center justify-between flex-wrap gap-4">
                     <h2 className="text-xl font-semibold text-gray-100">Submitted Details</h2>
                     <div className="flex items-center gap-4">
                         <DebouncedSearch
@@ -96,7 +121,7 @@ export default function EnquiriesPage() {
                     ) : (
                         <table className="w-full">
                             <thead>
-                                <tr className="bg-[#252525]">
+                                <tr className="border-b border-white/5">
                                     <th className="text-left p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">
                                         USER
                                     </th>
@@ -114,11 +139,11 @@ export default function EnquiriesPage() {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#2a2a2a]">
+                            <tbody className="divide-y divide-white/5">
                                 {enquiries.map((enquiry: any) => (
                                     <tr
                                         key={enquiry.id}
-                                        className="hover:bg-[#212121] transition-colors group"
+                                        className="hover:bg-white/5 border-b border-white/5 last:border-b-0 transition-colors group"
                                     >
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
@@ -129,7 +154,7 @@ export default function EnquiriesPage() {
                                                     <span className="text-gray-100 font-medium">
                                                         {enquiry.name}
                                                     </span>
-                                                    <span className="text-xs text-gray-500">
+                                                    <span className="text-xs text-gray-500 font-mono">
                                                         Submission ID: #{enquiry.id.slice(0, 6)}
                                                     </span>
                                                 </div>
@@ -198,7 +223,7 @@ export default function EnquiriesPage() {
                         />
                     </div>
                 )}
-            </div>
+            </motion.div>
 
             {/* Delete Confirmation Modal */}
             <EnquiryDeleteModal
@@ -208,6 +233,6 @@ export default function EnquiriesPage() {
                 confirmDeleteEnquiry={confirmDeleteEnquiry}
                 isDeleting={isDeleting}
             />
-        </div>
+        </motion.div>
     );
 }

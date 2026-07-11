@@ -21,6 +21,26 @@ import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 import Pagination from '@/components/ui/Pagination';
 import DashboardLoader from '@/components/ui/DashboardLoader';
+import { motion, Variants } from 'framer-motion';
+
+const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+        },
+    },
+};
+
+const itemVariants: Variants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: { type: 'spring', stiffness: 300, damping: 24 },
+    },
+};
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
     Pending: { label: 'Pending', color: 'bg-yellow-500', icon: Clock },
@@ -89,9 +109,14 @@ export default function OrdersPage() {
     ];
 
     return (
-        <div className="space-y-5 pb-12">
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-5 pb-12"
+        >
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     const bgClass = stat.color.includes('blue') ? 'bg-blue-500/10' : stat.color.includes('green') ? 'bg-green-500/10' : stat.color.includes('yellow') ? 'bg-yellow-500/10' : 'bg-red-500/10';
@@ -122,10 +147,10 @@ export default function OrdersPage() {
                         </div>
                     );
                 })}
-            </div>
+            </motion.div>
 
             {/* Orders Table */}
-            <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+            <motion.div variants={itemVariants} className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
                 <div className="p-6 border-b border-white/5 flex items-center justify-between flex-wrap gap-4">
                     <h2 className="text-xl font-semibold text-gray-100">Recent Orders</h2>
                     <div className="flex items-center gap-4">
@@ -187,25 +212,25 @@ export default function OrdersPage() {
                                             <div className="flex items-center gap-2">
                                                 <Clipboard className="w-3 h-3 text-gray-500" />
                                                 <span className="text-gray-100 font-semibold font-mono text-sm">
-                                                    {order.id.slice(0, 8)}...
+                                                    #{order.id.slice(0, 8)}
                                                 </span>
                                             </div>
                                         </td>
                                         <td className="p-4">
                                             <div className="flex flex-col">
                                                 <span className="text-gray-100 font-medium">
-                                                    {order.user?.first_name || 'Swalih'}
+                                                    {order.user_detail?.first_name || order.user_detail?.username || 'Guest'}
                                                 </span>
                                                 <span className="text-xs text-gray-500">
-                                                    @{order.user?.username || 'swalih'}
+                                                    {order.user_detail?.email}
                                                 </span>
                                             </div>
                                         </td>
                                         <td className="p-4">
                                             <span
-                                                className={`${STATUS_CONFIG[order.status]?.color || 'bg-gray-500'} text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest`}
+                                                className={`px-3 py-1 rounded-full text-xs font-semibold ${STATUS_CONFIG[order.status]?.color || 'bg-gray-500'} bg-opacity-20 text-white`}
                                             >
-                                                {order.status}
+                                                {STATUS_CONFIG[order.status]?.label || order.status}
                                             </span>
                                         </td>
                                         <td className="p-4 text-gray-400 text-sm">
@@ -243,7 +268,7 @@ export default function OrdersPage() {
                         />
                     </div>
                 )}
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }

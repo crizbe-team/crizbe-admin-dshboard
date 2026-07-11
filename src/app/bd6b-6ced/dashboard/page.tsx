@@ -6,11 +6,31 @@ import {
   Package,
   Loader2
 } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
 import SalesOverviewChart from '@/components/SalesOverviewChart';
 import CategoryDistributionChart from '@/components/CategoryDistributionChart';
 import OrderStatusChart from '@/components/OrderStatusChart';
 import ProductPerformanceChart from '@/components/ProductPerformanceChart';
 import { useFetchAdminDashboardOverview } from '@/queries/use-orders';
+
+const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+        },
+    },
+};
+
+const itemVariants: Variants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: { type: 'spring', stiffness: 300, damping: 24 },
+    },
+};
 
 export default function Dashboard() {
   const { data: overviewResponse, isLoading, isError } = useFetchAdminDashboardOverview();
@@ -54,19 +74,24 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="space-y-6 pb-12">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6 pb-12"
+    >
       {/* Page Header */}
-      <div className="space-y-1">
+      <motion.div variants={itemVariants} className="space-y-1">
         <h1 className="text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none">
           Control Center
         </h1>
         <p className="text-gray-400 text-base font-medium">
           Global overview of business operations, sales channels & client lifecycle.
         </p>
-      </div>
+      </motion.div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {stats.map((stat) => {
           const Icon = stat.icon;
           const bgClass = stat.color.includes('blue') ? 'bg-blue-500/10' : stat.color.includes('green') ? 'bg-green-500/10' : 'bg-purple-500/10';
@@ -95,10 +120,10 @@ export default function Dashboard() {
             </div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 p-8 shadow-2xl relative overflow-hidden flex flex-col">
           <h2 className="text-xl font-semibold text-gray-100 mb-4">Sales Overview</h2>
           <SalesOverviewChart data={overviewData?.sales_overview} />
@@ -108,10 +133,10 @@ export default function Dashboard() {
           <h2 className="text-xl font-semibold text-gray-100 mb-4">Category Distribution</h2>
           <CategoryDistributionChart data={overviewData?.category_distribution} />
         </div>
-      </div>
+      </motion.div>
 
       {/* Bottom Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 p-8 shadow-2xl relative overflow-hidden flex flex-col">
           <h2 className="text-xl font-semibold text-gray-100 mb-4">Order Status Distribution</h2>
           <OrderStatusChart data={overviewData?.order_status_distribution} />
@@ -121,7 +146,7 @@ export default function Dashboard() {
           <h2 className="text-xl font-semibold text-gray-100 mb-4">Product Performance</h2>
           <ProductPerformanceChart data={overviewData?.product_performance} />
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

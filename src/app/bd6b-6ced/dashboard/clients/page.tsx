@@ -6,6 +6,26 @@ import { useFetchClients } from '@/queries/use-account';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import Link from 'next/link';
 import { useDebouncedCallback } from '@/hooks/use-debounce';
+import { motion, Variants } from 'framer-motion';
+
+const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+        },
+    },
+};
+
+const itemVariants: Variants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: { type: 'spring', stiffness: 300, damping: 24 },
+    },
+};
 
 interface Client {
     id: string;
@@ -92,9 +112,14 @@ export default function ClientsPage() {
     }
 
     return (
-        <div className="space-y-5 pb-12">
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-5 pb-12"
+        >
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     const bgClass = stat.color.includes('blue') ? 'bg-blue-500/10' : stat.color.includes('green') ? 'bg-green-500/10' : 'bg-purple-500/10';
@@ -123,10 +148,10 @@ export default function ClientsPage() {
                         </div>
                     );
                 })}
-            </div>
+            </motion.div>
 
             {/* Clients Table */}
-            <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+            <motion.div variants={itemVariants} className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
                 <div className="p-6 border-b border-white/5 flex items-center justify-between">
                     <h2 className="text-xl font-semibold text-gray-100">Clients</h2>
                     <div className="relative">
@@ -173,27 +198,27 @@ export default function ClientsPage() {
                                             <div className="flex items-center space-x-3">
                                                 <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20">
                                                     {(client.first_name || client.name)
-                                                        ?.charAt(0)
-                                                        ?.toUpperCase() || 'U'}
+                                                        ? (client.first_name || client.name)
+                                                              .charAt(0)
+                                                              .toUpperCase()
+                                                        : 'C'}
                                                 </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-gray-100 font-medium font-bricolage">
-                                                        {client.first_name && client.last_name
-                                                            ? `${client.first_name} ${client.last_name}`
-                                                            : client.name || 'N/A'}
-                                                    </span>
-                                                    <span className="text-[10px] text-gray-500 font-mono">
-                                                        @{client.username}
-                                                    </span>
+                                                <div>
+                                                    <div className="text-gray-100 font-medium">
+                                                        {client.first_name
+                                                            ? `${client.first_name} ${client.last_name || ''}`
+                                                            : client.name || 'Anonymous Client'}
+                                                    </div>
+                                                    <div className="text-gray-400 text-xs">
+                                                        @{client.username || 'username'}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-4 text-gray-300 text-sm">
-                                            {client.email || 'N/A'}
-                                        </td>
+                                        <td className="p-4 text-gray-300">{client.email}</td>
                                         <td className="p-4">
-                                            <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-bold uppercase tracking-widest border border-purple-500/20">
-                                                {client.role || 'user'}
+                                            <span className="px-2.5 py-1 rounded bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold uppercase tracking-wider">
+                                                {client.role || 'Client'}
                                             </span>
                                         </td>
                                         <td className="p-4 text-gray-400 text-sm">
@@ -244,7 +269,7 @@ export default function ClientsPage() {
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }

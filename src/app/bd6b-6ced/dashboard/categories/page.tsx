@@ -19,6 +19,26 @@ import DashboardLoader from '@/components/ui/DashboardLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import Pagination from '@/components/ui/Pagination';
 import { useEffect } from 'react';
+import { motion, Variants } from 'framer-motion';
+
+const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+        },
+    },
+};
+
+const itemVariants: Variants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: { type: 'spring', stiffness: 300, damping: 24 },
+    },
+};
 
 export default function CategoriesPage() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -114,9 +134,14 @@ export default function CategoriesPage() {
     };
 
     return (
-        <div className="space-y-5 pb-12">
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-5 pb-12"
+        >
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     const bgClass = stat.color.includes('blue') ? 'bg-blue-500/10' : stat.color.includes('green') ? 'bg-green-500/10' : stat.color.includes('purple') ? 'bg-purple-500/10' : 'bg-orange-500/10';
@@ -145,10 +170,10 @@ export default function CategoriesPage() {
                         </div>
                     );
                 })}
-            </div>
+            </motion.div>
 
             {/* Categories List */}
-            <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+            <motion.div variants={itemVariants} className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
                 <div className="p-6 border-b border-white/5 flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center space-x-4 flex-1 min-w-[300px]">
                         <DebouncedSearch
@@ -279,7 +304,7 @@ export default function CategoriesPage() {
                         />
                     </div>
                 )}
-            </div>
+            </motion.div>
 
             {/* Add/Edit Category Modal */}
             <CategoryAddEditModal
@@ -296,6 +321,6 @@ export default function CategoriesPage() {
                 confirmDeleteCategory={confirmDeleteCategory}
                 isDeleting={deleteMutation.isPending}
             />
-        </div>
+        </motion.div>
     );
 }
