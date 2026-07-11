@@ -92,23 +92,32 @@ export default function ClientsPage() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5 pb-12">
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {stats.map((stat) => {
                     const Icon = stat.icon;
+                    const bgClass = stat.color.includes('blue') ? 'bg-blue-500/10' : stat.color.includes('green') ? 'bg-green-500/10' : 'bg-purple-500/10';
+                    const glowClass = stat.color.includes('blue') ? 'hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)]' : stat.color.includes('green') ? 'hover:shadow-[0_0_30px_-5px_rgba(74,222,128,0.3)]' : 'hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]';
                     return (
                         <div
                             key={stat.title}
-                            className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a]"
+                            className={`bg-[#1a1a1a]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/5 transition-all group relative overflow-hidden ${glowClass}`}
                         >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-gray-400 text-sm mb-1">{stat.title}</p>
-                                    <p className="text-2xl font-bold text-gray-100">{stat.value}</p>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-white/5 to-transparent rounded-full -mr-16 -mt-16 pointer-events-none group-hover:scale-150 transition-transform duration-700" />
+                            <div className="flex flex-col h-full justify-between gap-6">
+                                <div className="flex items-center justify-between">
+                                    <div className={`${bgClass} ${stat.color} p-3.5 rounded-2xl`}>
+                                        <Icon className="w-5 h-5 shadow-lg" />
+                                    </div>
                                 </div>
-                                <div className={`${stat.color} bg-opacity-10 p-3 rounded-lg`}>
-                                    <Icon className="w-6 h-6" />
+                                <div>
+                                    <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2 leading-none">
+                                        {stat.title}
+                                    </p>
+                                    <p className="text-2xl font-black text-white font-mono tracking-tighter">
+                                        {stat.value}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -117,8 +126,8 @@ export default function ClientsPage() {
             </div>
 
             {/* Clients Table */}
-            <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a]">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
+            <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+                <div className="p-6 border-b border-white/5 flex items-center justify-between">
                     <h2 className="text-xl font-semibold text-gray-100">Clients</h2>
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -135,7 +144,7 @@ export default function ClientsPage() {
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-[#2a2a2a]">
+                            <tr className="border-b border-white/5">
                                 <th className="text-left p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">
                                     CLIENT
                                 </th>
@@ -153,12 +162,12 @@ export default function ClientsPage() {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#2a2a2a]">
+                        <tbody className="divide-y divide-white/5">
                             {filteredClients.length > 0 ? (
                                 filteredClients.map((client: any) => (
                                     <tr
                                         key={client.id}
-                                        className="hover:bg-[#212121] transition-colors group"
+                                        className="hover:bg-white/5 border-b border-white/5 last:border-b-0 transition-colors group"
                                     >
                                         <td className="p-4">
                                             <div className="flex items-center space-x-3">
