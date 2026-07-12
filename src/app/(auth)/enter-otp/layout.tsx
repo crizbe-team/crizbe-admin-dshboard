@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Verify OTP',
+    title: 'Verify OTP | Crizbe',
     description: 'Verify your account with the OTP sent to your email or mobile.',
 };
 

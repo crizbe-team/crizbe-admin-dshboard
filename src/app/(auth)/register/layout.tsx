@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Register',
+    title: 'Register | Crizbe',
     description: 'Create a Crizbe account to start shopping and tracking your orders.',
 };
 

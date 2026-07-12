@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Forgot Password',
+    title: 'Forgot Password | Crizbe',
     description: 'Reset your Crizbe account password.',
 };
 
