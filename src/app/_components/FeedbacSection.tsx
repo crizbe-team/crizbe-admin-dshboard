@@ -8,27 +8,30 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const slideVariants = {
-    enter: (direction: number) => ({
-        x: direction > 0 ? 60 : -60,
+    enter: (dir: 'left' | 'right') => ({
+        x: dir === 'right' ? '100%' : '-100%',
         opacity: 0,
-        scale: 0.98,
+        scale: 0.95,
+        zIndex: 10,
     }),
     center: {
         x: 0,
         opacity: 1,
         scale: 1,
+        zIndex: 5,
     },
-    exit: (direction: number) => ({
-        x: direction < 0 ? 60 : -60,
+    exit: (dir: 'left' | 'right') => ({
+        x: dir === 'right' ? '-15%' : '15%',
         opacity: 0,
-        scale: 0.98,
+        scale: 0.92,
+        zIndex: 1,
     }),
 };
 
 const FeedbacSection = () => {
     const { data: reviewsData, isLoading } = useFetchLandingPageReviews();
     const [activeIndex, setActiveIndex] = useState(0);
-    const [direction, setDirection] = useState(1); // 1 = Next (right), -1 = Prev (left)
+    const [direction, setDirection] = useState<'left' | 'right'>('right');
 
     const feedbackItems = reviewsData?.data || [];
 
@@ -46,12 +49,12 @@ const FeedbacSection = () => {
     }
 
     const handleNext = () => {
-        setDirection(1);
+        setDirection('right');
         setActiveIndex((prev) => (prev + 1) % feedbackItems.length);
     };
 
     const handlePrev = () => {
-        setDirection(-1);
+        setDirection('left');
         setActiveIndex((prev) => (prev - 1 + feedbackItems.length) % feedbackItems.length);
     };
 
@@ -68,8 +71,8 @@ const FeedbacSection = () => {
         <section className="py-24 lg:py-36 bg-[#F9F4E8] overflow-hidden">
             <div className="wrapper mx-auto px-6 lg:px-8 max-w-4xl text-center flex flex-col items-center">
                 {/* Dynamic Sliding Content Wrapper */}
-                <div className="w-full relative min-h-[320px] flex items-center justify-center">
-                    <AnimatePresence mode="wait" custom={direction}>
+                <motion.div layout className="w-full relative min-h-[320px] overflow-hidden py-4">
+                    <AnimatePresence mode="popLayout" custom={direction}>
                         <motion.div
                             key={`testimonial-${activeIndex}`}
                             custom={direction}
@@ -78,11 +81,12 @@ const FeedbacSection = () => {
                             animate="center"
                             exit="exit"
                             transition={{
-                                x: { type: 'spring', stiffness: 220, damping: 26 },
-                                opacity: { duration: 0.2 },
-                                scale: { duration: 0.2 },
+                                type: 'spring',
+                                stiffness: 140,
+                                damping: 20,
+                                mass: 1,
                             }}
-                            className="flex flex-col items-center space-y-8 w-full"
+                            className="flex flex-col items-center space-y-8 w-full min-h-[300px]"
                         >
                             {/* Rating Stars */}
                             <div className="flex gap-1 justify-center">
@@ -118,7 +122,7 @@ const FeedbacSection = () => {
                             </div>
                         </motion.div>
                     </AnimatePresence>
-                </div>
+                </motion.div>
 
                 {/* Static Navigation Controls (placed outside AnimatePresence so they don't reload or animate during slides) */}
                 <div className="flex gap-4 pt-10 justify-center">
