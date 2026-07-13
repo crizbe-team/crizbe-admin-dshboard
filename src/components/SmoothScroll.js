@@ -52,7 +52,7 @@ export default function SmoothScroll() {
                         height: window.innerHeight,
                     };
                 },
-                pinType: scrollContainer.style.transform ? 'transform' : 'fixed',
+                pinType: 'transform',
             });
 
             ScrollTrigger.addEventListener('refresh', handleRefresh);
@@ -79,7 +79,7 @@ export default function SmoothScroll() {
                             trigger: '.flavours-section',
                             start: 'top top',
                             end: () => `+=${scrollWidth}`,
-                            scrub: 1,
+                            scrub: 0.5,
                             pin: true,
                             anticipatePin: 1,
                             invalidateOnRefresh: true,
@@ -167,14 +167,10 @@ export default function SmoothScroll() {
                         '#almond-bottle',
                         {
                             x: () => {
-                                const target = document.querySelector(
-                                    '.almond-bottle-target-position'
-                                );
-                                const bottle = document.querySelector('#almond-bottle');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curX = gsap.getProperty(bottle, 'x');
+                                if (!almondBottleTarget || !almondBottle) return 0;
+                                const tRect = almondBottleTarget.getBoundingClientRect();
+                                const bRect = almondBottle.getBoundingClientRect();
+                                const curX = gsap.getProperty(almondBottle, 'x');
                                 return (
                                     tRect.left +
                                     tRect.width / 2 -
@@ -183,14 +179,10 @@ export default function SmoothScroll() {
                                 );
                             },
                             y: () => {
-                                const target = document.querySelector(
-                                    '.almond-bottle-target-position'
-                                );
-                                const bottle = document.querySelector('#almond-bottle');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curY = gsap.getProperty(bottle, 'y');
+                                if (!almondBottleTarget || !almondBottle) return 0;
+                                const tRect = almondBottleTarget.getBoundingClientRect();
+                                const bRect = almondBottle.getBoundingClientRect();
+                                const curY = gsap.getProperty(almondBottle, 'y');
                                 return (
                                     tRect.top +
                                     tRect.height / 2 -
@@ -211,14 +203,10 @@ export default function SmoothScroll() {
                         '#hazelnut-bottle',
                         {
                             x: () => {
-                                const target = document.querySelector(
-                                    '.hazelnut-bottle-target-position'
-                                );
-                                const bottle = document.querySelector('#hazelnut-bottle');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curX = gsap.getProperty(bottle, 'x');
+                                if (!hazelnutBottleTarget || !hazelnutBottle) return 0;
+                                const tRect = hazelnutBottleTarget.getBoundingClientRect();
+                                const bRect = hazelnutBottle.getBoundingClientRect();
+                                const curX = gsap.getProperty(hazelnutBottle, 'x');
                                 return (
                                     tRect.left +
                                     tRect.width / 2 -
@@ -227,14 +215,10 @@ export default function SmoothScroll() {
                                 );
                             },
                             y: () => {
-                                const target = document.querySelector(
-                                    '.hazelnut-bottle-target-position'
-                                );
-                                const bottle = document.querySelector('#hazelnut-bottle');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curY = gsap.getProperty(bottle, 'y');
+                                if (!hazelnutBottleTarget || !hazelnutBottle) return 0;
+                                const tRect = hazelnutBottleTarget.getBoundingClientRect();
+                                const bRect = hazelnutBottle.getBoundingClientRect();
+                                const curY = gsap.getProperty(hazelnutBottle, 'y');
                                 return (
                                     tRect.top +
                                     tRect.height / 2 -
@@ -255,14 +239,10 @@ export default function SmoothScroll() {
                         '#pista-bottle',
                         {
                             x: () => {
-                                const target = document.querySelector(
-                                    '.pista-bottle-target-position'
-                                );
-                                const bottle = document.querySelector('#pista-bottle');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curX = gsap.getProperty(bottle, 'x');
+                                if (!pistaBottleTarget || !pistaBottle) return 0;
+                                const tRect = pistaBottleTarget.getBoundingClientRect();
+                                const bRect = pistaBottle.getBoundingClientRect();
+                                const curX = gsap.getProperty(pistaBottle, 'x');
                                 return (
                                     tRect.left +
                                     tRect.width / 2 -
@@ -271,14 +251,10 @@ export default function SmoothScroll() {
                                 );
                             },
                             y: () => {
-                                const target = document.querySelector(
-                                    '.pista-bottle-target-position'
-                                );
-                                const bottle = document.querySelector('#pista-bottle');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curY = gsap.getProperty(bottle, 'y');
+                                if (!pistaBottleTarget || !pistaBottle) return 0;
+                                const tRect = pistaBottleTarget.getBoundingClientRect();
+                                const bRect = pistaBottle.getBoundingClientRect();
+                                const curY = gsap.getProperty(pistaBottle, 'y');
                                 return (
                                     tRect.top +
                                     tRect.height / 2 -
@@ -322,18 +298,16 @@ export default function SmoothScroll() {
                 });
 
                 if (pistaBottleTarget) {
+                    const nextFlavourBottleTarget = document.querySelector('#next-flavour-bottle-target');
+                    const pistaBottleTargetEl = document.querySelector('#pista-bottle-target');
                     tlTransition.to(
                         '#pista-bottle-target',
                         {
                             x: () => {
-                                const target = document.querySelector(
-                                    '#next-flavour-bottle-target'
-                                );
-                                const bottle = document.querySelector('#pista-bottle-target');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curX = gsap.getProperty(bottle, 'x');
+                                if (!nextFlavourBottleTarget || !pistaBottleTargetEl) return 0;
+                                const tRect = nextFlavourBottleTarget.getBoundingClientRect();
+                                const bRect = pistaBottleTargetEl.getBoundingClientRect();
+                                const curX = gsap.getProperty(pistaBottleTargetEl, 'x');
                                 return (
                                     tRect.left +
                                     tRect.width / 2 -
@@ -342,14 +316,10 @@ export default function SmoothScroll() {
                                 );
                             },
                             y: () => {
-                                const target = document.querySelector(
-                                    '#next-flavour-bottle-target'
-                                );
-                                const bottle = document.querySelector('#pista-bottle-target');
-                                if (!target || !bottle) return 0;
-                                const tRect = target.getBoundingClientRect();
-                                const bRect = bottle.getBoundingClientRect();
-                                const curY = gsap.getProperty(bottle, 'y');
+                                if (!nextFlavourBottleTarget || !pistaBottleTargetEl) return 0;
+                                const tRect = nextFlavourBottleTarget.getBoundingClientRect();
+                                const bRect = pistaBottleTargetEl.getBoundingClientRect();
+                                const curY = gsap.getProperty(pistaBottleTargetEl, 'y');
                                 return (
                                     tRect.top +
                                     tRect.height / 2 -
@@ -394,7 +364,7 @@ export default function SmoothScroll() {
                     scrollTrigger: {
                         trigger: '.next-flavour-section',
                         start: 'top top',
-                        end: '+=150%',
+                        end: '+=100%',
                         scrub: true,
                         pin: true,
                         invalidateOnRefresh: true,
