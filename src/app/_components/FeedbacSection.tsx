@@ -7,9 +7,28 @@ import { useFetchLandingPageReviews } from '@/queries/use-products';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+const slideVariants = {
+    enter: (direction: number) => ({
+        x: direction > 0 ? 60 : -60,
+        opacity: 0,
+        scale: 0.98,
+    }),
+    center: {
+        x: 0,
+        opacity: 1,
+        scale: 1,
+    },
+    exit: (direction: number) => ({
+        x: direction < 0 ? 60 : -60,
+        opacity: 0,
+        scale: 0.98,
+    }),
+};
+
 const FeedbacSection = () => {
     const { data: reviewsData, isLoading } = useFetchLandingPageReviews();
     const [activeIndex, setActiveIndex] = useState(0);
+    const [direction, setDirection] = useState(1); // 1 = Next (right), -1 = Prev (left)
 
     const feedbackItems = reviewsData?.data || [];
 
@@ -27,10 +46,12 @@ const FeedbacSection = () => {
     }
 
     const handleNext = () => {
+        setDirection(1);
         setActiveIndex((prev) => (prev + 1) % feedbackItems.length);
     };
 
     const handlePrev = () => {
+        setDirection(-1);
         setActiveIndex((prev) => (prev - 1 + feedbackItems.length) % feedbackItems.length);
     };
 
@@ -44,18 +65,27 @@ const FeedbacSection = () => {
     const designation = currentFeedback.designation || 'Happy Customer';
 
     return (
-        <section className=" py-42 bg-[#F9F4E8] min-h-screen">
-            <div className="wrapper mx-auto px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-                    <div className="order-2 lg:order-1 flex flex-col justify-center">
+        <section className="py-24 lg:py-36 bg-[#F9F4E8] overflow-hidden">
+            <div className="wrapper mx-auto px-6 lg:px-8 max-w-4xl text-center flex flex-col items-center">
+                {/* Dynamic Sliding Content Wrapper */}
+                <div className="w-full relative min-h-[320px] flex items-center justify-center">
+                    <AnimatePresence mode="wait" custom={direction}>
                         <motion.div
-                            key={`text-${activeIndex}`}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.5 }}
+                            key={`testimonial-${activeIndex}`}
+                            custom={direction}
+                            variants={slideVariants}
+                            initial="enter"
+                            animate="center"
+                            exit="exit"
+                            transition={{
+                                x: { type: 'spring', stiffness: 220, damping: 26 },
+                                opacity: { duration: 0.2 },
+                                scale: { duration: 0.2 },
+                            }}
+                            className="flex flex-col items-center space-y-8 w-full"
                         >
-                            <div className="flex gap-1 mb-8">
+                            {/* Rating Stars */}
+                            <div className="flex gap-1 justify-center">
                                 {[...Array(5)].map((_, i) => (
                                     <Star
                                         key={i}
@@ -64,56 +94,48 @@ const FeedbacSection = () => {
                                 ))}
                             </div>
 
-                            <blockquote className="text-3xl lg:text-4xl font-medium text-[#4E3325] leading-tight mb-12 font-bricolage">
+                            {/* Testimonial Quote */}
+                            <blockquote className="text-xl sm:text-2xl lg:text-3xl font-medium text-[#4E3325] leading-relaxed font-bricolage max-w-3xl">
                                 "{feedbackText}"
                             </blockquote>
 
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={handlePrev}
-                                    className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#4A3B2C] hover:bg-[#E3D1A5] transition-colors duration-300"
-                                    aria-label="Previous testimonial"
-                                >
-                                    <ArrowLeft className="w-5 h-5 text-[#CDAB78]" />
-                                </button>
-                                <button
-                                    onClick={handleNext}
-                                    className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#4A3B2C] hover:bg-[#E3D1A5] transition-colors duration-300"
-                                    aria-label="Next testimonial"
-                                >
-                                    <ArrowRight className="w-5 h-5 text-[#CDAB78]" />
-                                </button>
-                            </div>
-                        </motion.div>
-                    </div>
-
-                    <div className="order-1 lg:order-2 relative h-[700px] lg:h-[600px] w-full rounded-[20px] overflow-hidden">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={`image-${activeIndex}`}
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 1.05 }}
-                                transition={{ duration: 0.5 }}
-                                className="relative h-full w-full rounded-[3px] overflow-hidden"
-                            >
-                                <Image
-                                    src={userImage}
-                                    alt={userName}
-                                    fill
-                                    className="object-cover"
-                                    sizes="(max-width: 768px) 100vw, 50vw"
-                                    priority
-                                />
-                                <div className="absolute bottom-6 left-6 right-6 p-[20px] bg-[#8B7D79]/10 backdrop-blur-lg border border-white/20 rounded-2xl">
-                                    <h3 className="text-white text-xl font-semibold font-bricolage mb-1">
+                            {/* User Profile Info Card */}
+                            <div className="flex items-center gap-4 pt-4">
+                                <div className="w-14 h-14 rounded-full overflow-hidden border border-[#CDAB78]/20 bg-white relative shrink-0 shadow-sm">
+                                    <Image
+                                        src={userImage}
+                                        alt={userName}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <div className="flex flex-col text-left">
+                                    <h3 className="text-[#4E3325] text-lg font-bold font-bricolage leading-snug">
                                         {userName}
                                     </h3>
-                                    <p className="text-white/80 text-sm">{designation}</p>
+                                    <p className="text-[#8B7D79] text-sm font-medium">{designation}</p>
                                 </div>
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+
+                {/* Static Navigation Controls (placed outside AnimatePresence so they don't reload or animate during slides) */}
+                <div className="flex gap-4 pt-10 justify-center">
+                    <button
+                        onClick={handlePrev}
+                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#4A3B2C] hover:bg-[#E3D1A5] hover:shadow-md transition-all duration-300 border border-[#CDAB78]/10"
+                        aria-label="Previous testimonial"
+                    >
+                        <ArrowLeft className="w-5 h-5 text-[#CDAB78]" />
+                    </button>
+                    <button
+                        onClick={handleNext}
+                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#4A3B2C] hover:bg-[#E3D1A5] hover:shadow-md transition-all duration-300 border border-[#CDAB78]/10"
+                        aria-label="Next testimonial"
+                    >
+                        <ArrowRight className="w-5 h-5 text-[#CDAB78]" />
+                    </button>
                 </div>
             </div>
         </section>
