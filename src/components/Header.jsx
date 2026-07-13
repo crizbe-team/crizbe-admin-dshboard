@@ -1,14 +1,32 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Bell, User } from 'lucide-react';
 import { useSidebar } from '@/contexts/SidebarContext';
 import ProfileModal from './Modals/ProfileModal';
 import OutsideClick from './OutsideClick';
+import { useFetchMinimalDetails } from '@/queries/use-account';
+import { useLogout } from '@/queries/use-auth';
+import { authUtils } from '@/utils/auth';
 
 function Header() {
     const { isCollapsed } = useSidebar();
     const [isOpen, setOpen] = useState(false);
+    const [isAuth, setIsAuth] = useState(false);
+
+    useEffect(() => {
+        setIsAuth(authUtils.isAuthenticated());
+    }, []);
+
+    const { data: minimalDetailsRes } = useFetchMinimalDetails(isAuth);
+    const user = minimalDetailsRes?.data;
+    const name = user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Admin';
+    const profilePicture = user?.profile_picture;
+
+    const logoutMutation = useLogout();
+    const handleLogout = () => {
+        logoutMutation.mutate();
+    };
 
     const handleOpen = () => {
         setOpen(true);
@@ -27,15 +45,23 @@ function Header() {
                         <Bell className="w-5 sm:h-6 text-gray-300 cursor-pointer hover:text-white" />
                     </div>
                     <div className="flex items-center cursor-pointer" onClick={handleOpen}>
-                        <div className="w-[35px] h-[35px] rounded-full border border-gray-600 mr-[8px] sm:mr-[8px] flex items-center justify-center bg-gray-800 text-gray-300 hover:text-white hover:border-gray-400 transition-colors">
-                            <User className="w-5 h-5" />
+                        <div className="w-[35px] h-[35px] rounded-full border border-gray-600 mr-[8px] sm:mr-[8px] flex items-center justify-center bg-gray-800 text-gray-300 hover:text-white hover:border-gray-400 transition-colors overflow-hidden">
+                            {profilePicture ? (
+                                <img
+                                    src={profilePicture}
+                                    alt={name}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <User className="w-5 h-5" />
+                            )}
                         </div>
-                        <span className="hidden sm:block text-gray-100 font-medium">John Mark</span>
+                        <span className="hidden sm:block text-gray-100 font-medium">{name}</span>
                     </div>
                 </div>
             </div>
             <div className="relative">
-                <ProfileModal isOpen={isOpen} ref={ref} />
+                <ProfileModal isOpen={isOpen} ref={ref} user={user} onLogout={handleLogout} />
             </div>
         </header>
     );

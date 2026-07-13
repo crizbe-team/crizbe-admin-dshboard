@@ -58,7 +58,8 @@ api.interceptors.response.use(
                 authUtils.removeTokens();
 
                 if (typeof window !== 'undefined') {
-                    window.location.href = '/login';
+                    const isAdmin = window.location.pathname.startsWith('/bd6b-6ced');
+                    window.location.href = isAdmin ? '/bd6b-6ced/dashboard/login' : '/login';
                 }
 
                 return Promise.reject(refreshError);

@@ -82,10 +82,11 @@ export const useSetPassword = () => {
 
 export const useLogout = () => {
     const clearCredentials = () => {
+        const isAdmin = typeof window !== 'undefined' && window.location.pathname.startsWith('/bd6b-6ced');
         authUtils.removeTokens();
         authUtils.removeRole();
         if (typeof window !== 'undefined') {
-            window.location.href = '/login';
+            window.location.href = isAdmin ? '/bd6b-6ced/dashboard/login' : '/login';
         }
     };
     return useMutation({

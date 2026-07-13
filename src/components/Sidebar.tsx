@@ -21,7 +21,9 @@ import {
     ChevronLeft,
     Layers,
     Tags,
+    LogOut,
 } from 'lucide-react';
+import { useLogout } from '@/queries/use-auth';
 
 const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/bd6b-6ced/dashboard' },
@@ -42,6 +44,11 @@ export default function Sidebar() {
     const pathname = usePathname();
     const { isCollapsed, setIsCollapsed } = useSidebar();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const logoutMutation = useLogout();
+
+    const handleLogout = () => {
+        logoutMutation.mutate();
+    };
 
     const toggleSidebar = () => {
         setIsCollapsed(!isCollapsed);
@@ -137,6 +144,27 @@ export default function Sidebar() {
                             </Link>
                         );
                     })}
+                    <button
+                        onClick={handleLogout}
+                        disabled={logoutMutation.isPending}
+                        className={`
+                            w-full flex items-center space-x-3 px-4 py-3 mt-4 rounded-lg
+                            transition-all duration-200 ease-in-out text-red-400 hover:bg-red-500/10 hover:text-red-300
+                            ${isCollapsed ? 'justify-center' : ''}
+                        `}
+                        title={isCollapsed ? 'Logout' : ''}
+                    >
+                        <LogOut className="w-5 h-5 shrink-0" />
+                        <span
+                            className={`
+                                text-sm font-medium
+                                transition-opacity duration-300
+                                ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'}
+                            `}
+                        >
+                            {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
+                        </span>
+                    </button>
                 </nav>
             </aside>
         </>
