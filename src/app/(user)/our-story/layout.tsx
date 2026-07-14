@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'Our Story | Crizbe',
         description: 'Explore the journey of Crizbe and our commitment to premium crunch sticks.',
-        images: ['/images/user/our-story.png'],
+        images: ['/images/user/og-image.jpeg'],
     },
 };
 
