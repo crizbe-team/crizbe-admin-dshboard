@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { authUtils } from '@/utils/auth';
 import Cookies from 'js-cookie';
+import UserLoaders from '@/components/ui/UserLoader';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -53,11 +54,7 @@ export function ProtectedRoute({ children, requireAuth = false }: ProtectedRoute
 
     // Show loading state while checking authentication
     if (isChecking) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-[#0f0f0f]">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#C4994A]"></div>
-            </div>
-        );
+        return <UserLoaders />;
     }
 
     // Don't render if user is authenticated and on auth page (will redirect)
