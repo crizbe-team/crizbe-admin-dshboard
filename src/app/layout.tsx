@@ -51,6 +51,7 @@ export const metadata: Metadata = {
 };
 
 import { ToastContainer } from '@/components/ui/Toast';
+import GlobalImageLoader from '@/components/ui/GlobalImageLoader';
 
 export default function RootLayout({
     children,
@@ -62,6 +63,7 @@ export default function RootLayout({
             <body
                 className={`${interTight.variable} ${geistMono.variable} ${bricolage.variable} antialiased`}
             >
+                <GlobalImageLoader />
                 <AuthProviders>
                     <TanstackProvider>{children}</TanstackProvider>
                 </AuthProviders>

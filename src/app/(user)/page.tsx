@@ -34,7 +34,7 @@ export default function Home() {
     }, []);
     return (
         <div className="relative min-h-screen overflow-x-hidden">
-            {loading && <UserLoaders />}
+            {/* {loading && <UserLoaders />} */}
 
             {/* Layer 0: Global Background Gradient */}
             <div className="fixed inset-0 z-0 bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]" />

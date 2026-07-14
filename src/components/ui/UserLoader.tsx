@@ -9,7 +9,7 @@ export default function UserLoaders({ className }: { className?: string }) {
             className={`fixed inset-0 bg-white flex items-center justify-center z-[9999] ${className}`}
         >
             <div className="animate-pulse">
-                <Image src={logo} alt="Logo" width={150} height={150} />
+                <Image src={logo} alt="Logo" width={150} height={150} className="no-shimmer" />
             </div>
         </div>
     );
