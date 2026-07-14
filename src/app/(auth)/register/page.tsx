@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useRef } from 'react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { toast } from '@/components/ui/Toast';
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -73,8 +74,13 @@ export default function RegisterPage() {
                             });
                         }
                     },
-                    onSuccess: (response) => {
+                    onSuccess: (response: any) => {
                         console.log('Signup successful:', response);
+
+                        // If OTP is returned in the response (dev/local), show it via Toast
+                        if (response.data?.otp) {
+                            toast.info(`Development OTP: ${response.data.otp}`);
+                        }
 
                         // Store the username in session for the OTP page
                         const sessionData: {

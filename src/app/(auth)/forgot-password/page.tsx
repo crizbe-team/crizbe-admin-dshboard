@@ -13,6 +13,7 @@ import { signupSessionUtils } from '@/utils/signup-session';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, type SignupFormData } from '@/validations/auth';
+import { toast } from '@/components/ui/Toast';
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
@@ -80,8 +81,13 @@ export default function ForgotPasswordPage() {
                             });
                         }
                     },
-                    onSuccess: (response) => {
+                    onSuccess: (response: any) => {
                         console.log('Forgot password request successful:', response);
+
+                        // If OTP is returned in the response (dev/local), show it via Toast
+                        if (response.data?.otp) {
+                            toast.info(`Development OTP: ${response.data.otp}`);
+                        }
 
                         // Store the username and purpose in session for the OTP page
                         const sessionData: {

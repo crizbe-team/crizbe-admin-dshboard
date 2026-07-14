@@ -7,6 +7,7 @@ import { useForgotPassword, useVerifyOtp, useSetPassword } from '@/queries/use-a
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Eye, EyeOff, Check, X, Loader2, CheckCircle2 } from 'lucide-react';
 import { passwordSchema } from '@/validations/auth';
+import { toast } from '@/components/ui/Toast';
 
 interface UpdatePasswordModalProps {
     open: boolean;
@@ -155,7 +156,10 @@ export default function UpdatePasswordModal({ open, onClose, email }: UpdatePass
             forgotPassword(
                 { username: email, recaptcha_token: token },
                 {
-                    onSuccess: () => {
+                    onSuccess: (response: any) => {
+                        if (response.data?.otp) {
+                            toast.info(`Development OTP: ${response.data.otp}`);
+                        }
                         setStep('OTP');
                         setResendTimer(30);
                     },
