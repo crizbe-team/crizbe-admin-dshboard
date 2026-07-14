@@ -11,7 +11,7 @@ import { signupSchema, type SignupFormData } from '@/validations/auth';
 import { signupSessionUtils } from '@/utils/signup-session';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { toast } from '@/components/ui/Toast';
 
@@ -19,6 +19,7 @@ export default function RegisterPage() {
     const router = useRouter();
     const { mutate: signupInitiate, isPending } = useSignupInitiate();
     const { executeRecaptcha } = useGoogleReCaptcha();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Ref for maintaining focus
     const emailInputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +56,7 @@ export default function RegisterPage() {
             return;
         }
 
+        setIsSubmitting(true);
         const username = data.email || '';
 
         try {
@@ -64,6 +66,7 @@ export default function RegisterPage() {
                 { username, recaptcha_token: token },
                 {
                     onError: (error: any) => {
+                        setIsSubmitting(false);
                         if (error.errors) {
                             const apiErrors = error.errors;
                             Object.keys(apiErrors).forEach((field) => {
@@ -97,6 +100,7 @@ export default function RegisterPage() {
                 }
             );
         } catch (error) {
+            setIsSubmitting(false);
             console.error('Recaptcha error:', error);
             setError('root.serverError' as any, {
                 type: 'server',
@@ -139,7 +143,7 @@ export default function RegisterPage() {
                 {/* Continue Button */}
                 <GoldenButton
                     type="submit"
-                    isLoading={isPending}
+                    isLoading={isPending || isSubmitting}
                     loadingText="Please wait..."
                     fullWidth
                     style={{

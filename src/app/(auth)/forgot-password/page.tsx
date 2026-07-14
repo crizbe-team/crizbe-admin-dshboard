@@ -14,12 +14,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, type SignupFormData } from '@/validations/auth';
 import { toast } from '@/components/ui/Toast';
+import { useState } from 'react';
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
 
     const { mutate: forgotPassword, isPending } = useForgotPassword();
     const { executeRecaptcha } = useGoogleReCaptcha();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Ref for maintaining focus
     const emailInputRef = useRef<HTMLInputElement>(null);
@@ -56,6 +58,7 @@ export default function ForgotPasswordPage() {
             return;
         }
 
+        setIsSubmitting(true);
         const username = data.email || '';
 
         try {
@@ -65,6 +68,7 @@ export default function ForgotPasswordPage() {
                 { username, recaptcha_token: token },
                 {
                     onError: (error: any) => {
+                        setIsSubmitting(false);
                         if (error.errors) {
                             const apiErrors = error.errors;
                             Object.keys(apiErrors).forEach((field) => {
@@ -104,6 +108,7 @@ export default function ForgotPasswordPage() {
                 }
             );
         } catch (error) {
+            setIsSubmitting(false);
             console.error('Recaptcha error:', error);
             setError('email', {
                 type: 'server',
@@ -144,7 +149,7 @@ export default function ForgotPasswordPage() {
                 {/* Submit Button */}
                 <GoldenButton
                     type="submit"
-                    isLoading={isPending}
+                    isLoading={isPending || isSubmitting}
                     loadingText="Please wait..."
                     fullWidth
                     style={{

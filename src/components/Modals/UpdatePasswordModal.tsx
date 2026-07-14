@@ -40,6 +40,7 @@ export default function UpdatePasswordModal({ open, onClose, email }: UpdatePass
     const { mutate: setPasswordApi, isPending: isSettingPassword } = useSetPassword();
 
     const { executeRecaptcha } = useGoogleReCaptcha();
+    const [isSending, setIsSending] = useState(false);
 
     // Reset modal state when opened
     useEffect(() => {
@@ -52,6 +53,7 @@ export default function UpdatePasswordModal({ open, onClose, email }: UpdatePass
             setPasswordState('');
             setConfirmPasswordState('');
             setPasswordError('');
+            setIsSending(false);
         }
     }, [open]);
 
@@ -151,12 +153,14 @@ export default function UpdatePasswordModal({ open, onClose, email }: UpdatePass
             return;
         }
         setErrorMsg('');
+        setIsSending(true);
         try {
             const token = await executeRecaptcha('forgot_password');
             forgotPassword(
                 { username: email, recaptcha_token: token },
                 {
                     onSuccess: (response: any) => {
+                        setIsSending(false);
                         if (response.data?.otp) {
                             toast.info(`Development OTP: ${response.data.otp}`);
                         }
@@ -164,11 +168,13 @@ export default function UpdatePasswordModal({ open, onClose, email }: UpdatePass
                         setResendTimer(30);
                     },
                     onError: (err: any) => {
+                        setIsSending(false);
                         setErrorMsg(err?.message || 'Failed to send verification code. Please try again.');
                     },
                 }
             );
         } catch (error) {
+            setIsSending(false);
             console.error('Recaptcha error:', error);
             setErrorMsg('Security check failed. Please try again.');
         }
@@ -250,7 +256,7 @@ export default function UpdatePasswordModal({ open, onClose, email }: UpdatePass
         );
     };
 
-    const isConfirming = isSendingOtp;
+    const isConfirming = isSendingOtp || isSending;
     const isVerifying = isVerifyingOtp;
     const isResetting = isSettingPassword;
 

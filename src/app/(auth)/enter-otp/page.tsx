@@ -18,6 +18,7 @@ export default function EnterOtpPage() {
     const router = useRouter();
     const [otp, setOtp] = useState<string[]>(['', '', '', '']);
     const [resendTimer, setResendTimer] = useState(0);
+    const [isResending, setIsResending] = useState(false);
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -152,8 +153,9 @@ export default function EnterOtpPage() {
     };
 
     const handleResendCode = async () => {
-        if (resendTimer > 0 || isResendPending || !executeRecaptcha) return;
+        if (resendTimer > 0 || isResendPending || isResending || !executeRecaptcha) return;
 
+        setIsResending(true);
         try {
             const token = await executeRecaptcha('resend_otp');
 
@@ -167,12 +169,14 @@ export default function EnterOtpPage() {
                 { username, recaptcha_token: token },
                 {
                     onSuccess: () => {
+                        setIsResending(false);
                         setResendTimer(30); // 30 second cooldown
                         setOtp(['', '', '', '']);
                         clearErrors('otp');
                         inputRefs.current[0]?.focus();
                     },
                     onError: (error: any) => {
+                        setIsResending(false);
                         setError('otp', {
                             type: 'server',
                             message: error?.message || 'Failed to resend OTP. Please try again.',
@@ -181,6 +185,7 @@ export default function EnterOtpPage() {
                 }
             );
         } catch (error) {
+            setIsResending(false);
             console.error('Recaptcha error:', error);
             setError('otp', {
                 type: 'server',
@@ -241,14 +246,14 @@ export default function EnterOtpPage() {
                     <button
                         type="button"
                         onClick={handleResendCode}
-                        disabled={resendTimer > 0 || isResendPending}
+                        disabled={resendTimer > 0 || isResendPending || isResending}
                         className={`font-medium transition-colors ml-auto ${
-                            resendTimer > 0 || isResendPending
+                            resendTimer > 0 || isResendPending || isResending
                                 ? 'text-[#B7AFA5] cursor-not-allowed'
                                 : 'text-[#C4994A] hover:text-[#B38840] cursor-pointer'
                         }`}
                     >
-                        {isResendPending
+                        {isResendPending || isResending
                             ? 'Resending...'
                             : resendTimer > 0
                               ? `Resend in ${resendTimer}s`
