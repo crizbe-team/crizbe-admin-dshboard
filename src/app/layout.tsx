@@ -41,7 +41,7 @@ export const metadata: Metadata = {
         url: 'https://crizbe.com',
         images: [
             {
-                url: '/images/user/og-image.png',
+                url: '/images/user/og-image.jpeg',
                 width: 1200,
                 height: 630,
                 alt: 'Crizbe Premium Crunch Sticks',
