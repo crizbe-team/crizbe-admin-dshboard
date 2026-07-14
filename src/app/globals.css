@@ -476,7 +476,7 @@ button {
 }
 
 /* Global Image Loading Styling */
-img:not(.img-loaded):not(.no-shimmer):not([id*="target"]):not([id*="next"]):not([src*="line"]) {
+img:not(.img-loaded):not(.no-shimmer):not([id*="target"]):not([id*="next"]):not([src*="line"]):not([class*="orbit"]) {
     opacity: 0;
     filter: blur(5px);
     background: linear-gradient(90deg, #f5f2ea 25%, #faf8f5 50%, #f5f2ea 75%);
@@ -484,7 +484,7 @@ img:not(.img-loaded):not(.no-shimmer):not([id*="target"]):not([id*="next"]):not(
     animation: imgShimmer 1.5s infinite;
 }
 
-img.img-loaded:not(.no-shimmer):not([id*="target"]):not([id*="next"]):not([src*="line"]) {
+img.img-loaded:not(.no-shimmer):not([id*="target"]):not([id*="next"]):not([src*="line"]):not([class*="orbit"]) {
     opacity: 1;
     filter: blur(0);
     transition:
