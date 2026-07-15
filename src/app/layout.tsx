@@ -23,11 +23,12 @@ const bricolage = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://crizbe.com'),
-    title: 'Crizbe | Premium Crunch Sticks - Hazelnut, Pista & Almond',
+    title: 'Crizbe | Once in a while luxury',
     description:
-        'Experience the ultimate luxury with Crizbe crunch sticks. Crafted with real hazelnut, pistachio, and almond, dipped in premium Belgian chocolate.',
+        'Once in a while luxury. Experience the ultimate premium crunch sticks crafted with real hazelnut, pistachio, and almond.',
     keywords: [
         'Crizbe',
+        'Once in a while luxury',
         'crunch sticks',
         'premium chocolate',
         'hazelnut chocolate',
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
         'luxury snacks',
     ],
     openGraph: {
-        title: 'Crizbe | Premium Crunch Sticks',
+        title: 'Crizbe | Once in a while luxury',
         description: 'Taste the luxury with Crizbe’s perfectly layered crunch sticks.',
         type: 'website',
         url: 'https://crizbe.com',

@@ -6,12 +6,13 @@ export const metadata: Metadata = {
     metadataBase: new URL('https://crizbe.com'),
     title: {
         template: '%s | Crizbe',
-        default: 'Crizbe | Premium Crunch Sticks - Hazelnut, Pista & Almond',
+        default: 'Crizbe | Once in a while luxury',
     },
     description:
-        'Experience the ultimate luxury with Crizbe crunch sticks. Crafted with real hazelnut, pistachio, and almond, dipped in premium Belgian chocolate.',
+        'Once in a while luxury. Experience the ultimate premium crunch sticks crafted with real hazelnut, pistachio, and almond.',
     keywords: [
         'Crizbe',
+        'Once in a while luxury',
         'crunch sticks',
         'premium chocolate',
         'hazelnut chocolate',
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
         type: 'website',
         locale: 'en_US',
         url: 'https://crizbe.com',
-        title: 'Crizbe | Premium Crunch Sticks',
+        title: 'Crizbe | Once in a while luxury',
         description: 'Taste the luxury with Crizbe’s perfectly layered crunch sticks.',
         siteName: 'Crizbe',
         images: [
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Crizbe | Premium Crunch Sticks',
+        title: 'Crizbe | Once in a while luxury',
         description: 'Taste the luxury with Crizbe’s perfectly layered crunch sticks.',
         creator: '@crizbe',
         images: ['/images/user/og-image.jpeg'],
