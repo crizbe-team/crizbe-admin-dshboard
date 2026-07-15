@@ -23,9 +23,8 @@ const bricolage = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://crizbe.com'),
-    title: 'Crizbe | Once in a while luxury',
     description:
-        'Once in a while luxury. Experience the ultimate premium crunch sticks crafted with real hazelnut, pistachio, and almond.',
+        "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
     keywords: [
         'Crizbe',
         'Once in a while luxury',
@@ -37,7 +36,7 @@ export const metadata: Metadata = {
     ],
     openGraph: {
         title: 'Crizbe | Once in a while luxury',
-        description: 'Taste the luxury with Crizbe’s perfectly layered crunch sticks.',
+        description: "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
         type: 'website',
         url: 'https://crizbe.com',
         images: [
