@@ -48,6 +48,11 @@ export const metadata: Metadata = {
             },
         ],
     },
+    icons: {
+        icon: '/favicon.ico',
+        shortcut: '/favicon.ico',
+        apple: '/favicon.ico',
+    },
 };
 
 import { ToastContainer } from '@/components/ui/Toast';
