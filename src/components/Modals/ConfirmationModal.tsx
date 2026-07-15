@@ -3,6 +3,8 @@
 import React from 'react';
 import { ModalWrapper } from '@/components/ui/ModalWrapper';
 
+import { Loader2 } from 'lucide-react';
+
 interface ConfirmationModalProps {
     open: boolean;
     onClose: () => void;
@@ -59,13 +61,17 @@ export default function ConfirmationModal({
                         type="button"
                         onClick={onConfirm}
                         disabled={isPending}
-                        className={`min-w-[110px] px-8 py-3 rounded-xl text-[16px] font-bold text-white transition-all duration-200 shadow-sm disabled:opacity-50 ${
+                        className={`min-w-[110px] px-8 py-3 rounded-xl text-[16px] font-bold text-white transition-all duration-200 shadow-sm disabled:opacity-50 flex items-center justify-center ${
                             variant === 'destructive'
                                 ? 'bg-[#E1341E] hover:bg-[#C82D1B]'
                                 : 'bg-[#C4994A] hover:bg-[#B38A3F]'
                         }`}
                     >
-                        {isPending ? '...' : confirmText}
+                        {isPending ? (
+                            <Loader2 className="w-5 h-5 animate-spin" aria-hidden />
+                        ) : (
+                            confirmText
+                        )}
                     </button>
                 </div>
             </div>

@@ -34,7 +34,7 @@ export default function NextFlavour() {
     const [selectedFlavor, setSelectedFlavor] = useState(flavors[1]); // Default to Pistachio
 
     return (
-        <section className="min-h-screen flex justify-center next-flavour-section relative overflow-visible py-20 md:py-0 bg-transparent">
+        <section className="min-h-screen flex justify-center items-center next-flavour-section relative overflow-visible py-20 md:pt-[120px] md:pb-[60px] bg-transparent">
             <div className="wrapper flex flex-col md:flex-row gap-[60px] md:gap-[20px] justify-between items-center relative z-10">
                 <div className="flex flex-col items-center md:items-start text-center md:text-left">
                     <h2 className="text-[#4E3325] text-[48px] md:text-[64px] font-bricolage font-bold mb-[38px] next-flavour-title leading-tight">

@@ -22,6 +22,7 @@ import {
     Layers,
     Tags,
     LogOut,
+    Loader2,
 } from 'lucide-react';
 import { useLogout } from '@/queries/use-auth';
 
@@ -154,7 +155,11 @@ export default function Sidebar() {
                         `}
                         title={isCollapsed ? 'Logout' : ''}
                     >
-                        <LogOut className="w-5 h-5 shrink-0" />
+                        {logoutMutation.isPending ? (
+                            <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+                        ) : (
+                            <LogOut className="w-5 h-5 shrink-0" />
+                        )}
                         <span
                             className={`
                                 text-sm font-medium
