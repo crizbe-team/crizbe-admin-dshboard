@@ -8,62 +8,47 @@ import { COMPANY_CONTACT } from '@/constants/constants';
 const PrivacyPolicyPage = () => {
     const sections = [
         {
-            title: 'PRIVACY POLICY',
+            title: 'Privacy Policy',
             content:
-                'At Crizbe, we are committed to protecting your privacy. This Privacy Policy details how we collect, use, and safeguard your personal information when you visit our website, purchase our premium crunch sticks, or interact with our services.',
+                'CRIZBE Foods Pvt. Ltd. welcomes you to its website and looks forward to a meaningful interaction with you.\n\nCRIZBE Foods Pvt. Ltd. respects your right to privacy. Any personal information that you share with us, like your name, date of birth, address, marital status, telephone number, credit card particulars and the like, shall be entitled to privacy and kept confidential.',
         },
         {
-            title: 'PERSONAL IDENTIFICATION INFORMATION',
+            title: 'Use and Disclosure of Information',
             content:
-                'We may collect personal identification information from users in a variety of ways, including, but not limited to, when users visit our site, register on the site, place an order, and in connection with other activities, services, features, or resources we make available on our Site. Users may be asked for, as appropriate, name, email address, mailing address, and phone number.',
+                'CRIZBE Foods Pvt. Ltd. assures you that your personal information shall not be used/disclosed by it, save for the purpose of doing the intended business with you, or if required to be disclosed under the due process of law.\n\nCRIZBE Foods Pvt. Ltd. assures you that in the event of your personal information being shared with its subsidiaries, business associates etc., such sharing of information shall be for the purpose of doing the intended business with you.',
         },
         {
-            title: 'NON-PERSONAL IDENTIFICATION INFORMATION',
+            title: 'Site Usage & Analytics',
             content:
-                'We may collect non-personal identification information about users whenever they interact with our Site. Non-personal identification information may include the browser name, the type of computer, and technical information about users\' means of connection to our Site, such as the operating system, the Internet service providers utilized, and other similar information.',
+                'CRIZBE Foods Pvt. Ltd. reserves its rights to collect, analyse and disseminate aggregate site usage patterns of all its visitors with a view to enhancing services to its visitors. This includes sharing the information with its subsidiaries, and business associates as a general business practice.',
         },
         {
-            title: 'WEB BROWSER COOKIES',
+            title: 'Contests & Surveys',
             content:
-                'Our Site may use "cookies" to enhance the user experience. A user\'s web browser places cookies on their hard drive for record-keeping purposes and sometimes to track information about them. Users may choose to set their web browser to refuse cookies, or to alert you when cookies are being sent. If they do so, note that some parts of the Site may not function properly.',
+                'In the course of its business CRIZBE Foods Pvt. Ltd. may hold on-line contests and surveys as permitted by law and it reserves its right to use and disseminate the information so collected to enhance its services to the visitors. This shall also include sharing the information with its subsidiaries and business associates as a general business practice.',
         },
         {
-            title: 'HOW WE USE COLLECTED INFORMATION',
+            title: 'Security & Internet Environment',
             content:
-                'Crizbe may collect and use users\' personal information for the following purposes:\n\n• To improve customer service: Information you provide helps us respond to your customer service requests and support needs more efficiently.\n• To personalize user experience: We may use information in the aggregate to understand how our users as a group use the services and resources provided on our Site.\n• To process payments: We may use the information users provide about themselves when placing an order only to service that order. We do not share this information with outside parties except to the extent necessary to provide the service.\n• To send periodic emails: We may use the email address to send users information and updates pertaining to their order. It may also be used to respond to their inquiries, questions, and/or other requests.',
+                'While CRIZBE Foods Pvt. Ltd. assures you that it will do its best to ensure the privacy and security of your personal information, it shall not be responsible in any manner whatsoever for any violation or misuse of your personal information by unauthorised persons consequent to misuse of the internet environment.',
         },
         {
-            title: 'HOW WE PROTECT YOUR INFORMATION',
+            title: 'Policy Revisions',
             content:
-                'We adopt appropriate data collection, storage, and processing practices and security measures to protect against unauthorized access, alteration, disclosure, or destruction of your personal information, username, password, transaction information, and data stored on our Site. Sensitive and private data exchange between the Site and its users happens over an SSL secured communication channel and is encrypted and protected with digital signatures.',
+                'CRIZBE Foods Pvt. Ltd. reserves its rights to revise this privacy policy from time to time at its discretion with a view to making the policy more user friendly.',
         },
         {
-            title: 'SHARING YOUR PERSONAL INFORMATION',
+            title: 'Consent',
             content:
-                'We do not sell, trade, or rent users\' personal identification information to others. We may share generic aggregated demographic information not linked to any personal identification information regarding visitors and users with our business partners, trusted affiliates, and advertisers for the purposes outlined above.',
+                'In the design of our website, we have taken care to draw your attention to this privacy policy so that you are aware of the terms under which you may decide to share your personal information with us. Accordingly, should you choose to share your personal information with us, CRIZBE Foods Pvt. Ltd. will assume that you have no objections to the terms of this privacy policy.',
         },
         {
-            title: 'THIRD-PARTY WEBSITES',
+            title: 'Contact Us',
             content:
-                'Users may find advertising or other content on our Site that link to the sites and services of our partners, suppliers, advertisers, sponsors, licensors, and other third parties. We do not control the content or links that appear on these sites and are not responsible for the practices employed by websites linked to or from our Site. In addition, these sites or services, including their content and links, may be constantly changing.',
-        },
-        {
-            title: 'CHANGES TO THIS PRIVACY POLICY',
-            content:
-                'Crizbe has the discretion to update this privacy policy at any time. When we do, we will revise the updated date at the bottom of this page. We encourage users to frequently check this page for any changes to stay informed about how we are helping to protect the personal information we collect.',
-        },
-        {
-            title: 'YOUR ACCEPTANCE OF THESE TERMS',
-            content:
-                'By using this Site, you signify your acceptance of this policy. If you do not agree to this policy, please do not use our Site. Your continued use of the Site following the posting of changes to this policy will be deemed your acceptance of those changes.',
-        },
-        {
-            title: 'CONTACTING US',
-            content:
-                'If you have any questions about this Privacy Policy, the practices of this Site, or your dealings with this Site, please contact us at:',
+                'If you have any questions or concerns regarding your privacy issues, please do not hesitate to contact CRIZBE Foods Pvt. Ltd. at info@crizbe.com.',
             contact: {
                 phone: COMPANY_CONTACT.phone,
-                email: COMPANY_CONTACT.email,
+                email: 'info@crizbe.com',
                 location: COMPANY_CONTACT.fullAddress,
             },
         },
