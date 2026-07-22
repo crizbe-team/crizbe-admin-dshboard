@@ -88,11 +88,10 @@ function ProductCard({
                             {images.map((_: any, i: any) => (
                                 <div
                                     key={i}
-                                    className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${
-                                        i === currentImageIndex
-                                            ? 'bg-white opacity-100'
-                                            : 'bg-white/30'
-                                    }`}
+                                    className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${i === currentImageIndex
+                                        ? 'bg-white opacity-100'
+                                        : 'bg-white/30'
+                                        }`}
                                 />
                             ))}
                         </div>
@@ -140,10 +139,10 @@ function ProductCard({
                                     {addingProductId === product.id
                                         ? ''
                                         : !hasVariants
-                                          ? 'Coming Soon'
-                                          : !isInStock
-                                            ? 'Out of Stock'
-                                            : 'Add to cart'}
+                                            ? 'Coming Soon'
+                                            : !isInStock
+                                                ? 'Out of Stock'
+                                                : 'Add to cart'}
                                 </span>
                             </button>
                         )}
@@ -274,7 +273,7 @@ export default function ExploreBytes() {
                         </p>
                     </div>
                 ) : (
-                    <div className="flex flex-wrap justify-left gap-x-6 gap-y-10">
+                    <div className="flex flex-wrap justify-between gap-x-3 gap-y-10">
                         {apiProducts?.map((product: any, index: number) => (
                             <ProductCard
                                 key={product.id}

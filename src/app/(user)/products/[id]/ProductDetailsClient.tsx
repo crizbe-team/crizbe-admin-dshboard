@@ -109,7 +109,7 @@ const ProductDetailsPage = () => {
                                 <div className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] text-[#373737] [font-variant-numeric:lining-nums_proportional-nums]">
                                     <p>{product?.description}</p>
                                     <br />
-                                    <p className='font-medium text-[18px]'> ingredients : <span className='font-light text-[18px]'>{product?.ingredients}</span></p>
+                                    <p className='font-medium text-[16px]'> ingredients : <span className='font-light text-[14px]'>{product?.ingredients}</span></p>
                                 </div>
                             </AccordionItem>
 
