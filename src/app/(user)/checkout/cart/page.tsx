@@ -209,16 +209,6 @@ export default function CartPage() {
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        {it.available_stock > 0 &&
-                                                            it.available_stock < 10 &&
-                                                            (localQuantities[it.id] ??
-                                                                it.quantity) <=
-                                                            it.available_stock && (
-                                                                <span className="text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
-                                                                    🔥 Only {it.available_stock}{' '}
-                                                                    left!
-                                                                </span>
-                                                            )}
                                                     </div>
                                                     {(localQuantities[it.id] ?? it.quantity) >
                                                         (it.available_stock ?? 0) ? (

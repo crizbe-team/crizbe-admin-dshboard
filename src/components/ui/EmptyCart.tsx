@@ -12,7 +12,7 @@ function EmptyCart() {
         <section className="px-6 py-14">
             <div className="mx-auto flex h-36 w-36 items-center justify-center">
                 <Image
-                    src="https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-cart.png"
+                    src="https://crizbe-media-bucket.s3.eu-north-1.amazonaws.com/static/cart.png"
                     alt="empty-cart"
                     width={144}
                     height={144}

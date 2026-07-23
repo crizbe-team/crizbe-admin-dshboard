@@ -76,7 +76,7 @@ const ProductsPage = () => {
                         <div className="text-center w-full py-14">
                             <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
                                 <Image
-                                    src="https://crizbe.s3.eu-north-1.amazonaws.com/static/out-of-stock.png"
+                                    src="https://crizbe-media-bucket.s3.eu-north-1.amazonaws.com/static/product_empty.png"
                                     alt="out of stock"
                                     width={144}
                                     height={144}
