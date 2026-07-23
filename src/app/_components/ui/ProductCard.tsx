@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useAddToCart } from '@/queries/use-cart';
 import { useCartToast } from '@/contexts/CartToastContext';
 import AuthActionWrapper from '@/components/AuthActionWrapper';
-import { Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { toast } from '@/components/ui/Toast';
 
 interface Product {
@@ -135,20 +135,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     </Link>
                 ) : (
                     <button
-                        className="w-full max-w-full h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-normal text-[16px] leading-[150%] text-[#4E3325] hover:bg-[#4E3325] hover:text-white transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                        className={`relative overflow-hidden w-full max-w-full h-[44px] py-[12px] px-[24px] rounded-[12px] border border-[#4E3325] flex items-center justify-center gap-[8px] font-inter-tight font-normal text-[16px] leading-[150%] transition-all duration-300 cursor-pointer disabled:cursor-not-allowed ${
+                            isPending
+                                ? 'bg-[#4E3325] text-white disabled:opacity-100'
+                                : 'text-[#4E3325] hover:bg-[#4E3325] hover:text-white disabled:opacity-60'
+                        }`}
                         onClick={handleAddToCart}
                         disabled={isPending || !hasVariants || !isInStock}
                     >
-                        {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
                         <span>
-                            {isPending
-                                ? ''
-                                : !hasVariants
-                                  ? 'Coming Soon'
-                                  : !isInStock
+                            {!hasVariants
+                                ? 'Coming Soon'
+                                : !isInStock
                                     ? 'Out of Stock'
                                     : 'Add to cart'}
                         </span>
+                        {isPending && (
+                            <span
+                                aria-hidden
+                                className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] overflow-hidden rounded-b-[12px]"
+                            >
+                                <motion.span
+                                    className="absolute top-0 h-full w-6 bg-white"
+                                    initial={{ left: '-1.5rem' }}
+                                    animate={{ left: ['-1.5rem', '100%'] }}
+                                    transition={{
+                                        duration: 0.9,
+                                        repeat: Infinity,
+                                        ease: 'easeInOut',
+                                    }}
+                                />
+                            </span>
+                        )}
                     </button>
                 )}
             </AuthActionWrapper>

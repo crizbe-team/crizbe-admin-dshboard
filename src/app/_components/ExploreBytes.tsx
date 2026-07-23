@@ -18,6 +18,7 @@ interface ProductCardProps {
     convertPrice: (price: number) => string;
     isCurrencyLoading: boolean;
     addingProductId: string | null;
+    addedToCartProductIds: Set<string>;
     handleAddToCart: (product: any, e: React.MouseEvent) => void;
 }
 
@@ -27,6 +28,7 @@ function ProductCard({
     convertPrice,
     isCurrencyLoading,
     addingProductId,
+    addedToCartProductIds,
     handleAddToCart,
 }: ProductCardProps) {
     const [isHovered, setIsHovered] = useState(false);
@@ -57,6 +59,13 @@ function ProductCard({
     const isInStock = hasVariants
         ? defaultVariant && defaultVariant.stock > 0 && defaultVariant.in_stock !== false
         : false;
+    const isAdding = addingProductId === product.id;
+    const isInCart = defaultVariant?.is_in_cart || addedToCartProductIds.has(String(product.id));
+    const buttonLabel = !hasVariants
+        ? 'Coming Soon'
+        : !isInStock
+            ? 'Out of Stock'
+            : 'Add to cart';
 
     return (
         <motion.div
@@ -114,7 +123,7 @@ function ProductCard({
             <div className="p-[20px] pt-5 bg-[#fff] mt-auto">
                 <div className="px-1">
                     <AuthActionWrapper>
-                        {defaultVariant?.is_in_cart ? (
+                        {isInCart ? (
                             <Link
                                 href="/checkout/cart"
                                 className="w-fit h-[40px] px-5 rounded-full bg-[#4E3325] text-white flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[14px] hover:bg-[#3D281D] active:scale-[0.98] transition-all duration-300 cursor-pointer"
@@ -125,25 +134,28 @@ function ProductCard({
                         ) : (
                             <button
                                 onClick={(e) => handleAddToCart(product, e)}
-                                disabled={
-                                    addingProductId === product.id || !hasVariants || !isInStock
-                                }
-                                className="w-fit h-[40px] px-5 rounded-full bg-[#4E3325] text-white flex items-center justify-center gap-[8px] font-inter-tight font-medium text-[14px] hover:bg-[#3D281D] active:scale-[0.98] transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                                disabled={isAdding || !hasVariants || !isInStock}
+                                className="relative overflow-hidden w-fit h-[40px] px-5 rounded-full bg-[#4E3325] text-white flex items-center justify-center gap-2 font-inter-tight font-medium text-[14px] hover:bg-[#3D281D] active:scale-95 transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100"
                             >
-                                {addingProductId === product.id ? (
-                                    <Loader2 className="w-4 h-4 animate-spin text-white" />
-                                ) : (
-                                    <ShoppingCart className="w-4 h-4" />
+                                <ShoppingCart className="w-4 h-4 shrink-0" />
+                                <span>{buttonLabel}</span>
+                                {isAdding && (
+                                    <span
+                                        aria-hidden
+                                        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] overflow-hidden rounded-b-full"
+                                    >
+                                        <motion.span
+                                            className="absolute top-0 h-full w-1/3 bg-white"
+                                            initial={{ left: '-33%' }}
+                                            animate={{ left: ['-33%', '100%'] }}
+                                            transition={{
+                                                duration: 1,
+                                                repeat: Infinity,
+                                                ease: 'easeInOut',
+                                            }}
+                                        />
+                                    </span>
                                 )}
-                                <span>
-                                    {addingProductId === product.id
-                                        ? ''
-                                        : !hasVariants
-                                            ? 'Coming Soon'
-                                            : !isInStock
-                                                ? 'Out of Stock'
-                                                : 'Add to cart'}
-                                </span>
                             </button>
                         )}
                     </AuthActionWrapper>
@@ -164,6 +176,7 @@ export default function ExploreBytes() {
 
     // State to track which product is being added to cart (shows spinner)
     const [addingProductId, setAddingProductId] = useState<string | null>(null);
+    const [addedToCartProductIds, setAddedToCartProductIds] = useState<Set<string>>(new Set());
 
     // Refresh Locomotive Scroll & GSAP ScrollTrigger when products are loaded
     useEffect(() => {
@@ -210,6 +223,7 @@ export default function ExploreBytes() {
                     weight: defaultVariant?.size || 'Standard',
                     qty: 1,
                 });
+                setAddedToCartProductIds((prev) => new Set(prev).add(String(product.id)));
                 setAddingProductId(null);
             }, 600);
             return;
@@ -231,6 +245,7 @@ export default function ExploreBytes() {
                         weight: defaultVariant?.size || 'Standard',
                         qty: 1,
                     });
+                    setAddedToCartProductIds((prev) => new Set(prev).add(String(product.id)));
                     setAddingProductId(null);
                 },
                 onError: (error: any) => {
@@ -282,6 +297,7 @@ export default function ExploreBytes() {
                                 convertPrice={convertPrice}
                                 isCurrencyLoading={isCurrencyLoading}
                                 addingProductId={addingProductId}
+                                addedToCartProductIds={addedToCartProductIds}
                                 handleAddToCart={handleAddToCart}
                             />
                         ))}

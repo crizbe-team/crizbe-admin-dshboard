@@ -226,7 +226,7 @@ export default function Flavours() {
                 </div>
             </div>
             <div className="absolute bottom-[80px] left-1/2 -translate-x-1/2 z-10">
-                <Button className="view-all-btn bg-[#4E3325] hover:bg-[#3d281d] text-white rounded-full text-[16px] font-medium flex items-center gap-[10px] translate-y-[600px] invisible">
+                <Button onClick={() => router.push('/products')} className="view-all-btn bg-[#4E3325] hover:bg-[#3d281d] text-white rounded-full text-[16px] font-medium flex items-center gap-[10px] translate-y-[600px] invisible">
                     View all products{' '}
                     <Image
                         src="/images/user/arrow-right.svg"
