@@ -39,6 +39,9 @@ export const useUpdateCartItem = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CART] });
             queryClient.invalidateQueries({ queryKey: [GET_CART_SUMMARY] });
+            queryClient.invalidateQueries({ queryKey: [GET_PRODUCT] });
+            queryClient.invalidateQueries({ queryKey: [GET_PRODUCTS] });
+            queryClient.invalidateQueries({ queryKey: [GET_MINIMAL_DETAILS] });
         },
     });
 };
@@ -50,6 +53,9 @@ export const useRemoveFromCart = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CART] });
             queryClient.invalidateQueries({ queryKey: [GET_CART_SUMMARY] });
+            queryClient.invalidateQueries({ queryKey: [GET_PRODUCT] });
+            queryClient.invalidateQueries({ queryKey: [GET_PRODUCTS] });
+            queryClient.invalidateQueries({ queryKey: [GET_MINIMAL_DETAILS] });
         },
     });
 };
@@ -61,6 +67,9 @@ export const useClearCart = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_CART] });
             queryClient.invalidateQueries({ queryKey: [GET_CART_SUMMARY] });
+            queryClient.invalidateQueries({ queryKey: [GET_PRODUCT] });
+            queryClient.invalidateQueries({ queryKey: [GET_PRODUCTS] });
+            queryClient.invalidateQueries({ queryKey: [GET_MINIMAL_DETAILS] });
         },
     });
 };
