@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Minus, Plus, Trash2, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Footer from '@/app/_components/Footer';
 import CheckoutSteps from '@/app/(user)/_components/checkout/CheckoutSteps';
 
@@ -131,8 +132,8 @@ export default function CartPage() {
                                                     {isLoading
                                                         ? 'Loading...'
                                                         : convertPrice(
-                                                              it.variant_details?.price || 0
-                                                          )}
+                                                            it.variant_details?.price || 0
+                                                        )}
                                                 </span>
                                             </div>
 
@@ -142,7 +143,7 @@ export default function CartPage() {
                                                         Quantity
                                                     </div>
                                                     <div className="flex items-center gap-3">
-                                                        <div className="inline-flex items-center rounded-lg border border-[#474747] bg-white overflow-hidden">
+                                                        <div className="relative inline-flex items-center rounded-lg border border-[#474747] bg-white overflow-hidden">
                                                             <button
                                                                 type="button"
                                                                 aria-label="Decrease"
@@ -151,7 +152,7 @@ export default function CartPage() {
                                                                     handleUpdateQuantity(
                                                                         it.id,
                                                                         localQuantities[it.id] ??
-                                                                            it.quantity,
+                                                                        it.quantity,
                                                                         -1,
                                                                         it.available_stock ?? 999
                                                                     )
@@ -160,17 +161,13 @@ export default function CartPage() {
                                                             >
                                                                 <Minus className="w-4 h-4 text-[#0A0A0A]" />
                                                             </button>
-                                                            <div className="h-9 w-10 grid place-items-center text-sm text-[#0A0A0A] relative">
-                                                                {updatingId === it.id ? (
-                                                                    <Loader2 className="w-4 h-4 animate-spin text-[#4E3325]" />
-                                                                ) : (
-                                                                    (
-                                                                        localQuantities[it.id] ??
-                                                                        it.quantity
-                                                                    )
-                                                                        .toString()
-                                                                        .padStart(2, '0')
-                                                                )}
+                                                            <div className="h-9 w-10 grid place-items-center text-sm text-[#0A0A0A]">
+                                                                {(
+                                                                    localQuantities[it.id] ??
+                                                                    it.quantity
+                                                                )
+                                                                    .toString()
+                                                                    .padStart(2, '0')}
                                                             </div>
                                                             <button
                                                                 type="button"
@@ -179,13 +176,13 @@ export default function CartPage() {
                                                                     updatingId === it.id ||
                                                                     (localQuantities[it.id] ??
                                                                         it.quantity) >=
-                                                                        (it.available_stock ?? 999)
+                                                                    (it.available_stock ?? 999)
                                                                 }
                                                                 onClick={() =>
                                                                     handleUpdateQuantity(
                                                                         it.id,
                                                                         localQuantities[it.id] ??
-                                                                            it.quantity,
+                                                                        it.quantity,
                                                                         1,
                                                                         it.available_stock ?? 999
                                                                     )
@@ -194,12 +191,29 @@ export default function CartPage() {
                                                             >
                                                                 <Plus className="w-4 h-4 text-[#0A0A0A]" />
                                                             </button>
+                                                            {updatingId === it.id && (
+                                                                <span
+                                                                    aria-hidden
+                                                                    className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] overflow-hidden rounded-b-lg"
+                                                                >
+                                                                    <motion.span
+                                                                        className="absolute top-0 h-full w-6 bg-[#C4994A]"
+                                                                        initial={{ left: '-1.5rem' }}
+                                                                        animate={{ left: ['-1.5rem', '100%'] }}
+                                                                        transition={{
+                                                                            duration: 0.9,
+                                                                            repeat: Infinity,
+                                                                            ease: 'easeInOut',
+                                                                        }}
+                                                                    />
+                                                                </span>
+                                                            )}
                                                         </div>
                                                         {it.available_stock > 0 &&
                                                             it.available_stock < 10 &&
                                                             (localQuantities[it.id] ??
                                                                 it.quantity) <=
-                                                                it.available_stock && (
+                                                            it.available_stock && (
                                                                 <span className="text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
                                                                     🔥 Only {it.available_stock}{' '}
                                                                     left!
@@ -207,7 +221,7 @@ export default function CartPage() {
                                                             )}
                                                     </div>
                                                     {(localQuantities[it.id] ?? it.quantity) >
-                                                    (it.available_stock ?? 0) ? (
+                                                        (it.available_stock ?? 0) ? (
                                                         <p className="mt-2 text-[11px] font-medium text-red-600">
                                                             <span className="font-bold">
                                                                 Reduce quantity!
@@ -222,7 +236,7 @@ export default function CartPage() {
                                                             available — please lower your quantity.
                                                         </p>
                                                     ) : it.available_stock > 0 &&
-                                                      it.available_stock < 10 ? (
+                                                        it.available_stock < 10 ? (
                                                         <p className="mt-2 text-[11px] font-medium text-orange-700">
                                                             <span className="font-bold">
                                                                 Hurry!
