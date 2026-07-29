@@ -19,6 +19,7 @@ export default function Hero() {
                         </span>
                         <br />
                         Taste the Luxury.
+                        <span className="sr-only"> — Premium Belgian Chocolate Crunch Sticks</span>
                     </h1>
                     <ButtonLink
                         href="/products"

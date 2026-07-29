@@ -7,10 +7,11 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = await params;
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://api.crizbe.com/';
+    const apiBaseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'https://api.crizbe.com/api/v1/').replace(/\/$/, '');
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://crizbe.com').replace(/\/$/, '');
 
     try {
-        const res = await fetch(`${baseUrl}products/products/${id}/`, {
+        const res = await fetch(`${apiBaseUrl}/products/products/${id}/`, {
             next: { revalidate: 60 }, // cache for 60 seconds
         });
         const responseData = await res.json();
@@ -27,16 +28,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             product.description ||
             `Savor the roasted perfection of Crizbe's premium ${product.name} crunch sticks. Crafted with real ingredients and dipped in rich Belgian chocolate.`;
         const ogImage =
-            product.images?.[0]?.image || 'https://crizbe.com/images/user/og-image.jpeg';
+            product.images?.[0]?.image || `${siteUrl}/images/user/og-image.jpeg`;
 
         return {
             title,
             description,
+            keywords: [
+                product.name,
+                'Crizbe crunch sticks',
+                'Belgian chocolate snacks',
+                'premium chocolate',
+                'gourmet chocolate sticks',
+            ],
+            alternates: {
+                canonical: `${siteUrl}/products/${id}`,
+            },
+            robots: {
+                index: true,
+                follow: true,
+            },
             openGraph: {
                 title,
                 description,
                 type: 'website',
-                url: `https://crizbe.com/products/${id}`,
+                url: `${siteUrl}/products/${id}`,
                 images: [
                     {
                         url: ogImage,

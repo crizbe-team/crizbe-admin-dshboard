@@ -6,6 +6,10 @@ import Image from 'next/image';
 import TanstackProvider from '@/providers/TanstackProvider';
 import AuthProviders from '@/providers/AuthProviders';
 
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import { ToastContainer } from '@/components/ui/Toast';
+import GlobalImageLoader from '@/components/ui/GlobalImageLoader';
+
 const interTight = Inter_Tight({
     variable: '--font-inter-tight',
     subsets: ['latin'],
@@ -23,30 +27,59 @@ const bricolage = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://crizbe.com'),
+    title: {
+        default: 'Crizbe | Premium Belgian Chocolate Crunch Sticks & Gourmet Snacks',
+        template: '%s | Crizbe Premium Chocolate',
+    },
     description:
-        "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
+        "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered chocolate crunch sticks crafted with real hazelnut, pistachio, and almond. Premium Belgian chocolate snacks.",
     keywords: [
         'Crizbe',
+        'premium chocolate crunch sticks',
+        'Belgian chocolate snacks',
+        'hazelnut chocolate sticks',
+        'pistachio chocolate snacks',
+        'almond chocolate snacks',
+        'luxury chocolate treats',
+        'gourmet crunch sticks',
         'Once in a while luxury',
-        'crunch sticks',
-        'premium chocolate',
-        'hazelnut chocolate',
-        'pista chocolate',
-        'luxury snacks',
     ],
+    alternates: {
+        canonical: 'https://crizbe.com',
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+            'max-video-preview': -1,
+        },
+    },
     openGraph: {
-        title: 'Crizbe | Once in a while luxury',
-        description: "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
+        title: 'Crizbe | Premium Belgian Chocolate Crunch Sticks & Gourmet Snacks',
+        description:
+            "Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond dipped in Belgian chocolate.",
         type: 'website',
         url: 'https://crizbe.com',
+        siteName: 'Crizbe',
         images: [
             {
                 url: '/images/user/og-image.jpeg',
                 width: 1200,
                 height: 630,
-                alt: 'Crizbe Premium Crunch Sticks',
+                alt: 'Crizbe Premium Belgian Chocolate Crunch Sticks',
             },
         ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Crizbe | Premium Belgian Chocolate Crunch Sticks',
+        description:
+            "Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond.",
+        images: ['/images/user/og-image.jpeg'],
     },
     icons: {
         icon: '/favicon.ico',
@@ -54,9 +87,6 @@ export const metadata: Metadata = {
         apple: '/favicon.ico',
     },
 };
-
-import { ToastContainer } from '@/components/ui/Toast';
-import GlobalImageLoader from '@/components/ui/GlobalImageLoader';
 
 export default function RootLayout({
     children,
@@ -68,6 +98,7 @@ export default function RootLayout({
             <body
                 className={`${interTight.variable} ${geistMono.variable} ${bricolage.variable} antialiased`}
             >
+                <GoogleAnalytics />
                 <GlobalImageLoader />
                 <AuthProviders>
                     <TanstackProvider>{children}</TanstackProvider>

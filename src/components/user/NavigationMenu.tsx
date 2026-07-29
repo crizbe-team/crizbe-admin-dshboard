@@ -17,10 +17,12 @@ export default function NavigationMenu({ isOpen, onClose }: NavigationMenuProps)
 
     const links = [
         { href: '/', label: 'Home' },
+        { href: '/products', label: 'Products' },
         { href: '/our-story', label: 'Our story' },
+        { href: '/blog', label: 'Blog & Articles' },
+        { href: '/contact-us', label: 'Contact Us' },
         { href: '/privacy-policy', label: 'Privacy Policy' },
         { href: '/terms-and-conditions', label: 'Terms & Conditions' },
-        { href: '/contact-us', label: 'Contact Us' },
     ];
 
     return (
