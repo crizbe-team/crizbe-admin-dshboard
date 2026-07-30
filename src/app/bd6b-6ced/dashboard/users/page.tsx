@@ -44,7 +44,12 @@ const itemVariants: Variants = {
 };
 
 export default function AdminUsersPage() {
-    const { data: usersRes, isLoading: isUsersLoading, isRefetching, refetch } = useFetchAdminUsers();
+    const {
+        data: usersRes,
+        isLoading: isUsersLoading,
+        isRefetching,
+        refetch,
+    } = useFetchAdminUsers();
     const { data: rolesRes } = useFetchAdminRoles();
 
     const createUserMutation = useCreateAdminUserMutation();
@@ -137,14 +142,18 @@ export default function AdminUsersPage() {
             className="space-y-8 pb-16 max-w-7xl mx-auto"
         >
             {/* Page Header */}
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <motion.div
+                variants={itemVariants}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            >
                 <div className="space-y-1">
                     <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
                         <Users className="w-9 h-9 text-[#E8BF7A]" />
                         Sub-Admin User Management
                     </h1>
                     <p className="text-gray-400 text-sm sm:text-base font-medium">
-                        Create sub-admin login accounts (username, password, assigned role) to enforce role-based access.
+                        Create sub-admin login accounts (username, password, assigned role) to
+                        enforce role-based access.
                     </p>
                 </div>
 
@@ -155,7 +164,7 @@ export default function AdminUsersPage() {
                         className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2"
                     >
                         <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
-                        Refresh Accounts
+                        Refresh
                     </button>
 
                     <button
@@ -163,13 +172,16 @@ export default function AdminUsersPage() {
                         className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" />
-                        Create Sub-Admin User
+                        Create User
                     </button>
                 </div>
             </motion.div>
 
             {/* Users Table */}
-            <motion.div variants={itemVariants} className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            <motion.div
+                variants={itemVariants}
+                className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
+            >
                 <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <UserCheck className="w-5 h-5 text-[#E8BF7A]" />
@@ -186,7 +198,8 @@ export default function AdminUsersPage() {
                     </div>
                 ) : users.length === 0 ? (
                     <div className="p-12 text-center text-gray-400 font-medium">
-                        No sub-admin users created yet. Click "Create Sub-Admin User" to add account logins.
+                        No sub-admin users created yet. Click "Create Sub-Admin User" to add account
+                        logins.
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
@@ -202,7 +215,10 @@ export default function AdminUsersPage() {
                             </thead>
                             <tbody className="divide-y divide-white/5 font-medium">
                                 {users.map((u) => (
-                                    <tr key={u.id || u.username} className="hover:bg-white/[0.02] transition">
+                                    <tr
+                                        key={u.id || u.username}
+                                        className="hover:bg-white/[0.02] transition"
+                                    >
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#9A7236]/30 to-[#E8BF7A]/20 border border-[#E8BF7A]/30 flex items-center justify-center font-bold text-white uppercase text-sm">
@@ -255,7 +271,9 @@ export default function AdminUsersPage() {
                                                         : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
                                                 }`}
                                             >
-                                                <span className={`w-1.5 h-1.5 rounded-full ${u.is_active ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+                                                <span
+                                                    className={`w-1.5 h-1.5 rounded-full ${u.is_active ? 'bg-emerald-400' : 'bg-rose-400'}`}
+                                                />
                                                 {u.is_active ? 'Active' : 'Disabled'}
                                             </button>
                                         </td>
@@ -304,11 +322,14 @@ export default function AdminUsersPage() {
                         <div className="flex items-center gap-3 mb-2">
                             <Lock className="w-6 h-6 text-[#E8BF7A]" />
                             <h3 className="text-xl font-bold text-white font-bricolage">
-                                {editingUser ? 'Edit Sub-Admin User' : 'Create Sub-Admin User Account'}
+                                {editingUser
+                                    ? 'Edit Sub-Admin User'
+                                    : 'Create Sub-Admin User Account'}
                             </h3>
                         </div>
                         <p className="text-gray-400 text-xs mb-6">
-                            Assign login username, password, and role to restrict dashboard access based on permissions.
+                            Assign login username, password, and role to restrict dashboard access
+                            based on permissions.
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -372,7 +393,9 @@ export default function AdminUsersPage() {
 
                             <div>
                                 <label className="block text-xs font-bold text-gray-300 uppercase mb-1.5">
-                                    {editingUser ? 'New Password (Leave blank to keep current)' : 'Account Password'}
+                                    {editingUser
+                                        ? 'New Password (Leave blank to keep current)'
+                                        : 'Account Password'}
                                 </label>
                                 <input
                                     type="password"
@@ -393,7 +416,9 @@ export default function AdminUsersPage() {
                                     onChange={(e) => setFormAssignedRole(e.target.value)}
                                     className="w-full bg-[#141414] border border-white/20 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#E8BF7A] font-semibold"
                                 >
-                                    <option value="">-- Select Role (Default: Full Super Admin) --</option>
+                                    <option value="">
+                                        -- Select Role (Default: Full Super Admin) --
+                                    </option>
                                     {roles.map((r) => (
                                         <option key={r.id || r.name} value={r.id}>
                                             {r.name} ({r.permissions?.length ?? 0} accesses)
@@ -410,7 +435,10 @@ export default function AdminUsersPage() {
                                     onChange={(e) => setFormActive(e.target.checked)}
                                     className="w-4 h-4 rounded border-white/10 text-[#E8BF7A] focus:ring-0 accent-[#E8BF7A]"
                                 />
-                                <label htmlFor="userActiveCheck" className="text-sm font-semibold text-gray-300">
+                                <label
+                                    htmlFor="userActiveCheck"
+                                    className="text-sm font-semibold text-gray-300"
+                                >
                                     Account Enabled (User can login)
                                 </label>
                             </div>
@@ -425,10 +453,13 @@ export default function AdminUsersPage() {
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={createUserMutation.isPending || updateUserMutation.isPending}
+                                    disabled={
+                                        createUserMutation.isPending || updateUserMutation.isPending
+                                    }
                                     className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center justify-center gap-2"
                                 >
-                                    {(createUserMutation.isPending || updateUserMutation.isPending) && (
+                                    {(createUserMutation.isPending ||
+                                        updateUserMutation.isPending) && (
                                         <RefreshCw className="w-4 h-4 animate-spin" />
                                     )}
                                     Save User Account

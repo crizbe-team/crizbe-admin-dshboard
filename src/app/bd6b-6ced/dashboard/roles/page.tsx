@@ -43,19 +43,51 @@ const itemVariants: Variants = {
 
 // Available system access permissions that can be toggled per role
 const ALL_MODULE_PERMISSIONS = [
-    { key: 'dashboard', label: 'Dashboard Overview', desc: 'View sales stats, analytics charts & activity' },
+    {
+        key: 'dashboard',
+        label: 'Dashboard Overview',
+        desc: 'View sales stats, analytics charts & activity',
+    },
     { key: 'categories', label: 'Categories', desc: 'Create, update & delete product categories' },
     { key: 'products', label: 'Products', desc: 'Create, edit, feature & manage products' },
-    { key: 'variants', label: 'Product Variants', desc: 'Manage product weight & flavour variants' },
+    {
+        key: 'variants',
+        label: 'Product Variants',
+        desc: 'Manage product weight & flavour variants',
+    },
     { key: 'stock', label: 'Inventory / Stock', desc: 'Update product stock levels & history' },
-    { key: 'orders', label: 'Order Management', desc: 'View customer orders & update tracking status' },
+    {
+        key: 'orders',
+        label: 'Order Management',
+        desc: 'View customer orders & update tracking status',
+    },
     { key: 'sales', label: 'Sales Performance', desc: 'View detailed revenue reports & metrics' },
-    { key: 'clients', label: 'Clients / Customers', desc: 'View registered customer details & history' },
-    { key: 'enquiries', label: 'Enquiries & Messages', desc: 'Read contact messages & customer feedback' },
-    { key: 'currencies', label: 'Currencies & Rates', desc: 'Manage global currencies & conversion rates' },
-    { key: 'roles', label: 'Roles & Access Control', desc: 'Manage admin roles and permission matrices' },
+    {
+        key: 'clients',
+        label: 'Clients / Customers',
+        desc: 'View registered customer details & history',
+    },
+    {
+        key: 'enquiries',
+        label: 'Enquiries & Messages',
+        desc: 'Read contact messages & customer feedback',
+    },
+    {
+        key: 'currencies',
+        label: 'Currencies & Rates',
+        desc: 'Manage global currencies & conversion rates',
+    },
+    {
+        key: 'roles',
+        label: 'Roles & Access Control',
+        desc: 'Manage admin roles and permission matrices',
+    },
     { key: 'users', label: 'Sub-Admin Users', desc: 'Create and manage sub-admin user logins' },
-    { key: 'settings', label: 'System Settings', desc: 'Configure general administration settings' },
+    {
+        key: 'settings',
+        label: 'System Settings',
+        desc: 'Configure general administration settings',
+    },
 ];
 
 export default function RolesPage() {
@@ -125,7 +157,11 @@ export default function RolesPage() {
 
     const handleDeleteRole = async (id?: string) => {
         if (!id) return;
-        if (confirm('Are you sure you want to delete this role? Assigned users will lose custom access permissions.')) {
+        if (
+            confirm(
+                'Are you sure you want to delete this role? Assigned users will lose custom access permissions.'
+            )
+        ) {
             await deleteMutation.mutateAsync(id);
         }
     };
@@ -138,14 +174,18 @@ export default function RolesPage() {
             className="space-y-8 pb-16 max-w-7xl mx-auto"
         >
             {/* Page Header */}
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <motion.div
+                variants={itemVariants}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            >
                 <div className="space-y-1">
                     <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
                         <ShieldCheck className="w-9 h-9 text-[#E8BF7A]" />
                         Roles & Role-Based Access Control (RBAC)
                     </h1>
                     <p className="text-gray-400 text-sm sm:text-base font-medium">
-                        Create custom admin roles (e.g. Content Writer, Inventory Manager) and select exact module accesses.
+                        Create custom admin roles (e.g. Content Writer, Inventory Manager) and
+                        select exact module accesses.
                     </p>
                 </div>
 
@@ -156,7 +196,7 @@ export default function RolesPage() {
                         className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2"
                     >
                         <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
-                        Refresh Roles
+                        Refresh
                     </button>
 
                     <button
@@ -164,20 +204,24 @@ export default function RolesPage() {
                         className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" />
-                        Create New Role
+                        Create Role
                     </button>
                 </div>
             </motion.div>
 
             {/* Roles Grid */}
-            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div
+                variants={itemVariants}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
                 {isLoading ? (
                     <div className="col-span-full p-12 text-center text-gray-400 font-medium animate-pulse">
                         Loading admin roles and permission matrices...
                     </div>
                 ) : roles.length === 0 ? (
                     <div className="col-span-full p-12 text-center text-gray-400 font-medium bg-[#141414] rounded-3xl border border-white/10">
-                        No custom roles created yet. Click "Create New Role" to configure access permissions.
+                        No custom roles created yet. Click "Create New Role" to configure access
+                        permissions.
                     </div>
                 ) : (
                     roles.map((role) => (
@@ -197,9 +241,12 @@ export default function RolesPage() {
                                 </div>
 
                                 <div>
-                                    <h3 className="text-xl font-bold text-white font-bricolage">{role.name}</h3>
+                                    <h3 className="text-xl font-bold text-white font-bricolage">
+                                        {role.name}
+                                    </h3>
                                     <p className="text-gray-400 text-xs mt-1 line-clamp-2">
-                                        {role.description || 'Custom administrative role with specific module access rights.'}
+                                        {role.description ||
+                                            'Custom administrative role with specific module access rights.'}
                                     </p>
                                 </div>
 
@@ -207,13 +254,16 @@ export default function RolesPage() {
                                     <div className="flex items-center justify-between text-xs font-bold text-gray-400 uppercase tracking-wider">
                                         <span>Module Access</span>
                                         <span className="text-[#E8BF7A]">
-                                            {role.permissions?.length ?? 0} / {ALL_MODULE_PERMISSIONS.length} Allowed
+                                            {role.permissions?.length ?? 0} /{' '}
+                                            {ALL_MODULE_PERMISSIONS.length} Allowed
                                         </span>
                                     </div>
 
                                     <div className="flex flex-wrap gap-1.5 pt-1">
                                         {(role.permissions || []).map((permKey) => {
-                                            const match = ALL_MODULE_PERMISSIONS.find((p) => p.key === permKey);
+                                            const match = ALL_MODULE_PERMISSIONS.find(
+                                                (p) => p.key === permKey
+                                            );
                                             return (
                                                 <span
                                                     key={permKey}
@@ -270,7 +320,8 @@ export default function RolesPage() {
                             </h3>
                         </div>
                         <p className="text-gray-400 text-xs mb-6">
-                            Configure role title and select the exact access permissions this role is allowed to view and manage.
+                            Configure role title and select the exact access permissions this role
+                            is allowed to view and manage.
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
@@ -307,14 +358,16 @@ export default function RolesPage() {
                             <div className="space-y-3 pt-2">
                                 <div className="flex items-center justify-between">
                                     <label className="block text-xs font-bold text-[#E8BF7A] uppercase tracking-wider">
-                                        Module Access Permissions ({selectedPermissions.length} selected)
+                                        Module Access Permissions ({selectedPermissions.length}{' '}
+                                        selected)
                                     </label>
                                     <button
                                         type="button"
                                         onClick={handleSelectAll}
                                         className="text-xs font-bold text-gray-400 hover:text-white underline transition"
                                     >
-                                        {selectedPermissions.length === ALL_MODULE_PERMISSIONS.length
+                                        {selectedPermissions.length ===
+                                        ALL_MODULE_PERMISSIONS.length
                                             ? 'Deselect All'
                                             : 'Select All Accesses'}
                                     </button>
@@ -340,11 +393,15 @@ export default function RolesPage() {
                                                             : 'border-white/20 bg-white/5'
                                                     }`}
                                                 >
-                                                    {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                                                    {isChecked && (
+                                                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                                                    )}
                                                 </div>
 
                                                 <div>
-                                                    <h4 className="text-xs font-bold text-white">{perm.label}</h4>
+                                                    <h4 className="text-xs font-bold text-white">
+                                                        {perm.label}
+                                                    </h4>
                                                     <p className="text-[10px] text-gray-400 leading-snug mt-0.5">
                                                         {perm.desc}
                                                     </p>

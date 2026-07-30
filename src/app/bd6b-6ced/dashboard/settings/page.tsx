@@ -120,14 +120,19 @@ export default function SettingsPage() {
             className="space-y-8 pb-16 max-w-7xl mx-auto"
         >
             {/* Page Header */}
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <motion.div
+                variants={itemVariants}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            >
                 <div className="space-y-1">
                     <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
                         <DollarSign className="w-9 h-9 text-[#E8BF7A]" />
                         Currency & Exchange Rates Settings
                     </h1>
                     <p className="text-gray-400 text-sm sm:text-base font-medium">
-                        Manage global currencies, multi-currency conversion rates (base currency: <span className="text-[#E8BF7A] font-semibold">INR ₹</span>), and active status.
+                        Manage global currencies, multi-currency conversion rates (base currency:{' '}
+                        <span className="text-[#E8BF7A] font-semibold">INR ₹</span>), and active
+                        status.
                     </p>
                 </div>
 
@@ -138,7 +143,7 @@ export default function SettingsPage() {
                         className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2"
                     >
                         <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
-                        Refresh Rates
+                        Refresh
                     </button>
 
                     <button
@@ -146,13 +151,16 @@ export default function SettingsPage() {
                         className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" />
-                        Add New Currency
+                        Add Currency
                     </button>
                 </div>
             </motion.div>
 
             {/* Currency Management Table / Cards */}
-            <motion.div variants={itemVariants} className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            <motion.div
+                variants={itemVariants}
+                className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
+            >
                 <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <Globe className="w-5 h-5 text-[#E8BF7A]" />
@@ -186,7 +194,10 @@ export default function SettingsPage() {
                             </thead>
                             <tbody className="divide-y divide-white/5 font-medium">
                                 {currencies.map((c) => (
-                                    <tr key={c.id || c.code} className="hover:bg-white/[0.02] transition">
+                                    <tr
+                                        key={c.id || c.code}
+                                        className="hover:bg-white/[0.02] transition"
+                                    >
                                         <td className="px-6 py-4 font-bold text-white flex items-center gap-2">
                                             <span className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xs font-mono text-[#E8BF7A]">
                                                 {c.code}
@@ -198,8 +209,12 @@ export default function SettingsPage() {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-gray-300 font-semibold">{c.name}</td>
-                                        <td className="px-6 py-4 text-[#E8BF7A] font-bold text-base">{c.symbol}</td>
+                                        <td className="px-6 py-4 text-gray-300 font-semibold">
+                                            {c.name}
+                                        </td>
+                                        <td className="px-6 py-4 text-[#E8BF7A] font-bold text-base">
+                                            {c.symbol}
+                                        </td>
                                         <td className="px-6 py-4 font-mono font-bold text-white text-base">
                                             {c.exchange_rate}
                                         </td>
@@ -212,7 +227,9 @@ export default function SettingsPage() {
                                                         : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
                                                 }`}
                                             >
-                                                <span className={`w-1.5 h-1.5 rounded-full ${c.is_active ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+                                                <span
+                                                    className={`w-1.5 h-1.5 rounded-full ${c.is_active ? 'bg-emerald-400' : 'bg-rose-400'}`}
+                                                />
                                                 {c.is_active ? 'Active' : 'Inactive'}
                                             </button>
                                         </td>
@@ -263,7 +280,8 @@ export default function SettingsPage() {
                             {editingCurrency ? 'Edit Currency & Exchange Rate' : 'Add New Currency'}
                         </h3>
                         <p className="text-gray-400 text-xs mb-6">
-                            Configure exchange conversion rate relative to base currency INR (1 INR = Rate).
+                            Configure exchange conversion rate relative to base currency INR (1 INR
+                            = Rate).
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -332,7 +350,10 @@ export default function SettingsPage() {
                                     onChange={(e) => setFormActive(e.target.checked)}
                                     className="w-4 h-4 rounded border-white/10 text-[#E8BF7A] focus:ring-0 accent-[#E8BF7A]"
                                 />
-                                <label htmlFor="currencyActiveCheck" className="text-sm font-semibold text-gray-300">
+                                <label
+                                    htmlFor="currencyActiveCheck"
+                                    className="text-sm font-semibold text-gray-300"
+                                >
                                     Active for public site conversion
                                 </label>
                             </div>
