@@ -12,7 +12,7 @@ import { useOutsideClick } from '@/hooks/use-outside-click';
 import NavigationMenu from './NavigationMenu';
 
 export default function Header() {
-    const { currency, setCurrency, isLoading } = useCurrency();
+    const { currency, setCurrency, currencies, isLoading } = useCurrency();
     const pathname = usePathname();
     const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -24,15 +24,9 @@ export default function Header() {
     const { data: minimalDetailsRes } = useFetchMinimalDetails(isAuth);
     const cartCount = minimalDetailsRes?.data?.cart_count || 0;
 
-    const currencies = [
-        { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
-        { code: 'USD', symbol: '$', name: 'US Dollar' },
-        { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' },
-        { code: 'EUR', symbol: '€', name: 'Euro' },
-        { code: 'GBP', symbol: '£', name: 'British Pound' },
-    ];
-
-    const currentCurrency = currencies.find((c) => c.code === currency) || currencies[0];
+    const currentCurrency =
+        currencies.find((c) => c.code === currency) ||
+        currencies[0] || { code: currency, symbol: currency, name: currency };
 
     useEffect(() => {
         setIsAuth(authUtils.isAuthenticated());
