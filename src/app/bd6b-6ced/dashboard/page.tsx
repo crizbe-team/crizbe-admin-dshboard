@@ -140,17 +140,17 @@ export default function Dashboard() {
 
       {/* Charts Row 1 */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col">
-          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#E8BF7A]" />
+        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col justify-between">
+          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#E8BF7A] shadow-[0_0_8px_#E8BF7A]" />
             Sales Trend Revenue
           </h2>
           <SalesOverviewChart data={overviewData?.sales_overview} />
         </div>
 
-        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col">
-          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col justify-between">
+          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#C4994A] shadow-[0_0_8px_#C4994A]" />
             Category Volume Distribution
           </h2>
           <CategoryDistributionChart data={overviewData?.category_distribution} />
@@ -159,17 +159,17 @@ export default function Dashboard() {
 
       {/* Charts Row 2 */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col">
-          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
+        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col justify-between">
+          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34D399]" />
             Order Status Lifecycle
           </h2>
           <OrderStatusChart data={overviewData?.order_status_distribution} />
         </div>
 
-        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col">
-          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-purple-400" />
+        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col justify-between">
+          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#E8BF7A] shadow-[0_0_8px_#E8BF7A]" />
             Product Unit Sales
           </h2>
           <ProductPerformanceChart data={overviewData?.product_performance} />

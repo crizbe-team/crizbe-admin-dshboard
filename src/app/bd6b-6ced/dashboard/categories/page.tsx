@@ -169,7 +169,10 @@ export default function CategoriesPage() {
             </motion.div>
 
             {/* Statistics Cards */}
-            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <motion.div
+                variants={itemVariants}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            >
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     return (
@@ -233,8 +236,6 @@ export default function CategoriesPage() {
                                 <tr>
                                     <th className="px-6 py-4">Name</th>
                                     <th className="px-6 py-4">Description</th>
-                                    <th className="px-6 py-4">Status</th>
-                                    <th className="px-6 py-4">Products</th>
                                     <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -260,21 +261,7 @@ export default function CategoriesPage() {
                                         >
                                             {category?.description || '--'}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-bold transition inline-flex items-center gap-1.5 ${
-                                                    category.is_active
-                                                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                                                        : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
-                                                }`}
-                                            >
-                                                <span className={`w-1.5 h-1.5 rounded-full ${category.is_active ? 'bg-emerald-400' : 'bg-rose-400'}`} />
-                                                {category.is_active ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-white font-bold">
-                                            {category.productCount ?? 0} products
-                                        </td>
+
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end space-x-2">
                                                 <button
