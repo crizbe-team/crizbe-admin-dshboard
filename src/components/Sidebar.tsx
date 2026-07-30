@@ -14,8 +14,6 @@ import {
     ShoppingCart,
     Settings,
     Mail,
-    Bell,
-    HelpCircle,
     Menu,
     X,
     ChevronLeft,
@@ -24,21 +22,27 @@ import {
     LogOut,
     Loader2,
     Coins,
+    ShieldCheck,
+    UserCheck,
 } from 'lucide-react';
 import { useLogout } from '@/queries/use-auth';
+import { useFetchMinimalDetails } from '@/queries/use-account';
+import { authUtils } from '@/utils/auth';
 
-const menuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/bd6b-6ced/dashboard' },
-    { icon: Layers, label: 'Categories', path: '/bd6b-6ced/dashboard/categories' },
-    { icon: Package, label: 'Products', path: '/bd6b-6ced/dashboard/products' },
-    { icon: Tags, label: 'Variants', path: '/bd6b-6ced/dashboard/variants' },
-    { icon: Box, label: 'Stock', path: '/bd6b-6ced/dashboard/stock' },
-    { icon: ShoppingCart, label: 'Orders', path: '/bd6b-6ced/dashboard/orders' },
-    { icon: DollarSign, label: 'Sales', path: '/bd6b-6ced/dashboard/sales' },
-    { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients' },
-    { icon: Mail, label: 'Enquiries', path: '/bd6b-6ced/dashboard/enquiries' },
-    { icon: Coins, label: 'Currencies', path: '/bd6b-6ced/dashboard/settings' },
-    { icon: Settings, label: 'Settings', path: '/bd6b-6ced/dashboard/settings' },
+const allMenuItems = [
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/bd6b-6ced/dashboard', perm: 'dashboard' },
+    { icon: Layers, label: 'Categories', path: '/bd6b-6ced/dashboard/categories', perm: 'categories' },
+    { icon: Package, label: 'Products', path: '/bd6b-6ced/dashboard/products', perm: 'products' },
+    { icon: Tags, label: 'Variants', path: '/bd6b-6ced/dashboard/variants', perm: 'variants' },
+    { icon: Box, label: 'Stock', path: '/bd6b-6ced/dashboard/stock', perm: 'stock' },
+    { icon: ShoppingCart, label: 'Orders', path: '/bd6b-6ced/dashboard/orders', perm: 'orders' },
+    { icon: DollarSign, label: 'Sales', path: '/bd6b-6ced/dashboard/sales', perm: 'sales' },
+    { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients', perm: 'clients' },
+    { icon: Mail, label: 'Enquiries', path: '/bd6b-6ced/dashboard/enquiries', perm: 'enquiries' },
+    { icon: Coins, label: 'Currencies', path: '/bd6b-6ced/dashboard/settings', perm: 'currencies' },
+    { icon: ShieldCheck, label: 'Roles (RBAC)', path: '/bd6b-6ced/dashboard/roles', perm: 'roles' },
+    { icon: UserCheck, label: 'Sub-Admin Users', path: '/bd6b-6ced/dashboard/users', perm: 'users' },
+    { icon: Settings, label: 'Settings', path: '/bd6b-6ced/dashboard/settings', perm: 'settings' },
 ];
 
 export default function Sidebar() {
@@ -46,6 +50,17 @@ export default function Sidebar() {
     const { isCollapsed, setIsCollapsed } = useSidebar();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const logoutMutation = useLogout();
+
+    const isAuth = authUtils.isAuthenticated();
+    const { data: userDetailsRes } = useFetchMinimalDetails(isAuth);
+    const userPermissions: string[] | undefined = userDetailsRes?.data?.permissions;
+    const assignedRoleName: string | undefined = userDetailsRes?.data?.assigned_role_name;
+
+    // Filter menu items dynamically based on assigned role permissions
+    const menuItems = allMenuItems.filter((item) => {
+        if (!userPermissions || userPermissions.length === 0) return true; // Default fallback to all if super admin or loading
+        return userPermissions.includes(item.perm);
+    });
 
     const handleLogout = () => {
         logoutMutation.mutate();
@@ -89,15 +104,22 @@ export default function Sidebar() {
             >
                 <div className="p-4 flex items-center justify-between min-h-[64px]">
                     {!isCollapsed && (
-                        <Link href="/bd6b-6ced/dashboard" className="relative h-8 w-24 block">
-                            <Image
-                                src="/images/user/crizbe-logo.svg"
-                                alt="Crizbe Logo"
-                                fill
-                                className="object-contain filter brightness-0 invert"
-                                priority
-                            />
-                        </Link>
+                        <div className="flex flex-col">
+                            <Link href="/bd6b-6ced/dashboard" className="relative h-8 w-24 block">
+                                <Image
+                                    src="/images/user/crizbe-logo.svg"
+                                    alt="Crizbe Logo"
+                                    fill
+                                    className="object-contain filter brightness-0 invert"
+                                    priority
+                                />
+                            </Link>
+                            {assignedRoleName && (
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-[#E8BF7A] mt-1">
+                                    Role: {assignedRoleName}
+                                </span>
+                            )}
+                        </div>
                     )}
                     <button
                         onClick={toggleSidebar}
@@ -110,22 +132,22 @@ export default function Sidebar() {
                     </button>
                 </div>
 
-                <nav className="flex-1 px-4">
+                <nav className="flex-1 px-4 overflow-y-auto custom-scrollbar">
                     {menuItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname === item.path;
 
                         return (
                             <Link
-                                key={item.path}
+                                key={item.path + item.label}
                                 href={item.path}
                                 onClick={() => setIsMobileOpen(false)}
                                 className={`
-                                    flex items-center space-x-3 px-4 py-3 mb-2 rounded-lg
+                                    flex items-center space-x-3 px-4 py-3 mb-1.5 rounded-lg
                                     transition-all duration-200 ease-in-out
                                     ${
                                         isActive
-                                            ? 'bg-[#2a2a2a] text-white'
+                                            ? 'bg-[#2a2a2a] text-white font-bold border-l-2 border-[#E8BF7A]'
                                             : 'text-gray-400 hover:bg-[#2a2a2a] hover:text-white'
                                     }
                                     ${isCollapsed ? 'justify-center' : ''}
@@ -149,7 +171,7 @@ export default function Sidebar() {
                         onClick={handleLogout}
                         disabled={logoutMutation.isPending}
                         className={`
-                            w-full flex items-center space-x-3 px-4 py-3 mt-4 rounded-lg
+                            w-full flex items-center space-x-3 px-4 py-3 mt-4 mb-4 rounded-lg
                             transition-all duration-200 ease-in-out text-red-400 hover:bg-red-500/10 hover:text-red-300
                             ${isCollapsed ? 'justify-center' : ''}
                         `}

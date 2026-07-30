@@ -111,3 +111,82 @@ export const createClient = async (data: any) => {
     const response = await api.post(url, data);
     return handleApiResponse(response);
 };
+
+export type RoleData = {
+    id?: string;
+    name: string;
+    description?: string;
+    permissions: string[];
+    is_active?: boolean;
+    user_count?: number;
+};
+
+export type AdminUserData = {
+    id?: string;
+    username: string;
+    email: string;
+    first_name?: string;
+    last_name?: string;
+    password?: string;
+    assigned_role?: string | null;
+    assigned_role_name?: string;
+    permissions?: string[];
+    phone_number?: string;
+    is_active?: boolean;
+};
+
+export const getAdminRoles = async () => {
+    const { GET_ADMIN_ROLES } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_ADMIN_ROLES).build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
+
+export const createAdminRole = async (data: Partial<RoleData>) => {
+    const { CREATE_ADMIN_ROLE } = API_ENDPOINTS;
+    const url = new ApiBuilder(CREATE_ADMIN_ROLE).build();
+    const response = await api.post(url, data);
+    return handleApiResponse(response);
+};
+
+export const updateAdminRole = async (id: string, data: Partial<RoleData>) => {
+    const { MANAGE_ADMIN_ROLE } = API_ENDPOINTS;
+    const url = new ApiBuilder(MANAGE_ADMIN_ROLE).path('id', id).build();
+    const response = await api.patch(url, data);
+    return handleApiResponse(response);
+};
+
+export const deleteAdminRole = async (id: string) => {
+    const { MANAGE_ADMIN_ROLE } = API_ENDPOINTS;
+    const url = new ApiBuilder(MANAGE_ADMIN_ROLE).path('id', id).build();
+    const response = await api.delete(url);
+    return handleApiResponse(response);
+};
+
+export const getAdminUsers = async () => {
+    const { GET_ADMIN_USERS } = API_ENDPOINTS;
+    const url = new ApiBuilder(GET_ADMIN_USERS).build();
+    const response = await api.get(url);
+    return handleApiResponse(response);
+};
+
+export const createAdminUser = async (data: Partial<AdminUserData>) => {
+    const { CREATE_ADMIN_USER } = API_ENDPOINTS;
+    const url = new ApiBuilder(CREATE_ADMIN_USER).build();
+    const response = await api.post(url, data);
+    return handleApiResponse(response);
+};
+
+export const updateAdminUser = async (id: string, data: Partial<AdminUserData>) => {
+    const { MANAGE_ADMIN_USER } = API_ENDPOINTS;
+    const url = new ApiBuilder(MANAGE_ADMIN_USER).path('id', id).build();
+    const response = await api.patch(url, data);
+    return handleApiResponse(response);
+};
+
+export const deleteAdminUser = async (id: string) => {
+    const { MANAGE_ADMIN_USER } = API_ENDPOINTS;
+    const url = new ApiBuilder(MANAGE_ADMIN_USER).path('id', id).build();
+    const response = await api.delete(url);
+    return handleApiResponse(response);
+};

@@ -64,12 +64,18 @@ export const API_ENDPOINTS = {
     GET_ENQUIRIES: 'enquiries/',
     GET_ENQUIRY_DETAIL: 'enquiries/:id/',
 
-    // Account/Profile endpoints
+    // Account/Profile & Role endpoints
     GET_ADDRESSES: 'accounts/addresses/',
     GET_ADDRESS: 'accounts/addresses/:id/',
     GET_MINIMAL_DETAILS: 'accounts/minimal-details/',
     UPDATE_PROFILE: 'accounts/profile/update/',
     UPLOAD_PROFILE_PICTURE: 'accounts/profile/upload-picture/',
+    GET_ADMIN_ROLES: 'accounts/admin/roles/',
+    CREATE_ADMIN_ROLE: 'accounts/admin/roles/create/',
+    MANAGE_ADMIN_ROLE: 'accounts/admin/roles/:id/',
+    GET_ADMIN_USERS: 'accounts/admin/users/',
+    CREATE_ADMIN_USER: 'accounts/admin/users/create/',
+    MANAGE_ADMIN_USER: 'accounts/admin/users/:id/',
 
     // Client endpoints
     GET_CLIENTS: 'accounts/clients/',
