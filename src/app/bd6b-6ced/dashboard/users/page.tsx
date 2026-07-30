@@ -22,6 +22,7 @@ import {
     useUpdateAdminUserMutation,
     useDeleteAdminUserMutation,
 } from '@/queries/use-account';
+import ConfirmationModal from '@/components/Modals/ConfirmationModal';
 import { AdminUserData, RoleData } from '@/services/account';
 
 const containerVariants: Variants = {
@@ -127,10 +128,12 @@ export default function AdminUsersPage() {
         });
     };
 
-    const handleDeleteUser = async (id?: string) => {
-        if (!id) return;
-        if (confirm('Are you sure you want to deactivate this sub-admin user account?')) {
-            await deleteUserMutation.mutateAsync(id);
+    const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
+
+    const confirmDeleteUser = async () => {
+        if (deleteUserId) {
+            await deleteUserMutation.mutateAsync(deleteUserId);
+            setDeleteUserId(null);
         }
     };
 
@@ -288,7 +291,7 @@ export default function AdminUsersPage() {
                                                     <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeleteUser(u.id)}
+                                                    onClick={() => setDeleteUserId(u.id || null)}
                                                     className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition"
                                                     title="Deactivate Account"
                                                 >
@@ -469,6 +472,17 @@ export default function AdminUsersPage() {
                     </motion.div>
                 </div>
             )}
+
+            {/* Reusable Confirmation Modal */}
+            <ConfirmationModal
+                open={!!deleteUserId}
+                onClose={() => setDeleteUserId(null)}
+                onConfirm={confirmDeleteUser}
+                title="Deactivate Sub-Admin Account"
+                description="Are you sure you want to deactivate this sub-admin user account? The user will no longer be able to log in to the dashboard."
+                confirmText="Deactivate Account"
+                isPending={deleteUserMutation.isPending}
+            />
         </motion.div>
     );
 }

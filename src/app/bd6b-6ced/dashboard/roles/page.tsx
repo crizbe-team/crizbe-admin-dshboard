@@ -20,6 +20,7 @@ import {
     useUpdateRoleMutation,
     useDeleteRoleMutation,
 } from '@/queries/use-account';
+import ConfirmationModal from '@/components/Modals/ConfirmationModal';
 import { RoleData } from '@/services/account';
 
 const containerVariants: Variants = {
@@ -155,14 +156,12 @@ export default function RolesPage() {
         setIsModalOpen(false);
     };
 
-    const handleDeleteRole = async (id?: string) => {
-        if (!id) return;
-        if (
-            confirm(
-                'Are you sure you want to delete this role? Assigned users will lose custom access permissions.'
-            )
-        ) {
-            await deleteMutation.mutateAsync(id);
+    const [deleteRoleId, setDeleteRoleId] = useState<string | null>(null);
+
+    const confirmDeleteRole = async () => {
+        if (deleteRoleId) {
+            await deleteMutation.mutateAsync(deleteRoleId);
+            setDeleteRoleId(null);
         }
     };
 
@@ -286,7 +285,7 @@ export default function RolesPage() {
                                     Edit Role
                                 </button>
                                 <button
-                                    onClick={() => handleDeleteRole(role.id)}
+                                    onClick={() => setDeleteRoleId(role.id || null)}
                                     className="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-bold transition flex items-center gap-1.5"
                                 >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -435,6 +434,17 @@ export default function RolesPage() {
                     </motion.div>
                 </div>
             )}
+
+            {/* Reusable Delete Confirmation Modal */}
+            <ConfirmationModal
+                open={!!deleteRoleId}
+                onClose={() => setDeleteRoleId(null)}
+                onConfirm={confirmDeleteRole}
+                title="Delete Admin Role"
+                description="Are you sure you want to delete this administrative role? Users assigned to this role will revert to default access permissions."
+                confirmText="Delete Role"
+                isPending={deleteMutation.isPending}
+            />
         </motion.div>
     );
 }

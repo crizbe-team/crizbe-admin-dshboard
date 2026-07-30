@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, Loader2, Truck, Save } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Truck, Save, ShoppingBag, CreditCard, ShieldCheck } from 'lucide-react';
 import {
     useFetchAdminOrderDetail,
     useUpdateOrderStatus,
@@ -10,6 +10,7 @@ import {
 import { STATUS_CONFIG } from '@/constants/constants';
 import { useState, useEffect } from 'react';
 import { toast } from '@/components/ui/Toast';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 
 export default function AdminOrderDetailPage() {
     const params = useParams();
@@ -22,7 +23,6 @@ export default function AdminOrderDetailPage() {
 
     const [postalTrackId, setPostalTrackId] = useState('');
 
-    // The API returns data directly, not nested in base_data
     const order = orderData?.data || {};
 
     useEffect(() => {
@@ -66,51 +66,63 @@ export default function AdminOrderDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <Loader2 className="w-10 h-10 animate-spin text-purple-500" />
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <DashboardLoader text="Fetching Order Fulfillment Details..." />
             </div>
         );
     }
 
-    if (!order) {
+    if (!order || !order.id) {
         return (
-            <div className="p-6">
-                <div className="text-center text-gray-400">Order not found</div>
+            <div className="p-8 text-center bg-[#141414] rounded-3xl border border-white/10 max-w-xl mx-auto my-12 shadow-2xl">
+                <p className="text-gray-300 font-bold text-lg font-bricolage mb-4">Order record not found</p>
+                <button
+                    onClick={() => router.back()}
+                    className="px-6 py-2.5 bg-white/5 hover:bg-white/10 text-gray-300 rounded-xl transition border border-white/10 text-sm font-semibold"
+                >
+                    Back to Orders List
+                </button>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6 p-6">
+        <div className="space-y-8 max-w-7xl mx-auto pb-16">
             {/* Header */}
             <div className="flex items-center gap-4">
                 <button
                     onClick={() => router.back()}
-                    className="p-2 hover:bg-[#2a2a2a] rounded-lg transition-colors"
+                    className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 text-gray-400 hover:text-white transition shadow-sm"
                 >
-                    <ArrowLeft className="w-5 h-5 text-gray-400" />
+                    <ArrowLeft className="w-5 h-5 text-[#E8BF7A]" />
                 </button>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-100">Order Details</h1>
-                    <p className="text-sm text-gray-400 font-mono">#{order.id}</p>
+                    <h1 className="text-3xl font-extrabold text-white font-bricolage tracking-tight flex items-center gap-3">
+                        <ShoppingBag className="w-8 h-8 text-[#E8BF7A]" />
+                        Order Fulfillment Console
+                    </h1>
+                    <p className="text-xs text-gray-400 font-mono mt-1">
+                        Order Key: #{order.id}
+                    </p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Order Items & Info */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 space-y-8">
                     {/* Ordered Items */}
-                    <div className="bg-[#1a1a1a] rounded-xl p-6 border border-[#2a2a2a]">
-                        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-                            Ordered Items
+                    <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 sm:p-8 shadow-2xl">
+                        <h2 className="text-xs font-bold text-[#E8BF7A] uppercase tracking-wider mb-6 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-[#E8BF7A]" />
+                            Ordered Items & Manifest
                         </h2>
                         <div className="space-y-4">
                             {(order.items || []).map((item: any) => (
                                 <div
                                     key={item.id}
-                                    className="flex items-center gap-4 bg-[#2a2a2a]/30 p-4 rounded-lg border border-[#3a3a3a]"
+                                    className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10"
                                 >
-                                    <div className="w-16 h-16 bg-[#2a2a2a] rounded-lg overflow-hidden flex items-center justify-center">
+                                    <div className="w-16 h-16 bg-[#1a1a1a] rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-white/10">
                                         {item.product_image ? (
                                             <img
                                                 src={item.product_image}
@@ -118,26 +130,25 @@ export default function AdminOrderDetailPage() {
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
-                                            <span className="text-xs text-gray-500">Img</span>
+                                            <span className="text-xs text-gray-400">📦</span>
                                         )}
                                     </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm font-semibold text-gray-100">
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-bold text-white font-bricolage truncate">
                                             {item.product_name || 'Product'}
                                         </p>
-                                        <p className="text-xs text-gray-500">
+                                        <p className="text-xs text-gray-400 font-medium mt-0.5">
                                             {item.variant_size || item.variant_name || 'Standard'} ×{' '}
-                                            {item.quantity}
+                                            <span className="text-white font-bold">{item.quantity}</span>
                                         </p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm font-bold text-gray-100">
-                                            ₹
-                                            {parseFloat(
+                                        <p className="text-sm font-extrabold text-white">
+                                            ₹{parseFloat(
                                                 item.subtotal || item.price * item.quantity
                                             ).toFixed(2)}
                                         </p>
-                                        <p className="text-xs text-gray-500">
+                                        <p className="text-[10px] text-gray-400 font-mono">
                                             ₹{parseFloat(item.price).toFixed(2)}/unit
                                         </p>
                                     </div>
@@ -148,17 +159,18 @@ export default function AdminOrderDetailPage() {
 
                     {/* Shipping & Payment Info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-[#1a1a1a] rounded-xl p-6 border border-[#2a2a2a]">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-                                Shipping Information
+                        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl">
+                            <h3 className="text-xs font-bold text-[#E8BF7A] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <Truck className="w-4 h-4" />
+                                Shipping Destination
                             </h3>
-                            <div className="space-y-2 text-sm">
-                                <p className="text-gray-200 font-medium">
+                            <div className="space-y-2 text-xs">
+                                <p className="text-white font-bold text-sm font-bricolage">
                                     {order.first_name && order.last_name
                                         ? `${order.first_name} ${order.last_name}`
                                         : order.full_name || 'N/A'}
                                 </p>
-                                <p className="text-gray-400">
+                                <p className="text-gray-300 font-medium">
                                     {order.address_line1 || 'Address not available'}
                                 </p>
                                 <p className="text-gray-400">
@@ -166,37 +178,38 @@ export default function AdminOrderDetailPage() {
                                     {order.city && `${order.city}, `}
                                     {order.state && order.state}
                                 </p>
-                                <p className="text-gray-400">{order.zip_code || ''}</p>
-                                <p className="text-gray-400 pt-2">
+                                <p className="text-gray-400 font-mono">{order.zip_code || ''}</p>
+                                <p className="text-gray-300 font-mono pt-2">
                                     📞 {order.phone_number || 'N/A'}
                                 </p>
                                 {order.landmark && (
-                                    <p className="text-gray-500 text-xs italic">
+                                    <p className="text-gray-400 text-[11px] italic pt-1">
                                         Landmark: {order.landmark}
                                     </p>
                                 )}
                             </div>
                         </div>
 
-                        <div className="bg-[#1a1a1a] rounded-xl p-6 border border-[#2a2a2a]">
-                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-                                Payment Details
+                        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl">
+                            <h3 className="text-xs font-bold text-[#E8BF7A] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <CreditCard className="w-4 h-4" />
+                                Payment & Settlement
                             </h3>
-                            <div className="space-y-3 text-sm">
+                            <div className="space-y-3 text-xs">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-500">Method:</span>
-                                    <span className="text-gray-200 font-medium">
+                                    <span className="text-gray-400">Method:</span>
+                                    <span className="text-white font-bold uppercase font-mono">
                                         {order.payment_method || 'COD'}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-500">Payment Status:</span>
+                                    <span className="text-gray-400">Status:</span>
                                     <span
-                                        className={`text-xs font-bold ${
+                                        className={`text-xs font-extrabold uppercase px-2 py-0.5 rounded-full ${
                                             order.payment_status === 'Paid' ||
                                             order.payment_status === 'Success'
-                                                ? 'text-green-500'
-                                                : 'text-orange-500'
+                                                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                                                : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
                                         }`}
                                     >
                                         {order.payment_status || 'Pending'}
@@ -204,16 +217,16 @@ export default function AdminOrderDetailPage() {
                                 </div>
                                 {order.transaction_id && (
                                     <div className="flex justify-between">
-                                        <span className="text-gray-500">Transaction ID:</span>
-                                        <span className="text-gray-200 font-mono text-xs">
+                                        <span className="text-gray-400">Transaction ID:</span>
+                                        <span className="text-gray-300 font-mono text-[11px]">
                                             {order.transaction_id}
                                         </span>
                                     </div>
                                 )}
-                                <div className="flex justify-between pt-2 border-t border-[#3a3a3a] mt-2">
-                                    <span className="text-gray-500">Total Amount:</span>
-                                    <span className="text-purple-400 font-bold">
-                                        ₹{parseFloat(order.total_amount).toFixed(2)}
+                                <div className="flex justify-between pt-3 border-t border-white/10 mt-2">
+                                    <span className="text-gray-400 font-bold">Total Amount:</span>
+                                    <span className="text-[#E8BF7A] font-extrabold text-sm">
+                                        ₹{parseFloat(order.total_amount || 0).toFixed(2)}
                                     </span>
                                 </div>
                             </div>
@@ -224,9 +237,10 @@ export default function AdminOrderDetailPage() {
                 {/* Right Column: Status & Summary */}
                 <div className="space-y-6">
                     {/* Status Update */}
-                    <div className="bg-[#1a1a1a] rounded-xl p-6 border border-[#2a2a2a]">
-                        <h3 className="text-xs font-bold text-purple-400 uppercase tracking-widest mb-4">
-                            Order Status
+                    <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl">
+                        <h3 className="text-xs font-bold text-[#E8BF7A] uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <ShieldCheck className="w-4 h-4" />
+                            Order Lifecycle Control
                         </h3>
                         <div className="space-y-2">
                             {Object.entries(STATUS_CONFIG).map(([status, config]) => (
@@ -234,124 +248,88 @@ export default function AdminOrderDetailPage() {
                                     key={status}
                                     onClick={() => handleStatusUpdate(order.id, status)}
                                     disabled={statusPending}
-                                    className={`w-full flex items-center justify-between p-3 rounded-lg border transition-all ${
+                                    className={`w-full flex items-center justify-between p-3 rounded-xl border transition ${
                                         order.status === status
-                                            ? `${config.color} border-transparent text-white shadow-lg scale-105`
-                                            : 'bg-[#2a2a2a] border-[#3a3a3a] text-gray-400 hover:border-purple-500/50 hover:text-gray-200'
+                                            ? 'bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] border-[#E8BF7A] font-bold shadow-lg'
+                                            : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'
                                     }`}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2.5">
                                         <config.icon
                                             className={`w-4 h-4 ${statusPending && order.status === status ? 'animate-spin' : ''}`}
                                         />
                                         <span className="text-xs font-bold">{config.label}</span>
                                     </div>
-                                    {order.status === status && <CheckCircle className="w-4 h-4" />}
+                                    {order.status === status && <CheckCircle className="w-4 h-4 stroke-[3]" />}
                                 </button>
                             ))}
                         </div>
                     </div>
 
                     {/* Postal Tracking */}
-                    <div className="bg-[#1a1a1a] rounded-xl p-6 border border-[#2a2a2a]">
-                        <h3 className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl">
+                        <h3 className="text-xs font-bold text-[#E8BF7A] uppercase tracking-wider mb-4 flex items-center gap-2">
                             <Truck className="w-4 h-4" />
-                            Postal Tracking
+                            Postal Tracking ID
                         </h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs text-gray-500 mb-1.5 ml-1">
-                                    Postal Track ID
-                                </label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        placeholder="Enter Tracking ID"
-                                        value={postalTrackId}
-                                        onChange={(e) => setPostalTrackId(e.target.value)}
-                                        className="flex-1 bg-[#2a2a2a] border border-[#3a3a3a] rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-purple-500 transition-colors"
-                                    />
-                                    <button
-                                        onClick={handleTrackingUpdate}
-                                        disabled={trackingPending}
-                                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
-                                    >
-                                        <Save className="w-4 h-4" />
-                                        <span className="hidden sm:inline">Save</span>
-                                    </button>
-                                </div>
-                                <p className="mt-2 text-[10px] text-gray-500 italic">
-                                    Update this after sending the package through postal service.
-                                </p>
+                        <div className="space-y-3">
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="Enter Tracking ID"
+                                    value={postalTrackId}
+                                    onChange={(e) => setPostalTrackId(e.target.value)}
+                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E8BF7A] font-mono"
+                                />
+                                <button
+                                    onClick={handleTrackingUpdate}
+                                    disabled={trackingPending}
+                                    className="px-4 py-2 bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold rounded-xl text-xs hover:brightness-110 transition flex items-center justify-center gap-1.5"
+                                >
+                                    <Save className="w-3.5 h-3.5" />
+                                    <span>Save</span>
+                                </button>
                             </div>
+                            <p className="text-[10px] text-gray-400">
+                                Enter the postal or courier tracking reference once dispatched.
+                            </p>
                         </div>
                     </div>
 
                     {/* Order Summary */}
-                    <div className="bg-[#252525] rounded-xl p-6 border border-[#3a3a3a]">
-                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-                            Order Summary
+                    <div className="bg-[#141414] rounded-3xl p-6 border border-white/10 shadow-2xl">
+                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
+                            Financial Summary
                         </h3>
-                        <div className="space-y-3 border-b border-[#3a3a3a] pb-4 mb-4">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">Subtotal</span>
-                                <span className="text-gray-200 font-medium">
+                        <div className="space-y-3 border-b border-white/10 pb-4 mb-4">
+                            <div className="flex justify-between text-xs">
+                                <span className="text-gray-400">Subtotal</span>
+                                <span className="text-white font-semibold">
                                     ₹{parseFloat(order.total_amount || '0').toFixed(2)}
                                 </span>
                             </div>
                             {order.discount_amount && parseFloat(order.discount_amount) > 0 && (
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-500">Discount</span>
-                                    <span className="text-green-500 font-medium">
+                                <div className="flex justify-between text-xs">
+                                    <span className="text-gray-400">Discount</span>
+                                    <span className="text-emerald-400 font-semibold">
                                         -₹{parseFloat(order.discount_amount).toFixed(2)}
                                     </span>
                                 </div>
                             )}
                             {order.shipping_charge && parseFloat(order.shipping_charge) > 0 && (
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-500">Shipping Charge</span>
-                                    <span className="text-gray-200 font-medium">
+                                <div className="flex justify-between text-xs">
+                                    <span className="text-gray-400">Shipping Charge</span>
+                                    <span className="text-white font-semibold">
                                         ₹{parseFloat(order.shipping_charge).toFixed(2)}
                                     </span>
                                 </div>
                             )}
                         </div>
                         <div className="flex justify-between items-end">
-                            <span className="text-sm text-gray-100 font-bold">Total Amount</span>
-                            <span className="text-3xl text-purple-500 font-extrabold font-mono">
+                            <span className="text-xs text-gray-300 font-bold uppercase tracking-wider">Total Amount</span>
+                            <span className="text-2xl text-[#E8BF7A] font-extrabold font-bricolage">
                                 ₹{parseFloat(order.total_amount || '0').toFixed(2)}
                             </span>
-                        </div>
-                    </div>
-
-                    {/* Order Meta */}
-                    <div className="bg-[#1a1a1a] rounded-xl p-6 border border-[#2a2a2a] text-sm">
-                        <div className="space-y-2 text-gray-400">
-                            <div className="flex justify-between">
-                                <span>Order Date:</span>
-                                <span className="text-gray-200">
-                                    {new Date(order.created_at).toLocaleString()}
-                                </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Customer:</span>
-                                <span className="text-gray-200">
-                                    {order.user_details?.username ||
-                                        order.user_details?.first_name ||
-                                        'N/A'}
-                                </span>
-                            </div>
-
-                            {order.tracking_number && (
-                                <div className="flex justify-between pt-2 border-t border-[#2a2a2a] mt-2">
-                                    <span className="text-blue-400 font-bold uppercase text-[10px]">
-                                        Tracking ID:
-                                    </span>
-                                    <span className="text-gray-100 font-bold font-mono text-xs">
-                                        {order.tracking_number}
-                                    </span>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
