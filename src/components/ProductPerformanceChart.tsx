@@ -30,7 +30,7 @@ export default function ProductPerformanceChart({ data }: ProductPerformanceChar
     return (
         <div className="space-y-5">
             {items.map((item, index) => {
-                const percentage = maxVal > 0 ? ((item.revenue || 0) / maxVal) * 100 : 0;
+                const percentage = maxVal > 0 ? ((item?.revenue || 0) / maxVal) * 100 : 0;
                 const color = COLORS[index % COLORS.length];
                 return (
                     <div key={item.id || index}>
@@ -40,7 +40,7 @@ export default function ProductPerformanceChart({ data }: ProductPerformanceChar
                                 <span className="text-xs text-gray-500">{item.category} • {item.quantity_sold} sold</span>
                             </div>
                             <span className="text-sm font-bold text-gray-100 font-mono">
-                                ₹{item.revenue.toLocaleString()}
+                                ₹{item?.revenue?.toLocaleString()}
                             </span>
                         </div>
                         <div className="w-full bg-[#2a2a2a] rounded-full h-2.5 overflow-hidden">
