@@ -10,25 +10,29 @@ export const getRazorpayKeyId = async () => {
     return handleApiResponse(response);
 };
 
-export const createPaymentOrder = async (orderId: string) => {
+export const createPaymentOrder = async (data?: { orderId?: string; currency?: string }) => {
     const { CREATE_PAYMENT_ORDER } = API_ENDPOINTS;
     const url = new ApiBuilder(CREATE_PAYMENT_ORDER).build();
-    const response = await api.post(url, { order_id: orderId });
-    console.log('response', response);
+    const response = await api.post(url, {
+        order_id: data?.orderId,
+        currency: data?.currency || 'INR',
+    });
     return handleApiResponse(response);
 };
 
-export const verifyPayment = async (
-    razorpayOrderId: string,
-    razorpayPaymentId: string,
-    razorpaySignature: string
-) => {
+export const verifyPayment = async (data: {
+    razorpayOrderId: string;
+    razorpayPaymentId: string;
+    razorpaySignature: string;
+    addressId?: string;
+}) => {
     const { VERIFY_PAYMENT } = API_ENDPOINTS;
     const url = new ApiBuilder(VERIFY_PAYMENT).build();
     const response = await api.post(url, {
-        razorpay_order_id: razorpayOrderId,
-        razorpay_payment_id: razorpayPaymentId,
-        razorpay_signature: razorpaySignature,
+        razorpay_order_id: data.razorpayOrderId,
+        razorpay_payment_id: data.razorpayPaymentId,
+        razorpay_signature: data.razorpaySignature,
+        address_id: data.addressId,
     });
     return handleApiResponse(response);
 };

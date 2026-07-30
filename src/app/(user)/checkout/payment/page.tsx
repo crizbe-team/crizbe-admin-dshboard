@@ -87,34 +87,21 @@ export default function PaymentPage() {
         console.log('Setting isProcessing to true');
         setIsProcessing(true);
         try {
-            console.log('Step 1: Creating order with address:', selectedAddress.id);
-            const orderResponse = await createOrder({
-                address_id: selectedAddress.id,
-                payment_method: 'Razorpay',
+            // Step 1: Create payment order directly for Cart (without creating DB order yet)
+            console.log('Step 1: Creating payment order for Cart');
+            const paymentOrderResponse = await createPaymentOrderMutation.mutateAsync({
                 currency: currency || 'INR',
             });
-            console.log('Step 1 response:', orderResponse);
-
-            if (orderResponse.status_code !== 6000) {
-                throw new Error(orderResponse.message || 'Failed to create order');
-            }
-
-            const orderId = orderResponse.data.id;
-            console.log('Step 1 success. Order ID:', orderId);
-
-            // Step 2: Create payment order
-            console.log('Step 2: Creating payment order for order ID:', orderId);
-            const paymentOrderResponse = await createPaymentOrderMutation.mutateAsync(orderId);
-            console.log('Step 2 response:', paymentOrderResponse);
+            console.log('Step 1 response:', paymentOrderResponse);
 
             if (paymentOrderResponse.status_code !== 6000) {
                 throw new Error(paymentOrderResponse.message || 'Failed to create payment order');
             }
 
             const paymentData = paymentOrderResponse.data;
-            console.log('Step 2 success. Payment Data:', paymentData);
+            console.log('Step 1 success. Payment Data:', paymentData);
 
-            // Step 3: Open Razorpay checkout
+            // Step 2: Open Razorpay checkout
             const options = {
                 key: paymentData.key_id,
                 amount: paymentData.amount * 100, // Convert to paisa
@@ -130,17 +117,18 @@ export default function PaymentPage() {
                 },
                 theme: { color: '#C4994A' },
                 handler: async (razorpayResponse: any) => {
-                    // Step 4: Verify payment
+                    // Step 3: Verify payment and create order ONLY upon verification
                     try {
                         const verifyResponse = await verifyPaymentMutation.mutateAsync({
                             razorpayOrderId: razorpayResponse.razorpay_order_id,
                             razorpayPaymentId: razorpayResponse.razorpay_payment_id,
                             razorpaySignature: razorpayResponse.razorpay_signature,
+                            addressId: selectedAddress.id,
                         });
 
                         if (verifyResponse.status_code === 6000) {
                             Cookies.remove('selected_address_id');
-                            // Step 5: Redirect to success page
+                            // Step 4: Redirect to success page
                             router.push(
                                 `/profile/my-orders?orderId=${verifyResponse.data.order_id}`
                             );
@@ -157,17 +145,25 @@ export default function PaymentPage() {
                 modal: {
                     ondismiss: () => {
                         console.log('Payment cancelled by user');
+                        toast.info('Payment cancelled');
                         setIsProcessing(false);
                     },
+                },
+                onPaymentFailed: (error: any) => {
+                    console.error('Payment failed:', error);
+                    toast.error(error.description || 'Payment failed. Please try again.');
+                    setIsProcessing(false);
                 },
             };
 
             openCheckout(options);
-        } catch (error) {
-            console.error('Razorpay payment failed:', error);
-            toast.error(
-                error instanceof Error ? error.message : 'Payment failed. Please try again.'
-            );
+        } catch (error: any) {
+            console.error('Razorpay payment failed:', error?.message || error?.response?.data?.message || error);
+            const msg =
+                error?.message ||
+                error?.response?.data?.message ||
+                (typeof error === 'string' ? error : 'Payment failed. Please try again.');
+            toast.error(msg);
         } finally {
             setIsProcessing(false);
         }

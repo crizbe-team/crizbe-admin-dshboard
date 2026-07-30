@@ -37,6 +37,12 @@ export const useRazorpay = () => {
         }
 
         const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response: any) {
+            console.error('Payment failed event:', response.error);
+            if (options.onPaymentFailed) {
+                options.onPaymentFailed(response.error);
+            }
+        });
         rzp.open();
     };
 
