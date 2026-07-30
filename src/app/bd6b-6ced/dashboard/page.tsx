@@ -4,7 +4,8 @@ import {
   IndianRupee,
   Users,
   Package,
-  Loader2
+  LayoutDashboard,
+  RefreshCw,
 } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import SalesOverviewChart from '@/components/SalesOverviewChart';
@@ -12,19 +13,20 @@ import CategoryDistributionChart from '@/components/CategoryDistributionChart';
 import OrderStatusChart from '@/components/OrderStatusChart';
 import ProductPerformanceChart from '@/components/ProductPerformanceChart';
 import { useFetchAdminDashboardOverview } from '@/queries/use-orders';
+import DashboardLoader from '@/components/ui/DashboardLoader';
 
 const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.1,
+            staggerChildren: 0.08,
         },
     },
 };
 
 const itemVariants: Variants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 15, opacity: 0 },
     visible: {
         y: 0,
         opacity: 1,
@@ -33,43 +35,43 @@ const itemVariants: Variants = {
 };
 
 export default function Dashboard() {
-  const { data: overviewResponse, isLoading, isError } = useFetchAdminDashboardOverview();
+  const { data: overviewResponse, isLoading, isError, isRefetching, refetch } = useFetchAdminDashboardOverview();
   const overviewData = overviewResponse?.data;
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="w-10 h-10 animate-spin text-purple-500" />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <DashboardLoader text="Loading Dashboard Control Center..." />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh] text-red-500">
-        Failed to load dashboard overview data. Please try again later.
+      <div className="flex items-center justify-center min-h-[50vh] text-rose-400 font-semibold bg-[#141414] rounded-3xl border border-white/10 p-8">
+        Failed to load dashboard overview data. Please check connection and try again.
       </div>
     );
   }
 
   const stats = [
     {
-      title: 'Total Sales',
+      title: 'Total Sales Revenue',
       value: `₹${(overviewData?.total_sales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: IndianRupee,
-      color: 'text-blue-400',
+      color: 'text-[#E8BF7A]',
     },
     {
-      title: 'Total Clients',
+      title: 'Total Registered Clients',
       value: (overviewData?.total_clients || 0).toLocaleString(),
       icon: Users,
-      color: 'text-green-400',
+      color: 'text-emerald-400',
     },
     {
-      title: 'Total Products',
+      title: 'Active Products',
       value: (overviewData?.total_products || 0).toLocaleString(),
       icon: Package,
-      color: 'text-purple-400',
+      color: 'text-amber-300',
     },
   ];
 
@@ -78,41 +80,55 @@ export default function Dashboard() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6 pb-12"
+      className="space-y-8 pb-16 max-w-7xl mx-auto"
     >
       {/* Page Header */}
-      <motion.div variants={itemVariants} className="space-y-1">
-        <h1 className="text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none">
-          Control Center
-        </h1>
-        <p className="text-gray-400 text-base font-medium">
-          Global overview of business operations, sales channels & client lifecycle.
-        </p>
+      <motion.div
+        variants={itemVariants}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <div className="space-y-1">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
+            <LayoutDashboard className="w-9 h-9 text-[#E8BF7A]" />
+            Control Center Overview
+          </h1>
+          <p className="text-gray-400 text-sm sm:text-base font-medium">
+            Global overview of Crizbe luxury operations, sales channels & customer metrics.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => refetch()}
+            disabled={isRefetching}
+            className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
+            Refresh Overview
+          </button>
+        </div>
       </motion.div>
 
       {/* Statistics Cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {stats.map((stat) => {
           const Icon = stat.icon;
-          const bgClass = stat.color.includes('blue') ? 'bg-blue-500/10' : stat.color.includes('green') ? 'bg-green-500/10' : 'bg-purple-500/10';
-          const glowClass = stat.color.includes('blue') ? 'hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)]' : stat.color.includes('green') ? 'hover:shadow-[0_0_30px_-5px_rgba(74,222,128,0.3)]' : 'hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]';
           return (
             <div
               key={stat.title}
-              className={`bg-[#1a1a1a]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/5 transition-all group relative overflow-hidden ${glowClass}`}
+              className="bg-[#141414] rounded-3xl p-6 border border-white/10 transition-all hover:border-[#E8BF7A]/30 group relative overflow-hidden shadow-xl"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-white/5 to-transparent rounded-full -mr-16 -mt-16 pointer-events-none group-hover:scale-150 transition-transform duration-700" />
-              <div className="flex flex-col h-full justify-between gap-6">
+              <div className="flex flex-col h-full justify-between gap-4">
                 <div className="flex items-center justify-between">
-                  <div className={`${bgClass} ${stat.color} p-3.5 rounded-2xl`}>
-                    <Icon className="w-5 h-5 shadow-lg" />
+                  <div className="bg-white/5 p-3 rounded-2xl border border-white/10 text-[#E8BF7A]">
+                    <Icon className={`w-5 h-5 ${stat.color}`} />
                   </div>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2 leading-none">
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">
                     {stat.title}
                   </p>
-                  <p className="text-2xl font-black text-white font-mono tracking-tighter">
+                  <p className="text-3xl font-extrabold text-white font-bricolage tracking-tight">
                     {stat.value}
                   </p>
                 </div>
@@ -122,28 +138,40 @@ export default function Dashboard() {
         })}
       </motion.div>
 
-      {/* Charts Row */}
+      {/* Charts Row 1 */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 p-8 shadow-2xl relative overflow-hidden flex flex-col">
-          <h2 className="text-xl font-semibold text-gray-100 mb-4">Sales Overview</h2>
+        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col">
+          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#E8BF7A]" />
+            Sales Trend Revenue
+          </h2>
           <SalesOverviewChart data={overviewData?.sales_overview} />
         </div>
 
-        <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 p-8 shadow-2xl relative overflow-hidden flex flex-col">
-          <h2 className="text-xl font-semibold text-gray-100 mb-4">Category Distribution</h2>
+        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col">
+          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            Category Volume Distribution
+          </h2>
           <CategoryDistributionChart data={overviewData?.category_distribution} />
         </div>
       </motion.div>
 
-      {/* Bottom Charts Row */}
+      {/* Charts Row 2 */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 p-8 shadow-2xl relative overflow-hidden flex flex-col">
-          <h2 className="text-xl font-semibold text-gray-100 mb-4">Order Status Distribution</h2>
+        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col">
+          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            Order Status Lifecycle
+          </h2>
           <OrderStatusChart data={overviewData?.order_status_distribution} />
         </div>
 
-        <div className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 p-8 shadow-2xl relative overflow-hidden flex flex-col">
-          <h2 className="text-xl font-semibold text-gray-100 mb-4">Product Performance</h2>
+        <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl flex flex-col">
+          <h2 className="text-lg font-bold text-white font-bricolage mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-purple-400" />
+            Product Unit Sales
+          </h2>
           <ProductPerformanceChart data={overviewData?.product_performance} />
         </div>
       </motion.div>

@@ -10,10 +10,10 @@ import {
     ArrowUpRight,
     ArrowDownRight,
     Calendar,
-    Filter,
     Layers,
     Scale,
     Trophy,
+    RefreshCw,
 } from 'lucide-react';
 import ProductPerformanceChart from '@/components/ProductPerformanceChart';
 import { useFetchAdminSalesOverview } from '@/queries/use-orders';
@@ -25,13 +25,13 @@ const containerVariants: Variants = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.1,
+            staggerChildren: 0.08,
         },
     },
 };
 
 const itemVariants: Variants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 15, opacity: 0 },
     visible: {
         y: 0,
         opacity: 1,
@@ -43,7 +43,7 @@ export default function SalesPage() {
     const router = useRouter();
     const [dateRange, setDateRange] = useState('last_30_days');
 
-    const { data: salesData, isLoading } = useFetchAdminSalesOverview({ range: dateRange });
+    const { data: salesData, isLoading, isRefetching, refetch } = useFetchAdminSalesOverview({ range: dateRange });
 
     const overview = salesData?.data?.overview || {};
     const revenueAmount = overview?.total_sales_revenue || 0;
@@ -58,9 +58,7 @@ export default function SalesPage() {
             change: `${overview?.revenue_change >= 0 ? '+' : ''}${overview?.revenue_change || 0}%`,
             isPositive: (overview?.revenue_change || 0) >= 0,
             icon: IndianRupee,
-            color: 'text-blue-400',
-            bg: 'bg-blue-500/10',
-            glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)]',
+            color: 'text-[#E8BF7A]',
         },
         {
             title: 'Total Orders',
@@ -68,9 +66,7 @@ export default function SalesPage() {
             change: `${overview?.orders_change >= 0 ? '+' : ''}${overview?.orders_change || 0}%`,
             isPositive: (overview?.orders_change || 0) >= 0,
             icon: ShoppingCart,
-            color: 'text-green-400',
-            bg: 'bg-green-500/10',
-            glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(74,222,128,0.3)]',
+            color: 'text-emerald-400',
         },
         {
             title: 'Items Sold',
@@ -78,9 +74,7 @@ export default function SalesPage() {
             change: `${overview?.units_sold_change >= 0 ? '+' : ''}${overview?.units_sold_change || 0}%`,
             isPositive: (overview?.units_sold_change || 0) >= 0,
             icon: Package,
-            color: 'text-orange-400',
-            bg: 'bg-orange-500/10',
-            glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(251,146,60,0.3)]',
+            color: 'text-amber-300',
         },
         {
             title: 'Total KG Sold',
@@ -88,9 +82,7 @@ export default function SalesPage() {
             change: `${overview?.weight_sold_change >= 0 ? '+' : ''}${overview?.weight_sold_change || 0}%`,
             isPositive: (overview?.weight_sold_change || 0) >= 0,
             icon: Scale,
-            color: 'text-pink-400',
-            bg: 'bg-pink-500/10',
-            glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(244,114,182,0.3)]',
+            color: 'text-purple-400',
         },
     ];
 
@@ -110,152 +102,146 @@ export default function SalesPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="space-y-10 pb-12"
+            className="space-y-8 pb-16 max-w-7xl mx-auto"
         >
             {/* Page Header */}
             <motion.div
                 variants={itemVariants}
-                className="flex flex-col md:flex-row md:items-end justify-between gap-6"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
             >
                 <div className="space-y-1">
-                    <h1 className="text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none">
-                        Sales Intelligence
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
+                        <TrendingUp className="w-9 h-9 text-[#E8BF7A]" />
+                        Sales & Revenue Intelligence
                     </h1>
-                    <p className="text-gray-400 text-base font-medium">
-                        Real-time business performance & lifecycle analytics.
+                    <p className="text-gray-400 text-sm sm:text-base font-medium">
+                        Real-time business revenue, product performance & volume analytics.
                     </p>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="relative group">
-                        <div className="absolute -inset-1 bg-linear-to-r from-purple-600 to-blue-600 rounded-2xl blur-sm opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                        <div className="relative flex items-center bg-[#111111] border border-white/5 rounded-2xl px-5 py-3 text-sm text-gray-200 shadow-2xl">
-                            <Calendar className="w-4 h-4 mr-3 text-purple-400" />
-                            <select
-                                className="bg-transparent border-none focus:outline-none cursor-pointer pr-4 font-bold appearance-none"
-                                value={dateRange}
-                                onChange={(e) => setDateRange(e.target.value)}
-                            >
-                                <option value="today">Today</option>
-                                <option value="last_7_days">Last 7 Days</option>
-                                <option value="last_30_days">Last 30 Days</option>
-                                <option value="last_90_days">Last 90 Days</option>
-                                <option value="this_month">This Month</option>
-                                <option value="this_year">This Year</option>
-                                <option value="all_time">All Time</option>
-                            </select>
-                        </div>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => refetch()}
+                        disabled={isRefetching}
+                        className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
+                        Refresh
+                    </button>
+
+                    <div className="relative flex items-center bg-[#141414] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-200 shadow-xl">
+                        <Calendar className="w-4 h-4 mr-2 text-[#E8BF7A]" />
+                        <select
+                            className="bg-transparent border-none focus:outline-none cursor-pointer pr-4 font-bold appearance-none text-white text-xs"
+                            value={dateRange}
+                            onChange={(e) => setDateRange(e.target.value)}
+                        >
+                            <option value="today">Today</option>
+                            <option value="last_7_days">Last 7 Days</option>
+                            <option value="last_30_days">Last 30 Days</option>
+                            <option value="last_90_days">Last 90 Days</option>
+                            <option value="this_month">This Month</option>
+                            <option value="this_year">This Year</option>
+                            <option value="all_time">All Time</option>
+                        </select>
                     </div>
                 </div>
             </motion.div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                {stats.map((stat) => (
-                    <motion.div
-                        key={stat.title}
-                        variants={itemVariants}
-                        whileHover={{ y: -5 }}
-                        className={`bg-[#1a1a1a]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/5 transition-all group relative overflow-hidden ${stat.glow}`}
-                    >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-white/5 to-transparent rounded-full -mr-16 -mt-16 pointer-events-none group-hover:scale-150 transition-transform duration-700" />
-                        <div className="flex flex-col h-full justify-between gap-6">
-                            <div className="flex items-center justify-between">
-                                <div className={`${stat.bg} ${stat.color} p-3.5 rounded-2xl`}>
-                                    <stat.icon className="w-5 h-5 shadow-lg" />
+            {/* Statistics Cards */}
+            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {stats.map((stat) => {
+                    const Icon = stat.icon;
+                    return (
+                        <div
+                            key={stat.title}
+                            className="bg-[#141414] rounded-3xl p-6 border border-white/10 transition-all hover:border-[#E8BF7A]/30 group relative overflow-hidden shadow-xl"
+                        >
+                            <div className="flex flex-col h-full justify-between gap-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="bg-white/5 p-3 rounded-2xl border border-white/10 text-[#E8BF7A]">
+                                        <Icon className={`w-5 h-5 ${stat.color}`} />
+                                    </div>
+                                    <div
+                                        className={`flex items-center px-2 py-1 rounded-lg text-[10px] font-bold ${stat.isPositive ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'}`}
+                                    >
+                                        {stat.isPositive ? (
+                                            <ArrowUpRight className="w-3 h-3 mr-0.5" />
+                                        ) : (
+                                            <ArrowDownRight className="w-3 h-3 mr-0.5" />
+                                        )}
+                                        {stat.change}
+                                    </div>
                                 </div>
-                                <div
-                                    className={`flex items-center px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-tighter ${stat.isPositive ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}
-                                >
-                                    {stat.isPositive ? (
-                                        <ArrowUpRight className="w-3 h-3 mr-0.5" />
-                                    ) : (
-                                        <ArrowDownRight className="w-3 h-3 mr-0.5" />
-                                    )}
-                                    {stat.change}
+                                <div>
+                                    <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">
+                                        {stat.title}
+                                    </p>
+                                    <p className="text-3xl font-extrabold text-white font-bricolage tracking-tight">
+                                        {stat.value}
+                                    </p>
                                 </div>
-                            </div>
-                            <div>
-                                <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2 leading-none">
-                                    {stat.title}
-                                </p>
-                                <p className="text-2xl font-black text-white font-mono tracking-tighter">
-                                    {stat.value}
-                                </p>
                             </div>
                         </div>
-                    </motion.div>
-                ))}
-            </div>
+                    );
+                })}
+            </motion.div>
 
             {/* Detailed Analytics Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Category Performance Card */}
                 <motion.div
                     variants={itemVariants}
-                    className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 p-8 shadow-2xl relative overflow-hidden flex flex-col min-h-[400px]"
+                    className="bg-[#141414] rounded-3xl border border-white/10 p-6 shadow-2xl relative overflow-hidden flex flex-col min-h-[380px]"
                 >
-                    <div className="mb-10">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-purple-500/10 rounded-lg">
-                                <TrendingUp className="w-5 h-5 text-purple-400" />
+                    <div className="mb-6">
+                        <div className="flex items-center gap-3 mb-1">
+                            <div className="p-2 bg-white/5 border border-white/10 rounded-xl">
+                                <TrendingUp className="w-5 h-5 text-[#E8BF7A]" />
                             </div>
-                            <h3 className="text-xl font-bold text-white tracking-tight">
-                                Category Analytics
+                            <h3 className="text-lg font-bold text-white">
+                                Category Breakdown
                             </h3>
                         </div>
-                        <p className="text-xs text-gray-500 ml-10">Sales distribution by volume.</p>
+                        <p className="text-xs text-gray-400">Sales volume distribution per category.</p>
                     </div>
 
                     <div className="flex-grow flex flex-col justify-center">
                         <ProductPerformanceChart data={salesData?.data?.category_performance} />
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
-                            Top: {salesData?.data?.category_performance?.[0]?.name || 'N/A'}
+                    <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                            Top: <span className="text-white">{salesData?.data?.category_performance?.[0]?.name || 'N/A'}</span>
                         </span>
-                        <Trophy className="w-4 h-4 text-yellow-500/50" />
+                        <Trophy className="w-4 h-4 text-[#E8BF7A]" />
                     </div>
                 </motion.div>
 
                 {/* Product Sales Table */}
                 <motion.div
                     variants={itemVariants}
-                    className="lg:col-span-2 bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl"
+                    className="lg:col-span-2 bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
                 >
-                    <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-                        <div className="flex items-center gap-4">
-                            <div className="p-2.5 bg-purple-500/10 rounded-xl">
-                                <Package className="w-5 h-5 text-purple-400" />
-                            </div>
-                            <h3 className="text-xl font-bold text-white tracking-tight">
-                                Top Product Sales
+                    <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Package className="w-5 h-5 text-[#E8BF7A]" />
+                            <h3 className="text-lg font-bold text-white">
+                                Top Performing Products
                             </h3>
                         </div>
-                        <button className="p-2.5 text-gray-500 hover:text-white transition-all bg-white/5 hover:bg-white/10 rounded-xl">
-                            <Filter className="w-4 h-4" />
-                        </button>
                     </div>
                     <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="bg-white/[0.01] text-left">
-                                    <th className="px-8 py-5 text-[10px] uppercase font-black text-gray-500 tracking-[0.2em]">
-                                        Product
-                                    </th>
-                                    <th className="px-8 py-5 text-[10px] uppercase font-black text-gray-500 tracking-[0.2em]">
-                                        Category
-                                    </th>
-                                    <th className="px-8 py-5 text-center text-[10px] uppercase font-black text-gray-500 tracking-[0.2em]">
-                                        Weight Sold
-                                    </th>
-                                    <th className="px-8 py-5 text-right text-[10px] uppercase font-black text-gray-500 tracking-[0.2em]">
-                                        Revenue
-                                    </th>
+                        <table className="w-full text-left text-sm text-gray-300">
+                            <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
+                                <tr>
+                                    <th className="px-6 py-4">Product Name</th>
+                                    <th className="px-6 py-4">Category</th>
+                                    <th className="px-6 py-4 text-center">Weight Sold</th>
+                                    <th className="px-6 py-4 text-right">Revenue</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/[0.03]">
+                            <tbody className="divide-y divide-white/5 font-medium">
                                 <AnimatePresence>
                                     {topProducts.map((p: any) => (
                                         <motion.tr
@@ -265,30 +251,28 @@ export default function SalesPage() {
                                                     `/bd6b-6ced/dashboard/sales/products/${p.id}`
                                                 )
                                             }
-                                            className="hover:bg-white/[0.03] transition-all group cursor-pointer"
+                                            className="hover:bg-white/[0.02] transition cursor-pointer"
                                         >
-                                            <td className="px-8 py-6">
-                                                <span className="text-sm font-bold text-gray-200 group-hover:text-purple-400 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <span className="text-white font-bold hover:text-[#E8BF7A] transition">
                                                     {p.name}
                                                 </span>
                                             </td>
-                                            <td className="px-8 py-6">
-                                                <span className="text-[10px] font-black text-gray-400 bg-white/5 px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                                            <td className="px-6 py-4">
+                                                <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-white/5 text-gray-300 border border-white/10">
                                                     {p.category}
                                                 </span>
                                             </td>
-                                            <td className="px-8 py-6 text-center">
-                                                <span className="text-sm font-mono text-gray-300 font-bold">
-                                                    {p.kg_sold} kg
-                                                </span>
+                                            <td className="px-6 py-4 text-center font-bold font-mono text-white">
+                                                {p.kg_sold} kg
                                             </td>
-                                            <td className="px-8 py-6 text-right">
+                                            <td className="px-6 py-4 text-right">
                                                 <div className="flex flex-col items-end gap-1">
-                                                    <span className="text-sm font-black text-white font-mono">
+                                                    <span className="text-base font-bold text-[#E8BF7A] font-mono">
                                                         ₹{p.revenue.toLocaleString()}
                                                     </span>
                                                     <span
-                                                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${p.revenue_change >= 0 ? 'text-green-400 bg-green-400/10' : 'text-red-400 bg-red-400/10'}`}
+                                                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${p.revenue_change >= 0 ? 'text-emerald-400 bg-emerald-500/10' : 'text-rose-400 bg-rose-500/10'}`}
                                                     >
                                                         {p.revenue_change >= 0 ? '+' : ''}
                                                         {p.revenue_change}%
@@ -304,40 +288,30 @@ export default function SalesPage() {
                 </motion.div>
             </div>
 
-            {/* Variant Sales Table (Weight Analysis) */}
+            {/* Variant Sales Table */}
             <motion.div
                 variants={itemVariants}
-                className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl"
+                className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
             >
-                <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-                    <div className="flex items-center gap-4">
-                        <div className="p-2.5 bg-blue-500/10 rounded-xl">
-                            <Layers className="w-5 h-5 text-blue-400" />
-                        </div>
-                        <h3 className="text-xl font-bold text-white tracking-tight">
-                            Variant Breakdown
+                <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Layers className="w-5 h-5 text-[#E8BF7A]" />
+                        <h3 className="text-lg font-bold text-white">
+                            Variant Breakdown & Weight Metrics
                         </h3>
                     </div>
                 </div>
                 <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="bg-white/[0.01] text-left">
-                                <th className="px-8 py-5 text-[10px] uppercase font-black text-gray-500 tracking-[0.2em]">
-                                    Variant
-                                </th>
-                                <th className="px-8 py-5 text-center text-[10px] uppercase font-black text-gray-500 tracking-[0.2em]">
-                                    Qty Sold
-                                </th>
-                                <th className="px-8 py-5 text-right text-[10px] uppercase font-black text-gray-500 tracking-[0.2em]">
-                                    Weight Sold
-                                </th>
-                                <th className="px-8 py-5 text-right text-[10px] uppercase font-black text-gray-500 tracking-[0.2em]">
-                                    Revenue
-                                </th>
+                    <table className="w-full text-left text-sm text-gray-300">
+                        <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
+                            <tr>
+                                <th className="px-6 py-4">Variant Name</th>
+                                <th className="px-6 py-4 text-center">Qty Sold</th>
+                                <th className="px-6 py-4 text-right">Weight Sold</th>
+                                <th className="px-6 py-4 text-right">Revenue</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/[0.03]">
+                        <tbody className="divide-y divide-white/5 font-medium">
                             <AnimatePresence>
                                 {topVariants.map((v: any) => (
                                     <motion.tr
@@ -347,36 +321,34 @@ export default function SalesPage() {
                                                 `/bd6b-6ced/dashboard/sales/variants/${v.id}`
                                             )
                                         }
-                                        className="hover:bg-white/[0.03] transition-all group cursor-pointer"
+                                        className="hover:bg-white/[0.02] transition cursor-pointer"
                                     >
-                                        <td className="px-8 py-6">
+                                        <td className="px-6 py-4">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-gray-200 group-hover:text-blue-400 transition-colors">
+                                                <span className="text-white font-bold">
                                                     {v.product_name}
                                                 </span>
-                                                <span className="text-[10px] text-gray-500 font-bold font-mono">
+                                                <span className="text-xs text-gray-400 font-mono">
                                                     {v.size}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6 text-center">
-                                            <span className="text-sm font-mono text-gray-300 font-bold">
-                                                {v.quantity_sold}
-                                            </span>
+                                        <td className="px-6 py-4 text-center font-mono font-bold text-white">
+                                            {v.quantity_sold} units
                                         </td>
-                                        <td className="px-8 py-6 text-right">
-                                            <div className="flex items-center justify-end gap-2 text-xs text-blue-400 font-bold font-mono">
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center justify-end gap-1.5 text-xs text-amber-300 font-bold font-mono">
                                                 <Scale className="w-3.5 h-3.5" />
                                                 {v.weight_sold} kg
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6 text-right">
+                                        <td className="px-6 py-4 text-right">
                                             <div className="flex flex-col items-end gap-1">
-                                                <span className="text-sm font-black text-green-400 font-mono">
+                                                <span className="text-base font-bold text-[#E8BF7A] font-mono">
                                                     ₹{v.revenue.toLocaleString()}
                                                 </span>
                                                 <span
-                                                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${(v.revenue_change || 0) >= 0 ? 'text-green-400 bg-green-400/10' : 'text-red-400 bg-red-400/10'}`}
+                                                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${(v.revenue_change || 0) >= 0 ? 'text-emerald-400 bg-emerald-500/10' : 'text-rose-400 bg-rose-500/10'}`}
                                                 >
                                                     {(v.revenue_change || 0) >= 0 ? '+' : ''}
                                                     {v.revenue_change || 0}%

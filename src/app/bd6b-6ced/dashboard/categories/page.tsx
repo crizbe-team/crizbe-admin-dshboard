@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Layers,
     Search,
@@ -11,6 +11,7 @@ import {
     XCircle,
     Package,
     Filter,
+    RefreshCw,
 } from 'lucide-react';
 import CategoryAddEditModal, { Category } from '@/components/Modals/CategoryAddEditModal';
 import CategoryDeleteModal from '@/components/Modals/CategoryDeleteModal';
@@ -18,7 +19,6 @@ import { useFetchCategories, useDeleteCategory } from '@/queries/use-categories'
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import Pagination from '@/components/ui/Pagination';
-import { useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
 
 const containerVariants: Variants = {
@@ -26,13 +26,13 @@ const containerVariants: Variants = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.1,
+            staggerChildren: 0.08,
         },
     },
 };
 
 const itemVariants: Variants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 15, opacity: 0 },
     visible: {
         y: 0,
         opacity: 1,
@@ -45,7 +45,7 @@ export default function CategoriesPage() {
     const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
     const [currentPage, setCurrentPage] = useState(1);
 
-    const { data, isLoading } = useFetchCategories({
+    const { data, isLoading, isRefetching, refetch } = useFetchCategories({
         q: searchQuery,
         is_active: statusFilter === 'all' ? undefined : statusFilter === 'active',
         page: currentPage,
@@ -53,7 +53,6 @@ export default function CategoriesPage() {
 
     const deleteMutation = useDeleteCategory();
 
-    // Reset page when filters change
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery, statusFilter]);
@@ -68,47 +67,43 @@ export default function CategoriesPage() {
             title: 'Total Categories',
             value: data?.base_data?.total_categories ?? 0,
             icon: Layers,
-            color: 'text-blue-400',
+            color: 'text-[#E8BF7A]',
         },
         {
             title: 'Active Categories',
             value: data?.base_data?.active ?? 0,
             icon: CheckCircle,
-            color: 'text-green-400',
+            color: 'text-emerald-400',
         },
         {
             title: 'Inactive Categories',
             value: data?.base_data?.inactive ?? 0,
             icon: XCircle,
-            color: 'text-red-400',
+            color: 'text-rose-400',
         },
         {
             title: 'Total Products',
             value: data?.base_data?.total_products ?? 0,
             icon: Package,
-            color: 'text-purple-400',
+            color: 'text-amber-300',
         },
     ];
 
-    // Open modal for adding new category
     const handleAddCategory = () => {
         setEditingCategory(null);
         setIsModalOpen(true);
     };
 
-    // Open modal for editing category
     const handleEditCategory = (category: Category) => {
         setEditingCategory(category);
         setIsModalOpen(true);
     };
 
-    // Handle delete category - open confirmation modal
     const handleDeleteCategory = (category: Category) => {
         setCategoryToDelete(category);
         setIsDeleteModalOpen(true);
     };
 
-    // Confirm delete category
     const confirmDeleteCategory = async () => {
         if (categoryToDelete) {
             try {
@@ -121,13 +116,11 @@ export default function CategoriesPage() {
         }
     };
 
-    // Cancel delete
     const cancelDelete = () => {
         setIsDeleteModalOpen(false);
         setCategoryToDelete(null);
     };
 
-    // Close modal
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setEditingCategory(null);
@@ -138,31 +131,63 @@ export default function CategoriesPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="space-y-5 pb-12"
+            className="space-y-8 pb-16 max-w-7xl mx-auto"
         >
+            {/* Page Header */}
+            <motion.div
+                variants={itemVariants}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            >
+                <div className="space-y-1">
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
+                        <Layers className="w-9 h-9 text-[#E8BF7A]" />
+                        Category Management
+                    </h1>
+                    <p className="text-gray-400 text-sm sm:text-base font-medium">
+                        Organize and manage gourmet chocolate crunch stick product categories.
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => refetch()}
+                        disabled={isRefetching}
+                        className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
+                        Refresh
+                    </button>
+
+                    <button
+                        onClick={handleAddCategory}
+                        className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center gap-2"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add Category
+                    </button>
+                </div>
+            </motion.div>
+
             {/* Statistics Cards */}
-            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {stats.map((stat) => {
                     const Icon = stat.icon;
-                    const bgClass = stat.color.includes('blue') ? 'bg-blue-500/10' : stat.color.includes('green') ? 'bg-green-500/10' : stat.color.includes('purple') ? 'bg-purple-500/10' : 'bg-orange-500/10';
-                    const glowClass = stat.color.includes('blue') ? 'hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)]' : stat.color.includes('green') ? 'hover:shadow-[0_0_30px_-5px_rgba(74,222,128,0.3)]' : stat.color.includes('purple') ? 'hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]' : 'hover:shadow-[0_0_30px_-5px_rgba(249,115,22,0.3)]';
                     return (
                         <div
                             key={stat.title}
-                            className={`bg-[#1a1a1a]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/5 transition-all group relative overflow-hidden ${glowClass}`}
+                            className="bg-[#141414] rounded-3xl p-6 border border-white/10 transition-all hover:border-[#E8BF7A]/30 group relative overflow-hidden shadow-xl"
                         >
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-white/5 to-transparent rounded-full -mr-16 -mt-16 pointer-events-none group-hover:scale-150 transition-transform duration-700" />
-                            <div className="flex flex-col h-full justify-between gap-6">
+                            <div className="flex flex-col h-full justify-between gap-4">
                                 <div className="flex items-center justify-between">
-                                    <div className={`${bgClass} ${stat.color} p-3.5 rounded-2xl`}>
-                                        <Icon className="w-5 h-5 shadow-lg" />
+                                    <div className="bg-white/5 p-3 rounded-2xl border border-white/10 text-[#E8BF7A]">
+                                        <Icon className={`w-5 h-5 ${stat.color}`} />
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2 leading-none">
+                                    <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">
                                         {stat.title}
                                     </p>
-                                    <p className="text-2xl font-black text-white font-mono tracking-tighter">
+                                    <p className="text-3xl font-extrabold text-white font-bricolage tracking-tight">
                                         {stat.value}
                                     </p>
                                 </div>
@@ -172,10 +197,13 @@ export default function CategoriesPage() {
                 })}
             </motion.div>
 
-            {/* Categories List */}
-            <motion.div variants={itemVariants} className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
-                <div className="p-6 border-b border-white/5 flex items-center justify-between flex-wrap gap-4">
-                    <div className="flex items-center space-x-4 flex-1 min-w-[300px]">
+            {/* Categories List Table */}
+            <motion.div
+                variants={itemVariants}
+                className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
+            >
+                <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center space-x-4 flex-1 min-w-[280px]">
                         <DebouncedSearch
                             onSearch={setSearchQuery}
                             placeholder="Search Categories..."
@@ -185,7 +213,7 @@ export default function CategoriesPage() {
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value as any)}
-                                className="bg-[#2a2a2a] text-gray-100 pl-4 pr-10 py-2 rounded-lg border border-[#3a3a3a] focus:outline-none focus:border-purple-500 appearance-none cursor-pointer"
+                                className="bg-[#1a1a1a] text-gray-200 text-sm font-semibold pl-4 pr-10 py-2.5 rounded-xl border border-white/10 focus:outline-none focus:border-[#E8BF7A] appearance-none cursor-pointer"
                             >
                                 <option value="all">All Status</option>
                                 <option value="active">Active</option>
@@ -194,88 +222,74 @@ export default function CategoriesPage() {
                             <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                         </div>
                     </div>
-                    <button
-                        onClick={handleAddCategory}
-                        className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors whitespace-nowrap"
-                    >
-                        <Plus className="w-4 h-4" />
-                        <span>Add Category</span>
-                    </button>
                 </div>
 
                 <div className="overflow-x-auto">
                     {isLoading ? (
                         <DashboardLoader text="Loading Categories" />
                     ) : data?.data?.length > 0 ? (
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-white/5">
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        NAME
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        DESCRIPTION
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        STATUS
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        PRODUCTS
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        ACTIONS
-                                    </th>
+                        <table className="w-full text-left text-sm text-gray-300">
+                            <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
+                                <tr>
+                                    <th className="px-6 py-4">Name</th>
+                                    <th className="px-6 py-4">Description</th>
+                                    <th className="px-6 py-4">Status</th>
+                                    <th className="px-6 py-4">Products</th>
+                                    <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-white/5 font-medium">
                                 {data?.data?.map((category: Category) => (
                                     <tr
                                         key={category.id}
-                                        className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                                        className="hover:bg-white/[0.02] transition"
                                     >
-                                        <td className="p-4">
+                                        <td className="px-6 py-4">
                                             <div className="flex items-center space-x-3">
-                                                <div className="w-8 h-8 rounded-lg bg-purple-900 bg-opacity-30 flex items-center justify-center text-purple-400">
+                                                <div className="w-9 h-9 rounded-xl bg-[#E8BF7A]/10 border border-[#E8BF7A]/20 flex items-center justify-center text-[#E8BF7A]">
                                                     <Layers className="w-4 h-4" />
                                                 </div>
-                                                <span className="text-gray-100 font-medium max-w-[200px] truncate">
+                                                <span className="text-white font-bold max-w-[200px] truncate">
                                                     {category.name}
                                                 </span>
                                             </div>
                                         </td>
                                         <td
-                                            className="p-4 text-gray-300 max-w-xs truncate"
+                                            className="px-6 py-4 text-gray-400 max-w-xs truncate"
                                             title={category.description || '--'}
                                         >
                                             {category?.description || '--'}
                                         </td>
-                                        <td className="p-4">
+                                        <td className="px-6 py-4">
                                             <span
-                                                className={`px-2 py-1 rounded text-xs font-medium border ${
+                                                className={`px-3 py-1 rounded-full text-xs font-bold transition inline-flex items-center gap-1.5 ${
                                                     category.is_active
-                                                        ? 'bg-green-900 bg-opacity-20 text-green-400 border-green-900'
-                                                        : 'bg-red-900 bg-opacity-20 text-red-400 border-red-900'
+                                                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                                                        : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
                                                 }`}
                                             >
+                                                <span className={`w-1.5 h-1.5 rounded-full ${category.is_active ? 'bg-emerald-400' : 'bg-rose-400'}`} />
                                                 {category.is_active ? 'Active' : 'Inactive'}
                                             </span>
                                         </td>
-                                        <td className="p-4 text-gray-300">
+                                        <td className="px-6 py-4 text-white font-bold">
                                             {category.productCount ?? 0} products
                                         </td>
-                                        <td className="p-4">
-                                            <div className="flex items-center space-x-2">
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center justify-end space-x-2">
                                                 <button
                                                     onClick={() => handleEditCategory(category)}
-                                                    className="p-2 bg-blue-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                                                    className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition"
+                                                    title="Edit Category"
                                                 >
-                                                    <Edit className="w-4 h-4 text-blue-400" />
+                                                    <Edit className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteCategory(category)}
-                                                    className="p-2 bg-red-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                                                    className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition"
+                                                    title="Delete Category"
                                                 >
-                                                    <Trash2 className="w-4 h-4 text-red-400" />
+                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>
@@ -284,17 +298,15 @@ export default function CategoriesPage() {
                             </tbody>
                         </table>
                     ) : (
-                        <div className="p-8 text-center">
-                            <p className="text-gray-400">
-                                No categories found matching your search.
-                            </p>
+                        <div className="p-12 text-center text-gray-400 font-medium">
+                            No categories found matching your criteria.
                         </div>
                     )}
                 </div>
 
                 {/* Pagination */}
                 {data?.pagination && data.pagination.total_pages > 1 && (
-                    <div className="p-4 border-t border-[#2a2a2a]">
+                    <div className="p-4 border-t border-white/10">
                         <Pagination
                             currentPage={currentPage}
                             totalPages={data.pagination.total_pages}

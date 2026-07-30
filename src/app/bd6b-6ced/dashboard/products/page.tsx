@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Package, Box, Layers, Edit, Trash2, Plus, Eye } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Package, Box, Layers, Edit, Trash2, Plus, Eye, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import ProductAddEditModal, { Product } from '@/components/Modals/ProductAddEditModal';
 import DeleteModal from '@/components/Modals/DeleteModal';
@@ -11,7 +11,6 @@ import { useFetchProducts, useDeleteProduct } from '@/queries/use-products';
 import { useFetchCategories } from '@/queries/use-categories';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import Pagination from '@/components/ui/Pagination';
-import { useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
 
 const containerVariants: Variants = {
@@ -19,13 +18,13 @@ const containerVariants: Variants = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.1,
+            staggerChildren: 0.08,
         },
     },
 };
 
 const itemVariants: Variants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 15, opacity: 0 },
     visible: {
         y: 0,
         opacity: 1,
@@ -38,8 +37,7 @@ export default function ProductsPage() {
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Fetch Products
-    const { data: productsData, isLoading: isProductsLoading } = useFetchProducts({
+    const { data: productsData, isLoading: isProductsLoading, isRefetching, refetch } = useFetchProducts({
         q: searchQuery,
         category: selectedCategory === 'All' ? undefined : selectedCategory,
         page: currentPage,
@@ -47,17 +45,14 @@ export default function ProductsPage() {
 
     const [categorySearch, setCategorySearch] = useState('');
 
-    // Fetch Categories for the dropdown
     const { data: categoriesData, isLoading: isCategoriesLoading } = useFetchCategories({
         q: categorySearch,
     });
 
-    // Reset page when filters change
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery, selectedCategory]);
 
-    // Delete Mutation
     const deleteMutation = useDeleteProduct();
 
     const categoryOptions = useMemo(() => {
@@ -82,47 +77,43 @@ export default function ProductsPage() {
             title: 'Total Products',
             value: (baseData.total_products || 0).toLocaleString(),
             icon: Package,
-            color: 'text-blue-400',
+            color: 'text-[#E8BF7A]',
         },
         {
             title: 'Total Stock',
             value: (baseData.total_stock || 0).toLocaleString(),
             icon: Box,
-            color: 'text-green-400',
+            color: 'text-emerald-400',
         },
         {
             title: 'Total Variants',
             value: (baseData.total_variants || 0).toLocaleString(),
             icon: Layers,
-            color: 'text-purple-400',
+            color: 'text-amber-300',
         },
         {
             title: 'Total Categories',
             value: (baseData.total_categories || 0).toString(),
             icon: Layers,
-            color: 'text-orange-400',
+            color: 'text-purple-400',
         },
     ];
 
-    // Open modal for adding new product
     const handleAddProduct = () => {
         setEditingProduct(null);
         setIsModalOpen(true);
     };
 
-    // Open modal for editing product
     const handleEditProduct = (product: Product) => {
         setEditingProduct(product);
         setIsModalOpen(true);
     };
 
-    // Handle delete product - open confirmation modal
     const handleDeleteProduct = (product: Product) => {
         setProductToDelete(product);
         setIsDeleteModalOpen(true);
     };
 
-    // Confirm delete product
     const confirmDeleteProduct = async () => {
         if (productToDelete) {
             await deleteMutation.mutateAsync(productToDelete.id);
@@ -131,13 +122,11 @@ export default function ProductsPage() {
         }
     };
 
-    // Cancel delete
     const cancelDelete = () => {
         setIsDeleteModalOpen(false);
         setProductToDelete(null);
     };
 
-    // Close modal
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setEditingProduct(null);
@@ -148,31 +137,63 @@ export default function ProductsPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="space-y-5 pb-12"
+            className="space-y-8 pb-16 max-w-7xl mx-auto"
         >
+            {/* Page Header */}
+            <motion.div
+                variants={itemVariants}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            >
+                <div className="space-y-1">
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
+                        <Package className="w-9 h-9 text-[#E8BF7A]" />
+                        Products Management
+                    </h1>
+                    <p className="text-gray-400 text-sm sm:text-base font-medium">
+                        Manage Crizbe gourmet chocolate products, stock levels & variants.
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => refetch()}
+                        disabled={isRefetching}
+                        className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
+                        Refresh
+                    </button>
+
+                    <button
+                        onClick={handleAddProduct}
+                        className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center gap-2"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add Product
+                    </button>
+                </div>
+            </motion.div>
+
             {/* Statistics Cards */}
-            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {stats.map((stat) => {
                     const Icon = stat.icon;
-                    const bgClass = stat.color.includes('blue') ? 'bg-blue-500/10' : stat.color.includes('green') ? 'bg-green-500/10' : stat.color.includes('purple') ? 'bg-purple-500/10' : 'bg-orange-500/10';
-                    const glowClass = stat.color.includes('blue') ? 'hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.3)]' : stat.color.includes('green') ? 'hover:shadow-[0_0_30px_-5px_rgba(74,222,128,0.3)]' : stat.color.includes('purple') ? 'hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]' : 'hover:shadow-[0_0_30px_-5px_rgba(249,115,22,0.3)]';
                     return (
                         <div
                             key={stat.title}
-                            className={`bg-[#1a1a1a]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/5 transition-all group relative overflow-hidden ${glowClass}`}
+                            className="bg-[#141414] rounded-3xl p-6 border border-white/10 transition-all hover:border-[#E8BF7A]/30 group relative overflow-hidden shadow-xl"
                         >
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-white/5 to-transparent rounded-full -mr-16 -mt-16 pointer-events-none group-hover:scale-150 transition-transform duration-700" />
-                            <div className="flex flex-col h-full justify-between gap-6">
+                            <div className="flex flex-col h-full justify-between gap-4">
                                 <div className="flex items-center justify-between">
-                                    <div className={`${bgClass} ${stat.color} p-3.5 rounded-2xl`}>
-                                        <Icon className="w-5 h-5 shadow-lg" />
+                                    <div className="bg-white/5 p-3 rounded-2xl border border-white/10 text-[#E8BF7A]">
+                                        <Icon className={`w-5 h-5 ${stat.color}`} />
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2 leading-none">
+                                    <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">
                                         {stat.title}
                                     </p>
-                                    <p className="text-2xl font-black text-white font-mono tracking-tighter">
+                                    <p className="text-3xl font-extrabold text-white font-bricolage tracking-tight">
                                         {stat.value}
                                     </p>
                                 </div>
@@ -182,10 +203,13 @@ export default function ProductsPage() {
                 })}
             </motion.div>
 
-            {/* Products List */}
-            <motion.div variants={itemVariants} className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
-                <div className="p-6 border-b border-white/5 flex items-center justify-between flex-wrap gap-4">
-                    <div className="flex items-center space-x-4 flex-1 min-w-[300px]">
+            {/* Products List Table */}
+            <motion.div
+                variants={itemVariants}
+                className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
+            >
+                <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center space-x-4 flex-1 min-w-[280px]">
                         <DebouncedSearch
                             onSearch={setSearchQuery}
                             placeholder="Search Products..."
@@ -201,15 +225,6 @@ export default function ProductsPage() {
                             className="w-48"
                         />
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <button
-                            onClick={handleAddProduct}
-                            className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors whitespace-nowrap"
-                        >
-                            <Plus className="w-4 h-4" />
-                            <span>Add Product</span>
-                        </button>
-                    </div>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -218,95 +233,66 @@ export default function ProductsPage() {
                             <DashboardLoader text="Loading Products" />
                         </div>
                     ) : products.length > 0 ? (
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-white/5">
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        NAME
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        CATEGORY
-                                    </th>
-
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        STOCK
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-sm">
-                                        ACTIONS
-                                    </th>
+                        <table className="w-full text-left text-sm text-gray-300">
+                            <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
+                                <tr>
+                                    <th className="px-6 py-4">Product Name</th>
+                                    <th className="px-6 py-4">Category</th>
+                                    <th className="px-6 py-4">Stock</th>
+                                    <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-white/5 font-medium">
                                 {products.map((product: Product) => (
                                     <tr
                                         key={product.id}
-                                        className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                                        className="hover:bg-white/[0.02] transition"
                                     >
-                                        <td className="p-4">
+                                        <td className="px-6 py-4">
                                             <div className="flex items-center space-x-3">
                                                 {product.images && product.images.length > 0 ? (
                                                     <div className="flex items-center space-x-1">
                                                         <img
                                                             src={product.images[0]?.image}
                                                             alt={product.name}
-                                                            className="w-10 h-10 object-cover rounded-lg border border-[#3a3a3a]"
-                                                            onError={(e) => {
-                                                                e.currentTarget.style.display =
-                                                                    'none';
-                                                                const iconSpan =
-                                                                    e.currentTarget.parentElement?.parentElement?.querySelector(
-                                                                        '.product-icon'
-                                                                    );
-                                                                if (iconSpan)
-                                                                    iconSpan.classList.remove(
-                                                                        'hidden'
-                                                                    );
-                                                            }}
+                                                            className="w-10 h-10 object-cover rounded-xl border border-white/10"
                                                         />
-                                                        {product.images.length > 1 && (
-                                                            <span className="text-xs text-gray-400 bg-[#2a2a2a] px-1.5 py-0.5 rounded">
-                                                                +{product.images.length - 1}
-                                                            </span>
-                                                        )}
                                                     </div>
                                                 ) : null}
-                                                <span
-                                                    className={`text-2xl product-icon ${product.images && product.images.length > 0 ? 'hidden' : ''}`}
-                                                >
-                                                    {product.icon}
-                                                </span>
-                                                <span className="text-gray-100">
+                                                <span className="text-white font-bold text-base">
                                                     {product.name}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="p-4 text-gray-300">
-                                            {product?.category?.name}
+                                        <td className="px-6 py-4 text-gray-300 font-semibold">
+                                            {product?.category?.name || '--'}
                                         </td>
 
-                                        <td className="p-4 text-gray-300">
+                                        <td className="px-6 py-4 text-[#E8BF7A] font-bold font-mono text-base">
                                             {product.available_stock} kg
                                         </td>
-                                        <td className="p-4">
-                                            <div className="flex items-center space-x-2">
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center justify-end space-x-2">
                                                 <Link
                                                     href={`/bd6b-6ced/dashboard/products/${product.id}`}
-                                                    className="p-2 bg-purple-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                                                    className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition"
                                                     title="View Details"
                                                 >
-                                                    <Eye className="w-4 h-4 text-purple-400" />
+                                                    <Eye className="w-4 h-4 text-[#E8BF7A]" />
                                                 </Link>
                                                 <button
                                                     onClick={() => handleEditProduct(product)}
-                                                    className="p-2 bg-blue-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                                                    className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition"
+                                                    title="Edit Product"
                                                 >
-                                                    <Edit className="w-4 h-4 text-blue-400" />
+                                                    <Edit className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteProduct(product)}
-                                                    className="p-2 bg-red-500 bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                                                    className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition"
+                                                    title="Delete Product"
                                                 >
-                                                    <Trash2 className="w-4 h-4 text-red-400" />
+                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>
@@ -315,14 +301,14 @@ export default function ProductsPage() {
                             </tbody>
                         </table>
                     ) : (
-                        <div className="p-8 text-center border-t border-[#2a2a2a]">
-                            <p className="text-gray-400">No products found matching your search.</p>
+                        <div className="p-12 text-center text-gray-400 font-medium">
+                            No products found matching your search.
                         </div>
                     )}
                 </div>
 
                 {productsData?.pagination && productsData.pagination.total_pages > 1 && (
-                    <div className="p-4 border-t border-[#2a2a2a]">
+                    <div className="p-4 border-t border-white/10">
                         <Pagination
                             currentPage={currentPage}
                             totalPages={productsData.pagination.total_pages}

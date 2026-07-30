@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { User, Mail, Phone, MapPin, Eye, Trash2, Search } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Eye, Trash2, RefreshCw } from 'lucide-react';
 import { useFetchEnquiries, useDeleteEnquiry } from '@/queries/use-contact';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import Pagination from '@/components/ui/Pagination';
@@ -16,13 +16,13 @@ const containerVariants: Variants = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.1,
+            staggerChildren: 0.08,
         },
     },
 };
 
 const itemVariants: Variants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 15, opacity: 0 },
     visible: {
         y: 0,
         opacity: 1,
@@ -37,6 +37,7 @@ export default function EnquiriesPage() {
     const {
         data: enquiriesData,
         isLoading,
+        isRefetching,
         refetch,
     } = useFetchEnquiries({
         q: searchQuery,
@@ -72,7 +73,6 @@ export default function EnquiriesPage() {
         setEnquiryToDelete(null);
     };
 
-    // Reset page when search changes
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery]);
@@ -84,22 +84,42 @@ export default function EnquiriesPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="space-y-5 pb-12"
+            className="space-y-8 pb-16 max-w-7xl mx-auto"
         >
             {/* Page Header */}
-            <motion.div variants={itemVariants} className="space-y-1">
-                <h1 className="text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none">
-                    Contact Enquiries
-                </h1>
-                <p className="text-gray-400 text-base font-medium">
-                    View and manage messages submitted via the contact form.
-                </p>
+            <motion.div
+                variants={itemVariants}
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            >
+                <div className="space-y-1">
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
+                        <Mail className="w-9 h-9 text-[#E8BF7A]" />
+                        Contact Enquiries & Messages
+                    </h1>
+                    <p className="text-gray-400 text-sm sm:text-base font-medium">
+                        View customer enquiries and feedback submitted through the contact form.
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => refetch()}
+                        disabled={isRefetching}
+                        className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
+                        Refresh
+                    </button>
+                </div>
             </motion.div>
 
             {/* Enquiries Table */}
-            <motion.div variants={itemVariants} className="bg-[#1a1a1a]/60 backdrop-blur-xl rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
-                <div className="p-6 border-b border-white/5 flex items-center justify-between flex-wrap gap-4">
-                    <h2 className="text-xl font-semibold text-gray-100">Submitted Details</h2>
+            <motion.div
+                variants={itemVariants}
+                className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
+            >
+                <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
+                    <h2 className="text-lg font-bold text-white">Submitted Messages</h2>
                     <div className="flex items-center gap-4">
                         <DebouncedSearch
                             placeholder="Search by name, email or location..."
@@ -111,96 +131,86 @@ export default function EnquiriesPage() {
 
                 <div className="overflow-x-auto">
                     {isLoading ? (
-                        <div className="p-20">
+                        <div className="p-12 border-t border-white/5">
                             <DashboardLoader text="Loading enquiries..." />
                         </div>
                     ) : enquiries.length === 0 ? (
-                        <div className="p-20 text-center text-gray-500">
+                        <div className="p-12 text-center text-gray-400 font-medium">
                             No enquiries found yet.
                         </div>
                     ) : (
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-white/5">
-                                    <th className="text-left p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">
-                                        USER
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">
-                                        CONTACT INFO
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">
-                                        LOCATION
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">
-                                        DATE
-                                    </th>
-                                    <th className="text-left p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">
-                                        ACTIONS
-                                    </th>
+                        <table className="w-full text-left text-sm text-gray-300">
+                            <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
+                                <tr>
+                                    <th className="px-6 py-4">User</th>
+                                    <th className="px-6 py-4">Contact Info</th>
+                                    <th className="px-6 py-4">Location</th>
+                                    <th className="px-6 py-4">Date</th>
+                                    <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-white/5 font-medium">
                                 {enquiries.map((enquiry: any) => (
                                     <tr
                                         key={enquiry.id}
-                                        className="hover:bg-white/5 border-b border-white/5 last:border-b-0 transition-colors group"
+                                        className="hover:bg-white/[0.02] transition"
                                     >
-                                        <td className="p-4">
+                                        <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
-                                                    <User className="w-5 h-5" />
+                                                <div className="w-9 h-9 rounded-xl bg-[#E8BF7A]/10 border border-[#E8BF7A]/20 flex items-center justify-center text-[#E8BF7A]">
+                                                    <User className="w-4 h-4" />
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-gray-100 font-medium">
+                                                    <span className="text-white font-bold">
                                                         {enquiry.name}
                                                     </span>
-                                                    <span className="text-xs text-gray-500 font-mono">
-                                                        Submission ID: #{enquiry.id.slice(0, 6)}
+                                                    <span className="text-xs text-gray-400 font-mono">
+                                                        ID: #{enquiry.id.slice(0, 6)}
                                                     </span>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-4">
+                                        <td className="px-6 py-4">
                                             <div className="flex flex-col gap-1">
-                                                <div className="flex items-center gap-2 text-xs text-gray-400">
-                                                    <Mail className="w-3 h-3" />
+                                                <div className="flex items-center gap-1.5 text-xs text-gray-300 font-mono">
+                                                    <Mail className="w-3.5 h-3.5 text-[#E8BF7A]" />
                                                     {enquiry.email}
                                                 </div>
-                                                <div className="flex items-center gap-2 text-xs text-gray-400">
-                                                    <Phone className="w-3 h-3" />
+                                                <div className="flex items-center gap-1.5 text-xs text-gray-400 font-mono">
+                                                    <Phone className="w-3.5 h-3.5 text-gray-500" />
                                                     {enquiry.phone_number
                                                         ? `${enquiry.phone_country_code} ${enquiry.phone_number}`
                                                         : 'N/A'}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-4">
-                                            <div className="flex items-center gap-2 text-sm text-gray-300">
-                                                <MapPin className="w-4 h-4 text-gray-500" />
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-1.5 text-sm text-gray-300 font-medium">
+                                                <MapPin className="w-4 h-4 text-[#E8BF7A]" />
                                                 {enquiry.location}
                                             </div>
                                         </td>
-                                        <td className="p-4 text-gray-400 text-sm">
+                                        <td className="px-6 py-4 text-gray-400 text-sm">
                                             {enquiry.created_at
                                                 ? new Date(enquiry.created_at).toLocaleDateString()
                                                 : 'N/A'}
                                         </td>
-                                        <td className="p-4">
-                                            <div className="flex items-center space-x-2">
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center justify-end space-x-2">
                                                 <Link
                                                     href={`/bd6b-6ced/dashboard/enquiries/${enquiry.id}`}
-                                                    className="p-2 bg-purple-500/10 hover:bg-purple-500/20 rounded-lg transition-all group-hover:scale-110"
-                                                    title="View Full Message"
+                                                    className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition"
+                                                    title="View Message"
                                                 >
-                                                    <Eye className="w-4 h-4 text-purple-400" />
+                                                    <Eye className="w-4 h-4 text-[#E8BF7A]" />
                                                 </Link>
                                                 <button
                                                     onClick={() => handleDeleteClick(enquiry)}
                                                     disabled={isDeleting}
-                                                    className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all group-hover:scale-110 disabled:opacity-50"
+                                                    className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition disabled:opacity-50"
                                                     title="Delete Enquiry"
                                                 >
-                                                    <Trash2 className="w-4 h-4 text-red-400" />
+                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>
@@ -213,7 +223,7 @@ export default function EnquiriesPage() {
 
                 {/* Pagination */}
                 {enquiriesData?.pagination && enquiriesData.pagination.total_pages > 1 && (
-                    <div className="p-4 border-t border-[#2a2a2a]">
+                    <div className="p-4 border-t border-white/10">
                         <Pagination
                             currentPage={currentPage}
                             totalPages={enquiriesData.pagination.total_pages}

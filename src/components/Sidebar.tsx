@@ -31,7 +31,12 @@ import { authUtils } from '@/utils/auth';
 
 const allMenuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/bd6b-6ced/dashboard', perm: 'dashboard' },
-    { icon: Layers, label: 'Categories', path: '/bd6b-6ced/dashboard/categories', perm: 'categories' },
+    {
+        icon: Layers,
+        label: 'Categories',
+        path: '/bd6b-6ced/dashboard/categories',
+        perm: 'categories',
+    },
     { icon: Package, label: 'Products', path: '/bd6b-6ced/dashboard/products', perm: 'products' },
     { icon: Tags, label: 'Variants', path: '/bd6b-6ced/dashboard/variants', perm: 'variants' },
     { icon: Box, label: 'Stock', path: '/bd6b-6ced/dashboard/stock', perm: 'stock' },
@@ -39,9 +44,14 @@ const allMenuItems = [
     { icon: DollarSign, label: 'Sales', path: '/bd6b-6ced/dashboard/sales', perm: 'sales' },
     { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients', perm: 'clients' },
     { icon: Mail, label: 'Enquiries', path: '/bd6b-6ced/dashboard/enquiries', perm: 'enquiries' },
-    { icon: Coins, label: 'Currencies', path: '/bd6b-6ced/dashboard/settings', perm: 'currencies' },
+    {
+        icon: Coins,
+        label: 'Currencies',
+        path: '/bd6b-6ced/dashboard/currencies',
+        perm: 'currencies',
+    },
     { icon: ShieldCheck, label: 'Roles (RBAC)', path: '/bd6b-6ced/dashboard/roles', perm: 'roles' },
-    { icon: UserCheck, label: 'Sub-Admin Users', path: '/bd6b-6ced/dashboard/users', perm: 'users' },
+    { icon: UserCheck, label: 'Users', path: '/bd6b-6ced/dashboard/users', perm: 'users' },
     { icon: Settings, label: 'Settings', path: '/bd6b-6ced/dashboard/settings', perm: 'settings' },
 ];
 
