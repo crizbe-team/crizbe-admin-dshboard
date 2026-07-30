@@ -29,7 +29,7 @@ export const DashboardInput = ({ name, control, label, className, ...props }: In
                     {label && (
                         <label
                             htmlFor={name}
-                            className="block text-sm font-medium text-gray-300 mb-2"
+                            className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5"
                         >
                             {label}
                         </label>
@@ -38,13 +38,13 @@ export const DashboardInput = ({ name, control, label, className, ...props }: In
                         {...field}
                         id={name}
                         className={cn(
-                            'w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors',
-                            error ? 'border-red-500' : 'border-[#3a3a3a] focus:border-purple-500',
+                            'w-full bg-white/5 text-white px-4 py-2.5 rounded-xl border focus:outline-none transition-colors text-sm placeholder:text-gray-500',
+                            error ? 'border-rose-500' : 'border-white/10 focus:border-[#E8BF7A]',
                             className
                         )}
                         {...props}
                     />
-                    {error && <p className="mt-1 text-xs text-red-500">{error.message}</p>}
+                    {error && <p className="mt-1 text-xs font-semibold text-rose-400">{error.message}</p>}
                 </div>
             )}
         />
@@ -68,7 +68,7 @@ export const DashboardTextarea = ({
                     {label && (
                         <label
                             htmlFor={name}
-                            className="block text-sm font-medium text-gray-300 mb-2"
+                            className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5"
                         >
                             {label}
                         </label>
@@ -78,13 +78,13 @@ export const DashboardTextarea = ({
                         id={name}
                         rows={rows}
                         className={cn(
-                            'w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors',
-                            error ? 'border-red-500' : 'border-[#3a3a3a] focus:border-purple-500',
+                            'w-full bg-white/5 text-white px-4 py-2.5 rounded-xl border focus:outline-none transition-colors text-sm placeholder:text-gray-500',
+                            error ? 'border-rose-500' : 'border-white/10 focus:border-[#E8BF7A]',
                             className
                         )}
                         {...props}
                     />
-                    {error && <p className="mt-1 text-xs text-red-500">{error.message}</p>}
+                    {error && <p className="mt-1 text-xs font-semibold text-rose-400">{error.message}</p>}
                 </div>
             )}
         />
@@ -106,7 +106,7 @@ export const DashboardCheckbox = ({ name, control, label, className, ...props }:
                             onChange={(e) => onChange(e.target.checked)}
                             {...field}
                             className={cn(
-                                'w-4 h-4 rounded border-gray-600 bg-[#2a2a2a] text-purple-600 focus:ring-purple-500 cursor-pointer',
+                                'w-4 h-4 rounded border-white/10 bg-white/5 text-[#E8BF7A] accent-[#E8BF7A] focus:ring-0 cursor-pointer',
                                 className
                             )}
                             {...props}
@@ -114,13 +114,13 @@ export const DashboardCheckbox = ({ name, control, label, className, ...props }:
                         {label && (
                             <label
                                 htmlFor={name}
-                                className="text-sm font-medium text-gray-300 cursor-pointer"
+                                className="text-sm font-semibold text-gray-300 cursor-pointer"
                             >
                                 {label}
                             </label>
                         )}
                     </div>
-                    {error && <p className="text-xs text-red-500">{error.message}</p>}
+                    {error && <p className="text-xs font-semibold text-rose-400">{error.message}</p>}
                 </div>
             )}
         />
@@ -137,7 +137,7 @@ export const DashboardSelect = ({ name, control, label, className, children, ...
                     {label && (
                         <label
                             htmlFor={name}
-                            className="block text-sm font-medium text-gray-300 mb-2"
+                            className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5"
                         >
                             {label}
                         </label>
@@ -146,15 +146,15 @@ export const DashboardSelect = ({ name, control, label, className, children, ...
                         {...field}
                         id={name}
                         className={cn(
-                            'w-full bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border focus:outline-none transition-colors appearance-none',
-                            error ? 'border-red-500' : 'border-[#3a3a3a] focus:border-purple-500',
+                            'w-full bg-[#141414] text-white px-4 py-2.5 rounded-xl border focus:outline-none transition-colors text-sm font-semibold cursor-pointer',
+                            error ? 'border-rose-500' : 'border-white/10 focus:border-[#E8BF7A]',
                             className
                         )}
                         {...props}
                     >
                         {children}
                     </select>
-                    {error && <p className="mt-1 text-xs text-red-500">{error.message}</p>}
+                    {error && <p className="mt-1 text-xs font-semibold text-rose-400">{error.message}</p>}
                 </div>
             )}
         />

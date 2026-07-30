@@ -12,23 +12,23 @@ export default function DashboardLoader({
     subtext = 'Please wait while we fetch the latest information...',
 }: DashboardLoaderProps) {
     return (
-        <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400 min-h-[400px]">
+        <div className="flex flex-col items-center justify-center py-16 gap-4 text-gray-400 min-h-[350px]">
             <div className="relative">
-                <Loader2 className="w-12 h-12 animate-spin text-purple-600" />
-                <div className="absolute inset-0 blur-xl bg-purple-600/20 rounded-full animate-pulse" />
+                <Loader2 className="w-12 h-12 animate-spin text-[#E8BF7A]" />
+                <div className="absolute inset-0 blur-xl bg-[#E8BF7A]/25 rounded-full animate-pulse" />
             </div>
             <div className="flex flex-col items-center space-y-1">
-                <p className="text-xl font-medium text-gray-100 animate-pulse tracking-wide">
+                <p className="text-xl font-extrabold text-white font-bricolage animate-pulse tracking-tight">
                     {text}
                 </p>
-                <p className="text-sm text-gray-500 italic">{subtext}</p>
+                <p className="text-xs font-medium text-gray-400">{subtext}</p>
             </div>
-            {/* Subtle structure skeleton hint */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mt-8 max-w-4xl px-4 opacity-10">
+            {/* Subtle skeleton hint */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mt-6 max-w-4xl px-4 opacity-15">
                 {[1, 2, 3].map((i) => (
                     <div
                         key={i}
-                        className="bg-[#1a1a1a] rounded-lg p-6 border border-[#2a2a2a] h-20 animate-pulse"
+                        className="bg-[#141414] rounded-2xl p-6 border border-white/10 h-16 animate-pulse"
                     />
                 ))}
             </div>

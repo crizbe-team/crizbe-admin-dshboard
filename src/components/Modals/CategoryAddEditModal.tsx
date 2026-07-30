@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, X, Layers } from 'lucide-react';
 import { useCreateCategory, useUpdateCategory } from '@/queries/use-categories';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -45,7 +45,6 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
         },
     });
 
-    // Reset form only when modal specifically opens
     useEffect(() => {
         if (isModalOpen) {
             const defaultValues = editingCategory
@@ -104,23 +103,28 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
     const globalError = (errors.root as any)?.serverError?.message;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-lg mx-4">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-100">
-                        {editingCategory ? 'Edit Category' : 'Add New Category'}
-                    </h2>
-                    <button
-                        onClick={handleCloseModal}
-                        className="text-gray-400 hover:text-white transition-colors"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+            <div className="bg-[#1a1a1a] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative">
+                <button
+                    onClick={handleCloseModal}
+                    className="absolute top-5 right-5 text-gray-400 hover:text-white transition"
+                >
+                    <X className="w-5 h-5" />
+                </button>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+                <div className="flex items-center gap-3 mb-2">
+                    <Layers className="w-6 h-6 text-[#E8BF7A]" />
+                    <h3 className="text-xl font-bold text-white font-bricolage">
+                        {editingCategory ? 'Edit Product Category' : 'Add New Category'}
+                    </h3>
+                </div>
+                <p className="text-gray-400 text-xs mb-6">
+                    Define category details for Crizbe gourmet products.
+                </p>
+
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     {globalError && (
-                        <div className="bg-red-900 bg-opacity-20 border border-red-900 text-red-500 text-sm p-3 rounded-lg">
+                        <div className="bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-semibold p-3 rounded-xl">
                             {globalError}
                         </div>
                     )}
@@ -129,33 +133,33 @@ function CategoryAddEditModal({ isModalOpen, editingCategory, handleCloseModal }
                         name="name"
                         control={control}
                         label="Category Name"
-                        placeholder="Enter category name"
+                        placeholder="e.g. Gourmet Crunch Sticks"
                     />
 
                     <DashboardTextarea
                         name="description"
                         control={control}
                         label="Description"
-                        placeholder="Enter category description"
+                        placeholder="Enter category description..."
                     />
 
-                    <DashboardCheckbox name="is_active" control={control} label="Active" />
+                    <DashboardCheckbox name="is_active" control={control} label="Active Category" />
 
-                    <div className="flex justify-end space-x-3 pt-4">
+                    <div className="flex items-center gap-3 pt-4 border-t border-white/10">
                         <button
                             type="button"
                             onClick={handleCloseModal}
-                            className="px-4 py-2 bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a] rounded-lg transition-colors cursor-pointer"
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-semibold transition"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="px-4 py-2 min-h-[40px] w-[160px] bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer"
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center justify-center gap-2"
                         >
                             {isSubmitting ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="w-4 h-4 animate-spin" />
                             ) : editingCategory ? (
                                 'Update Category'
                             ) : (

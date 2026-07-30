@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, Trash2, Loader2, Upload } from 'lucide-react';
+import { X, Trash2, Loader2, Upload, Package } from 'lucide-react';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -77,7 +77,6 @@ function ProductAddEditModal({
         },
     });
 
-    // Reset when modal opens or editingProduct changes
     useEffect(() => {
         if (isModalOpen) {
             if (editingProduct) {
@@ -130,12 +129,10 @@ function ProductAddEditModal({
         formData.append('ingredients', data.ingredients || '');
         formData.append('icon', editingProduct?.icon || '📦');
 
-        // Existing images (urls)
         existingImagesList.forEach((url) => {
             formData.append('existing_images', url);
         });
 
-        // New files
         imageFiles.forEach((file) => {
             formData.append('images', file);
         });
@@ -174,30 +171,35 @@ function ProductAddEditModal({
     if (!isModalOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-100">
-                        {editingProduct ? 'Edit Product' : 'Add New Product'}
-                    </h2>
-                    <button
-                        onClick={handleCloseModal}
-                        className="text-gray-400 hover:text-white transition-colors"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+            <div className="bg-[#1a1a1a] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar my-8">
+                <button
+                    onClick={handleCloseModal}
+                    className="absolute top-5 right-5 text-gray-400 hover:text-white transition"
+                >
+                    <X className="w-5 h-5" />
+                </button>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
+                <div className="flex items-center gap-3 mb-2">
+                    <Package className="w-6 h-6 text-[#E8BF7A]" />
+                    <h3 className="text-xl font-bold text-white font-bricolage">
+                        {editingProduct ? 'Edit Product Details' : 'Add New Product'}
+                    </h3>
+                </div>
+                <p className="text-gray-400 text-xs mb-6">
+                    Configure product attributes, category alignment, and imagery.
+                </p>
+
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                     {globalError && (
-                        <div className="bg-red-900 bg-opacity-20 border border-red-900 text-red-500 text-sm p-3 rounded-lg">
+                        <div className="bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-semibold p-3 rounded-xl">
                             {globalError}
                         </div>
                     )}
 
                     {/* Images Section */}
-                    <div className="space-y-3">
-                        <label className="block text-sm font-medium text-gray-300">
+                    <div className="space-y-2">
+                        <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider">
                             Product Images
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -207,14 +209,14 @@ function ProductAddEditModal({
                                     <img
                                         src={url}
                                         alt="Existing"
-                                        className="w-full h-24 object-cover rounded-lg border border-[#3a3a3a]"
+                                        className="w-full h-24 object-cover rounded-xl border border-white/10"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => removeExistingImage(index)}
-                                        className="absolute top-1 right-1 p-1 bg-red-600 hover:bg-red-700 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute top-1.5 right-1.5 p-1.5 bg-rose-600 hover:bg-rose-700 rounded-lg opacity-0 group-hover:opacity-100 transition"
                                     >
-                                        <Trash2 className="w-3 h-3 text-white" />
+                                        <Trash2 className="w-3.5 h-3.5 text-white" />
                                     </button>
                                 </div>
                             ))}
@@ -224,21 +226,21 @@ function ProductAddEditModal({
                                     <img
                                         src={url}
                                         alt="Preview"
-                                        className="w-full h-24 object-cover rounded-lg border border-purple-500/50"
+                                        className="w-full h-24 object-cover rounded-xl border border-[#E8BF7A]/40"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => removeNewImage(index)}
-                                        className="absolute top-1 right-1 p-1 bg-red-600 hover:bg-red-700 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute top-1.5 right-1.5 p-1.5 bg-rose-600 hover:bg-rose-700 rounded-lg opacity-0 group-hover:opacity-100 transition"
                                     >
-                                        <Trash2 className="w-3 h-3 text-white" />
+                                        <Trash2 className="w-3.5 h-3.5 text-white" />
                                     </button>
                                 </div>
                             ))}
                             {/* Upload Button */}
-                            <label className="w-full h-24 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#3a3a3a] hover:border-purple-500 hover:bg-purple-500/5 transition-all cursor-pointer text-gray-500 hover:text-purple-400">
-                                <Upload className="w-6 h-6 mb-1" />
-                                <span className="text-xs font-medium">Add Images</span>
+                            <label className="w-full h-24 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/10 hover:border-[#E8BF7A] hover:bg-[#E8BF7A]/5 transition cursor-pointer text-gray-400 hover:text-[#E8BF7A]">
+                                <Upload className="w-5 h-5 mb-1" />
+                                <span className="text-xs font-bold">Add Images</span>
                                 <input
                                     type="file"
                                     multiple
@@ -255,12 +257,11 @@ function ProductAddEditModal({
                             name="name"
                             control={control}
                             label="Product Name"
-                            placeholder="Enter product name"
+                            placeholder="e.g. Belgian Chocolate Stick"
                         />
 
-                        {/* Category */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5">
                                 Category
                             </label>
                             <Controller
@@ -281,7 +282,7 @@ function ProductAddEditModal({
                                 )}
                             />
                             {errors.category && (
-                                <p className="mt-1 text-xs text-red-500">
+                                <p className="mt-1 text-xs font-semibold text-rose-400">
                                     {errors.category.message}
                                 </p>
                             )}
@@ -292,31 +293,31 @@ function ProductAddEditModal({
                         name="description"
                         control={control}
                         label="Description"
-                        placeholder="Enter product description"
+                        placeholder="Enter detailed product description..."
                     />
 
                     <DashboardTextarea
                         name="ingredients"
                         control={control}
                         label="Ingredients"
-                        placeholder="Enter product ingredients"
+                        placeholder="e.g. Belgian Chocolate, Roasted Pistachios, Hazelnut Paste"
                     />
 
-                    <div className="flex justify-end space-x-3 pt-4">
+                    <div className="flex items-center gap-3 pt-4 border-t border-white/10">
                         <button
                             type="button"
                             onClick={handleCloseModal}
-                            className="px-4 py-2 bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a] rounded-lg transition-colors cursor-pointer"
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-semibold transition"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="px-4 py-2 min-h-[40px] w-[160px] bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer"
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center justify-center gap-2"
                         >
                             {isSubmitting ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="w-4 h-4 animate-spin" />
                             ) : editingProduct ? (
                                 'Update Product'
                             ) : (

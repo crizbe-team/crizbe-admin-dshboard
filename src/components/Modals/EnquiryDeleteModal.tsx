@@ -19,43 +19,41 @@ function EnquiryDeleteModal({
     if (!isDeleteModalOpen || !enquiryToDelete) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-md mx-4">
-                <div className="p-6 border-b border-[#2a2a2a]">
-                    <div className="flex items-center space-x-3">
-                        <div className="shrink-0 w-12 h-12 bg-red-500 bg-opacity-20 rounded-full flex items-center justify-center">
-                            <Trash2 className="w-6 h-6 text-red-400" />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-semibold text-gray-100">Delete Enquiry</h3>
-                            <p className="text-sm text-gray-400">This action cannot be undone.</p>
-                        </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <div className="bg-[#1a1a1a] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+                <div className="flex items-center gap-4 mb-4">
+                    <div className="shrink-0 w-12 h-12 bg-rose-500/15 border border-rose-500/30 rounded-2xl flex items-center justify-center text-rose-400">
+                        <Trash2 className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold text-white font-bricolage">Delete Enquiry</h3>
+                        <p className="text-xs text-gray-400">This action cannot be undone.</p>
                     </div>
                 </div>
 
-                <div className="p-6">
-                    <p className="text-gray-300 mb-4">
+                <div className="space-y-3 mb-6">
+                    <p className="text-gray-300 text-sm">
                         Are you sure you want to delete the enquiry from{' '}
-                        <span className="font-semibold text-white">{enquiryToDelete.name}</span>?
+                        <span className="font-bold text-white">"{enquiryToDelete.name}"</span>?
                     </p>
-                    <div className="p-3 bg-[#2a2a2a] rounded-lg">
-                        <p className="text-sm text-gray-400">
-                            Email: {enquiryToDelete.email}
+                    <div className="p-3 bg-white/5 rounded-2xl border border-white/10">
+                        <p className="text-xs text-gray-400 font-mono">
+                            Email: <span className="text-gray-200">{enquiryToDelete.email}</span>
                         </p>
                     </div>
                 </div>
 
-                <div className="p-6 border-t border-[#2a2a2a] flex justify-end space-x-3">
+                <div className="flex items-center gap-3 pt-4 border-t border-white/10">
                     <button
                         onClick={cancelDelete}
-                        className="px-4 py-2 bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a] rounded-lg transition-colors"
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-semibold transition"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={confirmDeleteEnquiry}
                         disabled={isDeleting}
-                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-[160px]"
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                         {isDeleting ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

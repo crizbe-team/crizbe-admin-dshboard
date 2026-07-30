@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Search } from 'lucide-react';
+import { ChevronDown, Search, Loader2 } from 'lucide-react';
 import { useDebouncedCallback } from '@/hooks/use-debounce';
 
 interface Option {
@@ -78,53 +78,53 @@ export default function SearchableSelect({
         >
             <div
                 onClick={() => !isDisabled && setIsOpen(!isOpen)}
-                className={`bg-[#2a2a2a] text-gray-100 px-4 py-2 rounded-lg border border-[#3a3a3a] flex items-center justify-between ${isDisabled ? '' : 'cursor-pointer hover:border-purple-500'} transition-colors`}
+                className={`bg-[#1a1a1a] text-white text-sm font-semibold px-4 py-2.5 rounded-xl border border-white/10 flex items-center justify-between ${isDisabled ? '' : 'cursor-pointer hover:border-[#E8BF7A]/50'} transition-all`}
             >
-                <span className={selectedOption ? 'text-gray-100' : 'text-gray-400'}>
+                <span className={selectedOption ? 'text-white' : 'text-gray-400'}>
                     {selectedOption ? selectedOption.label : placeholder}
                 </span>
                 <ChevronDown
-                    className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    className={`w-4 h-4 text-[#E8BF7A] transition-transform ${isOpen ? 'rotate-180' : ''}`}
                 />
             </div>
 
             {isOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg shadow-xl z-50 overflow-hidden">
-                    <div className="p-2 border-b border-[#2a2a2a]">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#141414] border border-white/15 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                    <div className="p-2 border-b border-white/10">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#E8BF7A]" />
                             <input
                                 type="text"
                                 autoFocus
                                 value={searchQuery}
                                 onChange={handleSearchQueryChange}
                                 placeholder="Search..."
-                                className="w-full bg-[#2a2a2a] text-gray-100 pl-9 pr-4 py-2 rounded-md border border-[#3a3a3a] focus:outline-none focus:border-purple-500 text-sm"
+                                className="w-full bg-white/5 text-white pl-9 pr-4 py-2 rounded-xl border border-white/10 focus:outline-none focus:border-[#E8BF7A] text-xs font-medium"
                             />
                         </div>
                     </div>
-                    <div className="max-h-60 overflow-y-auto">
+                    <div className="max-h-60 overflow-y-auto custom-scrollbar p-1">
                         {isLoading ? (
                             <div className="p-4 flex flex-col items-center justify-center gap-2 text-gray-400">
-                                <Search className="w-5 h-5 animate-pulse text-purple-500" />
-                                <span className="text-xs">Finding options...</span>
+                                <Loader2 className="w-5 h-5 animate-spin text-[#E8BF7A]" />
+                                <span className="text-xs font-semibold">Finding options...</span>
                             </div>
                         ) : filteredOptions.length > 0 ? (
                             filteredOptions.map((option) => (
                                 <div
                                     key={option.value}
                                     onClick={() => handleSelect(option.value)}
-                                    className={`px-4 py-2 hover:bg-[#2a2a2a] cursor-pointer text-sm transition-colors ${
+                                    className={`px-4 py-2.5 rounded-xl cursor-pointer text-xs font-bold transition-all ${
                                         option.value === value
-                                            ? 'text-purple-400 bg-[#2a2a2a]'
-                                            : 'text-gray-300'
+                                            ? 'text-[#E8BF7A] bg-[#E8BF7A]/10 border border-[#E8BF7A]/20'
+                                            : 'text-gray-300 hover:bg-white/5 hover:text-white'
                                     }`}
                                 >
                                     {option.label}
                                 </div>
                             ))
                         ) : (
-                            <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                            <div className="px-4 py-3 text-xs text-gray-400 text-center font-medium">
                                 No results found
                             </div>
                         )}

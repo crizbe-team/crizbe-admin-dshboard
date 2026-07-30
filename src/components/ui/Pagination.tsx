@@ -33,10 +33,10 @@ const Pagination: React.FC<PaginationProps> = ({
                 <button
                     key={i}
                     onClick={() => onPageChange(i)}
-                    className={`min-w-[40px] h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
+                    className={`min-w-[40px] h-10 flex items-center justify-center rounded-xl text-xs font-extrabold transition-all duration-200 cursor-pointer ${
                         currentPage === i
-                            ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/20'
-                            : 'bg-[#2a2a2a] text-gray-400 hover:bg-[#333333] hover:text-white border border-[#3a3a3a]'
+                            ? 'bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] shadow-lg shadow-[#E8BF7A]/20'
+                            : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10'
                     }`}
                 >
                     {i}
@@ -47,22 +47,22 @@ const Pagination: React.FC<PaginationProps> = ({
     };
 
     return (
-        <div className="flex items-center justify-center space-x-2 py-6">
+        <div className="flex items-center justify-center space-x-2 py-4">
             <button
                 onClick={() => onPageChange(1)}
                 disabled={!hasPrevious}
-                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-gray-500 hover:text-white hover:border-[#3a3a3a] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-[#E8BF7A]/40 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="First Page"
             >
-                <ChevronsLeft className="w-5 h-5" />
+                <ChevronsLeft className="w-4 h-4" />
             </button>
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={!hasPrevious}
-                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-gray-500 hover:text-white hover:border-[#3a3a3a] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-[#E8BF7A]/40 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="Previous Page"
             >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4" />
             </button>
 
             <div className="flex items-center space-x-2">{renderPageNumbers()}</div>
@@ -70,18 +70,18 @@ const Pagination: React.FC<PaginationProps> = ({
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={!hasNext}
-                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-gray-500 hover:text-white hover:border-[#3a3a3a] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-[#E8BF7A]/40 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="Next Page"
             >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-4 h-4" />
             </button>
             <button
                 onClick={() => onPageChange(totalPages)}
                 disabled={!hasNext}
-                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-gray-500 hover:text-white hover:border-[#3a3a3a] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-[#E8BF7A]/40 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="Last Page"
             >
-                <ChevronsRight className="w-5 h-5" />
+                <ChevronsRight className="w-4 h-4" />
             </button>
         </div>
     );

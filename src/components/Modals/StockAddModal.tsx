@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import { X, Loader2, Box } from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { stockSchema, type StockFormData } from '@/validations/stock';
@@ -87,27 +87,34 @@ export default function StockAddModal({ isModalOpen, handleCloseModal, defaultPr
     const globalError = (errors.root as any)?.serverError?.message;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] w-full max-w-lg mx-4">
-                <div className="p-6 border-b border-[#2a2a2a] flex items-center justify-between bg-[#212121]">
-                    <h2 className="text-xl font-semibold text-gray-100">Add Stock</h2>
-                    <button
-                        onClick={handleCloseModal}
-                        className="text-gray-400 hover:text-white transition-colors"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+            <div className="bg-[#1a1a1a] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative">
+                <button
+                    onClick={handleCloseModal}
+                    className="absolute top-5 right-5 text-gray-400 hover:text-white transition"
+                >
+                    <X className="w-5 h-5" />
+                </button>
 
-                <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 space-y-4">
+                <div className="flex items-center gap-3 mb-2">
+                    <Box className="w-6 h-6 text-[#E8BF7A]" />
+                    <h3 className="text-xl font-bold text-white font-bricolage">
+                        Add Inventory Stock
+                    </h3>
+                </div>
+                <p className="text-gray-400 text-xs mb-6">
+                    Add new product stock batch quantity in kilograms.
+                </p>
+
+                <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
                     {globalError && (
-                        <div className="bg-red-900 bg-opacity-20 border border-red-900 text-red-500 text-sm p-3 rounded-lg">
+                        <div className="bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-semibold p-3 rounded-xl">
                             {globalError}
                         </div>
                     )}
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Select Product
+                        <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5">
+                            Target Product
                         </label>
                         <Controller
                             control={control}
@@ -127,7 +134,7 @@ export default function StockAddModal({ isModalOpen, handleCloseModal, defaultPr
                             )}
                         />
                         {errors.product && (
-                            <p className="mt-1 text-xs text-red-500">{errors.product.message}</p>
+                            <p className="mt-1 text-xs font-semibold text-rose-400">{errors.product.message}</p>
                         )}
                     </div>
 
@@ -144,26 +151,26 @@ export default function StockAddModal({ isModalOpen, handleCloseModal, defaultPr
                         name="notes"
                         control={control}
                         label="Notes (Optional)"
-                        placeholder="Add any notes..."
+                        placeholder="Add stock batch notes..."
                     />
 
-                    <div className="flex justify-end space-x-3 pt-4 border-t border-[#2a2a2a]">
+                    <div className="flex items-center gap-3 pt-4 border-t border-white/10">
                         <button
                             type="button"
                             onClick={handleCloseModal}
-                            className="px-4 py-2 bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a] rounded-lg transition-colors border border-[#3a3a3a]"
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-semibold transition"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isCreating}
-                            className="px-6 py-2 min-h-[40px] bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold shadow-lg shadow-purple-600/20"
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center justify-center gap-2"
                         >
                             {isCreating ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
-                                'Add Stock'
+                                'Add Stock Batch'
                             )}
                         </button>
                     </div>
