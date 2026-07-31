@@ -61,7 +61,7 @@ export default function ResponsiveFlavours() {
                             className="font-medium text-[15px] bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent group-hover:text-white group-hover:bg-none"
                             onClick={() => router.push('/products')}
                         >
-                            Get it Now
+                            Shop Now
                         </span>
                     </Button>
                 </motion.div>
@@ -88,7 +88,7 @@ export default function ResponsiveFlavours() {
                             height={500}
                             priority
                             quality={100}
-                            className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[115%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
+                            className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
                         />
                     </motion.article>
 
@@ -113,7 +113,7 @@ export default function ResponsiveFlavours() {
                             height={500}
                             priority
                             quality={100}
-                            className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[115%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
+                            className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
                         />
                     </motion.article>
 
@@ -138,7 +138,7 @@ export default function ResponsiveFlavours() {
                             height={500}
                             priority
                             quality={100}
-                            className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[115%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
+                            className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
                         />
                     </motion.article>
                 </div>
@@ -147,7 +147,10 @@ export default function ResponsiveFlavours() {
                     variants={cardVariants}
                     className="mt-[20px] w-full flex justify-center z-10"
                 >
-                    <Button className="view-all-btn bg-[#4E3325] hover:bg-[#3d281d] text-white rounded-full text-[14px] font-medium flex items-center gap-[10px] h-[48px] px-6 transition-all duration-300 hover:scale-105 active:scale-95 shadow-md">
+                    <Button
+                        onClick={() => router.push('/products')}
+                        className="view-all-btn bg-[#4E3325] hover:bg-[#3d281d] text-white rounded-full text-[14px] font-medium flex items-center gap-[10px] h-[48px] px-6 transition-all duration-300 hover:scale-105 active:scale-95 shadow-md"
+                    >
                         View all products{' '}
                         <Image
                             src="/images/user/arrow-right.svg"

@@ -65,7 +65,7 @@ export default function ResponsiveHero() {
                             className="transition-all z-1 duration-300 ease-out hover:scale-[1.02] whitespace-nowrap py-3 group relative overflow-hidden shadow-sm hover:opacity-95 active:opacity-90 h-[54px] w-[195px] font-medium mx-auto flex items-center justify-center rounded-full"
                         >
                             <span className="pointer-events-none absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-1000 group-hover:left-full ease-in-out" />
-                            Discover the Crunch
+                            Shop Now
                         </ButtonLink>
                     </motion.div>
                 </div>

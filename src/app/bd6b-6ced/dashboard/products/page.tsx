@@ -95,7 +95,7 @@ export default function ProductsPage() {
             title: 'Total Categories',
             value: (baseData.total_categories || 0).toString(),
             icon: Layers,
-            color: 'text-purple-400',
+            color: 'text-[#E8BF7A]',
         },
     ];
 

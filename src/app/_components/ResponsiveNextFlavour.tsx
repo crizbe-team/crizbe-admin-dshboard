@@ -104,7 +104,7 @@ export default function ResponsiveNextFlavour() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, type: 'spring' }}
                     viewport={{ once: true }}
-                    className="w-[160px] relative h-[360px] z-20 flex justify-center items-center"
+                    className="w-[125px] relative h-[270px] z-20 flex justify-center items-center"
                 >
                     <AnimatePresence mode="wait">
                         <motion.div

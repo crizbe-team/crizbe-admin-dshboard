@@ -93,7 +93,7 @@ export default function VariantsPage() {
             title: 'Total Products',
             value: (baseData.total_products || 0).toString(),
             icon: Package,
-            color: 'text-purple-400',
+            color: 'text-[#E8BF7A]',
         },
     ];
 
