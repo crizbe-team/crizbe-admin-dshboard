@@ -86,4 +86,10 @@ export const API_ENDPOINTS = {
     CREATE_PAYMENT_ORDER: 'payments/create/',
     VERIFY_PAYMENT: 'payments/verify/',
     GET_PAYMENT_DETAILS: 'payments/:id/',
+
+    // Notification endpoints
+    GET_ADMIN_NOTIFICATIONS: 'core/notifications/',
+    MARK_ADMIN_NOTIFICATION_READ: 'core/notifications/mark-read/',
+    CLEAR_ADMIN_NOTIFICATIONS: 'core/notifications/clear/',
+    SUBSCRIBE_PUSH_NOTIFICATION: 'core/notifications/push-subscribe/',
 } as const;
