@@ -28,6 +28,7 @@ import {
 import { useLogout } from '@/queries/use-auth';
 import { useFetchMinimalDetails } from '@/queries/use-account';
 import { authUtils } from '@/utils/auth';
+import ConfirmationModal from '@/components/Modals/ConfirmationModal';
 
 const allMenuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/bd6b-6ced/dashboard', perm: 'dashboard' },
@@ -59,6 +60,7 @@ export default function Sidebar() {
     const pathname = usePathname();
     const { isCollapsed, setIsCollapsed } = useSidebar();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const logoutMutation = useLogout();
 
     const isAuth = authUtils.isAuthenticated();
@@ -73,7 +75,11 @@ export default function Sidebar() {
     });
 
     const handleLogout = () => {
-        logoutMutation.mutate();
+        logoutMutation.mutate(undefined, {
+            onSettled: () => {
+                setShowLogoutModal(false);
+            },
+        });
     };
 
     const toggleSidebar = () => {
@@ -178,7 +184,7 @@ export default function Sidebar() {
                         );
                     })}
                     <button
-                        onClick={handleLogout}
+                        onClick={() => setShowLogoutModal(true)}
                         disabled={logoutMutation.isPending}
                         className={`
                             w-full flex items-center space-x-3 px-4 py-3 mt-4 mb-4 rounded-lg
@@ -204,6 +210,17 @@ export default function Sidebar() {
                     </button>
                 </nav>
             </aside>
+
+            {/* Logout Confirmation Modal */}
+            <ConfirmationModal
+                open={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={handleLogout}
+                title="Logout of Dashboard?"
+                description="Are you sure you want to log out of the admin panel?"
+                confirmText="Logout"
+                isPending={logoutMutation.isPending}
+            />
         </>
     );
 }

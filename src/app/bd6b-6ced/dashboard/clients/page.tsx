@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { Users, UserPlus, UserCheck, Search, Eye, Trash2, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, UserPlus, UserCheck, Search, Eye, RefreshCw } from 'lucide-react';
 import { useFetchClients } from '@/queries/use-account';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import Link from 'next/link';
 import { useDebouncedCallback } from '@/hooks/use-debounce';
 import { motion, Variants } from 'framer-motion';
+import Pagination from '@/components/ui/Pagination';
 
 const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -36,11 +37,16 @@ interface Client {
     country?: string;
     is_new?: boolean;
     is_active?: boolean;
+    role?: string;
+    date_joined?: string;
+    first_name?: string;
+    last_name?: string;
 }
 
 export default function ClientsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const handleSearch = useDebouncedCallback((query: string) => {
         setDebouncedQuery(query);
@@ -52,6 +58,10 @@ export default function ClientsPage() {
         handleSearch(query);
     };
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedQuery]);
+
     const {
         data: clientsResponse,
         isLoading,
@@ -59,7 +69,7 @@ export default function ClientsPage() {
         error,
         isRefetching,
         refetch,
-    } = useFetchClients({ q: debouncedQuery });
+    } = useFetchClients({ q: debouncedQuery, page: currentPage });
 
     const clients: Client[] = clientsResponse?.data || [];
 
@@ -67,40 +77,38 @@ export default function ClientsPage() {
     const newClients = clientsResponse?.base_data?.new_clients || 0;
     const activeClients = clientsResponse?.base_data?.active_clients || 0;
 
-    const filteredClients = clients;
-
     const stats = [
         {
             title: 'Total Clients',
-            value: totalClients.toString(),
+            value: totalClients.toLocaleString(),
             icon: Users,
             color: 'text-[#E8BF7A]',
         },
         {
             title: 'New Clients',
-            value: newClients.toString(),
+            value: newClients.toLocaleString(),
             icon: UserPlus,
             color: 'text-amber-300',
         },
         {
             title: 'Active Clients',
-            value: activeClients.toString(),
+            value: activeClients.toLocaleString(),
             icon: UserCheck,
             color: 'text-emerald-400',
         },
     ];
 
-    if (isLoading) {
+    if (isLoading && currentPage === 1) {
         return (
-            <div className="flex items-center justify-center p-20">
-                <DashboardLoader text="Loading Clients" />
+            <div className="flex items-center justify-center p-20 min-h-[60vh]">
+                <DashboardLoader text="Loading Clients Directory..." />
             </div>
         );
     }
 
     if (isError) {
         return (
-            <div className="bg-[#141414] rounded-3xl p-8 border border-white/10 text-center">
+            <div className="bg-[#141414] rounded-3xl p-8 border border-white/10 text-center mx-4 my-8">
                 <p className="text-rose-400 font-semibold">
                     Error loading clients: {error?.message || 'Unknown error'}
                 </p>
@@ -202,8 +210,8 @@ export default function ClientsPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5 font-medium">
-                            {filteredClients.length > 0 ? (
-                                filteredClients.map((client: any) => (
+                            {clients.length > 0 ? (
+                                clients.map((client: any) => (
                                     <tr
                                         key={client.id}
                                         className="hover:bg-white/[0.02] transition"
@@ -270,6 +278,19 @@ export default function ClientsPage() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Controls */}
+                {clientsResponse?.pagination && clientsResponse.pagination.total_pages > 1 && (
+                    <div className="p-4 border-t border-white/10">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={clientsResponse.pagination.total_pages}
+                            onPageChange={setCurrentPage}
+                            hasNext={clientsResponse.pagination.has_next}
+                            hasPrevious={clientsResponse.pagination.has_previous}
+                        />
+                    </div>
+                )}
             </motion.div>
         </motion.div>
     );
