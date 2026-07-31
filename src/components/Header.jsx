@@ -6,6 +6,7 @@ import { useSidebar } from '@/contexts/SidebarContext';
 import ProfileModal from './Modals/ProfileModal';
 import ConfirmationModal from './Modals/ConfirmationModal';
 import NotificationPopover from './Notifications/NotificationPopover';
+import NotificationToast from './Notifications/NotificationToast';
 import OutsideClick from './OutsideClick';
 import { useFetchMinimalDetails } from '@/queries/use-account';
 import { useLogout } from '@/queries/use-auth';
@@ -44,51 +45,58 @@ export const playNotificationChime = () => {
     }
 };
 
-// OS Desktop Notification Banner trigger
-export const triggerDesktopNotification = (notif) => {
+// Reliable OS Desktop Notification Banner trigger for Chromium (Brave/Chrome) & Web Push
+export const triggerDesktopNotification = async (notif) => {
     if (typeof window === 'undefined' || !('Notification' in window)) return;
 
-    const fireBanner = () => {
-        try {
-            const title = notif.title || '🛒 New Order Received!';
-            const options = {
-                body: notif.message || 'A customer placed a new order.',
-                icon: '/favicon.ico',
-                badge: '/favicon.ico',
-                tag: notif.id || String(Date.now()),
-                data: {
-                    url: notif.reference_id
-                        ? `/bd6b-6ced/dashboard/orders/${notif.reference_id}`
-                        : '/bd6b-6ced/dashboard/orders',
-                },
-            };
+    const fireBanner = async () => {
+        const title = notif.title || '🛒 New Order Received!';
+        const options = {
+            body: notif.message || 'A customer placed a new order.',
+            icon: '/favicon.ico',
+            badge: '/favicon.ico',
+            tag: notif.id || String(Date.now()),
+            requireInteraction: true,
+            data: {
+                url: notif.reference_id
+                    ? `/bd6b-6ced/dashboard/orders/${notif.reference_id}`
+                    : '/bd6b-6ced/dashboard/orders',
+            },
+        };
 
-            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                navigator.serviceWorker.ready.then((reg) => {
-                    reg.showNotification(title, options);
-                });
-            } else {
-                const n = new Notification(title, options);
-                n.onclick = () => {
-                    window.focus();
-                    if (notif.reference_id) {
-                        window.location.href = `/bd6b-6ced/dashboard/orders/${notif.reference_id}`;
-                    }
-                };
+        try {
+            // Chrome & Brave require ServiceWorkerRegistration.showNotification()
+            if ('serviceWorker' in navigator) {
+                let reg = await navigator.serviceWorker.getRegistration();
+                if (!reg) {
+                    reg = await navigator.serviceWorker.register('/sw.js');
+                }
+                if (reg) {
+                    await reg.showNotification(title, options);
+                    return;
+                }
             }
+
+            // Fallback for Safari / Firefox window.Notification constructor
+            const n = new Notification(title, options);
+            n.onclick = () => {
+                window.focus();
+                if (notif.reference_id) {
+                    window.location.href = `/bd6b-6ced/dashboard/orders/${notif.reference_id}`;
+                }
+            };
         } catch (e) {
-            console.error('Desktop notification error:', e);
+            console.error('Error firing desktop notification:', e);
         }
     };
 
     if (Notification.permission === 'granted') {
-        fireBanner();
+        await fireBanner();
     } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission().then((perm) => {
-            if (perm === 'granted') {
-                fireBanner();
-            }
-        });
+        const perm = await Notification.requestPermission();
+        if (perm === 'granted') {
+            await fireBanner();
+        }
     }
 };
 
@@ -98,6 +106,7 @@ function Header() {
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const [isAuth, setIsAuth] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [activeToast, setActiveToast] = useState(null);
 
     const seenNotifIdsRef = useRef(null);
 
@@ -110,6 +119,17 @@ function Header() {
                 console.warn('SW registration failed:', err);
             });
         }
+
+        // Custom event listener for test alerts & manual triggers
+        const handleCustomAlert = (event) => {
+            const data = event.detail;
+            if (data) {
+                setActiveToast(data);
+            }
+        };
+
+        window.addEventListener('crizbe-order-alert', handleCustomAlert);
+        return () => window.removeEventListener('crizbe-order-alert', handleCustomAlert);
     }, []);
 
     const { data: minimalDetailsRes } = useFetchMinimalDetails(isAuth);
@@ -122,7 +142,7 @@ function Header() {
     const notifications = notifRes?.data || [];
     const unreadCount = notifRes?.base_data?.unread_count || 0;
 
-    // Robust detection: tracks seen notification IDs and fires chime + OS push banner when new unread notifications land
+    // Robust detection: tracks seen notification IDs and fires chime + OS push banner + in-app toast
     useEffect(() => {
         if (!notifRes || notifications.length === 0) return;
 
@@ -148,6 +168,7 @@ function Header() {
         if (hasNewUnread && newestNotif) {
             playNotificationChime();
             triggerDesktopNotification(newestNotif);
+            setActiveToast(newestNotif);
         }
     }, [notifRes, notifications]);
 
@@ -183,21 +204,21 @@ function Header() {
                 } left-0 h-16`}
             >
                 <div className="w-full h-full py-4 px-4 sm:px-6 flex items-center justify-between bg-[#1e1e1e] shadow-lg">
-                    <h1 className="text-lg sm:text-2xl font-semibold text-gray-100 font-bricolage">
+                    <h1 className="text-xl sm:text-2xl font-extrabold text-white font-bricolage tracking-tight">
                         Dashboard
                     </h1>
 
-                    <div className="flex items-center space-x-3 sm:space-x-6">
+                    <div className="flex items-center space-x-3 sm:space-x-5">
                         {/* Notification Bell Container */}
                         <div className="relative" ref={notifRef}>
                             <button
                                 onClick={toggleNotifPopover}
-                                className="relative p-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition flex items-center justify-center"
+                                className="relative p-2.5 rounded-2xl bg-white/5 hover:bg-[#E8BF7A]/10 text-gray-300 hover:text-[#E8BF7A] border border-white/10 hover:border-[#E8BF7A]/30 transition-all flex items-center justify-center"
                                 title="Notifications"
                             >
-                                <Bell className="w-5 sm:w-6 h-5 sm:h-6" />
+                                <Bell className="w-5 h-5" />
                                 {unreadCount > 0 && (
-                                    <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#E8BF7A] text-[10px] font-black text-[#141414] shadow-md ring-2 ring-[#1e1e1e]">
+                                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#E8BF7A] text-[10px] font-black text-[#141414] shadow-md ring-2 ring-[#141414]">
                                         {unreadCount > 9 ? '9+' : unreadCount}
                                     </span>
                                 )}
@@ -214,6 +235,7 @@ function Header() {
                         <div
                             className="flex items-center cursor-pointer"
                             onClick={handleOpenProfile}
+                            ref={profileRef}
                         >
                             <div className="w-[35px] h-[35px] rounded-full border border-gray-600 mr-[8px] sm:mr-[8px] flex items-center justify-center bg-gray-800 text-gray-300 hover:text-white hover:border-[#E8BF7A]/50 transition-colors overflow-hidden">
                                 {profilePicture ? (
@@ -223,10 +245,10 @@ function Header() {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <User className="w-5 h-5" />
+                                    <User className="w-4 h-4 text-[#141414]" />
                                 )}
                             </div>
-                            <span className="hidden sm:block text-gray-100 font-medium text-sm">
+                            <span className="hidden sm:block text-sm font-bold text-white font-bricolage tracking-tight">
                                 {name}
                             </span>
                         </div>
@@ -242,6 +264,9 @@ function Header() {
                     />
                 </div>
             </header>
+
+            {/* In-App Floating Toast Banner */}
+            <NotificationToast toast={activeToast} onClose={() => setActiveToast(null)} />
 
             <ConfirmationModal
                 open={showLogoutModal}

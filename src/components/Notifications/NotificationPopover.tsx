@@ -118,11 +118,16 @@ export default function NotificationPopover({
 
     const handleTestAlert = () => {
         playNotificationChime();
-        triggerDesktopNotification({
+        const testPayload = {
+            id: 'test-' + Date.now(),
             title: '🛒 Test Crizbe Order Received!',
-            message: 'Audio chime and OS push notifications are active and working!',
+            message: 'Audio chime, in-app toast, and OS push notifications are active!',
             reference_id: '',
-        });
+        };
+        triggerDesktopNotification(testPayload);
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('crizbe-order-alert', { detail: testPayload }));
+        }
     };
 
     return (
@@ -133,7 +138,7 @@ export default function NotificationPopover({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                    className="absolute right-0 top-12 z-50 w-80 sm:w-96 bg-[#141414] border border-white/10 rounded-3xl shadow-2xl overflow-hidden backdrop-blur-xl"
+                    className="absolute right-0 top-14 z-50 w-80 sm:w-96 bg-[#141414] border border-white/10 rounded-3xl shadow-2xl overflow-hidden backdrop-blur-xl"
                 >
                     {/* Header Bar */}
                     <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
