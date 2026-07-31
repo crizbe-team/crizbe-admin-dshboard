@@ -1,19 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
 import {
     Users,
     Plus,
     Edit2,
     Trash2,
-    Check,
     X,
     RefreshCw,
     ShieldCheck,
     Lock,
     UserCheck,
-    UserX,
 } from 'lucide-react';
 import {
     useFetchAdminUsers,
@@ -24,6 +22,8 @@ import {
 } from '@/queries/use-account';
 import ConfirmationModal from '@/components/Modals/ConfirmationModal';
 import { AdminUserData, RoleData } from '@/services/account';
+import DebouncedSearch from '@/components/ui/DebouncedSearch';
+import Pagination from '@/components/ui/Pagination';
 
 const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -45,13 +45,23 @@ const itemVariants: Variants = {
 };
 
 export default function AdminUsersPage() {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
+
     const {
         data: usersRes,
         isLoading: isUsersLoading,
         isRefetching,
         refetch,
-    } = useFetchAdminUsers();
+    } = useFetchAdminUsers({
+        page: currentPage,
+        q: searchQuery,
+    });
     const { data: rolesRes } = useFetchAdminRoles();
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery]);
 
     const createUserMutation = useCreateAdminUserMutation();
     const updateUserMutation = useUpdateAdminUserMutation();
@@ -185,14 +195,22 @@ export default function AdminUsersPage() {
                 variants={itemVariants}
                 className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
             >
-                <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
+                <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-3">
                         <UserCheck className="w-5 h-5 text-[#E8BF7A]" />
                         <h2 className="text-lg font-bold text-white">Configured Admin Accounts</h2>
                     </div>
-                    <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#E8BF7A]/10 text-[#E8BF7A] border border-[#E8BF7A]/20">
-                        {users.length} Users
-                    </span>
+
+                    <div className="flex items-center gap-4">
+                        <DebouncedSearch
+                            onSearch={setSearchQuery}
+                            placeholder="Search accounts..."
+                            className="max-w-xs"
+                        />
+                        <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#E8BF7A]/10 text-[#E8BF7A] border border-[#E8BF7A]/20">
+                            {usersRes?.pagination?.total_items ?? users.length} Users
+                        </span>
+                    </div>
                 </div>
 
                 {isUsersLoading ? (
@@ -201,8 +219,7 @@ export default function AdminUsersPage() {
                     </div>
                 ) : users.length === 0 ? (
                     <div className="p-12 text-center text-gray-400 font-medium">
-                        No sub-admin users created yet. Click "Create Sub-Admin User" to add account
-                        logins.
+                        No sub-admin users created yet. Click "Create User" to add account logins.
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
@@ -303,6 +320,18 @@ export default function AdminUsersPage() {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+                )}
+
+                {usersRes?.pagination && usersRes.pagination.total_pages > 1 && (
+                    <div className="p-4 border-t border-white/10">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={usersRes.pagination.total_pages}
+                            onPageChange={setCurrentPage}
+                            hasNext={usersRes.pagination.has_next}
+                            hasPrevious={usersRes.pagination.has_previous}
+                        />
                     </div>
                 )}
             </motion.div>

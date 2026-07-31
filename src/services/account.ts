@@ -135,9 +135,12 @@ export type AdminUserData = {
     is_active?: boolean;
 };
 
-export const getAdminRoles = async () => {
+export const getAdminRoles = async (params: any = {}) => {
     const { GET_ADMIN_ROLES } = API_ENDPOINTS;
-    const url = new ApiBuilder(GET_ADMIN_ROLES).build();
+    const url = new ApiBuilder(GET_ADMIN_ROLES)
+        .query('page', params.page)
+        .query('q', params.q)
+        .build();
     const response = await api.get(url);
     return handleApiResponse(response);
 };
@@ -163,9 +166,12 @@ export const deleteAdminRole = async (id: string) => {
     return handleApiResponse(response);
 };
 
-export const getAdminUsers = async () => {
+export const getAdminUsers = async (params: any = {}) => {
     const { GET_ADMIN_USERS } = API_ENDPOINTS;
-    const url = new ApiBuilder(GET_ADMIN_USERS).build();
+    const url = new ApiBuilder(GET_ADMIN_USERS)
+        .query('page', params.page)
+        .query('q', params.q)
+        .build();
     const response = await api.get(url);
     return handleApiResponse(response);
 };

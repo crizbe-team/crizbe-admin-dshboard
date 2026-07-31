@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, ShoppingBag, Search, IndianRupee, Clock, Eye, Filter } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, IndianRupee, Clock, Eye, Filter } from 'lucide-react';
 import { useFetchUserOrdersAdmin } from '@/queries/use-orders';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import { STATUS_CONFIG } from '@/constants/constants';
@@ -29,80 +29,70 @@ export default function ClientOrdersPage() {
     }, [searchTerm]);
 
     const orders = ordersResponse?.data || [];
+    const clientName =
+        ordersResponse?.base_data?.first_name ||
+        ordersResponse?.base_data?.username ||
+        'Client';
 
     if (isLoading && currentPage === 1) {
         return (
-            <div className="flex items-center justify-center p-20 min-h-[60vh]">
-                <DashboardLoader text="Fetching Order History..." />
+            <div className="flex items-center justify-center min-h-[60vh] w-full">
+                <DashboardLoader text="Fetching Client Order History..." />
             </div>
         );
     }
 
     return (
-        <div className="space-y-8 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-8 animate-in fade-in duration-500 pb-20 max-w-7xl mx-auto">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center space-x-4">
                     <button
                         onClick={() => router.back()}
-                        className="p-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl text-gray-400 hover:text-white hover:border-[#3a3a3a] transition-all shadow-sm"
+                        className="p-3 bg-[#141414] border border-white/10 rounded-2xl text-gray-300 hover:text-white hover:border-[#E8BF7A]/40 hover:bg-white/5 transition-all shadow-md"
                     >
-                        <ArrowLeft className="w-5 h-5" />
+                        <ArrowLeft className="w-5 h-5 text-[#E8BF7A]" />
                     </button>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-100 font-bricolage">
-                            Order History
-                        </h1>
-                        <p className="text-sm text-gray-400">
-                            Showing {ordersResponse?.pagination?.total_items || orders.length}{' '}
-                            orders for{' '}
-                            {ordersResponse?.base_data?.first_name ||
-                                ordersResponse?.base_data?.username ||
-                                'Client'}
+                        <div className="flex items-center space-x-3 mb-1">
+                            <h1 className="text-3xl font-extrabold text-white font-bricolage tracking-tight">
+                                Order History
+                            </h1>
+                            <span className="px-3 py-1 bg-[#E8BF7A]/10 text-[#E8BF7A] text-xs font-bold rounded-full border border-[#E8BF7A]/20 uppercase tracking-wider">
+                                {clientName}
+                            </span>
+                        </div>
+                        <p className="text-gray-400 text-xs sm:text-sm font-medium">
+                            Showing {ordersResponse?.pagination?.total_items || orders.length} total orders for this client.
                         </p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <DebouncedSearch
-                        placeholder="Search order ID..."
+                        placeholder="Search by order ID..."
                         onSearch={setSearchTerm}
                         className="w-64"
                     />
-                    <button className="p-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl text-gray-400 hover:text-white transition-all">
-                        <Filter className="w-5 h-5" />
-                    </button>
                 </div>
             </div>
 
             {/* Orders Table */}
-            <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] overflow-hidden shadow-2xl shadow-black/20">
+            <div className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
                 <div className="overflow-x-auto">
                     {orders.length > 0 ? (
-                        <table className="w-full">
-                            <thead>
-                                <tr className="bg-[#1d1d1d] border-b border-[#2a2a2a]">
-                                    <th className="text-left p-5 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
-                                        Order Details
-                                    </th>
-                                    <th className="text-left p-5 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
-                                        Status
-                                    </th>
-                                    <th className="text-left p-5 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
-                                        Payment Details
-                                    </th>
-                                    <th className="text-left p-5 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
-                                        Items
-                                    </th>
-                                    <th className="text-left p-5 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
-                                        Total Amount
-                                    </th>
-                                    <th className="text-right p-5 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
-                                        Action
-                                    </th>
+                        <table className="w-full text-left text-sm text-gray-300">
+                            <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
+                                <tr>
+                                    <th className="px-6 py-4">Order Details</th>
+                                    <th className="px-6 py-4">Status</th>
+                                    <th className="px-6 py-4">Payment</th>
+                                    <th className="px-6 py-4">Items</th>
+                                    <th className="px-6 py-4">Total Amount</th>
+                                    <th className="px-6 py-4 text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#2a2a2a]">
+                            <tbody className="divide-y divide-white/5 font-medium">
                                 {orders.map((order: any) => {
                                     const statusInfo = STATUS_CONFIG[
                                         order.status as keyof typeof STATUS_CONFIG
@@ -110,20 +100,21 @@ export default function ClientOrdersPage() {
                                     return (
                                         <tr
                                             key={order.id}
-                                            className="hover:bg-[#212121] transition-colors group italic"
+                                            className="hover:bg-white/[0.02] transition group"
                                         >
-                                            <td className="p-5">
-                                                <div className="flex flex-col gap-1">
-                                                    <span className="text-xs font-mono font-bold text-gray-200">
+                                            <td className="px-6 py-4">
+                                                <div className="flex flex-col gap-0.5">
+                                                    <span className="text-xs font-mono font-bold text-[#E8BF7A]">
                                                         #{order.id.slice(0, 8)}...
                                                     </span>
-                                                    <span className="text-[10px] text-gray-500 flex items-center gap-1.5 grayscale group-hover:grayscale-0 transition-all">
-                                                        <Clock className="w-3 h-3" />
+                                                    <span className="text-[11px] text-gray-400 flex items-center gap-1.5 font-mono">
+                                                        <Clock className="w-3 h-3 text-gray-500" />
                                                         {new Date(order.created_at).toLocaleString(
                                                             undefined,
                                                             {
                                                                 month: 'short',
                                                                 day: 'numeric',
+                                                                year: 'numeric',
                                                                 hour: '2-digit',
                                                                 minute: '2-digit',
                                                             }
@@ -131,49 +122,48 @@ export default function ClientOrdersPage() {
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="p-5">
-                                                <div className="flex items-center gap-2">
-                                                    <span
-                                                        className={`px-2 py-0.5 rounded-full ${statusInfo.color} text-white text-[10px] font-bold border border-current scale-90 uppercase tracking-tighter`}
-                                                    >
-                                                        {statusInfo.label}
-                                                    </span>
-                                                </div>
+                                            <td className="px-6 py-4">
+                                                <span
+                                                    className={`px-3 py-1 rounded-full ${statusInfo.color} text-white text-[10px] font-bold border border-white/20 uppercase tracking-wider inline-block`}
+                                                >
+                                                    {statusInfo.label}
+                                                </span>
                                             </td>
-                                            <td className="p-5">
+                                            <td className="px-6 py-4">
                                                 <div className="flex flex-col">
                                                     <span
-                                                        className={`text-[10px] font-bold ${order.payment_status === 'Paid' ? 'text-green-400' : 'text-orange-400'}`}
+                                                        className={`text-xs font-mono font-bold ${order.payment_status === 'Paid' ? 'text-emerald-400' : 'text-amber-400'}`}
                                                     >
                                                         {order.payment_status?.toUpperCase()}
                                                     </span>
-                                                    <span className="text-[9px] text-gray-500 uppercase font-medium">
+                                                    <span className="text-[10px] text-gray-400 uppercase font-semibold mt-0.5">
                                                         {order.payment_method}
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="p-5">
+                                            <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="p-1.5 bg-[#2a2a2a] rounded-lg">
-                                                        <ShoppingBag className="w-3.5 h-3.5 text-gray-400" />
+                                                    <div className="p-2 bg-white/5 rounded-xl border border-white/10">
+                                                        <ShoppingBag className="w-3.5 h-3.5 text-[#E8BF7A]" />
                                                     </div>
-                                                    <span className="text-sm text-gray-300 font-medium">
+                                                    <span className="text-sm text-gray-200 font-semibold font-mono">
                                                         {order.items?.length || 0} Items
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="p-5">
-                                                <span className="text-xs font-bold text-gray-200 flex items-center gap-0.5">
+                                            <td className="px-6 py-4">
+                                                <span className="text-sm font-bold font-mono text-white flex items-center gap-0.5">
                                                     {order.currency === 'INR' && (
-                                                        <IndianRupee className="w-3.5 h-3.5" />
+                                                        <IndianRupee className="w-3.5 h-3.5 text-[#E8BF7A]" />
                                                     )}
-                                                    {order.total_amount}
+                                                    {parseFloat(order.total_amount || '0').toFixed(2)}
                                                 </span>
                                             </td>
-                                            <td className="p-5 text-right">
+                                            <td className="px-6 py-4 text-right">
                                                 <Link
                                                     href={`/bd6b-6ced/dashboard/orders/${order.id}`}
-                                                    className="inline-flex items-center justify-center p-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-xl transition-all hover:scale-110 shadow-lg shadow-purple-500/5 group"
+                                                    className="inline-flex items-center justify-center p-2.5 bg-white/5 hover:bg-[#E8BF7A]/10 text-gray-300 hover:text-[#E8BF7A] border border-white/10 hover:border-[#E8BF7A]/30 rounded-xl transition-all group"
+                                                    title="View Order Details"
                                                 >
                                                     <Eye className="w-4 h-4" />
                                                 </Link>
@@ -184,29 +174,31 @@ export default function ClientOrdersPage() {
                             </tbody>
                         </table>
                     ) : (
-                        <div className="py-24 text-center space-y-4">
-                            <div className="w-20 h-20 bg-[#2a2a2a] rounded-full flex items-center justify-center mx-auto mb-2">
-                                <ShoppingBag className="w-10 h-10 text-gray-600" />
+                        <div className="py-16 text-center space-y-4">
+                            <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto text-[#E8BF7A]">
+                                <ShoppingBag className="w-8 h-8" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-gray-200">No Orders Found</h3>
-                                <p className="text-gray-500 text-sm">
-                                    We couldn't find any orders matching your criteria.
+                                <h3 className="text-lg font-bold text-white font-bricolage">No Orders Found</h3>
+                                <p className="text-gray-400 text-sm mt-1">
+                                    We couldn't find any orders matching your search query.
                                 </p>
                             </div>
-                            <button
-                                onClick={() => setSearchTerm('')}
-                                className="px-6 py-2 bg-purple-500 text-white rounded-xl text-sm font-bold hover:bg-purple-600 transition-all shadow-lg shadow-purple-500/20"
-                            >
-                                Clear All Filters
-                            </button>
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm('')}
+                                    className="px-5 py-2.5 bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#141414] rounded-xl text-xs font-extrabold transition-all shadow-lg hover:brightness-110"
+                                >
+                                    Clear Search Filter
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>
 
                 {/* Pagination */}
                 {ordersResponse?.pagination && ordersResponse.pagination.total_pages > 1 && (
-                    <div className="p-4 border-t border-[#2a2a2a] bg-[#1d1d1d]/50">
+                    <div className="p-4 border-t border-white/10">
                         <Pagination
                             currentPage={currentPage}
                             totalPages={ordersResponse.pagination.total_pages}
@@ -219,9 +211,9 @@ export default function ClientOrdersPage() {
             </div>
 
             {!isLoading && orders.length > 0 && (
-                <div className="flex items-center justify-between text-gray-500 text-[10px] uppercase font-bold tracking-widest px-2">
-                    <p>Showing {orders.length} results on this page</p>
-                    <p>Total {ordersResponse?.pagination?.total_items || orders.length} Orders</p>
+                <div className="flex items-center justify-between text-gray-400 text-xs font-medium px-2">
+                    <p className="font-mono">Showing {orders.length} results on page {currentPage}</p>
+                    <p className="font-mono">Total {ordersResponse?.pagination?.total_items || orders.length} Orders</p>
                 </div>
             )}
         </div>

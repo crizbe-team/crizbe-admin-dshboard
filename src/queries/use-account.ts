@@ -145,10 +145,10 @@ export const useDeleteClient = () => {
 };
 
 // Admin Role Queries & Mutations
-export const useFetchAdminRoles = () => {
+export const useFetchAdminRoles = (params: any = {}) => {
     return useQuery({
-        queryKey: [GET_ADMIN_ROLES],
-        queryFn: () => getAdminRoles(),
+        queryKey: [GET_ADMIN_ROLES, params],
+        queryFn: () => getAdminRoles(params),
         staleTime: 1000 * 60 * 5,
     });
 };
@@ -186,10 +186,10 @@ export const useDeleteRoleMutation = () => {
 };
 
 // Admin Sub-User Queries & Mutations
-export const useFetchAdminUsers = () => {
+export const useFetchAdminUsers = (params: any = {}) => {
     return useQuery({
-        queryKey: [GET_ADMIN_USERS],
-        queryFn: () => getAdminUsers(),
+        queryKey: [GET_ADMIN_USERS, params],
+        queryFn: () => getAdminUsers(params),
         staleTime: 1000 * 60 * 2,
     });
 };

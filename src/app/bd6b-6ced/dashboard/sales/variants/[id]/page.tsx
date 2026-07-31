@@ -5,19 +5,17 @@ import {
     ArrowLeft,
     IndianRupee,
     ShoppingCart,
-    Package,
     Scale,
     TrendingUp,
     CheckCircle2,
     Clock,
     AlertCircle,
     Archive,
-    Tag,
+    Calendar,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useFetchVariantPerformance } from '@/queries/use-orders';
 import DashboardLoader from '@/components/ui/DashboardLoader';
-import { Calendar } from 'lucide-react';
 
 export default function VariantSalesDetailPage() {
     const { id } = useParams();
@@ -34,209 +32,216 @@ export default function VariantSalesDetailPage() {
 
     if (isLoading)
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <DashboardLoader text="Analyzing Variant Sales..." />
+            <div className="flex items-center justify-center min-h-[60vh] w-full">
+                <DashboardLoader text="Analyzing Variant Sales Performance..." />
             </div>
         );
 
+    const stats = [
+        {
+            title: 'Total Sales Revenue',
+            value: `₹${(overview.total_revenue || 0).toLocaleString()}`,
+            icon: IndianRupee,
+            color: 'text-[#E8BF7A]',
+            bg: 'bg-[#E8BF7A]/10',
+        },
+        {
+            title: 'Units Sold (Qty)',
+            value: (overview.successfully_delivered || 0).toLocaleString(),
+            icon: ShoppingCart,
+            color: 'text-emerald-400',
+            bg: 'bg-emerald-500/10',
+        },
+        {
+            title: 'Total Weight Sold',
+            value: `${(overview.total_weight_sold || 0).toFixed(2)} kg`,
+            icon: Scale,
+            color: 'text-purple-400',
+            bg: 'bg-purple-500/10',
+        },
+        {
+            title: 'Revenue Growth',
+            value: `${(overview.revenue_change || 0) >= 0 ? '+' : ''}${overview.revenue_change || 0}%`,
+            icon: TrendingUp,
+            color: (overview.revenue_change || 0) >= 0 ? 'text-emerald-400' : 'text-rose-400',
+            bg: (overview.revenue_change || 0) >= 0 ? 'bg-emerald-500/10' : 'bg-rose-500/10',
+        },
+    ];
+
     return (
-        <div className="space-y-8 p-6 animate-in fade-in duration-500">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="flex items-center gap-4">
+        <div className="space-y-8 animate-in fade-in duration-500 pb-20 max-w-7xl mx-auto">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center space-x-4">
                     <button
                         onClick={() => router.back()}
-                        className="p-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl text-gray-400 hover:text-white transition-all shadow-sm"
+                        className="p-3 bg-[#141414] border border-white/10 rounded-2xl text-gray-300 hover:text-white hover:border-[#E8BF7A]/40 hover:bg-white/5 transition-all shadow-md"
                     >
-                        <ArrowLeft className="w-5 h-5" />
+                        <ArrowLeft className="w-5 h-5 text-[#E8BF7A]" />
                     </button>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-100 font-bricolage">
-                            {overview.product_name || 'Variant'}{' '}
-                            <span className="text-blue-500 text-lg ml-2">{overview.size}</span>
-                        </h1>
-                        <p className="text-sm text-gray-500">
-                            Deep-dive into variant performance and logistics.
+                        <div className="flex items-center space-x-3 mb-1">
+                            <h1 className="text-3xl font-extrabold text-white font-bricolage tracking-tight">
+                                {overview.product_name || 'Variant'} — <span className="text-[#E8BF7A]">{overview.size}</span>
+                            </h1>
+                        </div>
+                        <p className="text-gray-400 text-xs sm:text-sm font-medium">
+                            Granular variant performance metrics and logistics progress tracking.
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="relative group">
-                        <div className="absolute -inset-1 bg-linear-to-r from-purple-600 to-blue-600 rounded-2xl blur-sm opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                        <div className="relative flex items-center bg-[#111111] border border-white/5 rounded-2xl px-5 py-3 text-sm text-gray-200 shadow-2xl">
-                            <Calendar className="w-4 h-4 mr-3 text-purple-400" />
-                            <select
-                                className="bg-transparent border-none focus:outline-none cursor-pointer pr-4 font-bold appearance-none"
-                                value={dateRange}
-                                onChange={(e) => setDateRange(e.target.value)}
-                            >
-                                <option value="today">Today</option>
-                                <option value="last_7_days">Last 7 Days</option>
-                                <option value="last_30_days">Last 30 Days</option>
-                                <option value="last_90_days">Last 90 Days</option>
-                                <option value="this_month">This Month</option>
-                                <option value="this_year">This Year</option>
-                                <option value="all_time">All Time</option>
-                            </select>
-                        </div>
+                <div className="flex items-center space-x-3">
+                    <div className="flex items-center bg-[#141414] border border-white/10 rounded-2xl px-4 py-2.5 shadow-xl">
+                        <Calendar className="w-4 h-4 mr-2.5 text-[#E8BF7A]" />
+                        <select
+                            className="bg-transparent text-gray-200 border-none focus:outline-none cursor-pointer font-bold text-xs uppercase tracking-wider appearance-none pr-2"
+                            value={dateRange}
+                            onChange={(e) => setDateRange(e.target.value)}
+                        >
+                            <option value="today" className="bg-[#141414]">Today</option>
+                            <option value="last_7_days" className="bg-[#141414]">Last 7 Days</option>
+                            <option value="last_30_days" className="bg-[#141414]">Last 30 Days</option>
+                            <option value="last_90_days" className="bg-[#141414]">Last 90 Days</option>
+                            <option value="this_month" className="bg-[#141414]">This Month</option>
+                            <option value="this_year" className="bg-[#141414]">This Year</option>
+                            <option value="all_time" className="bg-[#141414]">All Time</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                    {
-                        title: 'Total Revenue',
-                        value: `₹${(overview.total_revenue || 0).toLocaleString()}`,
-                        icon: IndianRupee,
-                        color: 'text-blue-400',
-                    },
-                    {
-                        title: 'Units Sold (Qty)',
-                        value: overview.successfully_delivered || 0,
-                        icon: ShoppingCart,
-                        color: 'text-green-400',
-                    },
-                    {
-                        title: 'Weight Sold',
-                        value: `${(overview.total_weight_sold || 0).toFixed(2)} kg`,
-                        icon: Scale,
-                        color: 'text-pink-400',
-                    },
-                    {
-                        title: 'Growth Rate',
-                        value: `${(overview.revenue_change || 0) >= 0 ? '+' : ''}${overview.revenue_change || 0}%`,
-                        icon: TrendingUp,
-                        color:
-                            (overview.revenue_change || 0) >= 0 ? 'text-green-400' : 'text-red-400',
-                    },
-                ].map((stat) => (
-                    <div
-                        key={stat.title}
-                        className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#2a2a2a] relative overflow-hidden group"
-                    >
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-linear-to-br from-white/5 to-transparent rounded-full -mr-6 -mt-6" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                {stats.map((stat) => {
+                    const Icon = stat.icon;
+                    return (
                         <div
-                            className={`${stat.color} bg-opacity-10 p-3 rounded-xl inline-flex mb-4`}
+                            key={stat.title}
+                            className="bg-[#141414] rounded-3xl p-6 border border-white/10 shadow-xl relative overflow-hidden group hover:border-[#E8BF7A]/30 transition-all"
                         >
-                            <stat.icon className="w-6 h-6" />
+                            <div className="flex items-center justify-between relative z-10">
+                                <div>
+                                    <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">
+                                        {stat.title}
+                                    </p>
+                                    <p className="text-2xl font-extrabold text-white font-bricolage tracking-tight">
+                                        {stat.value}
+                                    </p>
+                                </div>
+                                <div className={`${stat.color} ${stat.bg} p-3.5 rounded-2xl border border-white/10 group-hover:scale-110 transition-transform`}>
+                                    <Icon className="w-6 h-6" />
+                                </div>
+                            </div>
                         </div>
-                        <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest">
-                            {stat.title}
-                        </p>
-                        <p className="text-2xl font-extrabold text-gray-100 mt-1 font-mono">
-                            {stat.value}
-                        </p>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
-            {/* In-Depth Performance */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Logistics breakdown */}
-                <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] p-8 shadow-xl">
-                    <h3 className="text-lg font-bold text-gray-100 mb-8 flex items-center gap-2">
-                        <Archive className="w-5 h-5 text-blue-500" />
-                        Quantity Movement
+            {/* In-Depth Performance Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Quantity Movement */}
+                <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 sm:p-8 shadow-xl space-y-8">
+                    <h3 className="text-xl font-bold text-white font-bricolage flex items-center space-x-3">
+                        <Archive className="w-5 h-5 text-[#E8BF7A]" />
+                        <span>Quantity Movement</span>
                     </h3>
-                    <div className="space-y-10">
+                    <div className="space-y-8">
                         <div className="relative">
                             <div className="flex justify-between items-end mb-3">
                                 <div>
-                                    <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">
+                                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">
                                         Packed Quantity
                                     </p>
-                                    <p className="text-3xl font-extrabold text-gray-100 font-mono">
+                                    <p className="text-3xl font-extrabold text-white font-mono mt-0.5">
                                         {overview.packed_ready || 0}
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-[10px] text-blue-400 font-bold bg-blue-400/10 px-3 py-1 rounded-full border border-blue-400/20">
+                                    <p className="text-[10px] text-blue-400 font-bold bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 uppercase tracking-wider">
                                         READY TO SHIP
                                     </p>
                                 </div>
                             </div>
-                            <div className="w-full bg-[#2a2a2a] rounded-full h-3 ring-4 ring-blue-500/5">
+                            <div className="w-full bg-white/5 rounded-full h-3 p-0.5 border border-white/5">
                                 <div
-                                    className="bg-blue-500 h-3 rounded-full transition-all duration-1000 shadow-lg shadow-blue-500/40 relative"
+                                    className="bg-gradient-to-r from-blue-600 to-blue-400 h-2 rounded-full transition-all duration-1000 shadow-md shadow-blue-500/20"
                                     style={{
                                         width: `${((overview.packed_ready || 0) / ((overview.packed_ready || 0) + (overview.successfully_delivered || 1))) * 100}%`,
                                     }}
-                                >
-                                    <div className="absolute inset-0 bg-white/20 animate-pulse rounded-full" />
-                                </div>
+                                />
                             </div>
                         </div>
 
                         <div className="relative">
                             <div className="flex justify-between items-end mb-3">
                                 <div>
-                                    <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">
-                                        Selled (Delivered)
+                                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">
+                                        Delivered Quantity
                                     </p>
-                                    <p className="text-3xl font-extrabold text-gray-100 font-mono">
+                                    <p className="text-3xl font-extrabold text-white font-mono mt-0.5">
                                         {overview.successfully_delivered || 0}
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-[10px] text-green-400 font-bold bg-green-400/10 px-3 py-1 rounded-full border border-green-400/20">
+                                    <p className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 uppercase tracking-wider">
                                         FINALIZED
                                     </p>
                                 </div>
                             </div>
-                            <div className="w-full bg-[#2a2a2a] rounded-full h-3 ring-4 ring-green-500/5">
+                            <div className="w-full bg-white/5 rounded-full h-3 p-0.5 border border-white/5">
                                 <div
-                                    className="bg-green-500 h-3 rounded-full transition-all duration-1000 shadow-lg shadow-green-500/40 relative"
+                                    className="bg-gradient-to-r from-emerald-600 to-emerald-400 h-2 rounded-full transition-all duration-1000 shadow-md shadow-emerald-500/20"
                                     style={{
                                         width: `${((overview.successfully_delivered || 0) / ((overview.packed_ready || 0) + (overview.successfully_delivered || 1))) * 100}%`,
                                     }}
-                                >
-                                    <div className="absolute inset-0 bg-white/20 animate-pulse rounded-full" />
-                                </div>
+                                />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Financial Health */}
-                <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] p-8 shadow-xl flex flex-col justify-between">
+                <div className="bg-[#141414] rounded-3xl border border-white/10 p-6 sm:p-8 shadow-xl flex flex-col justify-between space-y-6">
                     <div>
-                        <h3 className="text-lg font-bold text-gray-100 mb-8 flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5 text-purple-400" />
-                            Revenue Statistics
+                        <h3 className="text-xl font-bold text-white font-bricolage mb-6 flex items-center space-x-3">
+                            <TrendingUp className="w-5 h-5 text-[#E8BF7A]" />
+                            <span>Revenue Statistics</span>
                         </h3>
-                        <div className="space-y-6">
-                            <div className="flex justify-between items-center">
-                                <span className="text-gray-400 text-sm">Amount Received</span>
-                                <span className="text-xl font-bold text-green-400 font-mono">
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
+                                <div className="flex items-center space-x-3">
+                                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                                    <span className="text-gray-300 text-sm font-medium">Amount Received</span>
+                                </div>
+                                <span className="text-xl font-extrabold text-emerald-400 font-mono">
                                     ₹{(overview.amount_received || 0).toLocaleString()}
                                 </span>
                             </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-gray-400 text-sm">
-                                    Pending Amount (In Transit)
-                                </span>
-                                <span className="text-xl font-bold text-orange-400 font-mono">
+                            <div className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
+                                <div className="flex items-center space-x-3">
+                                    <Clock className="w-5 h-5 text-amber-400" />
+                                    <span className="text-gray-300 text-sm font-medium">Pending Amount (In Transit)</span>
+                                </div>
+                                <span className="text-xl font-extrabold text-amber-400 font-mono">
                                     ₹{(overview.pending_amount || 0).toLocaleString()}
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-12 p-6 bg-purple-500/5 border border-purple-500/10 rounded-2xl">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+                    <div className="p-4 bg-[#E8BF7A]/5 border border-[#E8BF7A]/20 rounded-2xl">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">
                                 Total Valuation
                             </span>
-                            <span className="text-2xl font-black text-purple-400 font-mono">
+                            <span className="text-2xl font-extrabold text-[#E8BF7A] font-mono">
                                 ₹{(overview.total_revenue || 0).toLocaleString()}
                             </span>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-gray-500 italic">
-                            <AlertCircle className="w-3.5 h-3.5" />
-                            Includes both Paid and Pending (In Transit) status orders.
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
+                            <AlertCircle className="w-3.5 h-3.5 text-[#E8BF7A]" />
+                            <span>Includes both Paid and In-Transit / COD status orders.</span>
                         </div>
                     </div>
                 </div>

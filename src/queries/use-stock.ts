@@ -57,6 +57,8 @@ export const useCreateStock = () => {
         mutationFn: (data: any) => createStock(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_STOCK_LIST] });
+            queryClient.invalidateQueries({ queryKey: [GET_STOCK_HISTORY_LIST] });
+            queryClient.invalidateQueries({ queryKey: [GET_VARIANT_STOCK] });
             toast.success('Stock added successfully');
         },
         onError: (error: any) => {

@@ -26,6 +26,10 @@ const nextConfig: NextConfig = {
                 protocol: 'https',
                 hostname: 'crizbe-media-bucket.s3.eu-north-1.amazonaws.com',
             },
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+            },
         ],
     },
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
 import {
     ShieldCheck,
@@ -22,6 +22,8 @@ import {
 } from '@/queries/use-account';
 import ConfirmationModal from '@/components/Modals/ConfirmationModal';
 import { RoleData } from '@/services/account';
+import DebouncedSearch from '@/components/ui/DebouncedSearch';
+import Pagination from '@/components/ui/Pagination';
 
 const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -92,7 +94,23 @@ const ALL_MODULE_PERMISSIONS = [
 ];
 
 export default function RolesPage() {
-    const { data: rolesRes, isLoading, isRefetching, refetch } = useFetchAdminRoles();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const {
+        data: rolesRes,
+        isLoading,
+        isRefetching,
+        refetch,
+    } = useFetchAdminRoles({
+        page: currentPage,
+        q: searchQuery,
+    });
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery]);
+
     const createMutation = useCreateRoleMutation();
     const updateMutation = useUpdateRoleMutation();
     const deleteMutation = useDeleteRoleMutation();
@@ -175,12 +193,12 @@ export default function RolesPage() {
             {/* Page Header */}
             <motion.div
                 variants={itemVariants}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
             >
                 <div className="space-y-1">
                     <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
                         <ShieldCheck className="w-9 h-9 text-[#E8BF7A]" />
-                        Roles & Role-Based Access Control (RBAC)
+                        Roles & Access Control (RBAC)
                     </h1>
                     <p className="text-gray-400 text-sm sm:text-base font-medium">
                         Create custom admin roles (e.g. Content Writer, Inventory Manager) and
@@ -188,11 +206,17 @@ export default function RolesPage() {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                    <DebouncedSearch
+                        onSearch={setSearchQuery}
+                        placeholder="Search roles..."
+                        className="w-full sm:w-64"
+                    />
+
                     <button
                         onClick={() => refetch()}
                         disabled={isRefetching}
-                        className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2"
+                        className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 text-sm font-semibold transition flex items-center gap-2 shrink-0"
                     >
                         <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
                         Refresh
@@ -200,7 +224,7 @@ export default function RolesPage() {
 
                     <button
                         onClick={openAddModal}
-                        className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center gap-2"
+                        className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#1a1a1a] font-bold text-sm hover:brightness-110 shadow-lg transition flex items-center gap-2 shrink-0"
                     >
                         <Plus className="w-4 h-4" />
                         Create Role
@@ -219,7 +243,7 @@ export default function RolesPage() {
                     </div>
                 ) : roles.length === 0 ? (
                     <div className="col-span-full p-12 text-center text-gray-400 font-medium bg-[#141414] rounded-3xl border border-white/10">
-                        No custom roles created yet. Click "Create New Role" to configure access
+                        No custom roles created yet. Click "Create Role" to configure access
                         permissions.
                     </div>
                 ) : (
@@ -296,6 +320,22 @@ export default function RolesPage() {
                     ))
                 )}
             </motion.div>
+
+            {/* Pagination Controls */}
+            {rolesRes?.pagination && rolesRes.pagination.total_pages > 1 && (
+                <motion.div
+                    variants={itemVariants}
+                    className="bg-[#141414] rounded-3xl border border-white/10 p-4 shadow-xl"
+                >
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={rolesRes.pagination.total_pages}
+                        onPageChange={setCurrentPage}
+                        hasNext={rolesRes.pagination.has_next}
+                        hasPrevious={rolesRes.pagination.has_previous}
+                    />
+                </motion.div>
+            )}
 
             {/* Modal for Creating / Editing Role & Access Matrix */}
             {isModalOpen && (
