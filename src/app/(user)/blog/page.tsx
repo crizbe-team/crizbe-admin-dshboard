@@ -2,17 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useFetchPublicBlogs } from '@/queries/use-blogs';
-import { blogPosts as fallbackBlogPosts } from '@/constants/blog-data';
+import { BlogItem } from '@/types/blog';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Footer from '@/app/_components/Footer';
 
 export default function BlogListPage() {
     const { data: publicBlogsRes, isLoading } = useFetchPublicBlogs();
-    const dynamicBlogs = publicBlogsRes?.data || [];
-
-    const displayBlogs = dynamicBlogs.length > 0 ? dynamicBlogs : fallbackBlogPosts;
+    const displayBlogs = publicBlogsRes?.data || [];
 
     const breadcrumbItems = [
         {
@@ -52,14 +49,21 @@ export default function BlogListPage() {
                 </div>
 
                 {isLoading ? (
-                    <div className="text-center py-20 text-[#8C7466]">Loading journal articles...</div>
+                    <div className="text-center py-20 text-[#8C7466] font-sans">Loading journal articles...</div>
+                ) : displayBlogs.length === 0 ? (
+                    <div className="text-center py-20 bg-white border border-[#EADBBD] rounded-3xl max-w-xl mx-auto p-12 shadow-xs mb-16">
+                        <h3 className="text-2xl font-bricolage font-bold text-[#4E3325] mb-2">No Articles Published Yet</h3>
+                        <p className="text-[#6C5549] text-sm font-sans leading-relaxed">
+                            Check back soon for new gourmet stories, flavor pairing guides, and confectionery insights from Crizbe.
+                        </p>
+                    </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-                        {displayBlogs.map((post: any) => {
-                            const coverImg = post.cover_image_url || post.cover_image || post.coverImage || '/images/user/hazelnut-bottle.png';
+                        {displayBlogs.map((post: BlogItem) => {
+                            const coverImg = post.cover_image_url || post.cover_image || '/images/user/hazelnut-bottle.png';
                             const category = post.category || 'Gourmet Chocolate';
-                            const readTime = post.read_time || post.readTime || '4 min read';
-                            const pubDate = post.published_at ? new Date(post.published_at).toISOString().split('T')[0] : (post.publishedAt || '2026-08-01');
+                            const readTime = post.read_time || '4 min read';
+                            const pubDate = post.published_at ? new Date(post.published_at).toISOString().split('T')[0] : '2026-08-01';
 
                             return (
                                 <article

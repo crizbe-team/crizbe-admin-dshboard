@@ -4,7 +4,6 @@ import React from 'react';
 import { notFound, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useFetchPublicBlogDetail } from '@/queries/use-blogs';
-import { blogPosts as fallbackBlogPosts } from '@/constants/blog-data';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Footer from '@/app/_components/Footer';
 
@@ -12,12 +11,8 @@ export default function BlogPostPage() {
     const params = useParams();
     const slug = typeof params?.slug === 'string' ? params.slug : '';
 
-    const { data: detailRes, isLoading, isError } = useFetchPublicBlogDetail(slug);
-    const dynamicPost = detailRes?.data;
-
-    // Fallback to static data if API loading or error
-    const fallbackPost = fallbackBlogPosts.find((p) => p.slug === slug);
-    const post: any = dynamicPost || fallbackPost;
+    const { data: detailRes, isLoading } = useFetchPublicBlogDetail(slug);
+    const post = detailRes?.data;
 
     if (!isLoading && !post) {
         return notFound();
@@ -25,16 +20,18 @@ export default function BlogPostPage() {
 
     if (isLoading && !post) {
         return (
-            <div className="bg-[#FFFDF7] min-h-screen pt-32 text-center text-[#8C7466]">
+            <div className="bg-[#FFFDF7] min-h-screen pt-32 text-center text-[#8C7466] font-sans">
                 Loading article details...
             </div>
         );
     }
 
-    const coverImg = post.cover_image_url || post.cover_image || post.coverImage || '/images/user/hazelnut-bottle.png';
+    if (!post) return null;
+
+    const coverImg = post.cover_image_url || post.cover_image || '/images/user/hazelnut-bottle.png';
     const category = post.category || 'Gourmet Chocolate';
-    const readTime = post.read_time || post.readTime || '4 min read';
-    const pubDate = post.published_at ? new Date(post.published_at).toISOString().split('T')[0] : (post.publishedAt || '2026-08-01');
+    const readTime = post.read_time || '4 min read';
+    const pubDate = post.published_at ? new Date(post.published_at).toISOString().split('T')[0] : '2026-08-01';
     const authorName = post.author_name || post.author?.name || 'Crizbe Culinary Team';
     const authorRole = post.author_role || post.author?.role || 'Master Chocolatier';
     const tagsList = post.tags || [];
