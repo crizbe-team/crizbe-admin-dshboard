@@ -21,13 +21,15 @@ import {
 } from '../services/account';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
-const { GET_ADDRESSES, GET_CLIENTS, GET_MINIMAL_DETAILS, GET_ADMIN_ROLES, GET_ADMIN_USERS } = API_ENDPOINTS;
+const { GET_ADDRESSES, GET_CLIENTS, GET_MINIMAL_DETAILS, GET_ADMIN_ROLES, GET_ADMIN_USERS } =
+    API_ENDPOINTS;
 
 export const useFetchMinimalDetails = (enabled: boolean = false) => {
     return useQuery<any>({
         queryKey: [GET_MINIMAL_DETAILS],
         queryFn: () => getMinimalDetails(),
         enabled: enabled,
+        staleTime: 15 * 60 * 1000, // Cache user details for 5 minutes
     });
 };
 

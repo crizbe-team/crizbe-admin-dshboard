@@ -205,49 +205,34 @@ function Header() {
         };
     }, []);
 
-    // Direct 4-second background polling loop for audio chime & in-app toast
-    useEffect(() => {
-        if (!isAuth) return;
-
-        const checkNewNotifications = async () => {
-            try {
-                const res = await getAdminNotifications();
-                const list = res?.data || [];
-
-                if (!list || list.length === 0) return;
-
-                if (seenNotifIdsRef.current === null) {
-                    seenNotifIdsRef.current = new Set(list.map((n) => n.id));
-                    return;
-                }
-
-                let newestNotif = null;
-                for (const n of list) {
-                    if (!seenNotifIdsRef.current.has(n.id)) {
-                        seenNotifIdsRef.current.add(n.id);
-                        if (!n.is_read && !newestNotif) {
-                            newestNotif = n;
-                        }
-                    }
-                }
-
-                if (newestNotif) {
-                    playNotificationChime();
-                    setActiveToast(newestNotif);
-                }
-            } catch (err) {
-                console.warn('Background notification poll error:', err);
-            }
-        };
-
-        checkNewNotifications();
-        const intervalId = setInterval(checkNewNotifications, 4000);
-
-        return () => clearInterval(intervalId);
-    }, [isAuth]);
-
     const { data: minimalDetailsRes } = useFetchMinimalDetails(isAuth);
     const { data: notifRes } = useFetchAdminNotifications(isAuth);
+
+    // Watch for new notifications from React Query cache response
+    useEffect(() => {
+        const list = notifRes?.data || [];
+        if (!list || list.length === 0) return;
+
+        if (seenNotifIdsRef.current === null) {
+            seenNotifIdsRef.current = new Set(list.map((n) => n.id));
+            return;
+        }
+
+        let newestNotif = null;
+        for (const n of list) {
+            if (!seenNotifIdsRef.current.has(n.id)) {
+                seenNotifIdsRef.current.add(n.id);
+                if (!n.is_read && !newestNotif) {
+                    newestNotif = n;
+                }
+            }
+        }
+
+        if (newestNotif) {
+            playNotificationChime();
+            setActiveToast(newestNotif);
+        }
+    }, [notifRes]);
 
     const user = minimalDetailsRes?.data;
     const name = user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Admin';
