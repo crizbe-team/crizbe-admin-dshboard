@@ -66,6 +66,11 @@ const ALL_MODULE_PERMISSIONS = [
     },
     { key: 'sales', label: 'Sales Performance', desc: 'View detailed revenue reports & metrics' },
     {
+        key: 'blogs',
+        label: 'Blog Management',
+        desc: 'Create, edit, draft & publish blog articles',
+    },
+    {
         key: 'clients',
         label: 'Clients / Customers',
         desc: 'View registered customer details & history',

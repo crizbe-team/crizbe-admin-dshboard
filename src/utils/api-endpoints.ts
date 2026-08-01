@@ -92,4 +92,14 @@ export const API_ENDPOINTS = {
     MARK_ADMIN_NOTIFICATION_READ: 'core/notifications/mark-read/',
     CLEAR_ADMIN_NOTIFICATIONS: 'core/notifications/clear/',
     SUBSCRIBE_PUSH_NOTIFICATION: 'core/notifications/push-subscribe/',
+
+    // Blog endpoints
+    GET_PUBLIC_BLOGS: 'blogs/',
+    GET_PUBLIC_BLOG_DETAIL: 'blogs/:slug/',
+    GET_ADMIN_BLOGS: 'blogs/admin/list/',
+    CREATE_ADMIN_BLOG: 'blogs/admin/create/',
+    GET_ADMIN_BLOG_DETAIL: 'blogs/admin/:id/',
+    UPDATE_ADMIN_BLOG: 'blogs/admin/:id/update/',
+    TOGGLE_ADMIN_BLOG_STATUS: 'blogs/admin/:id/status/',
+    DELETE_ADMIN_BLOG: 'blogs/admin/:id/delete/',
 } as const;

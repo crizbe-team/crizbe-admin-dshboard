@@ -1,70 +1,43 @@
+'use client';
+
 import React from 'react';
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { blogPosts } from '@/constants/blog-data';
+import { useFetchPublicBlogDetail } from '@/queries/use-blogs';
+import { blogPosts as fallbackBlogPosts } from '@/constants/blog-data';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Footer from '@/app/_components/Footer';
 
-type Props = {
-    params: Promise<{ slug: string }>;
-};
+export default function BlogPostPage() {
+    const params = useParams();
+    const slug = typeof params?.slug === 'string' ? params.slug : '';
 
-export async function generateStaticParams() {
-    return blogPosts.map((post) => ({
-        slug: post.slug,
-    }));
-}
+    const { data: detailRes, isLoading, isError } = useFetchPublicBlogDetail(slug);
+    const dynamicPost = detailRes?.data;
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { slug } = await params;
-    const post = blogPosts.find((p) => p.slug === slug);
+    // Fallback to static data if API loading or error
+    const fallbackPost = fallbackBlogPosts.find((p) => p.slug === slug);
+    const post: any = dynamicPost || fallbackPost;
 
-    if (!post) {
-        return {
-            title: 'Article Not Found | Crizbe',
-        };
+    if (!isLoading && !post) {
+        return notFound();
     }
 
-    return {
-        title: `${post.title} | Crizbe Gourmet Blog`,
-        description: post.excerpt,
-        keywords: post.keywords,
-        alternates: {
-            canonical: `https://crizbe.com/blog/${post.slug}`,
-        },
-        openGraph: {
-            title: post.title,
-            description: post.excerpt,
-            type: 'article',
-            publishedTime: post.publishedAt,
-            authors: [post.author.name],
-            url: `https://crizbe.com/blog/${post.slug}`,
-            images: [
-                {
-                    url: post.coverImage.startsWith('http')
-                        ? post.coverImage
-                        : `https://crizbe.com${post.coverImage}`,
-                    alt: post.title,
-                },
-            ],
-        },
-        twitter: {
-            card: 'summary_large_image',
-            title: post.title,
-            description: post.excerpt,
-        },
-    };
-}
-
-export default async function BlogPostPage({ params }: Props) {
-    const { slug } = await params;
-    const post = blogPosts.find((p) => p.slug === slug);
-
-    if (!post) {
-        notFound();
+    if (isLoading && !post) {
+        return (
+            <div className="bg-[#FFFDF7] min-h-screen pt-32 text-center text-[#8C7466]">
+                Loading article details...
+            </div>
+        );
     }
+
+    const coverImg = post.cover_image_url || post.cover_image || post.coverImage || '/images/user/hazelnut-bottle.png';
+    const category = post.category || 'Gourmet Chocolate';
+    const readTime = post.read_time || post.readTime || '4 min read';
+    const pubDate = post.published_at ? new Date(post.published_at).toISOString().split('T')[0] : (post.publishedAt || '2026-08-01');
+    const authorName = post.author_name || post.author?.name || 'Crizbe Culinary Team';
+    const authorRole = post.author_role || post.author?.role || 'Master Chocolatier';
+    const tagsList = post.tags || [];
 
     const breadcrumbItems = [
         {
@@ -89,22 +62,16 @@ export default async function BlogPostPage({ params }: Props) {
         '@type': 'Article',
         headline: post.title,
         description: post.excerpt,
-        image: post.coverImage.startsWith('http')
-            ? post.coverImage
-            : `https://crizbe.com${post.coverImage}`,
-        datePublished: post.publishedAt,
+        image: coverImg,
+        datePublished: pubDate,
         author: {
             '@type': 'Person',
-            name: post.author.name,
-            jobTitle: post.author.role,
+            name: authorName,
+            jobTitle: authorRole,
         },
         publisher: {
             '@type': 'Organization',
             name: 'Crizbe',
-            logo: {
-                '@type': 'ImageObject',
-                url: 'https://crizbe.com/apple-touch-icon.png',
-            },
         },
         mainEntityOfPage: {
             '@type': 'WebPage',
@@ -126,11 +93,11 @@ export default async function BlogPostPage({ params }: Props) {
 
                 <header className="mb-10">
                     <div className="flex items-center gap-3 mb-4">
-                        <span className="bg-[#9A7236] text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-                            {post.category}
+                        <span className="bg-[#9A7236] text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider font-sans">
+                            {category}
                         </span>
-                        <span className="text-xs text-[#8C7466]">
-                            {post.publishedAt} • {post.readTime}
+                        <span className="text-xs text-[#8C7466] font-sans">
+                            {pubDate} • {readTime}
                         </span>
                     </div>
 
@@ -140,20 +107,17 @@ export default async function BlogPostPage({ params }: Props) {
 
                     <div className="flex items-center gap-4 pt-4 border-t border-[#EADBBD]">
                         <div>
-                            <p className="text-sm font-semibold text-[#4E3325]">{post.author.name}</p>
-                            <p className="text-xs text-[#8C7466]">{post.author.role}</p>
+                            <p className="text-sm font-semibold text-[#4E3325] font-sans">{authorName}</p>
+                            <p className="text-xs text-[#8C7466] font-sans">{authorRole}</p>
                         </div>
                     </div>
                 </header>
 
                 <div className="relative w-full h-[320px] sm:h-[420px] bg-[#FAF4E6] rounded-2xl mb-12 flex items-center justify-center p-8 overflow-hidden border border-[#EADBBD]">
-                    <Image
-                        src={post.coverImage}
+                    <img
+                        src={coverImg}
                         alt={post.title}
-                        width={280}
-                        height={280}
                         className="object-contain max-h-[340px]"
-                        priority
                     />
                 </div>
 
@@ -165,31 +129,33 @@ export default async function BlogPostPage({ params }: Props) {
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
-                <div className="border-t border-b border-[#EADBBD] py-6 mb-12 flex flex-wrap gap-2 items-center">
-                    <span className="text-xs font-semibold text-[#9A7236] uppercase tracking-wider mr-2">
-                        Tags:
-                    </span>
-                    {post.tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className="bg-[#F5EAD4] text-[#6C5549] text-xs font-medium px-3 py-1 rounded-full"
-                        >
-                            #{tag}
+                {tagsList.length > 0 && (
+                    <div className="border-t border-b border-[#EADBBD] py-6 mb-12 flex flex-wrap gap-2 items-center">
+                        <span className="text-xs font-semibold text-[#9A7236] uppercase tracking-wider mr-2 font-sans">
+                            Tags:
                         </span>
-                    ))}
-                </div>
+                        {tagsList.map((tag: string) => (
+                            <span
+                                key={tag}
+                                className="bg-[#F5EAD4] text-[#6C5549] text-xs font-medium px-3 py-1 rounded-full font-sans"
+                            >
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
 
                 {/* Call to Action Box for Internal Linking to Products */}
                 <div className="bg-[#FAF4E6] border border-[#EADBBD] rounded-2xl p-8 text-center mb-16 shadow-xs">
                     <h3 className="text-2xl font-bricolage font-bold text-[#4E3325] mb-2">
                         Ready to Experience the Crunch?
                     </h3>
-                    <p className="text-[#6C5549] text-base mb-6 max-w-lg mx-auto">
+                    <p className="text-[#6C5549] text-base mb-6 max-w-lg mx-auto font-sans">
                         Taste Crizbe&apos;s slender, perfectly layered Belgian chocolate crunch sticks in Hazelnut, Pistachio, and Almond.
                     </p>
                     <Link
                         href="/products"
-                        className="inline-block bg-gradient-to-r from-[#9A7236] via-[#E8BF7A] to-[#937854] text-white font-medium text-base px-8 py-3.5 rounded-full shadow-sm hover:opacity-95 transition-opacity"
+                        className="inline-block bg-gradient-to-r from-[#9A7236] via-[#E8BF7A] to-[#937854] text-white font-medium text-base px-8 py-3.5 rounded-full shadow-sm hover:opacity-95 transition-opacity font-sans"
                     >
                         Explore All Products
                     </Link>

@@ -24,6 +24,7 @@ import {
     Coins,
     ShieldCheck,
     UserCheck,
+    BookOpen,
 } from 'lucide-react';
 import { useLogout } from '@/queries/use-auth';
 import { useFetchMinimalDetails } from '@/queries/use-account';
@@ -43,6 +44,7 @@ const allMenuItems = [
     { icon: Box, label: 'Stock', path: '/bd6b-6ced/dashboard/stock', perm: 'stock' },
     { icon: ShoppingCart, label: 'Orders', path: '/bd6b-6ced/dashboard/orders', perm: 'orders' },
     { icon: DollarSign, label: 'Sales', path: '/bd6b-6ced/dashboard/sales', perm: 'sales' },
+    { icon: BookOpen, label: 'Blogs', path: '/bd6b-6ced/dashboard/blogs', perm: 'blogs' },
     { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients', perm: 'clients' },
     { icon: Mail, label: 'Enquiries', path: '/bd6b-6ced/dashboard/enquiries', perm: 'enquiries' },
     {
