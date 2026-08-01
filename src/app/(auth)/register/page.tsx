@@ -78,8 +78,6 @@ export default function RegisterPage() {
                         }
                     },
                     onSuccess: (response: any) => {
-                        console.log('Signup successful:', response);
-
                         // If OTP is returned in the response (dev/local), show it via Toast
                         if (response.data?.otp) {
                             toast.info(`Development OTP: ${response.data.otp}`);

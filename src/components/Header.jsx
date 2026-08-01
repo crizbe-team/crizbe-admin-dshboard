@@ -11,16 +11,29 @@ import OutsideClick from './OutsideClick';
 import { useFetchMinimalDetails } from '@/queries/use-account';
 import { useLogout } from '@/queries/use-auth';
 import { useFetchAdminNotifications } from '@/queries/use-notifications';
+import { getAdminNotifications, subscribePushNotification } from '@/services/notification';
 import { authUtils } from '@/utils/auth';
 
-// Soft audio chime using Web Audio API (No external sound file needed)
+const VAPID_PUBLIC_KEY = 'BF5cgBeYltKFiAKDBRx4Xc6Tj33vlhalIIlYSsAGOAP2apgEqEUdj7op4L_rikGZ-MS4urtjU6uDdd2g5jbiecw';
+
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+// Soft audio chime using Web Audio API
 export const playNotificationChime = () => {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
         const ctx = new AudioContext();
 
-        // Resume AudioContext if suspended by browser autoplay policy
         if (ctx.state === 'suspended') {
             ctx.resume();
         }
@@ -29,8 +42,8 @@ export const playNotificationChime = () => {
         const gain = ctx.createGain();
 
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 note
-        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5 note
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
 
         gain.gain.setValueAtTime(0.3, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
@@ -45,58 +58,51 @@ export const playNotificationChime = () => {
     }
 };
 
-// Reliable OS Desktop Notification Banner trigger for Chromium (Brave/Chrome) & Web Push
+// Reliable OS Desktop Notification Banner trigger for Chromium & Web Push
 export const triggerDesktopNotification = async (notif) => {
     if (typeof window === 'undefined' || !('Notification' in window)) return;
 
-    const fireBanner = async () => {
-        const title = notif.title || '🛒 New Order Received!';
-        const options = {
-            body: notif.message || 'A customer placed a new order.',
-            icon: '/favicon.ico',
-            badge: '/favicon.ico',
-            tag: notif.id || String(Date.now()),
-            requireInteraction: true,
-            data: {
-                url: notif.reference_id
-                    ? `/bd6b-6ced/dashboard/orders/${notif.reference_id}`
-                    : '/bd6b-6ced/dashboard/orders',
-            },
-        };
+    if (Notification.permission !== 'granted') {
+        const perm = await Notification.requestPermission();
+        if (perm !== 'granted') return;
+    }
 
-        try {
-            // Chrome & Brave require ServiceWorkerRegistration.showNotification()
-            if ('serviceWorker' in navigator) {
-                let reg = await navigator.serviceWorker.getRegistration();
-                if (!reg) {
-                    reg = await navigator.serviceWorker.register('/sw.js');
-                }
-                if (reg) {
-                    await reg.showNotification(title, options);
-                    return;
-                }
-            }
-
-            // Fallback for Safari / Firefox window.Notification constructor
-            const n = new Notification(title, options);
-            n.onclick = () => {
-                window.focus();
-                if (notif.reference_id) {
-                    window.location.href = `/bd6b-6ced/dashboard/orders/${notif.reference_id}`;
-                }
-            };
-        } catch (e) {
-            console.error('Error firing desktop notification:', e);
-        }
+    const title = notif.title || '🛒 New Order Received!';
+    const options = {
+        body: notif.message || 'A customer placed a new order.',
+        icon: '/favicon.ico',
+        badge: '/favicon.ico',
+        tag: notif.id || String(Date.now()),
+        requireInteraction: true,
+        data: {
+            url: notif.reference_id
+                ? `/bd6b-6ced/dashboard/orders/${notif.reference_id}`
+                : '/bd6b-6ced/dashboard/orders',
+        },
     };
 
-    if (Notification.permission === 'granted') {
-        await fireBanner();
-    } else if (Notification.permission !== 'denied') {
-        const perm = await Notification.requestPermission();
-        if (perm === 'granted') {
-            await fireBanner();
+    try {
+        if ('serviceWorker' in navigator) {
+            const reg = await navigator.serviceWorker.ready;
+            if (reg && 'showNotification' in reg) {
+                await reg.showNotification(title, options);
+                return;
+            }
         }
+    } catch (e) {
+        console.warn('SW showNotification fallback to window Notification:', e);
+    }
+
+    try {
+        const n = new Notification(title, options);
+        n.onclick = () => {
+            window.focus();
+            if (notif.reference_id) {
+                window.location.href = `/bd6b-6ced/dashboard/orders/${notif.reference_id}`;
+            }
+        };
+    } catch (e) {
+        console.error('Error firing Notification constructor:', e);
     }
 };
 
@@ -113,14 +119,64 @@ function Header() {
     useEffect(() => {
         setIsAuth(authUtils.isAuthenticated());
 
-        // Register Service Worker on mount if supported
-        if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch((err) => {
-                console.warn('SW registration failed:', err);
-            });
+        if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'Notification' in window) {
+            const registerVapidPush = async () => {
+                try {
+                    const reg = await navigator.serviceWorker.register('/sw.js');
+                    await navigator.serviceWorker.ready;
+
+                    if (Notification.permission === 'granted') {
+                        try {
+                            let subscription = await reg.pushManager.getSubscription();
+
+                            if (!subscription) {
+                                subscription = await reg.pushManager.subscribe({
+                                    userVisibleOnly: true,
+                                    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+                                });
+                            }
+
+                            if (subscription) {
+                                const subJson = subscription.toJSON();
+                                if (subJson.endpoint && subJson.keys) {
+                                    const res = await subscribePushNotification({
+                                        endpoint: subJson.endpoint,
+                                        p256dh: subJson.keys.p256dh || '',
+                                        auth: subJson.keys.auth || '',
+                                    });
+                                    console.log('ACTIVE VAPID PUSH ENDPOINT REGISTERED:', res);
+                                }
+                            }
+                        } catch (pushErr) {
+                            console.warn('Push registration retry:', pushErr);
+                            try {
+                                const oldSub = await reg.pushManager.getSubscription();
+                                if (oldSub) await oldSub.unsubscribe();
+                                const newSub = await reg.pushManager.subscribe({
+                                    userVisibleOnly: true,
+                                    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+                                });
+                                const subJson = newSub.toJSON();
+                                if (subJson.endpoint && subJson.keys) {
+                                    await subscribePushNotification({
+                                        endpoint: subJson.endpoint,
+                                        p256dh: subJson.keys.p256dh || '',
+                                        auth: subJson.keys.auth || '',
+                                    });
+                                }
+                            } catch (retryErr) {
+                                console.error('Push subscribe error:', retryErr);
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.warn('SW registration warning:', err);
+                }
+            };
+
+            registerVapidPush();
         }
 
-        // Custom event listener for test alerts & manual triggers
         const handleCustomAlert = (event) => {
             const data = event.detail;
             if (data) {
@@ -128,9 +184,67 @@ function Header() {
             }
         };
 
+        const handleSwMessage = (event) => {
+            if (event.data?.type === 'PUSH_ORDER_ALERT') {
+                const payload = event.data.payload;
+                playNotificationChime();
+                setActiveToast(payload);
+            }
+        };
+
+        if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', handleSwMessage);
+        }
+
         window.addEventListener('crizbe-order-alert', handleCustomAlert);
-        return () => window.removeEventListener('crizbe-order-alert', handleCustomAlert);
+        return () => {
+            window.removeEventListener('crizbe-order-alert', handleCustomAlert);
+            if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+                navigator.serviceWorker.removeEventListener('message', handleSwMessage);
+            }
+        };
     }, []);
+
+    // Direct 4-second background polling loop for audio chime & in-app toast
+    useEffect(() => {
+        if (!isAuth) return;
+
+        const checkNewNotifications = async () => {
+            try {
+                const res = await getAdminNotifications();
+                const list = res?.data || [];
+
+                if (!list || list.length === 0) return;
+
+                if (seenNotifIdsRef.current === null) {
+                    seenNotifIdsRef.current = new Set(list.map((n) => n.id));
+                    return;
+                }
+
+                let newestNotif = null;
+                for (const n of list) {
+                    if (!seenNotifIdsRef.current.has(n.id)) {
+                        seenNotifIdsRef.current.add(n.id);
+                        if (!n.is_read && !newestNotif) {
+                            newestNotif = n;
+                        }
+                    }
+                }
+
+                if (newestNotif) {
+                    playNotificationChime();
+                    setActiveToast(newestNotif);
+                }
+            } catch (err) {
+                console.warn('Background notification poll error:', err);
+            }
+        };
+
+        checkNewNotifications();
+        const intervalId = setInterval(checkNewNotifications, 4000);
+
+        return () => clearInterval(intervalId);
+    }, [isAuth]);
 
     const { data: minimalDetailsRes } = useFetchMinimalDetails(isAuth);
     const { data: notifRes } = useFetchAdminNotifications(isAuth);
@@ -139,38 +253,7 @@ function Header() {
     const name = user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Admin';
     const profilePicture = user?.profile_picture;
 
-    const notifications = notifRes?.data || [];
     const unreadCount = notifRes?.base_data?.unread_count || 0;
-
-    // Robust detection: tracks seen notification IDs and fires chime + OS push banner + in-app toast
-    useEffect(() => {
-        if (!notifRes || notifications.length === 0) return;
-
-        if (seenNotifIdsRef.current === null) {
-            // First load: store all current notification IDs
-            seenNotifIdsRef.current = new Set(notifications.map((n) => n.id));
-            return;
-        }
-
-        let hasNewUnread = false;
-        let newestNotif = null;
-
-        for (const n of notifications) {
-            if (!seenNotifIdsRef.current.has(n.id)) {
-                seenNotifIdsRef.current.add(n.id);
-                if (!n.is_read) {
-                    hasNewUnread = true;
-                    if (!newestNotif) newestNotif = n;
-                }
-            }
-        }
-
-        if (hasNewUnread && newestNotif) {
-            playNotificationChime();
-            triggerDesktopNotification(newestNotif);
-            setActiveToast(newestNotif);
-        }
-    }, [notifRes, notifications]);
 
     const logoutMutation = useLogout();
     const handleLogout = () => {
@@ -213,10 +296,10 @@ function Header() {
                         <div className="relative" ref={notifRef}>
                             <button
                                 onClick={toggleNotifPopover}
-                                className="relative p-2.5 rounded-2xl bg-white/5 hover:bg-[#E8BF7A]/10 text-gray-300 hover:text-[#E8BF7A] border border-white/10 hover:border-[#E8BF7A]/30 transition-all flex items-center justify-center"
+                                className="relative p-2.5 rounded-2xl bg-white/5 hover:bg-[#E8BF7A]/10 text-gray-300 hover:text-[#E8BF7A] border border-[#E8BF7A]/30 transition-all flex items-center justify-center"
                                 title="Notifications"
                             >
-                                <Bell className="w-5 h-5" />
+                                <Bell className="w-5 h-5 text-[#E8BF7A]" />
                                 {unreadCount > 0 && (
                                     <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#E8BF7A] text-[10px] font-black text-[#141414] shadow-md ring-2 ring-[#141414]">
                                         {unreadCount > 9 ? '9+' : unreadCount}

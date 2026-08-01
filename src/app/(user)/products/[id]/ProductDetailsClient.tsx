@@ -26,8 +26,6 @@ const ProductDetailsPage = () => {
     const [showAllReviews, setShowAllReviews] = useState(false);
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
-    console.log(productData, 'isError', isError);
-
     if (isLoading) {
         return <UserLoaders />;
     }
@@ -109,7 +107,13 @@ const ProductDetailsPage = () => {
                                 <div className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] text-[#373737] [font-variant-numeric:lining-nums_proportional-nums]">
                                     <p>{product?.description}</p>
                                     <br />
-                                    <p className='font-medium text-[16px]'> ingredients : <span className='font-light text-[14px]'>{product?.ingredients}</span></p>
+                                    <p className="font-medium text-[16px]">
+                                        {' '}
+                                        ingredients :{' '}
+                                        <span className="font-light text-[14px]">
+                                            {product?.ingredients}
+                                        </span>
+                                    </p>
                                 </div>
                             </AccordionItem>
 
@@ -170,12 +174,12 @@ const ProductDetailsPage = () => {
                                                     rating === 5
                                                         ? 'Excellent'
                                                         : rating === 4
-                                                            ? 'Very good'
-                                                            : rating === 3
-                                                                ? 'Good'
-                                                                : rating === 2
-                                                                    ? 'Average'
-                                                                    : 'Poor';
+                                                          ? 'Very good'
+                                                          : rating === 3
+                                                            ? 'Good'
+                                                            : rating === 2
+                                                              ? 'Average'
+                                                              : 'Poor';
 
                                                 return (
                                                     <div
@@ -227,12 +231,12 @@ const ProductDetailsPage = () => {
                                                                     {review.rating >= 5
                                                                         ? 'Excellent product!!'
                                                                         : review.rating >= 4
-                                                                            ? 'Worth It'
-                                                                            : review.rating >= 3
-                                                                                ? 'Good product'
-                                                                                : review.rating >= 2
-                                                                                    ? 'Average product'
-                                                                                    : 'Poor product'}
+                                                                          ? 'Worth It'
+                                                                          : review.rating >= 3
+                                                                            ? 'Good product'
+                                                                            : review.rating >= 2
+                                                                              ? 'Average product'
+                                                                              : 'Poor product'}
                                                                 </h4>
                                                             </div>
                                                             <p className="font-inter-tight font-normal text-[16px] leading-[24px] tracking-[0.02em] text-[#747474] mb-2">

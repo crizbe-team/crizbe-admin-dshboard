@@ -86,8 +86,6 @@ export default function ForgotPasswordPage() {
                         }
                     },
                     onSuccess: (response: any) => {
-                        console.log('Forgot password request successful:', response);
-
                         // If OTP is returned in the response (dev/local), show it via Toast
                         if (response.data?.otp) {
                             toast.info(`Development OTP: ${response.data.otp}`);

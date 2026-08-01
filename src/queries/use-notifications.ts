@@ -14,8 +14,9 @@ export const useFetchAdminNotifications = (enabled: boolean = true) => {
         queryKey: [GET_ADMIN_NOTIFICATIONS],
         queryFn: () => getAdminNotifications(),
         enabled: enabled,
-        refetchInterval: 12000, // Poll every 12 seconds for real-time notifications
-        staleTime: 5000,
+        refetchInterval: 6000, // Poll every 6 seconds for instant order alerts
+        refetchIntervalInBackground: true, // Keep polling active even when on another tab!
+        staleTime: 2000,
     });
 };
 

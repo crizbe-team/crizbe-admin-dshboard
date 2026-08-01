@@ -4,11 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Bell,
-    Check,
     CheckCheck,
     Trash2,
     ShoppingBag,
-    AlertTriangle,
     Info,
     ExternalLink,
     BellRing,
@@ -21,7 +19,6 @@ import {
     useFetchAdminNotifications,
     useMarkNotificationRead,
     useClearNotifications,
-    useSubscribePushNotification,
 } from '@/queries/use-notifications';
 import { AdminNotificationData } from '@/services/notification';
 import { playNotificationChime, triggerDesktopNotification } from '@/components/Header';
@@ -52,7 +49,6 @@ export default function NotificationPopover({
     const { data: notifRes } = useFetchAdminNotifications();
     const markReadMutation = useMarkNotificationRead();
     const clearMutation = useClearNotifications();
-    const pushSubscribeMutation = useSubscribePushNotification();
 
     const notifications: AdminNotificationData[] = notifRes?.data || [];
     const unreadCount: number = notifRes?.base_data?.unread_count || 0;
@@ -63,9 +59,9 @@ export default function NotificationPopover({
         if (typeof window !== 'undefined' && 'Notification' in window) {
             setPushPermission(Notification.permission);
         }
-    }, []);
+    }, [isOpen]);
 
-    // Register Service Worker & Subscribe
+    // Request Browser Push Permission
     const requestPushPermission = async () => {
         if (typeof window === 'undefined' || !('Notification' in window)) return;
 
@@ -75,20 +71,11 @@ export default function NotificationPopover({
 
             if (permission === 'granted') {
                 playNotificationChime();
-                if ('serviceWorker' in navigator) {
-                    const reg = await navigator.serviceWorker.register('/sw.js').catch(() => null);
-                    if (reg) {
-                        reg.showNotification('🎉 Desktop Push Notifications Enabled!', {
-                            body: 'You will now receive OS desktop alerts whenever a new order is placed.',
-                            icon: '/favicon.ico',
-                        });
-                    }
-                } else {
-                    new Notification('🎉 Desktop Push Notifications Enabled!', {
-                        body: 'You will now receive OS desktop alerts whenever a new order is placed.',
-                        icon: '/favicon.ico',
-                    });
-                }
+                triggerDesktopNotification({
+                    title: '🎉 Desktop Push Notifications Active!',
+                    message: 'You will now receive desktop alerts for every new order.',
+                    reference_id: '',
+                });
             }
         } catch (err) {
             console.error('Error requesting push permission:', err);
@@ -217,8 +204,7 @@ export default function NotificationPopover({
                                     <Bell className="w-6 h-6" />
                                 </div>
                                 <p className="text-gray-400 text-xs font-medium">
-                                    No new notifications yet. You'll be alerted when an order is
-                                    placed.
+                                    No new notifications yet. You'll be alerted when an order is placed.
                                 </p>
                             </div>
                         ) : (
