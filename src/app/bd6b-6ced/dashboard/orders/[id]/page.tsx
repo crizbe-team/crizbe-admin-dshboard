@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, Truck, Save, ShoppingBag, CreditCard, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Truck, Save, ShoppingBag, CreditCard, ShieldCheck, Printer } from 'lucide-react';
 import {
     useFetchAdminOrderDetail,
     useUpdateOrderStatus,
@@ -11,6 +11,7 @@ import { STATUS_CONFIG } from '@/constants/constants';
 import { useState, useEffect } from 'react';
 import { toast } from '@/components/ui/Toast';
 import DashboardLoader from '@/components/ui/DashboardLoader';
+import PrintableAddressLabels from '@/components/Orders/PrintableAddressLabels';
 
 export default function AdminOrderDetailPage() {
     const params = useParams();
@@ -88,23 +89,35 @@ export default function AdminOrderDetailPage() {
 
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-16">
+            <PrintableAddressLabels orders={[order]} />
+
             {/* Header */}
-            <div className="flex items-center gap-4">
-                <button
-                    onClick={() => router.back()}
-                    className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 text-gray-400 hover:text-white transition shadow-sm"
-                >
-                    <ArrowLeft className="w-5 h-5 text-[#E8BF7A]" />
-                </button>
-                <div>
-                    <h1 className="text-3xl font-extrabold text-white font-bricolage tracking-tight flex items-center gap-3">
-                        <ShoppingBag className="w-8 h-8 text-[#E8BF7A]" />
-                        Order Fulfillment Console
-                    </h1>
-                    <p className="text-xs text-gray-400 font-mono mt-1">
-                        Order Key: #{order.id}
-                    </p>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => router.back()}
+                        className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 text-gray-400 hover:text-white transition shadow-sm"
+                    >
+                        <ArrowLeft className="w-5 h-5 text-[#E8BF7A]" />
+                    </button>
+                    <div>
+                        <h1 className="text-3xl font-extrabold text-white font-bricolage tracking-tight flex items-center gap-3">
+                            <ShoppingBag className="w-8 h-8 text-[#E8BF7A]" />
+                            Order Fulfillment Console
+                        </h1>
+                        <p className="text-xs text-gray-400 font-mono mt-1">
+                            Order Key: #{order.id}
+                        </p>
+                    </div>
                 </div>
+
+                <button
+                    onClick={() => window.print()}
+                    className="px-4 py-2.5 bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#141414] font-bold text-xs rounded-xl flex items-center gap-2 shadow-md hover:brightness-110 transition cursor-pointer"
+                    title="Print 4x6 inch thermal shipping label for this order (Does NOT change status)"
+                >
+                    <Printer className="w-4 h-4" /> Print Address Label
+                </button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

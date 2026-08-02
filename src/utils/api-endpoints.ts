@@ -40,6 +40,7 @@ export const API_ENDPOINTS = {
     ADMIN_ORDER_DETAIL: 'orders/admin/:pk/',
     GET_USER_ORDERS_ADMIN: 'orders/admin/user/:pk/',
     UPDATE_ORDER_STATUS: 'orders/admin/:pk/status/',
+    ADMIN_BULK_ORDER_STATUS: 'orders/admin/bulk-status/',
     UPDATE_ORDER_TRACKING: 'orders/admin/:pk/tracking/',
     GET_ADMIN_SALES_OVERVIEW: 'orders/admin/sales-overview/',
     GET_ADMIN_DASHBOARD_OVERVIEW: 'orders/admin/dashboard-overview/',

@@ -5,6 +5,7 @@ import {
     getOrderDetail,
     getAdminOrderList,
     updateOrderStatus,
+    bulkUpdateOrderStatus,
     getAdminOrderDetail,
     updateOrderTracking,
     getUserOrdersAdmin,
@@ -80,6 +81,18 @@ export const useUpdateOrderStatus = () => {
     const queryClient = useQueryClient();
     return useMutation<any, any, { id: string; status: string }>({
         mutationFn: ({ id, status }) => updateOrderStatus(id, status),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [ADMIN_ORDER_LIST] });
+            queryClient.invalidateQueries({ queryKey: [ORDER_DETAIL] });
+            queryClient.invalidateQueries({ queryKey: [ADMIN_ORDER_DETAIL] });
+        },
+    });
+};
+
+export const useBulkUpdateOrderStatus = () => {
+    const queryClient = useQueryClient();
+    return useMutation<any, any, { order_ids: string[]; status: string }>({
+        mutationFn: ({ order_ids, status }) => bulkUpdateOrderStatus(order_ids, status),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [ADMIN_ORDER_LIST] });
             queryClient.invalidateQueries({ queryKey: [ORDER_DETAIL] });

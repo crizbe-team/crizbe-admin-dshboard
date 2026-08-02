@@ -142,15 +142,6 @@ export default function NotificationPopover({
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <button
-                                onClick={handleTestAlert}
-                                className="px-2 py-1 rounded-lg bg-[#E8BF7A]/10 border border-[#E8BF7A]/30 text-[#E8BF7A] hover:bg-[#E8BF7A]/20 transition text-[11px] font-extrabold flex items-center gap-1"
-                                title="Test audio chime & desktop OS alert banner"
-                            >
-                                <Volume2 className="w-3.5 h-3.5" />
-                                Test Alert
-                            </button>
-
                             {unreadCount > 0 && (
                                 <button
                                     onClick={handleMarkAllRead}
@@ -204,7 +195,8 @@ export default function NotificationPopover({
                                     <Bell className="w-6 h-6" />
                                 </div>
                                 <p className="text-gray-400 text-xs font-medium">
-                                    No new notifications yet. You'll be alerted when an order is placed.
+                                    No new notifications yet. You'll be alerted when an order is
+                                    placed.
                                 </p>
                             </div>
                         ) : (

@@ -70,6 +70,13 @@ export const updateOrderStatus = async (id: string, status: string): Promise<any
     return handleApiResponse(response);
 };
 
+export const bulkUpdateOrderStatus = async (orderIds: string[], status: string): Promise<any> => {
+    const { ADMIN_BULK_ORDER_STATUS } = API_ENDPOINTS;
+    const url = new ApiBuilder(ADMIN_BULK_ORDER_STATUS).build();
+    const response = await api.post(url, { order_ids: orderIds, status });
+    return handleApiResponse(response);
+};
+
 export const updateOrderTracking = async (id: string, tracking_number: string): Promise<any> => {
     const { UPDATE_ORDER_TRACKING } = API_ENDPOINTS;
     const url = new ApiBuilder(UPDATE_ORDER_TRACKING).path('pk', id).build();

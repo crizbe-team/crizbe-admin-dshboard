@@ -13,13 +13,18 @@ import {
     PackageCheck,
     Loader2,
     RefreshCw,
+    Printer,
+    CheckSquare,
+    Square,
+    X,
 } from 'lucide-react';
-import { useFetchAdminOrders } from '@/queries/use-orders';
+import { useFetchAdminOrders, useBulkUpdateOrderStatus } from '@/queries/use-orders';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 import Pagination from '@/components/ui/Pagination';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import { motion, Variants } from 'framer-motion';
+import PrintableAddressLabels from '@/components/Orders/PrintableAddressLabels';
 
 const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -53,17 +58,73 @@ export default function OrdersPage() {
     const [selectedStatus, setSelectedStatus] = useState<string>('All');
     const [currentPage, setCurrentPage] = useState(1);
 
+    // Multi-select state
+    const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(new Set());
+    const [isBulkStatusModalOpen, setIsBulkStatusModalOpen] = useState(false);
+    const [bulkTargetStatus, setBulkTargetStatus] = useState<string>('Shipped');
+
     const { data: ordersData, isLoading, isRefetching, refetch } = useFetchAdminOrders({
         q: searchQuery,
         status: selectedStatus === 'All' ? undefined : selectedStatus,
         page: currentPage,
     });
 
+    const bulkUpdateMutation = useBulkUpdateOrderStatus();
+
     useEffect(() => {
         setCurrentPage(1);
+        setSelectedOrderIds(new Set());
     }, [searchQuery, selectedStatus]);
 
-    const orders = ordersData?.data || [];
+    const orders: any[] = ordersData?.data || [];
+
+    // Checked orders list for printing
+    const selectedOrders = orders.filter((o) => selectedOrderIds.has(o.id));
+
+    const isAllSelected = orders.length > 0 && orders.every((o) => selectedOrderIds.has(o.id));
+
+    const toggleSelectAll = () => {
+        if (isAllSelected) {
+            setSelectedOrderIds(new Set());
+        } else {
+            const next = new Set<string>();
+            orders.forEach((o) => next.add(o.id));
+            setSelectedOrderIds(next);
+        }
+    };
+
+    const toggleSelectRow = (id: string) => {
+        const next = new Set(selectedOrderIds);
+        if (next.has(id)) {
+            next.delete(id);
+        } else {
+            next.add(id);
+        }
+        setSelectedOrderIds(next);
+    };
+
+    // Print Address Labels WITHOUT altering order statuses
+    const handlePrintAddresses = () => {
+        if (selectedOrderIds.size === 0) return;
+        setTimeout(() => {
+            window.print();
+        }, 100);
+    };
+
+    // Explicit Bulk Status Change
+    const handleApplyBulkStatus = async () => {
+        if (selectedOrderIds.size === 0) return;
+        try {
+            await bulkUpdateMutation.mutateAsync({
+                order_ids: Array.from(selectedOrderIds),
+                status: bulkTargetStatus,
+            });
+            setIsBulkStatusModalOpen(false);
+            setSelectedOrderIds(new Set());
+        } catch (err) {
+            console.error('Failed bulk status update:', err);
+        }
+    };
 
     const stats = [
         {
@@ -107,6 +168,9 @@ export default function OrdersPage() {
             animate="visible"
             className="space-y-8 pb-16 max-w-7xl mx-auto"
         >
+            {/* Hidden printable 4x6" thermal labels */}
+            <PrintableAddressLabels orders={selectedOrders} />
+
             {/* Page Header */}
             <motion.div
                 variants={itemVariants}
@@ -118,7 +182,7 @@ export default function OrdersPage() {
                         Order Management
                     </h1>
                     <p className="text-gray-400 text-sm sm:text-base font-medium">
-                        Track customer orders, manage shipments & view detailed status logs.
+                        Track customer orders, print 4x6&quot; address labels, and manage bulk shipments.
                     </p>
                 </div>
 
@@ -163,11 +227,48 @@ export default function OrdersPage() {
                 })}
             </motion.div>
 
-            {/* Orders Table */}
-            <motion.div
-                variants={itemVariants}
-                className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
-            >
+            {/* Orders Table Container */}
+            <motion.div variants={itemVariants} className="space-y-4">
+                {/* Bulk Action Bar Above Table */}
+                {selectedOrderIds.size > 0 && (
+                    <div className="bg-[#1e1e1e] border border-[#E8BF7A]/50 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xl transition-all animate-in fade-in slide-in-from-top-3">
+                        <div className="flex items-center gap-3">
+                            <span className="px-3.5 py-1.5 bg-[#E8BF7A]/20 text-[#E8BF7A] rounded-xl text-xs font-extrabold font-mono border border-[#E8BF7A]/30">
+                                {selectedOrderIds.size} Orders Selected
+                            </span>
+                            <span className="text-xs text-gray-300 font-medium hidden sm:inline">
+                                Perform bulk actions on selected orders:
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <button
+                                onClick={handlePrintAddresses}
+                                className="px-4 py-2 bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#141414] rounded-xl text-xs font-bold flex items-center gap-2 hover:brightness-110 shadow-md transition cursor-pointer"
+                                title="Print 4x6 inch thermal shipping address labels for checked orders (Does NOT change status)"
+                            >
+                                <Printer className="w-4 h-4" /> Print Address Labels
+                            </button>
+
+                            <button
+                                onClick={() => setIsBulkStatusModalOpen(true)}
+                                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-xl text-xs font-bold flex items-center gap-2 transition cursor-pointer"
+                            >
+                                <Truck className="w-4 h-4 text-[#E8BF7A]" /> Change Status
+                            </button>
+
+                            <button
+                                onClick={() => setSelectedOrderIds(new Set())}
+                                className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/10 transition"
+                                title="Clear selection"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                <div className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
                 <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-4 flex-1 min-w-[280px]">
                         <DebouncedSearch
@@ -198,6 +299,20 @@ export default function OrdersPage() {
                         <table className="w-full text-left text-sm text-gray-300">
                             <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
                                 <tr>
+                                    <th className="px-4 py-4 w-12 text-center">
+                                        <button
+                                            type="button"
+                                            onClick={toggleSelectAll}
+                                            className="text-[#E8BF7A] hover:opacity-80 transition"
+                                            title="Select all on this page"
+                                        >
+                                            {isAllSelected ? (
+                                                <CheckSquare className="w-4 h-4" />
+                                            ) : (
+                                                <Square className="w-4 h-4" />
+                                            )}
+                                        </button>
+                                    </th>
                                     <th className="px-6 py-4">Order ID</th>
                                     <th className="px-6 py-4">Client</th>
                                     <th className="px-6 py-4">Status</th>
@@ -208,6 +323,7 @@ export default function OrdersPage() {
                             </thead>
                             <tbody className="divide-y divide-white/5 font-medium">
                                 {orders.map((order: any) => {
+                                    const isSelected = selectedOrderIds.has(order.id);
                                     const statusCfg = STATUS_CONFIG[order.status] || {
                                         label: order.status,
                                         colorClass: 'bg-white/10 text-gray-300 border border-white/10',
@@ -215,8 +331,23 @@ export default function OrdersPage() {
                                     return (
                                         <tr
                                             key={order.id}
-                                            className="hover:bg-white/[0.02] transition"
+                                            className={`transition ${
+                                                isSelected ? 'bg-[#E8BF7A]/[0.08]' : 'hover:bg-white/[0.02]'
+                                            }`}
                                         >
+                                            <td className="px-4 py-4 text-center">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleSelectRow(order.id)}
+                                                    className="text-[#E8BF7A] hover:opacity-80 transition"
+                                                >
+                                                    {isSelected ? (
+                                                        <CheckSquare className="w-4 h-4" />
+                                                    ) : (
+                                                        <Square className="w-4 h-4" />
+                                                    )}
+                                                </button>
+                                            </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
                                                     <Clipboard className="w-4 h-4 text-[#E8BF7A]" />
@@ -280,7 +411,53 @@ export default function OrdersPage() {
                         />
                     </div>
                 )}
+                </div>
             </motion.div>
+
+            {/* Bulk Status Update Modal */}
+            {isBulkStatusModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+                    <div className="w-full max-w-md bg-[#141414] border border-[#E8BF7A]/30 rounded-3xl p-6 shadow-2xl space-y-4">
+                        <h3 className="text-xl font-bold font-bricolage text-white">
+                            Bulk Update Order Status
+                        </h3>
+                        <p className="text-xs text-gray-400">
+                            Updating status for <span className="text-[#E8BF7A] font-bold">{selectedOrderIds.size} selected orders</span>.
+                        </p>
+
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-300 mb-2">Select Target Status</label>
+                            <select
+                                value={bulkTargetStatus}
+                                onChange={(e) => setBulkTargetStatus(e.target.value)}
+                                className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#333] rounded-xl text-white text-sm focus:border-[#E8BF7A] focus:outline-none"
+                            >
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Canceled">Canceled</option>
+                            </select>
+                        </div>
+
+                        <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                            <button
+                                onClick={() => setIsBulkStatusModalOpen(false)}
+                                className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white transition"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleApplyBulkStatus}
+                                disabled={bulkUpdateMutation.isPending}
+                                className="px-5 py-2.5 bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#141414] text-xs font-bold rounded-xl shadow-md hover:brightness-110 transition disabled:opacity-50"
+                            >
+                                {bulkUpdateMutation.isPending ? 'Updating...' : 'Apply Status Change'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </motion.div>
     );
 }
