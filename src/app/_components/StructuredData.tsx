@@ -11,16 +11,13 @@ export default function StructuredData() {
                 url: 'https://crizbe.com',
                 logo: {
                     '@type': 'ImageObject',
-                    url: 'https://crizbe.com/apple-touch-icon.png',
+                    url: 'https://crizbe.com/favicon.svg',
                     width: 512,
                     height: 512,
                 },
                 description:
                     'Crizbe produces premium Belgian chocolate crunch sticks infused with real hazelnut, pistachio, and almond.',
-                sameAs: [
-                    'https://www.instagram.com/crizbe',
-                    'https://www.facebook.com/crizbe',
-                ],
+                sameAs: ['https://www.instagram.com/crizbe', 'https://www.facebook.com/crizbe'],
                 contactPoint: {
                     '@type': 'ContactPoint',
                     contactType: 'customer support',
@@ -33,7 +30,8 @@ export default function StructuredData() {
                 '@id': 'https://crizbe.com/#website',
                 url: 'https://crizbe.com',
                 name: 'Crizbe Premium Chocolate',
-                description: 'Luxury Belgian chocolate crunch sticks with hazelnut, pistachio & almond.',
+                description:
+                    'Luxury Belgian chocolate crunch sticks with hazelnut, pistachio & almond.',
                 publisher: {
                     '@id': 'https://crizbe.com/#organization',
                 },
