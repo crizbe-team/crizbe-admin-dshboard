@@ -26,7 +26,8 @@ export const metadata: Metadata = {
         locale: 'en_US',
         url: 'https://crizbe.com',
         title: 'Crizbe | Once in a while luxury',
-        description: "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
+        description:
+            "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
         siteName: 'Crizbe',
         images: [
             {
@@ -40,14 +41,15 @@ export const metadata: Metadata = {
     twitter: {
         card: 'summary_large_image',
         title: 'Crizbe | Once in a while luxury',
-        description: "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
+        description:
+            "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
         creator: '@crizbe',
         images: ['/images/user/og-image.jpeg'],
     },
     icons: {
-        icon: '/favicon.ico',
-        shortcut: '/favicon.ico',
-        apple: '/favicon.ico',
+        icon: '/favicon.svg',
+        shortcut: '/favicon.svg',
+        apple: '/favicon.svg',
     },
 };
 

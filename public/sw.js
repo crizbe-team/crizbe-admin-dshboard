@@ -21,8 +21,8 @@ self.addEventListener('push', function (event) {
     const title = data.title || '🛒 New Order Received!';
     const options = {
         body: data.message || 'A customer placed a new order.',
-        icon: '/favicon.ico',
-        badge: '/favicon.ico',
+        icon: '/favicon.svg',
+        badge: '/favicon.svg',
         vibrate: [300, 100, 300],
         requireInteraction: true,
         renotify: true,

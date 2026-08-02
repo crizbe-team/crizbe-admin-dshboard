@@ -82,9 +82,9 @@ export const metadata: Metadata = {
         images: ['/images/user/og-image.jpeg'],
     },
     icons: {
-        icon: '/favicon.ico',
-        shortcut: '/favicon.ico',
-        apple: '/favicon.ico',
+        icon: '/favicon.svg',
+        shortcut: '/favicon.svg',
+        apple: '/favicon.svg',
     },
 };
 

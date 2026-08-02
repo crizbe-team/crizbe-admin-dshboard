@@ -14,7 +14,8 @@ import { useFetchAdminNotifications } from '@/queries/use-notifications';
 import { getAdminNotifications, subscribePushNotification } from '@/services/notification';
 import { authUtils } from '@/utils/auth';
 
-const VAPID_PUBLIC_KEY = 'BF5cgBeYltKFiAKDBRx4Xc6Tj33vlhalIIlYSsAGOAP2apgEqEUdj7op4L_rikGZ-MS4urtjU6uDdd2g5jbiecw';
+const VAPID_PUBLIC_KEY =
+    'BF5cgBeYltKFiAKDBRx4Xc6Tj33vlhalIIlYSsAGOAP2apgEqEUdj7op4L_rikGZ-MS4urtjU6uDdd2g5jbiecw';
 
 function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -70,8 +71,8 @@ export const triggerDesktopNotification = async (notif) => {
     const title = notif.title || '🛒 New Order Received!';
     const options = {
         body: notif.message || 'A customer placed a new order.',
-        icon: '/favicon.ico',
-        badge: '/favicon.ico',
+        icon: '/favicon.svg',
+        badge: '/favicon.svg',
         tag: notif.id || String(Date.now()),
         requireInteraction: true,
         data: {
@@ -119,7 +120,11 @@ function Header() {
     useEffect(() => {
         setIsAuth(authUtils.isAuthenticated());
 
-        if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'Notification' in window) {
+        if (
+            typeof window !== 'undefined' &&
+            'serviceWorker' in navigator &&
+            'Notification' in window
+        ) {
             const registerVapidPush = async () => {
                 try {
                     const reg = await navigator.serviceWorker.register('/sw.js');
