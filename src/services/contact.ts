@@ -6,6 +6,7 @@ import { ContactFormData } from '../validations/contact';
 export const fetchEnquiries = async (params?: {
     q?: string;
     page?: number;
+    enquiry_type?: string;
 }): Promise<{
     status_code: number;
     status: string;

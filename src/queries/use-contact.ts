@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { submitEnquiry, fetchEnquiries, fetchEnquiryDetail, deleteEnquiry, updateEnquiry } from '../services/contact';
 import { ContactFormData } from '../validations/contact';
 
-export const useFetchEnquiries = (params?: { q?: string; page?: number }) => {
+export const useFetchEnquiries = (params?: { q?: string; page?: number; enquiry_type?: string }) => {
     return useQuery({
         queryKey: ['enquiries', params],
         queryFn: () => fetchEnquiries(params),

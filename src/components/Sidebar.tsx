@@ -14,6 +14,7 @@ import {
     ShoppingCart,
     Settings,
     Mail,
+    Gift,
     Menu,
     X,
     ChevronLeft,
@@ -47,6 +48,7 @@ const allMenuItems = [
     { icon: BookOpen, label: 'Blogs', path: '/bd6b-6ced/dashboard/blogs', perm: 'blogs' },
     { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients', perm: 'clients' },
     { icon: Mail, label: 'Enquiries', path: '/bd6b-6ced/dashboard/enquiries', perm: 'enquiries' },
+    { icon: Gift, label: 'Pre-Orders', path: '/bd6b-6ced/dashboard/pre-orders', perm: 'enquiries' },
     {
         icon: Coins,
         label: 'Currencies',

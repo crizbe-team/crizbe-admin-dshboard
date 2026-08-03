@@ -21,6 +21,7 @@ const ROUTE_PERMISSION_MAP: Record<string, string> = {
     '/bd6b-6ced/dashboard/sales': 'sales',
     '/bd6b-6ced/dashboard/clients': 'clients',
     '/bd6b-6ced/dashboard/enquiries': 'enquiries',
+    '/bd6b-6ced/dashboard/pre-orders': 'enquiries',
     '/bd6b-6ced/dashboard/settings': 'settings',
     '/bd6b-6ced/dashboard/roles': 'roles',
     '/bd6b-6ced/dashboard/users': 'users',
