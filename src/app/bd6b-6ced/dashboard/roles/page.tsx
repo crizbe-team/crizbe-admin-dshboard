@@ -20,7 +20,7 @@ import {
     useUpdateRoleMutation,
     useDeleteRoleMutation,
 } from '@/queries/use-account';
-import ConfirmationModal from '@/components/Modals/ConfirmationModal';
+import DashboardConfirmationModal from '@/components/Modals/DashboardConfirmationModal';
 import { RoleData } from '@/services/account';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import Pagination from '@/components/ui/Pagination';
@@ -481,7 +481,7 @@ export default function RolesPage() {
             )}
 
             {/* Reusable Delete Confirmation Modal */}
-            <ConfirmationModal
+            <DashboardConfirmationModal
                 open={!!deleteRoleId}
                 onClose={() => setDeleteRoleId(null)}
                 onConfirm={confirmDeleteRole}

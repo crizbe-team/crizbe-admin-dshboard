@@ -20,7 +20,7 @@ import {
     useUpdateAdminUserMutation,
     useDeleteAdminUserMutation,
 } from '@/queries/use-account';
-import ConfirmationModal from '@/components/Modals/ConfirmationModal';
+import DashboardConfirmationModal from '@/components/Modals/DashboardConfirmationModal';
 import { AdminUserData, RoleData } from '@/services/account';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import Pagination from '@/components/ui/Pagination';
@@ -503,7 +503,7 @@ export default function AdminUsersPage() {
             )}
 
             {/* Reusable Confirmation Modal */}
-            <ConfirmationModal
+            <DashboardConfirmationModal
                 open={!!deleteUserId}
                 onClose={() => setDeleteUserId(null)}
                 onConfirm={confirmDeleteUser}

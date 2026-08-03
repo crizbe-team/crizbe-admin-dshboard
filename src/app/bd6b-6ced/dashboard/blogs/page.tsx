@@ -18,7 +18,7 @@ import {
 import { useFetchAdminBlogs, useToggleBlogStatus, useDeleteBlog } from '@/queries/use-blogs';
 import { BlogItem } from '@/types/blog';
 import BlogFormModal from './_components/BlogFormModal';
-import ConfirmationModal from '@/components/Modals/ConfirmationModal';
+import DashboardConfirmationModal from '@/components/Modals/DashboardConfirmationModal';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 
@@ -133,7 +133,8 @@ export default function AdminBlogsPage() {
                         Blog & Article CMS
                     </h1>
                     <p className="text-gray-400 text-sm sm:text-base font-medium">
-                        Manage luxury gourmet stories, flavor guides, drafts, and published journal articles.
+                        Manage luxury gourmet stories, flavor guides, drafts, and published journal
+                        articles.
                     </p>
                 </div>
 
@@ -158,10 +159,7 @@ export default function AdminBlogsPage() {
             </motion.div>
 
             {/* Statistics Cards */}
-            <motion.div
-                variants={itemVariants}
-                className="grid grid-cols-1 sm:grid-cols-3 gap-5"
-            >
+            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     return (
@@ -228,7 +226,9 @@ export default function AdminBlogsPage() {
                 {isLoading ? (
                     <div className="py-20 flex flex-col items-center justify-center">
                         <DashboardLoader />
-                        <p className="text-sm font-medium text-gray-400 mt-4">Fetching articles...</p>
+                        <p className="text-sm font-medium text-gray-400 mt-4">
+                            Fetching articles...
+                        </p>
                     </div>
                 ) : blogs.length === 0 ? (
                     <div className="p-16 text-center text-gray-400 space-y-4">
@@ -236,9 +236,12 @@ export default function AdminBlogsPage() {
                             <BookOpen className="w-8 h-8" />
                         </div>
                         <div>
-                            <p className="text-lg font-bold text-white font-bricolage">No blog articles found</p>
+                            <p className="text-lg font-bold text-white font-bricolage">
+                                No blog articles found
+                            </p>
                             <p className="text-xs text-gray-500 max-w-sm mx-auto mt-1">
-                                No articles match your current filter or search criteria. Click &quot;Create Article&quot; to publish a new story.
+                                No articles match your current filter or search criteria. Click
+                                &quot;Create Article&quot; to publish a new story.
                             </p>
                         </div>
                     </div>
@@ -257,13 +260,20 @@ export default function AdminBlogsPage() {
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {blogs.map((item) => (
-                                    <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group">
+                                    <tr
+                                        key={item.id}
+                                        className="hover:bg-white/[0.02] transition-colors group"
+                                    >
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
                                                     {item.cover_image_url || item.cover_image ? (
                                                         <img
-                                                            src={item.cover_image_url || item.cover_image || ''}
+                                                            src={
+                                                                item.cover_image_url ||
+                                                                item.cover_image ||
+                                                                ''
+                                                            }
                                                             alt={item.title}
                                                             className="w-full h-full object-contain p-1"
                                                         />
@@ -299,10 +309,14 @@ export default function AdminBlogsPage() {
                                                 }`}
                                                 title="Click to toggle publishing status"
                                             >
-                                                {item.status === 'published' ? '🚀 Published' : '📝 Draft'}
+                                                {item.status === 'published'
+                                                    ? '🚀 Published'
+                                                    : '📝 Draft'}
                                             </button>
                                         </td>
-                                        <td className="px-6 py-4 text-xs text-gray-400 font-mono">{item.read_time}</td>
+                                        <td className="px-6 py-4 text-xs text-gray-400 font-mono">
+                                            {item.read_time}
+                                        </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
                                                 {item.status === 'published' && (
@@ -348,7 +362,7 @@ export default function AdminBlogsPage() {
             />
 
             {/* Delete Confirmation Modal */}
-            <ConfirmationModal
+            <DashboardConfirmationModal
                 open={Boolean(deleteItem)}
                 onClose={() => setDeleteItem(null)}
                 onConfirm={confirmDelete}

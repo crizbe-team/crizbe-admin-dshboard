@@ -30,7 +30,7 @@ import {
 import { useLogout } from '@/queries/use-auth';
 import { useFetchMinimalDetails } from '@/queries/use-account';
 import { authUtils } from '@/utils/auth';
-import ConfirmationModal from '@/components/Modals/ConfirmationModal';
+import DashboardConfirmationModal from '@/components/Modals/DashboardConfirmationModal';
 
 const allMenuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/bd6b-6ced/dashboard', perm: 'dashboard' },
@@ -216,7 +216,7 @@ export default function Sidebar() {
             </aside>
 
             {/* Logout Confirmation Modal */}
-            <ConfirmationModal
+            <DashboardConfirmationModal
                 open={showLogoutModal}
                 onClose={() => setShowLogoutModal(false)}
                 onConfirm={handleLogout}

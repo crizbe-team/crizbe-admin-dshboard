@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Bell, User } from 'lucide-react';
 import { useSidebar } from '@/contexts/SidebarContext';
 import ProfileModal from './Modals/ProfileModal';
-import ConfirmationModal from './Modals/ConfirmationModal';
+import DashboardConfirmationModal from './Modals/DashboardConfirmationModal';
 import NotificationPopover from './Notifications/NotificationPopover';
 import NotificationToast from './Notifications/NotificationToast';
 import OutsideClick from './OutsideClick';
@@ -341,7 +341,7 @@ function Header() {
             {/* In-App Floating Toast Banner */}
             <NotificationToast toast={activeToast} onClose={() => setActiveToast(null)} />
 
-            <ConfirmationModal
+            <DashboardConfirmationModal
                 open={showLogoutModal}
                 onClose={() => setShowLogoutModal(false)}
                 onConfirm={handleLogout}
