@@ -5,6 +5,7 @@ import { ModalWrapper } from '@/components/ui/ModalWrapper';
 import FormInput from '@/components/ui/FormInput';
 import FormTextarea from '@/components/ui/FormTextarea';
 import PhoneInput from '@/components/ui/PhoneInput';
+import DatePicker from '@/components/ui/DatePicker';
 import GoldenButton from '@/components/ui/GoldenButton';
 import { useFetchCountries } from '@/queries/use-core';
 import { useSubmitContactForm } from '@/queries/use-contact';
@@ -39,10 +40,12 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
 
     const submitMutation = useSubmitContactForm();
 
+    const todayString = new Date().toISOString().split('T')[0];
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validate using Zod preOrderSchema
+        // Frontend Zod validation
         const validation = preOrderSchema.safeParse(formData);
         if (!validation.success) {
             const fieldErrors: PreOrderFormErrors = {};
@@ -97,7 +100,7 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
 
     return (
         <ModalWrapper open={open} onClose={handleReset}>
-            <div className="w-full max-w-[520px] bg-white rounded-[24px] overflow-hidden shadow-2xl border border-[#E9EAEB]">
+            <div className="w-full max-w-[520px] bg-white rounded-[24px] overflow-visible shadow-2xl border border-[#E9EAEB]">
                 {/* Header */}
                 <div className="border-b border-[#E7E4DD] px-8 py-6">
                     <h2 className="text-2xl font-bold font-bricolage text-[#4E3325]">
@@ -179,13 +182,13 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
                                     error={errors.email}
                                 />
 
-                                <FormInput
+                                <DatePicker
                                     label="Target Date"
-                                    type="date"
-                                    placeholder=""
+                                    placeholder="Select date"
+                                    minDate={todayString}
                                     value={formData.targetDate}
-                                    onChange={(e) => {
-                                        setFormData((prev) => ({ ...prev, targetDate: e.target.value }));
+                                    onChange={(dateVal) => {
+                                        setFormData((prev) => ({ ...prev, targetDate: dateVal }));
                                         if (errors.targetDate) setErrors((prev) => ({ ...prev, targetDate: undefined }));
                                     }}
                                     error={errors.targetDate}
