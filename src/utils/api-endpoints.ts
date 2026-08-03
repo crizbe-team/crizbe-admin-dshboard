@@ -58,10 +58,6 @@ export const API_ENDPOINTS = {
     // Core endpoints
     GET_COUNTRIES: 'core/countries/',
     GET_STATES: 'core/states/',
-    GET_CURRENCY_RATES: 'core/currency-rates/',
-    GET_ADMIN_CURRENCIES: 'core/admin/currencies/',
-    CREATE_ADMIN_CURRENCY: 'core/admin/currencies/create/',
-    MANAGE_ADMIN_CURRENCY: 'core/admin/currencies/:id/',
     GET_ENQUIRIES: 'enquiries/',
     GET_ENQUIRY_DETAIL: 'enquiries/:id/',
 

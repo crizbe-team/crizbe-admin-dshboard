@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
-import { getCurrencyRates } from '@/services/core';
 
 export interface CurrencyItem {
     code: string;
@@ -21,10 +20,27 @@ interface CurrencyContextType {
     setCurrency: (currency: string) => void;
     convertPrice: (priceInINR: number | string) => string;
     isLoading: boolean;
-    refetchRates: () => Promise<void>;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
+
+const DEFAULT_RATES: CurrencyRates = {
+    INR: 1.0,
+    USD: 0.012,
+    EUR: 0.011,
+    GBP: 0.0095,
+    AED: 0.044,
+    CAD: 0.016,
+    AUD: 0.018,
+    SAR: 0.045,
+    QAR: 0.044,
+    OMR: 0.046,
+    KWD: 0.0036,
+    BHD: 0.0045,
+    SGD: 0.016,
+    JPY: 1.81,
+    CNY: 0.087,
+};
 
 const KNOWN_CURRENCY_METADATA: Record<string, { symbol: string; name: string }> = {
     INR: { symbol: '₹', name: 'Indian Rupee' },
@@ -65,80 +81,139 @@ function getCurrencyName(code: string): string {
     return code;
 }
 
+const TIMEZONE_TO_CURRENCY: Record<string, string> = {
+    'Asia/Kolkata': 'INR',
+    'Asia/Calcutta': 'INR',
+    'America/New_York': 'USD',
+    'America/Los_Angeles': 'USD',
+    'America/Chicago': 'USD',
+    'America/Denver': 'USD',
+    'Asia/Dubai': 'AED',
+    'Europe/London': 'GBP',
+    'Europe/Paris': 'EUR',
+    'Europe/Berlin': 'EUR',
+    'Europe/Rome': 'EUR',
+    'Europe/Madrid': 'EUR',
+    'Europe/Amsterdam': 'EUR',
+    'Europe/Dublin': 'EUR',
+    'Europe/Brussels': 'EUR',
+    'Europe/Vienna': 'EUR',
+    'Asia/Riyadh': 'SAR',
+    'Asia/Qatar': 'QAR',
+    'Asia/Kuwait': 'KWD',
+    'Asia/Muscat': 'OMR',
+    'Asia/Bahrain': 'BHD',
+    'Asia/Singapore': 'SGD',
+    'Asia/Tokyo': 'JPY',
+    'Asia/Shanghai': 'CNY',
+    'Australia/Sydney': 'AUD',
+    'Australia/Melbourne': 'AUD',
+    'America/Toronto': 'CAD',
+    'America/Vancouver': 'CAD',
+};
+
+const COUNTRY_CODE_TO_CURRENCY: Record<string, string> = {
+    IN: 'INR',
+    US: 'USD',
+    AE: 'AED',
+    GB: 'GBP',
+    SA: 'SAR',
+    QA: 'QAR',
+    KW: 'KWD',
+    OM: 'OMR',
+    BH: 'BHD',
+    SG: 'SGD',
+    JP: 'JPY',
+    CN: 'CNY',
+    AU: 'AUD',
+    CA: 'CAD',
+    DE: 'EUR',
+    FR: 'EUR',
+    IT: 'EUR',
+    ES: 'EUR',
+    NL: 'EUR',
+    IE: 'EUR',
+    AT: 'EUR',
+    BE: 'EUR',
+    FI: 'EUR',
+    GR: 'EUR',
+    PT: 'EUR',
+};
+
+async function detectCurrencyFromRegion(): Promise<string | null> {
+    // Strategy 1: ipapi.co
+    try {
+        const res = await fetch('https://ipapi.co/json/', { cache: 'no-store' });
+        if (res.ok) {
+            const data = await res.json();
+            if (data.currency) return data.currency;
+            if (data.country_code && COUNTRY_CODE_TO_CURRENCY[data.country_code]) {
+                return COUNTRY_CODE_TO_CURRENCY[data.country_code];
+            }
+        }
+    } catch {}
+
+    // Strategy 2: ipwho.is fallback
+    try {
+        const res = await fetch('https://ipwho.is/', { cache: 'no-store' });
+        if (res.ok) {
+            const data = await res.json();
+            if (data.success) {
+                if (data.currency?.code) return data.currency.code;
+                if (data.country_code && COUNTRY_CODE_TO_CURRENCY[data.country_code]) {
+                    return COUNTRY_CODE_TO_CURRENCY[data.country_code];
+                }
+            }
+        }
+    } catch {}
+
+    // Strategy 3: Browser Timezone
+    try {
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (timeZone && TIMEZONE_TO_CURRENCY[timeZone]) {
+            return TIMEZONE_TO_CURRENCY[timeZone];
+        }
+    } catch {}
+
+    // Strategy 4: Browser Language / Locale
+    try {
+        const lang = typeof navigator !== 'undefined' ? navigator.language || '' : '';
+        const country = lang.split('-')[1]?.toUpperCase();
+        if (country && COUNTRY_CODE_TO_CURRENCY[country]) {
+            return COUNTRY_CODE_TO_CURRENCY[country];
+        }
+    } catch {}
+
+    return null;
+}
+
 export function CurrencyProvider({ children }: { children: ReactNode }) {
     const [currency, setCurrencyState] = useState<string>('INR');
-    const [rates, setRates] = useState<CurrencyRates>({
-        INR: 1,
-        USD: 0.012,
-        AED: 0.044,
-        EUR: 0.011,
-        GBP: 0.0095,
-    });
-    const [apiCurrencies, setApiCurrencies] = useState<CurrencyItem[] | null>(null);
+    const [rates] = useState<CurrencyRates>(DEFAULT_RATES);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Compute dynamic list of supported currencies from rates/API
-    const supportedCurrencies = useMemo(() => {
-        const keys = Object.keys(rates);
-        return keys.length > 0 ? keys : ['INR', 'USD', 'AED', 'EUR', 'GBP'];
-    }, [rates]);
+    const supportedCurrencies = useMemo(() => Object.keys(rates), [rates]);
 
     const currencies: CurrencyItem[] = useMemo(() => {
-        if (apiCurrencies && apiCurrencies.length > 0) {
-            return apiCurrencies;
-        }
         return supportedCurrencies.map((code) => ({
             code,
             symbol: getCurrencySymbol(code),
             name: getCurrencyName(code),
         }));
-    }, [supportedCurrencies, apiCurrencies]);
+    }, [supportedCurrencies]);
 
-    // Fetch exchange rates from backend service
-    const fetchExchangeRates = async () => {
-        try {
-            const res = await getCurrencyRates();
-            const fetchedRates = res?.data?.rates || (res?.data as any);
-
-            if (fetchedRates && typeof fetchedRates === 'object') {
-                setRates((prev) => ({ ...prev, ...fetchedRates }));
-            }
-
-            if (Array.isArray(res?.data?.currencies)) {
-                setApiCurrencies(res.data.currencies);
-            }
-        } catch (error) {
-            console.error('Failed to fetch exchange rates via core service:', error);
-        }
-    };
-
-    // Auto-detect user's currency using ipapi.co
-    const detectUserCurrency = async (availableCurrencies: string[]) => {
-        try {
-            const response = await fetch('https://ipapi.co/json/');
-            const data = await response.json();
-
-            if (data.currency && availableCurrencies.includes(data.currency)) {
-                setCurrencyState(data.currency);
-                localStorage.setItem('selectedCurrency', data.currency);
-            }
-        } catch (error) {
-            console.error('Failed to detect user currency:', error);
-        }
-    };
-
-    // Initialize currency and rates
+    // Initialize currency strictly with automatic region detection
     useEffect(() => {
         const initializeCurrency = async () => {
             setIsLoading(true);
             try {
-                await fetchExchangeRates();
-
-                const savedCurrency = localStorage.getItem('selectedCurrency');
-                if (savedCurrency) {
-                    setCurrencyState(savedCurrency);
+                const autoDetected = await detectCurrencyFromRegion();
+                if (autoDetected && rates[autoDetected]) {
+                    setCurrencyState(autoDetected);
+                } else if (autoDetected) {
+                    setCurrencyState(autoDetected);
                 } else {
-                    await detectUserCurrency(supportedCurrencies);
+                    setCurrencyState('INR');
                 }
             } catch (error) {
                 console.error('Initialization error in CurrencyProvider:', error);
@@ -148,7 +223,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
         };
 
         initializeCurrency();
-    }, []);
+    }, [rates]);
 
     const setCurrency = (newCurrency: string) => {
         setCurrencyState(newCurrency);
@@ -178,8 +253,8 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
             return new Intl.NumberFormat(locale, {
                 style: 'currency',
                 currency: currency,
-                minimumFractionDigits: currency === 'INR' ? 0 : 2,
-                maximumFractionDigits: currency === 'INR' ? 0 : 2,
+                minimumFractionDigits: currency === 'INR' || currency === 'JPY' ? 0 : 2,
+                maximumFractionDigits: currency === 'INR' || currency === 'JPY' ? 0 : 2,
             }).format(convertedPrice);
         } catch {
             const symbol = getCurrencySymbol(currency);
@@ -195,7 +270,6 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
         setCurrency,
         convertPrice,
         isLoading,
-        refetchRates: fetchExchangeRates,
     };
 
     return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>;

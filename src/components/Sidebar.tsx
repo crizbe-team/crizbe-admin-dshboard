@@ -49,12 +49,6 @@ const allMenuItems = [
     { icon: Users, label: 'Clients', path: '/bd6b-6ced/dashboard/clients', perm: 'clients' },
     { icon: Mail, label: 'Enquiries', path: '/bd6b-6ced/dashboard/enquiries', perm: 'enquiries' },
     { icon: Gift, label: 'Pre-Orders', path: '/bd6b-6ced/dashboard/pre-orders', perm: 'enquiries' },
-    {
-        icon: Coins,
-        label: 'Currencies',
-        path: '/bd6b-6ced/dashboard/currencies',
-        perm: 'currencies',
-    },
     { icon: ShieldCheck, label: 'Roles (RBAC)', path: '/bd6b-6ced/dashboard/roles', perm: 'roles' },
     { icon: UserCheck, label: 'Users', path: '/bd6b-6ced/dashboard/users', perm: 'users' },
     { icon: Settings, label: 'Settings', path: '/bd6b-6ced/dashboard/settings', perm: 'settings' },

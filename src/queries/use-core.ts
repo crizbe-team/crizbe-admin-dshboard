@@ -1,14 +1,5 @@
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import {
-    getCountries,
-    getStates,
-    getCurrencyRates,
-    getAdminCurrencies,
-    createAdminCurrency,
-    updateAdminCurrency,
-    deleteAdminCurrency,
-    CurrencyData,
-} from '../services/core';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { getCountries, getStates } from '../services/core';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
 type Country = {
@@ -30,57 +21,7 @@ type ApiResponse<T> = {
     errors: Record<string, any> | null;
 };
 
-const { GET_COUNTRIES, GET_STATES, GET_CURRENCY_RATES, GET_ADMIN_CURRENCIES } = API_ENDPOINTS;
-
-export const useFetchCurrencyRates = () => {
-    return useQuery({
-        queryKey: [GET_CURRENCY_RATES],
-        queryFn: () => getCurrencyRates(),
-        staleTime: 1000 * 60 * 15,
-    });
-};
-
-export const useFetchAdminCurrencies = () => {
-    return useQuery({
-        queryKey: [GET_ADMIN_CURRENCIES],
-        queryFn: () => getAdminCurrencies(),
-        staleTime: 1000 * 60 * 2,
-    });
-};
-
-export const useCreateCurrencyMutation = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (data: Partial<CurrencyData>) => createAdminCurrency(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [GET_ADMIN_CURRENCIES] });
-            queryClient.invalidateQueries({ queryKey: [GET_CURRENCY_RATES] });
-        },
-    });
-};
-
-export const useUpdateCurrencyMutation = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ id, data }: { id: string; data: Partial<CurrencyData> }) =>
-            updateAdminCurrency(id, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [GET_ADMIN_CURRENCIES] });
-            queryClient.invalidateQueries({ queryKey: [GET_CURRENCY_RATES] });
-        },
-    });
-};
-
-export const useDeleteCurrencyMutation = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (id: string) => deleteAdminCurrency(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [GET_ADMIN_CURRENCIES] });
-            queryClient.invalidateQueries({ queryKey: [GET_CURRENCY_RATES] });
-        },
-    });
-};
+const { GET_COUNTRIES, GET_STATES } = API_ENDPOINTS;
 
 export const useFetchCountries = (filters: any = {}) => {
     return useQuery<ApiResponse<Country[]>>({

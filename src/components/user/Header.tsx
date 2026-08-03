@@ -3,8 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { useCurrency } from '@/contexts/CurrencyContext';
-import { ChevronDown, ChevronRight, ShoppingCart, User, Gift } from 'lucide-react';
+import { ChevronRight, ShoppingCart, User, Gift } from 'lucide-react';
 import AuthActionWrapper from '@/components/AuthActionWrapper';
 import { authUtils } from '@/utils/auth';
 import { useFetchMinimalDetails } from '@/queries/use-account';
@@ -13,30 +12,19 @@ import NavigationMenu from './NavigationMenu';
 import PreOrderModal from '@/components/PreOrder/PreOrderModal';
 
 export default function Header() {
-    const { currency, setCurrency, currencies, isLoading } = useCurrency();
     const pathname = usePathname();
-    const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isPreOrderOpen, setIsPreOrderOpen] = useState(false);
     const [isAuth, setIsAuth] = useState(false);
-    const currencyRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
 
     const { data: minimalDetailsRes } = useFetchMinimalDetails(isAuth);
     const cartCount = minimalDetailsRes?.data?.cart_count || 0;
 
-    const currentCurrency = currencies.find((c) => c.code === currency) ||
-        currencies[0] || { code: currency, symbol: currency, name: currency };
-
     useEffect(() => {
         setIsAuth(authUtils.isAuthenticated());
     }, []);
-
-    useOutsideClick({
-        ref: currencyRef as any,
-        callback: () => setIsCurrencyOpen(false),
-    });
 
     useOutsideClick({
         ref: profileRef as any,
@@ -75,49 +63,6 @@ export default function Header() {
                             <Gift className="w-3.5 h-3.5 text-[#141414]" />
                             <span>Pre-Order</span>
                         </button>
-
-                        {/* Currency Switcher */}
-                        <div className="relative" ref={currencyRef}>
-                            <button
-                                onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
-                                disabled={isLoading}
-                                className="flex items-center gap-2 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg border border-white/30 transition-all duration-200 text-white"
-                            >
-                                <span className="font-medium">{currentCurrency.symbol}</span>
-                                <span className="text-sm">{currentCurrency.code}</span>
-                                <ChevronDown
-                                    className={`w-4 h-4 transition-transform duration-200 ${isCurrencyOpen ? 'rotate-180' : ''}`}
-                                />
-                            </button>
-
-                            {isCurrencyOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50">
-                                    {currencies.map((curr) => (
-                                        <button
-                                            key={curr.code}
-                                            onClick={() => {
-                                                setCurrency(curr.code);
-                                                setIsCurrencyOpen(false);
-                                            }}
-                                            className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between ${currency === curr.code ? 'bg-blue-50 text-blue-600' : 'text-gray-700'}`}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <span className="font-medium">{curr.symbol}</span>
-                                                <div>
-                                                    <div className="font-medium">{curr.code}</div>
-                                                    <div className="text-xs text-gray-500">
-                                                        {curr.name}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {currency === curr.code && (
-                                                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                                            )}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
 
                         {/* Cart & Profile */}
                         <div className="flex items-center gap-3 sm:gap-4">

@@ -81,11 +81,6 @@ const ALL_MODULE_PERMISSIONS = [
         desc: 'Read contact messages & customer feedback',
     },
     {
-        key: 'currencies',
-        label: 'Currencies & Rates',
-        desc: 'Manage global currencies & conversion rates',
-    },
-    {
         key: 'roles',
         label: 'Roles & Access Control',
         desc: 'Manage admin roles and permission matrices',
