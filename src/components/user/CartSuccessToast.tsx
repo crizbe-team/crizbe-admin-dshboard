@@ -134,7 +134,7 @@ export default function CartSuccessToast({
                         <motion.div variants={childVariants} className="flex flex-col gap-4">
                             <div className="flex gap-3">
                                 <Link
-                                    href="/checkout"
+                                    href="/checkout/address"
                                     onClick={onClose}
                                     style={{
                                         background:
