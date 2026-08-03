@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import pistaBottle from '../../../public/images/user/pista-bottle.png';
 import almondBottle from '../../../public/images/user/almond-bottle.png';
 import hazelnutBottle from '../../../public/images/user/hazelnut-bottle.png';
+import mixedBottle from '../../../public/images/user/mix-bottle.png';
 
 const flavors = [
     {
@@ -26,6 +27,12 @@ const flavors = [
         name: 'Hazelnut',
         image: hazelnutBottle,
         alt: 'Crizbe Hazelnut Premium Crunch Stick Bottle',
+    },
+    {
+        id: 'mixed',
+        name: 'Mixed',
+        image: mixedBottle,
+        alt: 'Crizbe Mixed Premium Crunch Stick Bottle',
     },
 ];
 
@@ -73,10 +80,11 @@ export default function NextFlavour() {
                             <button
                                 key={flavor.id}
                                 onClick={() => setSelectedFlavor(flavor)}
-                                className={`w-[48px] md:w-[48px] h-[48px] md:h-[48px] rounded-full bg-white flex items-center justify-center p-2 pb-0 transition-all duration-300 shadow-xl cursor-pointer ${selectedFlavor.id === flavor.id
-                                    ? 'ring-2 ring-[#C2A065] scale-110 shadow-[0_0_20px_rgba(194,160,101,0.4)] w-[64px] h-[64px]'
-                                    : 'hover:ring-2 hover:ring-[#C2A065]/50 grayscale-[0.3] hover:grayscale-0'
-                                    }`}
+                                className={`w-[48px] md:w-[48px] h-[48px] md:h-[48px] rounded-full bg-white flex items-center justify-center p-2 pb-0 transition-all duration-300 shadow-xl cursor-pointer ${
+                                    selectedFlavor.id === flavor.id
+                                        ? 'ring-2 ring-[#C2A065] scale-110 shadow-[0_0_20px_rgba(194,160,101,0.4)] w-[64px] h-[64px]'
+                                        : 'hover:ring-2 hover:ring-[#C2A065]/50 grayscale-[0.3] hover:grayscale-0'
+                                }`}
                             >
                                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
                                     <Image

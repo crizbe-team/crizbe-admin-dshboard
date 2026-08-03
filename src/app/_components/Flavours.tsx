@@ -2,9 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 import pistaBottle from '../../../public/images/user/pista-bottle.png';
 import { useRouter } from 'next/navigation';
+import { useFetchProducts } from '@/queries/use-products';
 
 const ingredientsConfig = [
     { size: 50, blur: 'blur-[4px]', z: 'z-1', delay: '0.1s' }, // Back far
@@ -26,6 +28,38 @@ const mixIngredients = [
 
 export default function Flavours() {
     const router = useRouter();
+    const { data: productsData } = useFetchProducts();
+    const products = productsData?.data || [];
+
+    const getProductHref = (keyword: string) => {
+        if (!products || products.length === 0) return '/products';
+        const keywordLower = keyword.toLowerCase();
+
+        let matched = products.find((p: any) => {
+            const name = (p.name || '').toLowerCase();
+            const slug = (p.slug || '').toLowerCase();
+            return name.includes(keywordLower) || slug.includes(keywordLower);
+        });
+
+        if (!matched) {
+            if (keywordLower === 'mix') {
+                matched = products.find(
+                    (p: any) =>
+                        (p.name || '').toLowerCase().includes('magic') ||
+                        (p.name || '').toLowerCase().includes('mixed')
+                );
+            } else if (keywordLower === 'pista') {
+                matched = products.find((p: any) =>
+                    (p.name || '').toLowerCase().includes('pistachio')
+                );
+            }
+        }
+
+        if (matched?.slug) return `/products/${matched.slug}`;
+        if (matched?.id) return `/products/${matched.id}`;
+        return '/products';
+    };
+
     return (
         <section className=" flavours-section bg-[url(/images/user/flavours-bg.png)] bg-[length:100%_100%] bg-no-repeat h-screen flex items-center overflow-visible relative">
             <div className="horizontal-scroll-wrapper flex gap-[100px] items-center">
@@ -37,11 +71,11 @@ export default function Flavours() {
                             Crunch.
                         </span>
                     </h2>
-                    <Button className="bg-[#FAF3E2] h-[54px] w-[193px] hover:bg-black/5 focus-visible:border-[#C4994A] outline-none transition disabled:opacity-50 group">
-                        <span
-                            className="font-medium bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent group-hover:text-white group-hover:bg-none"
-                            onClick={() => router.push('/products')}
-                        >
+                    <Button
+                        onClick={() => router.push('/products')}
+                        className="bg-[#FAF3E2] h-[54px] w-[193px] hover:bg-black/5 focus-visible:border-[#C4994A] outline-none transition disabled:opacity-50 group"
+                    >
+                        <span className="font-medium bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent group-hover:text-white group-hover:bg-none">
                             Shop Now
                         </span>
                     </Button>
@@ -49,184 +83,195 @@ export default function Flavours() {
 
                 <div className="flex gap-[40px] items-center">
                     {/* Almond Card */}
-                    <article className="group relative w-[600px] h-[360px] shrink-0">
-                        <div className="bg-[url(/images/user/almond-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
-                        <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
-                            <h2 className="text-[#5C4114] text-[40px] font-bricolage font-semibold mb-[10px]">
-                                Almond
-                            </h2>
-                            <p className="text-[#4E3325CC] text-[16px] font-normal">
-                                Feel the premium almond <br />
-                                crunch in every byte.
-                            </p>
-                        </div>
-                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] almond-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
-                            {/* Ingredient Orbits */}
-                            {ingredientsConfig.map((config, i) => (
-                                <Image
-                                    key={i}
-                                    src={`/images/user/almond-${i + 1}.png`}
-                                    alt="Almond piece for Crizbe Almond Crunch Stick"
-                                    width={config.size}
-                                    height={config.size}
-                                    quality={100}
-                                    style={{
-                                        transitionDelay: config.delay,
-                                        transitionTimingFunction:
-                                            'cubic-bezier(0.34, 1.56, 0.64, 1)',
-                                    }}
-                                    className={`absolute pointer-events-none transition-all duration-700 opacity-0 scale-0 ingredient-orbit-${i + 1} group-hover:opacity-100 group-hover:scale-100 ${config.blur} ${config.z} drop-shadow-2xl`}
-                                />
-                            ))}
+                    <Link href={getProductHref('almond')} className="shrink-0 block">
+                        <article className="group relative w-[600px] h-[360px]">
+                            <div className="bg-[url(/images/user/almond-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
+                            <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
+                                <h2 className="text-[#5C4114] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                    Almond
+                                </h2>
+                                <p className="text-[#4E3325CC] text-[16px] font-normal">
+                                    Feel the premium almond <br />
+                                    crunch in every byte.
+                                </p>
+                            </div>
+                            <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] almond-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
+                                {/* Ingredient Orbits */}
+                                {ingredientsConfig.map((config, i) => (
+                                    <Image
+                                        key={i}
+                                        src={`/images/user/almond-${i + 1}.png`}
+                                        alt="Almond piece for Crizbe Almond Crunch Stick"
+                                        width={config.size}
+                                        height={config.size}
+                                        quality={100}
+                                        style={{
+                                            transitionDelay: config.delay,
+                                            transitionTimingFunction:
+                                                'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                        }}
+                                        className={`absolute pointer-events-none transition-all duration-700 opacity-0 scale-0 ingredient-orbit-${i + 1} group-hover:opacity-100 group-hover:scale-100 ${config.blur} ${config.z} drop-shadow-2xl`}
+                                    />
+                                ))}
 
-                            <Image
-                                id="almond-bottle-target"
-                                src="/images/user/almond-bottle.png"
-                                alt="Crizbe Almond Premium Crunch Stick Bottle"
-                                width={230}
-                                height={100}
-                                priority
-                                quality={100}
-                                className="w-full h-full invisible opacity-0 relative z-10"
-                            />
-                        </div>
-                    </article>
+                                <Image
+                                    id="almond-bottle-target"
+                                    src="/images/user/almond-bottle.png"
+                                    alt="Crizbe Almond Premium Crunch Stick Bottle"
+                                    width={230}
+                                    height={100}
+                                    priority
+                                    quality={100}
+                                    className="w-full h-full invisible opacity-0 relative z-10"
+                                />
+                            </div>
+                        </article>
+                    </Link>
 
                     {/* Hazelnut Card */}
-                    <article className="group relative w-[600px] h-[360px] shrink-0">
-                        <div className="bg-[url(/images/user/hazelnut-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
-                        <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
-                            <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
-                                Hazelnut
-                            </h2>
-                            <p className="text-[#FFFFFF] text-[16px] font-normal">
-                                Indulge in the rich <br />
-                                hazelnut center.
-                            </p>
-                        </div>
-                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] hazelnut-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
-                            {/* Ingredient Orbits */}
-                            {ingredientsConfig.map((config, i) => (
-                                <Image
-                                    key={i}
-                                    src={`/images/user/hazelnut-${i + 1}.png`}
-                                    alt="Hazelnut piece for Crizbe Hazelnut Crunch Stick"
-                                    width={config.size}
-                                    height={config.size}
-                                    quality={100}
-                                    style={{
-                                        transitionDelay: config.delay,
-                                        transitionTimingFunction:
-                                            'cubic-bezier(0.34, 1.56, 0.64, 1)',
-                                    }}
-                                    className={`absolute pointer-events-none transition-all duration-700 opacity-0 scale-0 ingredient-orbit-${i + 1} group-hover:opacity-100 group-hover:scale-100 ${config.blur} ${config.z} drop-shadow-2xl`}
-                                />
-                            ))}
+                    <Link href={getProductHref('hazelnut')} className="shrink-0 block">
+                        <article className="group relative w-[600px] h-[360px]">
+                            <div className="bg-[url(/images/user/hazelnut-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
+                            <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
+                                <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                    Hazelnut
+                                </h2>
+                                <p className="text-[#FFFFFF] text-[16px] font-normal">
+                                    Indulge in the rich <br />
+                                    hazelnut center.
+                                </p>
+                            </div>
+                            <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] hazelnut-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
+                                {/* Ingredient Orbits */}
+                                {ingredientsConfig.map((config, i) => (
+                                    <Image
+                                        key={i}
+                                        src={`/images/user/hazelnut-${i + 1}.png`}
+                                        alt="Hazelnut piece for Crizbe Hazelnut Crunch Stick"
+                                        width={config.size}
+                                        height={config.size}
+                                        quality={100}
+                                        style={{
+                                            transitionDelay: config.delay,
+                                            transitionTimingFunction:
+                                                'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                        }}
+                                        className={`absolute pointer-events-none transition-all duration-700 opacity-0 scale-0 ingredient-orbit-${i + 1} group-hover:opacity-100 group-hover:scale-100 ${config.blur} ${config.z} drop-shadow-2xl`}
+                                    />
+                                ))}
 
-                            <Image
-                                id="hazelnut-bottle-target"
-                                src="/images/user/hazelnut-bottle.png"
-                                alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
-                                width={230}
-                                height={100}
-                                priority
-                                quality={100}
-                                className="w-full h-full invisible opacity-0 relative z-10"
-                            />
-                        </div>
-                    </article>
+                                <Image
+                                    id="hazelnut-bottle-target"
+                                    src="/images/user/hazelnut-bottle.png"
+                                    alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
+                                    width={230}
+                                    height={100}
+                                    priority
+                                    quality={100}
+                                    className="w-full h-full invisible opacity-0 relative z-10"
+                                />
+                            </div>
+                        </article>
+                    </Link>
 
                     {/* Mixed Card */}
-                    <article className="group relative w-[600px] h-[360px] shrink-0">
-                        <div className="bg-[url(/images/user/mix-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
-                        <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
-                            <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
-                                Magic Mix
-                            </h2>
-                            <p className="text-[#FFFFFF] text-[16px] font-normal">
-                                Feel the premium pista, almond <br />& hazelnut crunch in every
-                                byte.
-                            </p>
-                        </div>
-                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] mix-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
-                            {/* Ingredient Orbits */}
-                            {ingredientsConfig.map((config, i) => (
-                                <Image
-                                    key={i}
-                                    src={mixIngredients[i]}
-                                    alt="Mixed piece for Crizbe Mixed Crunch Stick"
-                                    width={config.size}
-                                    height={config.size}
-                                    quality={100}
-                                    style={{
-                                        transitionDelay: config.delay,
-                                        transitionTimingFunction:
-                                            'cubic-bezier(0.34, 1.56, 0.64, 1)',
-                                    }}
-                                    className={`absolute pointer-events-none transition-all duration-700 opacity-0 scale-0 ingredient-orbit-${i + 1} group-hover:opacity-100 group-hover:scale-100 ${config.blur} ${config.z} drop-shadow-2xl`}
-                                />
-                            ))}
+                    <Link href={getProductHref('mix')} className="shrink-0 block">
+                        <article className="group relative w-[600px] h-[360px]">
+                            <div className="bg-[url(/images/user/mix-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
+                            <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
+                                <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                    Magic Mix
+                                </h2>
+                                <p className="text-[#FFFFFF] text-[16px] font-normal">
+                                    Feel the premium pista, almond <br />& hazelnut crunch in every
+                                    byte.
+                                </p>
+                            </div>
+                            <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] mix-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
+                                {/* Ingredient Orbits */}
+                                {ingredientsConfig.map((config, i) => (
+                                    <Image
+                                        key={i}
+                                        src={mixIngredients[i]}
+                                        alt="Mixed piece for Crizbe Mixed Crunch Stick"
+                                        width={config.size}
+                                        height={config.size}
+                                        quality={100}
+                                        style={{
+                                            transitionDelay: config.delay,
+                                            transitionTimingFunction:
+                                                'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                        }}
+                                        className={`absolute pointer-events-none transition-all duration-700 opacity-0 scale-0 ingredient-orbit-${i + 1} group-hover:opacity-100 group-hover:scale-100 ${config.blur} ${config.z} drop-shadow-2xl`}
+                                    />
+                                ))}
 
-                            <Image
-                                id="mix-bottle-target"
-                                src="/images/user/mix-bottle.png"
-                                alt="Crizbe Mixed Premium Crunch Stick Bottle"
-                                width={230}
-                                height={100}
-                                priority
-                                quality={100}
-                                className="w-full h-full relative z-10"
-                            />
-                        </div>
-                    </article>
+                                <Image
+                                    id="mix-bottle-target"
+                                    src="/images/user/mix-bottle.png"
+                                    alt="Crizbe Mixed Premium Crunch Stick Bottle"
+                                    width={230}
+                                    height={100}
+                                    priority
+                                    quality={100}
+                                    className="w-full h-full relative z-10"
+                                />
+                            </div>
+                        </article>
+                    </Link>
 
                     {/* Pista Card */}
-                    <article className="group relative w-[600px] h-[360px] shrink-0">
-                        <div className="bg-[url(/images/user/pista-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
-                        <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
-                            <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
-                                Pista
-                            </h2>
-                            <p className="text-[#FFFFFF] text-[16px] font-normal">
-                                Savor the roasted <br />
-                                pistachio perfection.
-                            </p>
-                        </div>
-                        <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] pista-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
-                            {/* Ingredient Orbits */}
-                            {ingredientsConfig.map((config, i) => (
-                                <Image
-                                    key={i}
-                                    src={`/images/user/pista-${i + 1}.png`}
-                                    alt="Pistachio piece for Crizbe Pista Crunch Stick"
-                                    width={config.size}
-                                    height={config.size}
-                                    quality={100}
-                                    style={{
-                                        transitionDelay: config.delay,
-                                        transitionTimingFunction:
-                                            'cubic-bezier(0.34, 1.56, 0.64, 1)',
-                                    }}
-                                    className={`absolute pointer-events-none transition-all duration-700 opacity-0 scale-0 ingredient-orbit-${i + 1} group-hover:opacity-100 group-hover:scale-100 ${config.blur} ${config.z} drop-shadow-2xl`}
-                                />
-                            ))}
+                    <Link href={getProductHref('pista')} className="shrink-0 block">
+                        <article className="group relative w-[600px] h-[360px]">
+                            <div className="bg-[url(/images/user/pista-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
+                            <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
+                                <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                    Pista
+                                </h2>
+                                <p className="text-[#FFFFFF] text-[16px] font-normal">
+                                    Savor the roasted <br />
+                                    pistachio perfection.
+                                </p>
+                            </div>
+                            <div className="w-[230px] absolute right-[70px] top-[50%] translate-y-[-50%] pista-bottle-target-position z-20 flex items-center justify-center pointer-events-none">
+                                {/* Ingredient Orbits */}
+                                {ingredientsConfig.map((config, i) => (
+                                    <Image
+                                        key={i}
+                                        src={`/images/user/pista-${i + 1}.png`}
+                                        alt="Pistachio piece for Crizbe Pista Crunch Stick"
+                                        width={config.size}
+                                        height={config.size}
+                                        quality={100}
+                                        style={{
+                                            transitionDelay: config.delay,
+                                            transitionTimingFunction:
+                                                'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                        }}
+                                        className={`absolute pointer-events-none transition-all duration-700 opacity-0 scale-0 ingredient-orbit-${i + 1} group-hover:opacity-100 group-hover:scale-100 ${config.blur} ${config.z} drop-shadow-2xl`}
+                                    />
+                                ))}
 
-                            <Image
-                                id="pista-bottle-target"
-                                src={pistaBottle}
-                                alt="Crizbe Pista Premium Crunch Stick Bottle"
-                                width={230}
-                                height={100}
-                                priority
-                                quality={100}
-                                className="w-full h-full invisible opacity-0 relative z-10"
-                            />
-                        </div>
-                    </article>
+                                <Image
+                                    id="pista-bottle-target"
+                                    src={pistaBottle}
+                                    alt="Crizbe Pista Premium Crunch Stick Bottle"
+                                    width={230}
+                                    height={100}
+                                    priority
+                                    quality={100}
+                                    className="w-full h-full invisible opacity-0 relative z-10"
+                                />
+                            </div>
+                        </article>
+                    </Link>
                 </div>
             </div>
             <div className="absolute bottom-[80px] left-1/2 -translate-x-1/2 z-10">
-                <Button onClick={() => router.push('/products')} className="view-all-btn bg-[#4E3325] hover:bg-[#3d281d] text-white rounded-full text-[16px] font-medium flex items-center gap-[10px] translate-y-[600px] invisible">
+                <Button
+                    onClick={() => router.push('/products')}
+                    className="view-all-btn bg-[#4E3325] hover:bg-[#3d281d] text-white rounded-full text-[16px] font-medium flex items-center gap-[10px] translate-y-[600px] invisible"
+                >
                     View all products{' '}
                     <Image
                         src="/images/user/arrow-right.svg"

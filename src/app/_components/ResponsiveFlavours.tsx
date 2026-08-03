@@ -2,13 +2,48 @@
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 import pistaBottle from '../../../public/images/user/pista-bottle.png';
 import { useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
+import { useFetchProducts } from '@/queries/use-products';
 
 export default function ResponsiveFlavours() {
     const router = useRouter();
+    const { data: productsData } = useFetchProducts();
+    const products = productsData?.data || [];
+
+    const getProductHref = (keyword: string) => {
+        if (!products || products.length === 0) return '/products';
+        const keywordLower = keyword.toLowerCase();
+
+        let matched = products.find((p: any) => {
+            const name = (p.name || '').toLowerCase();
+            const slug = (p.slug || '').toLowerCase();
+            return name.includes(keywordLower) || slug.includes(keywordLower);
+        });
+
+        if (!matched) {
+            if (keywordLower === 'mix') {
+                matched = products.find(
+                    (p: any) =>
+                        (p.name || '').toLowerCase().includes('magic') ||
+                        (p.name || '').toLowerCase().includes('mixed')
+                );
+            } else if (keywordLower === 'pista' || keywordLower === 'pistachio') {
+                matched = products.find(
+                    (p: any) =>
+                        (p.name || '').toLowerCase().includes('pista') ||
+                        (p.name || '').toLowerCase().includes('pistachio')
+                );
+            }
+        }
+
+        if (matched?.slug) return `/products/${matched.slug}`;
+        if (matched?.id) return `/products/${matched.id}`;
+        return '/products';
+    };
 
     const containerVariants: Variants = {
         hidden: { opacity: 0 },
@@ -56,91 +91,97 @@ export default function ResponsiveFlavours() {
                             Crunch.
                         </span>
                     </h2>
-                    <Button className="bg-[#FAF3E2] h-[48px] w-[150px] hover:bg-black/5 focus-visible:border-[#C4994A] outline-none transition disabled:opacity-50 group rounded-full mt-2">
-                        <span
-                            className="font-medium text-[15px] bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent group-hover:text-white group-hover:bg-none"
-                            onClick={() => router.push('/products')}
-                        >
+                    <Button
+                        onClick={() => router.push('/products')}
+                        className="bg-[#FAF3E2] h-[48px] w-[150px] hover:bg-black/5 focus-visible:border-[#C4994A] outline-none transition disabled:opacity-50 group rounded-full mt-2"
+                    >
+                        <span className="font-medium bg-[linear-gradient(88.77deg,#9A7236_-7.08%,#E8BF7A_31.99%,#C4994A_68.02%,#937854_122.31%)] bg-clip-text text-transparent group-hover:text-white group-hover:bg-none">
                             Shop Now
                         </span>
                     </Button>
                 </motion.div>
 
-                <div className="flex flex-col gap-[80px] sm:gap-[100px] w-full max-w-[340px] sm:max-w-[420px] mt-[30px] mb-[60px] relative z-20">
+                <div className="w-full max-w-[500px] flex flex-col gap-6 relative z-10">
                     {/* Almond Card */}
-                    <motion.article
-                        variants={cardVariants}
-                        className="relative w-full aspect-[600/360]"
-                    >
-                        <div className="absolute inset-0 bg-[url(/images/user/almond-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
-                        <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
-                            <h2 className="text-[#5C4114] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
-                                Almond
-                            </h2>
-                            <p className="text-[#4E3325CC] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
-                                Feel the premium almond crunch in every byte.
-                            </p>
-                        </div>
-                        <Image
-                            src="/images/user/almond-bottle.png"
-                            alt="Crizbe Almond Premium Crunch Stick Bottle"
-                            width={200}
-                            height={500}
-                            priority
-                            quality={100}
-                            className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
-                        />
-                    </motion.article>
+                    <Link href={getProductHref('almond')} className="w-full block">
+                        <motion.article
+                            variants={cardVariants}
+                            className="relative w-full aspect-[600/360]"
+                        >
+                            <div className="absolute inset-0 bg-[url(/images/user/almond-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
+                            <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
+                                <h2 className="text-[#5C4114] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
+                                    Almond
+                                </h2>
+                                <p className="text-[#4E3325CC] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
+                                    Feel the premium almond crunch in every byte.
+                                </p>
+                            </div>
+                            <Image
+                                src="/images/user/almond-bottle.png"
+                                alt="Crizbe Almond Premium Crunch Stick Bottle"
+                                width={200}
+                                height={500}
+                                priority
+                                quality={100}
+                                className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
+                            />
+                        </motion.article>
+                    </Link>
 
                     {/* Hazelnut Card */}
-                    <motion.article
-                        variants={cardVariants}
-                        className="relative w-full aspect-[600/360]"
-                    >
-                        <div className="absolute inset-0 bg-[url(/images/user/hazelnut-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
-                        <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
-                            <h2 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
-                                Hazelnut
-                            </h2>
-                            <p className="text-[#FFFFFFDD] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
-                                Feel the premium hazelnut crunch in every byte.
-                            </p>
-                        </div>
-                        <Image
-                            src="/images/user/hazelnut-bottle.png"
-                            alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
-                            width={200}
-                            height={500}
-                            priority
-                            quality={100}
-                            className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
-                        />
-                    </motion.article>
+                    <Link href={getProductHref('hazelnut')} className="w-full block">
+                        <motion.article
+                            variants={cardVariants}
+                            className="relative w-full aspect-[600/360]"
+                        >
+                            <div className="absolute inset-0 bg-[url(/images/user/hazelnut-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
+                            <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
+                                <h2 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
+                                    Hazelnut
+                                </h2>
+                                <p className="text-[#FFFFFFDD] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
+                                    Feel the premium hazelnut crunch in every byte.
+                                </p>
+                            </div>
+                            <Image
+                                src="/images/user/hazelnut-bottle.png"
+                                alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
+                                width={200}
+                                height={500}
+                                priority
+                                quality={100}
+                                className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
+                            />
+                        </motion.article>
+                    </Link>
 
                     {/* Pista Card */}
-                    <motion.article
-                        variants={cardVariants}
-                        className="relative w-full aspect-[600/360]"
-                    >
-                        <div className="absolute inset-0 bg-[url(/images/user/pista-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
-                        <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
-                            <h2 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
-                                Pistachio
-                            </h2>
-                            <p className="text-[#FFFFFFDD] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
-                                Feel the premium pista crunch in every byte.
-                            </p>
-                        </div>
-                        <Image
-                            src={pistaBottle}
-                            alt="Crizbe Pista Premium Crunch Stick Bottle"
-                            width={200}
-                            height={500}
-                            priority
-                            quality={100}
-                            className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
-                        />
-                    </motion.article>
+                    <Link href={getProductHref('pista')} className="w-full block">
+                        <motion.article
+                            variants={cardVariants}
+                            className="relative w-full aspect-[600/360]"
+                        >
+                            <div className="absolute inset-0 bg-[url(/images/user/pista-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
+                            <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
+                                <h2 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
+                                    Pistachio
+                                </h2>
+                                <p className="text-[#FFFFFFDD] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
+                                    Feel the premium pista crunch in every byte.
+                                </p>
+                            </div>
+                            <Image
+                                src={pistaBottle}
+                                alt="Crizbe Pista Premium Crunch Stick Bottle"
+                                width={200}
+                                height={500}
+                                priority
+                                quality={100}
+                                className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
+                            />
+                        </motion.article>
+                    </Link>
                 </div>
 
                 <motion.div
