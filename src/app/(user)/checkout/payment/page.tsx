@@ -114,7 +114,7 @@ export default function PaymentPage() {
             // Step 2: Open Razorpay checkout
             const options = {
                 key: paymentData.key_id,
-                amount: paymentData.amount * 100, // Convert to paisa
+                amount: paymentData.razorpay_amount || Math.round(paymentData.amount * 100),
                 currency: paymentData.currency,
                 name: 'Crizbe',
                 description: 'Order Payment',

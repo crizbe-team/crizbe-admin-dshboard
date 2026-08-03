@@ -141,7 +141,15 @@ const COUNTRY_CODE_TO_CURRENCY: Record<string, string> = {
 };
 
 async function detectCurrencyFromRegion(): Promise<string | null> {
-    // Strategy 1: ipapi.co
+    // Strategy 1: Browser Timezone (Instant & works with Chrome DevTools Sensors!)
+    try {
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (timeZone && TIMEZONE_TO_CURRENCY[timeZone]) {
+            return TIMEZONE_TO_CURRENCY[timeZone];
+        }
+    } catch {}
+
+    // Strategy 2: ipapi.co
     try {
         const res = await fetch('https://ipapi.co/json/', { cache: 'no-store' });
         if (res.ok) {
@@ -153,7 +161,7 @@ async function detectCurrencyFromRegion(): Promise<string | null> {
         }
     } catch {}
 
-    // Strategy 2: ipwho.is fallback
+    // Strategy 3: ipwho.is fallback
     try {
         const res = await fetch('https://ipwho.is/', { cache: 'no-store' });
         if (res.ok) {
@@ -164,14 +172,6 @@ async function detectCurrencyFromRegion(): Promise<string | null> {
                     return COUNTRY_CODE_TO_CURRENCY[data.country_code];
                 }
             }
-        }
-    } catch {}
-
-    // Strategy 3: Browser Timezone
-    try {
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        if (timeZone && TIMEZONE_TO_CURRENCY[timeZone]) {
-            return TIMEZONE_TO_CURRENCY[timeZone];
         }
     } catch {}
 
