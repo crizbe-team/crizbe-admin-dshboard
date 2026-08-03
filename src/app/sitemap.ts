@@ -5,7 +5,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const apiUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://api.crizbe.com/api/v1/';
 
     // Core static public routes
-    const routes = [
+    const staticRoutes: MetadataRoute.Sitemap = [
         '',
         '/products',
         '/our-story',
@@ -22,34 +22,45 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: route === '' ? 1.0 : route === '/products' ? 0.9 : 0.7,
     }));
 
-    // Dynamic blog articles from API
+    // Dynamic Product pages from API
+    let productRoutes: MetadataRoute.Sitemap = [];
+    try {
+        const res = await fetch(`${apiUrl}products/products/`, { next: { revalidate: 3600 } });
+        if (res.ok) {
+            const data = await res.json();
+            const products = data.data || [];
+            productRoutes = products
+                .filter((p: any) => p.slug)
+                .map((product: { slug: string; updated_at?: string }) => ({
+                    url: `${baseUrl}/products/${product.slug}`,
+                    lastModified: product.updated_at ? new Date(product.updated_at) : new Date(),
+                    changeFrequency: 'daily' as const,
+                    priority: 0.8,
+                }));
+        }
+    } catch (error) {
+        console.error('Sitemap product fetch error:', error);
+    }
+
+    // Dynamic Blog articles from API
     let blogRoutes: MetadataRoute.Sitemap = [];
     try {
         const res = await fetch(`${apiUrl}blogs/`, { next: { revalidate: 3600 } });
         if (res.ok) {
             const data = await res.json();
             const posts = data.data || [];
-            blogRoutes = posts.map((post: { slug: string; updated_at?: string }) => ({
-                url: `${baseUrl}/blog/${post.slug}`,
-                lastModified: post.updated_at ? new Date(post.updated_at) : new Date(),
-                changeFrequency: 'monthly' as const,
-                priority: 0.8,
-            }));
+            blogRoutes = posts
+                .filter((p: any) => p.slug)
+                .map((post: { slug: string; updated_at?: string }) => ({
+                    url: `${baseUrl}/blog/${post.slug}`,
+                    lastModified: post.updated_at ? new Date(post.updated_at) : new Date(),
+                    changeFrequency: 'weekly' as const,
+                    priority: 0.8,
+                }));
         }
-    } catch {
-        // Fallback static blog slugs if API is unreachable during static build
-        const fallbackSlugs = [
-            'art-of-belgian-chocolate-crunch-sticks',
-            'hazelnut-pistachio-almond-gourmet-pairings',
-            'luxury-snack-trends-elevating-dessert-experience',
-        ];
-        blogRoutes = fallbackSlugs.map((slug) => ({
-            url: `${baseUrl}/blog/${slug}`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly' as const,
-            priority: 0.8,
-        }));
+    } catch (error) {
+        console.error('Sitemap blog fetch error:', error);
     }
 
-    return [...routes, ...blogRoutes];
+    return [...staticRoutes, ...productRoutes, ...blogRoutes];
 }
