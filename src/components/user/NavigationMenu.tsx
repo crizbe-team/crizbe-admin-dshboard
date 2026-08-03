@@ -5,14 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Gift } from 'lucide-react';
 
 interface NavigationMenuProps {
     isOpen: boolean;
     onClose: () => void;
+    onOpenPreOrder?: () => void;
 }
 
-export default function NavigationMenu({ isOpen, onClose }: NavigationMenuProps) {
+export default function NavigationMenu({ isOpen, onClose, onOpenPreOrder }: NavigationMenuProps) {
     const pathname = usePathname();
 
     const links = [
@@ -52,7 +53,23 @@ export default function NavigationMenu({ isOpen, onClose }: NavigationMenuProps)
                         </button>
 
                         {/* Menu Links */}
-                        <div className="flex flex-col items-center gap-[24px]">
+                        <div className="flex flex-col items-center gap-[20px] sm:gap-[24px]">
+                            {/* Pre-Order Gifting Highlight Link */}
+                            {onOpenPreOrder && (
+                                <button
+                                    onClick={() => {
+                                        onClose();
+                                        onOpenPreOrder();
+                                    }}
+                                    className="flex items-center gap-2 px-6 py-2 bg-[#E8BF7A] text-[#141414] rounded-full hover:scale-105 transition-all shadow-lg"
+                                >
+                                    <Gift className="w-5 h-5 text-[#141414]" />
+                                    <span className="font-bricolage font-bold text-xl sm:text-2xl tracking-tight">
+                                        Pre-Order / Bulk Gifting
+                                    </span>
+                                </button>
+                            )}
+
                             {links.map((link) => {
                                 const isActive = pathname === link.href;
                                 return (
@@ -66,7 +83,7 @@ export default function NavigationMenu({ isOpen, onClose }: NavigationMenuProps)
                                             }`}
                                     >
                                         <span
-                                            className={`relative z-10 font-bricolage font-bold tracking-tight text-[38px]`}
+                                            className={`relative z-10 font-bricolage font-bold tracking-tight text-[32px] sm:text-[38px]`}
                                         >
                                             {link.label}
                                         </span>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { User, Mail, Phone, MapPin, Eye, Trash2, RefreshCw } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Eye, Trash2, RefreshCw, MessageCircle, Gift, Calendar } from 'lucide-react';
 import { useFetchEnquiries, useDeleteEnquiry } from '@/queries/use-contact';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
 import Pagination from '@/components/ui/Pagination';
@@ -62,7 +62,7 @@ export default function EnquiriesPage() {
                 refetch();
                 setIsDeleteModalOpen(false);
                 setEnquiryToDelete(null);
-            } catch (error) {
+            } catch {
                 toast.error('Failed to delete enquiry');
             }
         }
@@ -94,10 +94,10 @@ export default function EnquiriesPage() {
                 <div className="space-y-1">
                     <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
                         <Mail className="w-9 h-9 text-[#E8BF7A]" />
-                        Contact Enquiries & Messages
+                        Contact Enquiries & Pre-Orders
                     </h1>
                     <p className="text-gray-400 text-sm sm:text-base font-medium">
-                        View customer enquiries and feedback submitted through the contact form.
+                        Manage customer messages, corporate pre-orders, and bulk gifting requests.
                     </p>
                 </div>
 
@@ -119,12 +119,12 @@ export default function EnquiriesPage() {
                 className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
             >
                 <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
-                    <h2 className="text-lg font-bold text-white">Submitted Messages</h2>
+                    <h2 className="text-lg font-bold text-white">Submitted Messages & Inquiries</h2>
                     <div className="flex items-center gap-4">
                         <DebouncedSearch
-                            placeholder="Search by name, email or location..."
+                            placeholder="Search by name, email or phone..."
                             onSearch={setSearchQuery}
-                            className="w-72"
+                            className="w-80"
                         />
                     </div>
                 </div>
@@ -136,86 +136,126 @@ export default function EnquiriesPage() {
                         </div>
                     ) : enquiries.length === 0 ? (
                         <div className="p-12 text-center text-gray-400 font-medium">
-                            No enquiries found yet.
+                            No enquiries or pre-orders found.
                         </div>
                     ) : (
                         <table className="w-full text-left text-sm text-gray-300">
                             <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
                                 <tr>
-                                    <th className="px-6 py-4">User</th>
+                                    <th className="px-6 py-4">Type & Client</th>
                                     <th className="px-6 py-4">Contact Info</th>
-                                    <th className="px-6 py-4">Location</th>
-                                    <th className="px-6 py-4">Date</th>
+                                    <th className="px-6 py-4">Target Date / Location</th>
+                                    <th className="px-6 py-4">Date Submitted</th>
                                     <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5 font-medium">
-                                {enquiries.map((enquiry: any) => (
-                                    <tr
-                                        key={enquiry.id}
-                                        className="hover:bg-white/[0.02] transition"
-                                    >
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-9 h-9 rounded-xl bg-[#E8BF7A]/10 border border-[#E8BF7A]/20 flex items-center justify-center text-[#E8BF7A]">
-                                                    <User className="w-4 h-4" />
+                                {enquiries.map((enquiry: any) => {
+                                    const isPreOrder = enquiry.enquiry_type === 'PRE_ORDER';
+                                    const rawPhone = (enquiry.phone_number || '').replace(/\D/g, '');
+                                    const whatsappMsg = encodeURIComponent(
+                                        `Hi ${enquiry.name}, thank you for reaching out to Crizbe! We would love to assist you with your pre-order request.`
+                                    );
+                                    const whatsappUrl = `https://wa.me/${rawPhone}?text=${whatsappMsg}`;
+
+                                    return (
+                                        <tr
+                                            key={enquiry.id}
+                                            className="hover:bg-white/[0.02] transition"
+                                        >
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-9 h-9 rounded-xl border flex items-center justify-center ${isPreOrder ? 'bg-[#E8BF7A]/20 border-[#E8BF7A] text-[#E8BF7A]' : 'bg-white/5 border-white/10 text-gray-400'}`}>
+                                                        {isPreOrder ? <Gift className="w-4 h-4" /> : <User className="w-4 h-4" />}
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-white font-bold">
+                                                                {enquiry.name}
+                                                            </span>
+                                                            {isPreOrder && (
+                                                                <span className="px-2 py-0.5 text-[9px] font-extrabold uppercase bg-[#E8BF7A] text-[#141414] rounded-full tracking-wider">
+                                                                    PRE-ORDER
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <span className="text-xs text-gray-400 font-mono">
+                                                            ID: #{enquiry.id.slice(0, 6)}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-white font-bold">
-                                                        {enquiry.name}
-                                                    </span>
-                                                    <span className="text-xs text-gray-400 font-mono">
-                                                        ID: #{enquiry.id.slice(0, 6)}
-                                                    </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex flex-col gap-1">
+                                                    {enquiry.email && (
+                                                        <div className="flex items-center gap-1.5 text-xs text-gray-300 font-mono">
+                                                            <Mail className="w-3.5 h-3.5 text-[#E8BF7A]" />
+                                                            {enquiry.email}
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-center gap-1.5 text-xs text-gray-400 font-mono">
+                                                        <Phone className="w-3.5 h-3.5 text-gray-500" />
+                                                        {enquiry.phone_number
+                                                            ? `${enquiry.phone_country_code || '+91'} ${enquiry.phone_number}`
+                                                            : 'N/A'}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex flex-col gap-1">
-                                                <div className="flex items-center gap-1.5 text-xs text-gray-300 font-mono">
-                                                    <Mail className="w-3.5 h-3.5 text-[#E8BF7A]" />
-                                                    {enquiry.email}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex flex-col gap-1 text-xs">
+                                                    {enquiry.target_date ? (
+                                                        <span className="text-[#E8BF7A] font-bold flex items-center gap-1 font-mono">
+                                                            <Calendar className="w-3.5 h-3.5" />
+                                                            Target Date: {enquiry.target_date}
+                                                        </span>
+                                                    ) : enquiry.location ? (
+                                                        <span className="text-gray-300 flex items-center gap-1">
+                                                            <MapPin className="w-3.5 h-3.5 text-[#E8BF7A]" />
+                                                            {enquiry.location}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-gray-500 italic">General</span>
+                                                    )}
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-xs text-gray-400 font-mono">
-                                                    <Phone className="w-3.5 h-3.5 text-gray-500" />
-                                                    {enquiry.phone_number
-                                                        ? `${enquiry.phone_country_code} ${enquiry.phone_number}`
-                                                        : 'N/A'}
+                                            </td>
+                                            <td className="px-6 py-4 text-gray-400 text-sm">
+                                                {enquiry.created_at
+                                                    ? new Date(enquiry.created_at).toLocaleDateString()
+                                                    : 'N/A'}
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <div className="flex items-center justify-end space-x-2">
+                                                    {rawPhone && (
+                                                        <a
+                                                            href={whatsappUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 transition"
+                                                            title="Reply on WhatsApp"
+                                                        >
+                                                            <MessageCircle className="w-4 h-4" />
+                                                        </a>
+                                                    )}
+                                                    <Link
+                                                        href={`/bd6b-6ced/dashboard/enquiries/${enquiry.id}`}
+                                                        className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-[#E8BF7A] transition"
+                                                        title="View Message"
+                                                    >
+                                                        <Eye className="w-4 h-4 text-[#E8BF7A]" />
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => handleDeleteClick(enquiry)}
+                                                        disabled={isDeleting}
+                                                        className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition disabled:opacity-50"
+                                                        title="Delete Enquiry"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-1.5 text-sm text-gray-300 font-medium">
-                                                <MapPin className="w-4 h-4 text-[#E8BF7A]" />
-                                                {enquiry.location}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-gray-400 text-sm">
-                                            {enquiry.created_at
-                                                ? new Date(enquiry.created_at).toLocaleDateString()
-                                                : 'N/A'}
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex items-center justify-end space-x-2">
-                                                <Link
-                                                    href={`/bd6b-6ced/dashboard/enquiries/${enquiry.id}`}
-                                                    className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition"
-                                                    title="View Message"
-                                                >
-                                                    <Eye className="w-4 h-4 text-[#E8BF7A]" />
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDeleteClick(enquiry)}
-                                                    disabled={isDeleting}
-                                                    className="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition disabled:opacity-50"
-                                                    title="Delete Enquiry"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     )}

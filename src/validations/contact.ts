@@ -10,3 +10,22 @@ export const contactSchema = z.object({
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
+
+export const preOrderSchema = z.object({
+    name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
+    phoneNumber: z
+        .string()
+        .min(7, { message: 'Phone number must be at least 7 digits' })
+        .max(15, { message: 'Phone number cannot exceed 15 digits' })
+        .regex(/^\d+$/, { message: 'Phone number must contain only digits' }),
+    phoneCountryCode: z.string().min(1, { message: 'Country code is required' }),
+    email: z
+        .string()
+        .email({ message: 'Invalid email address' })
+        .or(z.literal(''))
+        .optional(),
+    targetDate: z.string().optional(),
+    message: z.string().optional(),
+});
+
+export type PreOrderFormData = z.infer<typeof preOrderSchema>;

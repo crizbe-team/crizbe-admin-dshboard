@@ -4,12 +4,13 @@ import Link from 'next/link';
 import React, { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { ChevronDown, ChevronRight, ShoppingCart, User } from 'lucide-react';
+import { ChevronDown, ChevronRight, ShoppingCart, User, Gift } from 'lucide-react';
 import AuthActionWrapper from '@/components/AuthActionWrapper';
 import { authUtils } from '@/utils/auth';
 import { useFetchMinimalDetails } from '@/queries/use-account';
 import { useOutsideClick } from '@/hooks/use-outside-click';
 import NavigationMenu from './NavigationMenu';
+import PreOrderModal from '@/components/PreOrder/PreOrderModal';
 
 export default function Header() {
     const { currency, setCurrency, currencies, isLoading } = useCurrency();
@@ -17,6 +18,7 @@ export default function Header() {
     const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isPreOrderOpen, setIsPreOrderOpen] = useState(false);
     const [isAuth, setIsAuth] = useState(false);
     const currencyRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
@@ -24,8 +26,7 @@ export default function Header() {
     const { data: minimalDetailsRes } = useFetchMinimalDetails(isAuth);
     const cartCount = minimalDetailsRes?.data?.cart_count || 0;
 
-    const currentCurrency =
-        currencies.find((c) => c.code === currency) ||
+    const currentCurrency = currencies.find((c) => c.code === currency) ||
         currencies[0] || { code: currency, symbol: currency, name: currency };
 
     useEffect(() => {
@@ -49,8 +50,8 @@ export default function Header() {
 
     return (
         <>
-            <header className="fixed  top-0 left-0 right-0 z-50 w-full h-[80px] backdrop-blur-md ">
-                <div className="mx-auto wrapper flex h-full max-w-7xl items-center justify-between ">
+            <header className="fixed top-0 left-0 right-0 z-50 w-full h-[80px] backdrop-blur-md">
+                <div className="mx-auto wrapper flex h-full max-w-7xl items-center justify-between">
                     <h1 className="text-lg font-semibold text-white w-[150px]">
                         <Link href="/">
                             <Image
@@ -65,7 +66,16 @@ export default function Header() {
                     </h1>
 
                     {/* Right side actions */}
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4 sm:gap-6">
+                        {/* Pre-Order / Corporate Gifting Button */}
+                        <button
+                            onClick={() => setIsPreOrderOpen(true)}
+                            className="hidden sm:flex items-center gap-2 px-3.5 py-2 bg-[#E8BF7A] hover:bg-[#d4ac68] text-[#141414] font-bold text-xs rounded-full transition-all duration-300 shadow-md hover:scale-105"
+                        >
+                            <Gift className="w-3.5 h-3.5 text-[#141414]" />
+                            <span>Pre-Order</span>
+                        </button>
+
                         {/* Currency Switcher */}
                         <div className="relative" ref={currencyRef}>
                             <button
@@ -76,8 +86,7 @@ export default function Header() {
                                 <span className="font-medium">{currentCurrency.symbol}</span>
                                 <span className="text-sm">{currentCurrency.code}</span>
                                 <ChevronDown
-                                    className={`w-4 h-4 transition-transform duration-200 ${isCurrencyOpen ? 'rotate-180' : ''
-                                        }`}
+                                    className={`w-4 h-4 transition-transform duration-200 ${isCurrencyOpen ? 'rotate-180' : ''}`}
                                 />
                             </button>
 
@@ -90,10 +99,7 @@ export default function Header() {
                                                 setCurrency(curr.code);
                                                 setIsCurrencyOpen(false);
                                             }}
-                                            className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between ${currency === curr.code
-                                                ? 'bg-blue-50 text-blue-600'
-                                                : 'text-gray-700'
-                                                }`}
+                                            className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between ${currency === curr.code ? 'bg-blue-50 text-blue-600' : 'text-gray-700'}`}
                                         >
                                             <div className="flex items-center gap-3">
                                                 <span className="font-medium">{curr.symbol}</span>
@@ -114,14 +120,11 @@ export default function Header() {
                         </div>
 
                         {/* Cart & Profile */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3 sm:gap-4">
                             <AuthActionWrapper>
                                 <Link
                                     href="/checkout/cart"
-                                    className={`relative flex h-[44px] w-[44px] items-center justify-center rounded-full transition-all duration-300 ${isCartActive
-                                        ? 'bg-white text-[#4E3325] shadow-lg scale-110'
-                                        : 'bg-white/15 hover:bg-white text-[#4E3325] hover:shadow-lg hover:scale-110'
-                                        }`}
+                                    className={`relative flex h-[44px] w-[44px] items-center justify-center rounded-full transition-all duration-300 ${isCartActive ? 'bg-white text-[#4E3325] shadow-lg scale-110' : 'bg-white/15 hover:bg-white text-[#4E3325] hover:shadow-lg hover:scale-110'}`}
                                     aria-label="Cart"
                                 >
                                     <ShoppingCart className="w-[22px] h-[22px]" />
@@ -137,10 +140,7 @@ export default function Header() {
                                 <AuthActionWrapper>
                                     <button
                                         onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                        className={`flex h-[44px] w-[44px] items-center justify-center rounded-full transition-all duration-300 ${isProfileActive || isProfileOpen
-                                            ? 'bg-white text-[#4E3325] shadow-lg scale-110'
-                                            : 'bg-white/15 hover:bg-white text-[#4E3325] hover:shadow-lg hover:scale-110'
-                                            }`}
+                                        className={`flex h-[44px] w-[44px] items-center justify-center rounded-full transition-all duration-300 ${isProfileActive || isProfileOpen ? 'bg-white text-[#4E3325] shadow-lg scale-110' : 'bg-white/15 hover:bg-white text-[#4E3325] hover:shadow-lg hover:scale-110'}`}
                                         aria-label="Profile"
                                     >
                                         <User className="w-[22px] h-[22px]" />
@@ -153,28 +153,19 @@ export default function Header() {
                                             <Link
                                                 href="/profile"
                                                 onClick={() => setIsProfileOpen(false)}
-                                                className={`flex items-center justify-between w-full h-[52px] rounded-[16px] px-5 py-3 transition-all group ${isProfilePage
-                                                    ? 'bg-[#4E3325] text-white shadow-md'
-                                                    : 'bg-gray-50 text-[#1A1A1A] hover:bg-gray-100'
-                                                    }`}
+                                                className={`flex items-center justify-between w-full h-[52px] rounded-[16px] px-5 py-3 transition-all group ${isProfilePage ? 'bg-[#4E3325] text-white shadow-md' : 'bg-gray-50 text-[#1A1A1A] hover:bg-gray-100'}`}
                                             >
                                                 <span className="text-[17px] font-medium font-inter-tight">
                                                     Go to profile
                                                 </span>
                                                 <ChevronRight
-                                                    className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${isProfilePage
-                                                        ? 'text-white'
-                                                        : 'text-[#A4A7AE]'
-                                                        }`}
+                                                    className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${isProfilePage ? 'text-white' : 'text-[#A4A7AE]'}`}
                                                 />
                                             </Link>
                                             <Link
                                                 href="/profile/my-orders"
                                                 onClick={() => setIsProfileOpen(false)}
-                                                className={`flex items-center justify-between w-full h-[52px] rounded-[16px] px-5 py-3 transition-all group ${isOrdersPage
-                                                    ? 'bg-[#4E3325] text-white shadow-md'
-                                                    : 'bg-white text-[#1A1A1A] hover:bg-gray-50'
-                                                    }`}
+                                                className={`flex items-center justify-between w-full h-[52px] rounded-[16px] px-5 py-3 transition-all group ${isOrdersPage ? 'bg-[#4E3325] text-white shadow-md' : 'bg-white text-[#1A1A1A] hover:bg-gray-50'}`}
                                             >
                                                 <span className="text-[17px] font-medium font-inter-tight">
                                                     My orders
@@ -204,7 +195,13 @@ export default function Header() {
                 </div>
             </header>
 
-            <NavigationMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+            <NavigationMenu
+                isOpen={isMenuOpen}
+                onClose={() => setIsMenuOpen(false)}
+                onOpenPreOrder={() => setIsPreOrderOpen(true)}
+            />
+
+            <PreOrderModal open={isPreOrderOpen} onClose={() => setIsPreOrderOpen(false)} />
         </>
     );
 }
