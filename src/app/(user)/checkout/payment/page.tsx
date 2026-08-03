@@ -9,16 +9,19 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { useFetchAddresses } from '@/queries/use-account';
 import { useRazorpay } from '@/hooks/useRazorpay';
 import { useCreatePaymentOrder, useVerifyPayment } from '@/queries/use-payment';
-import { createOrder } from '@/services/orders';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Cookies from 'js-cookie';
 import { useFetchCartSummary } from '@/queries/use-cart';
 import RedirectingModal from '@/components/Modals/RedirectingModal';
 import { toast } from '@/components/ui/Toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { API_ENDPOINTS } from '@/utils/api-endpoints';
 
 type PayMethod = 'upi' | 'card' | 'netbanking' | 'wallet';
 
 export default function PaymentPage() {
+    const { GET_MINIMAL_DETAILS } = API_ENDPOINTS;
+    const queryClient = useQueryClient();
     const router = useRouter();
     const { currency } = useCurrency();
     const [isProcessing, setIsProcessing] = useState(false);
@@ -141,6 +144,7 @@ export default function PaymentPage() {
                         if (verifyResponse.status_code === 6000) {
                             Cookies.remove('selected_address_id');
                             Cookies.remove('buy_now_item');
+                            queryClient.invalidateQueries({ queryKey: [GET_MINIMAL_DETAILS] });
                             // Step 4: Redirect to success page
                             router.push(
                                 `/profile/my-orders?orderId=${verifyResponse.data.order_id}`
@@ -171,7 +175,10 @@ export default function PaymentPage() {
 
             openCheckout(options);
         } catch (error: any) {
-            console.error('Razorpay payment failed:', error?.message || error?.response?.data?.message || error);
+            console.error(
+                'Razorpay payment failed:',
+                error?.message || error?.response?.data?.message || error
+            );
             const msg =
                 error?.message ||
                 error?.response?.data?.message ||
