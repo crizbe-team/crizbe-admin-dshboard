@@ -14,6 +14,24 @@ const api = axios.create({
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
 });
 
+// Single token refresh queue state to prevent duplicate parallel refresh calls
+let isRefreshing = false;
+let failedQueue: Array<{
+    resolve: (token: string) => void;
+    reject: (error: any) => void;
+}> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+    failedQueue.forEach((promise) => {
+        if (error) {
+            promise.reject(error);
+        } else {
+            promise.resolve(token!);
+        }
+    });
+    failedQueue = [];
+};
+
 api.interceptors.request.use(
     (config: any) => {
         const accessToken = authUtils.getAccessToken();
@@ -33,10 +51,26 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
-        const originalRequest = error.config;
+        const originalRequest = error?.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+            if (isRefreshing) {
+                // Queue parallel 401 requests while a single refresh token call is in progress
+                return new Promise((resolve, reject) => {
+                    failedQueue.push({
+                        resolve: (token: string) => {
+                            originalRequest.headers.Authorization = `Bearer ${token}`;
+                            resolve(api(originalRequest));
+                        },
+                        reject: (err: any) => {
+                            reject(err);
+                        },
+                    });
+                });
+            }
+
             originalRequest._retry = true;
+            isRefreshing = true;
 
             try {
                 const refreshToken = authUtils.getRefreshToken();
@@ -48,13 +82,19 @@ api.interceptors.response.use(
                     refresh: refreshToken,
                 });
 
-                const { access_token } = response.data;
+                const access = response?.data?.data?.access || response?.data?.access;
 
-                authUtils.updateAccessToken(access_token);
+                if (!access) {
+                    throw new Error('Invalid refresh response token format');
+                }
 
-                originalRequest.headers.Authorization = `Bearer ${access_token}`;
+                authUtils.updateAccessToken(access);
+                processQueue(null, access);
+
+                originalRequest.headers.Authorization = `Bearer ${access}`;
                 return api(originalRequest);
             } catch (refreshError) {
+                processQueue(refreshError, null);
                 authUtils.removeTokens();
 
                 if (typeof window !== 'undefined') {
@@ -63,6 +103,8 @@ api.interceptors.response.use(
                 }
 
                 return Promise.reject(refreshError);
+            } finally {
+                isRefreshing = false;
             }
         }
 
