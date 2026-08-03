@@ -19,8 +19,12 @@ export const useRazorpayKeyId = () => {
 
 export const useCreatePaymentOrder = () => {
     const queryClient = useQueryClient();
-    return useMutation<any, any, { orderId?: string; currency?: string } | undefined>({
-        mutationFn: (data?: { orderId?: string; currency?: string }) => createPaymentOrder(data),
+    return useMutation<
+        any,
+        any,
+        { orderId?: string; currency?: string; variantId?: string; quantity?: number } | undefined
+    >({
+        mutationFn: (data) => createPaymentOrder(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [CREATE_PAYMENT_ORDER] });
         },
@@ -37,6 +41,8 @@ export const useVerifyPayment = () => {
             razorpayPaymentId: string;
             razorpaySignature: string;
             addressId?: string;
+            variantId?: string;
+            quantity?: number;
         }
     >({
         mutationFn: (payload) => verifyPayment(payload),
