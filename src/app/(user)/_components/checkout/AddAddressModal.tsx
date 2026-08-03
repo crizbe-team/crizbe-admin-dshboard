@@ -186,13 +186,14 @@ export default function AddAddressModal({
                 aria-labelledby={titleId}
                 className="relative w-full md:w-[800px]  rounded-[24px] bg-white shadow-xl border border-[#EEE7DB] overflow-hidden flex flex-col"
             >
-
                 <div className="sticky top-0 z-10 flex items-start justify-between px-[24px] pt-[24px] pb-[20px] bg-white">
                     <div>
                         <h2 id={titleId} className="text-base font-semibold text-[#191919]">
                             {editingAddress ? 'Edit address' : 'Add address'}
                         </h2>
-                        <p className="text-sm font-normal text-[#474747] mt-1">Enter the address details and continue.</p>
+                        <p className="text-sm font-normal text-[#474747] mt-1">
+                            Enter the address details and continue.
+                        </p>
                     </div>
                 </div>
                 <hr className="border-t border-[#E7E4DD]" />
@@ -235,6 +236,7 @@ export default function AddAddressModal({
                             onCodeSearchChange={setCountrySearchQuery}
                             placeholder="000 0000 000"
                             error={errors.phoneNumber}
+                            wrapperClassName="flex flex-col"
                         />
 
                         <FormInput

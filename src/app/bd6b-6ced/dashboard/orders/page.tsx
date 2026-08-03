@@ -313,8 +313,8 @@ export default function OrdersPage() {
                                             )}
                                         </button>
                                     </th>
-                                    <th className="px-6 py-4">Order ID</th>
-                                    <th className="px-6 py-4">Client</th>
+                                    <th className="px-6 py-4">Customer</th>
+                                    <th className="px-6 py-4">Payment</th>
                                     <th className="px-6 py-4">Status</th>
                                     <th className="px-6 py-4">Date</th>
                                     <th className="px-6 py-4">Total Amount</th>
@@ -328,6 +328,19 @@ export default function OrdersPage() {
                                         label: order.status,
                                         colorClass: 'bg-white/10 text-gray-300 border border-white/10',
                                     };
+
+                                    const customerName =
+                                        [order.first_name, order.last_name].filter(Boolean).join(' ') ||
+                                        order.user_details?.name ||
+                                        order.user_details?.username ||
+                                        'Guest User';
+
+                                    const contactInfo =
+                                        order.phone_number ||
+                                        order.user_details?.phone_number ||
+                                        order.user_details?.email ||
+                                        'No contact';
+
                                     return (
                                         <tr
                                             key={order.id}
@@ -349,20 +362,28 @@ export default function OrdersPage() {
                                                 </button>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <Clipboard className="w-4 h-4 text-[#E8BF7A]" />
-                                                    <span className="text-white font-bold font-mono text-sm">
-                                                        #{order.id.slice(0, 8)}
+                                                <div className="flex flex-col space-y-0.5">
+                                                    <span className="text-white font-bold">
+                                                        {customerName}
+                                                    </span>
+                                                    <span className="text-xs text-gray-400 font-mono">
+                                                        {contactInfo}
                                                     </span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="flex flex-col">
-                                                    <span className="text-white font-bold">
-                                                        {order.user_detail?.first_name || order.user_detail?.username || 'Guest'}
+                                                <div className="flex flex-col space-y-0.5">
+                                                    <span className="text-gray-200 text-xs font-semibold">
+                                                        {order.payment_method || 'Online'}
                                                     </span>
-                                                    <span className="text-xs text-gray-400 font-mono">
-                                                        {order.user_detail?.email}
+                                                    <span
+                                                        className={`text-[10px] font-extrabold uppercase tracking-wider ${
+                                                            order.payment_status === 'Paid'
+                                                                ? 'text-emerald-400'
+                                                                : 'text-amber-400'
+                                                        }`}
+                                                    >
+                                                        ● {order.payment_status || 'Pending'}
                                                     </span>
                                                 </div>
                                             </td>
@@ -375,10 +396,17 @@ export default function OrdersPage() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-gray-400 text-sm">
-                                                {new Date(order.created_at).toLocaleDateString()}
+                                                {new Date(order.created_at).toLocaleDateString(undefined, {
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    year: 'numeric',
+                                                })}
                                             </td>
                                             <td className="px-6 py-4 text-[#E8BF7A] font-bold font-mono text-base">
-                                                ₹{order.total_amount}
+                                                ₹{Number(order.total_amount || 0).toLocaleString('en-IN', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2,
+                                                })}
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end space-x-2">
