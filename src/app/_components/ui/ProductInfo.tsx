@@ -12,11 +12,14 @@ interface ProductInfoProps {
 }
 
 import { useCartToast } from '@/contexts/CartToastContext';
+import { toast } from '@/components/ui/Toast';
+import Cookies from 'js-cookie';
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     const router = useRouter();
     const { showToast } = useCartToast();
     const [quantity, setQuantity] = useState(1);
+    const [isBuying, setIsBuying] = useState(false);
     const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
         product.variants?.[0]?.id || null
     );
@@ -52,7 +55,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
 
     const handleAddToCart = () => {
         if (!selectedVariant && product.variants?.length > 0) {
-            alert('Please select a size');
+            toast.error('Please select a size');
             return;
         }
 
@@ -78,6 +81,31 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 },
             }
         );
+    };
+
+    const handleBuyNow = () => {
+        if (!selectedVariant && product.variants?.length > 0) {
+            toast.error('Please select a size');
+            return;
+        }
+
+        if (!isInStock) {
+            toast.error('This product size is currently out of stock.');
+            return;
+        }
+
+        // Store direct Buy Now item context in cookie
+        Cookies.set(
+            'buy_now_item',
+            JSON.stringify({
+                variant_id: selectedVariant?.id,
+                product_id: product.id,
+                quantity: quantity,
+            }),
+            { expires: 1 / 24 } // 1 hour
+        );
+
+        router.push('/checkout/address');
     };
 
     const { convertPrice, isLoading } = useCurrency();
@@ -266,16 +294,21 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     <div className="flex flex-col sm:flex-row gap-3 mb-[32px]">
                         <AuthActionWrapper>
                             <button
-                                disabled={isPending || !isInStock}
+                                onClick={handleBuyNow}
+                                disabled={isPending || isBuying || !isInStock}
                                 style={{
                                     background:
                                         'linear-gradient(88.77deg, #9A7236 -7.08%, #E8BF7A 31.99%, #C4994A 68.02%, #937854 122.31%)',
                                 }}
-                                className="group relative flex h-[44px] w-full items-center justify-center gap-[8px] overflow-hidden rounded-[12px] px-[24px] py-[12px] font-inter-tight text-[16px] leading-[150%] font-medium text-[#FFFFFF] transition-all duration-300 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 sm:flex-1"
+                                className="group relative flex h-[44px] w-full items-center justify-center gap-[8px] overflow-hidden rounded-[12px] px-[24px] py-[12px] font-inter-tight text-[16px] leading-[150%] font-medium text-[#FFFFFF] transition-all duration-300 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 sm:flex-1 cursor-pointer"
                             >
                                 {/* Shine Effect */}
                                 <div className="pointer-events-none absolute inset-0 -left-full h-full w-full -skew-x-12 bg-linear-to-r from-transparent via-white/30 to-transparent transition-all duration-1000 ease-in-out group-hover:left-full group-disabled:hidden" />
-                                <span className="relative z-10">Buy Now</span>
+                                {isBuying ? (
+                                    <Loader2 className="w-5 h-5 animate-spin relative z-10" />
+                                ) : (
+                                    <span className="relative z-10">Buy Now</span>
+                                )}
                             </button>
                         </AuthActionWrapper>
 

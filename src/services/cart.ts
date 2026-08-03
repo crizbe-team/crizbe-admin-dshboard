@@ -38,9 +38,14 @@ export const clearCart = async () => {
     return handleApiResponse(response);
 };
 
-export const getCartSummary = async () => {
+export const getCartSummary = async (params?: { variant_id?: string; quantity?: number }) => {
     const { GET_CART_SUMMARY } = API_ENDPOINTS;
-    const url = new ApiBuilder(GET_CART_SUMMARY).build();
+    const builder = new ApiBuilder(GET_CART_SUMMARY);
+    if (params?.variant_id) {
+        builder.query('variant_id', params.variant_id);
+        builder.query('quantity', (params.quantity || 1).toString());
+    }
+    const url = builder.build();
     const response = await api.get(url);
     return handleApiResponse(response);
 };

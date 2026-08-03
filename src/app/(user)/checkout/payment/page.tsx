@@ -84,13 +84,23 @@ export default function PaymentPage() {
             return;
         }
 
+        const buyNowCookie = Cookies.get('buy_now_item');
+        let buyNowItem: { variant_id?: string; quantity?: number } | undefined = undefined;
+        if (buyNowCookie) {
+            try {
+                buyNowItem = JSON.parse(buyNowCookie);
+            } catch (e) {}
+        }
+
         console.log('Setting isProcessing to true');
         setIsProcessing(true);
         try {
-            // Step 1: Create payment order directly for Cart (without creating DB order yet)
-            console.log('Step 1: Creating payment order for Cart');
+            // Step 1: Create payment order directly for Cart or Direct Buy Now
+            console.log('Step 1: Creating payment order');
             const paymentOrderResponse = await createPaymentOrderMutation.mutateAsync({
                 currency: currency || 'INR',
+                variantId: buyNowItem?.variant_id,
+                quantity: buyNowItem?.quantity,
             });
             console.log('Step 1 response:', paymentOrderResponse);
 
@@ -124,10 +134,13 @@ export default function PaymentPage() {
                             razorpayPaymentId: razorpayResponse.razorpay_payment_id,
                             razorpaySignature: razorpayResponse.razorpay_signature,
                             addressId: selectedAddress.id,
+                            variantId: buyNowItem?.variant_id,
+                            quantity: buyNowItem?.quantity,
                         });
 
                         if (verifyResponse.status_code === 6000) {
                             Cookies.remove('selected_address_id');
+                            Cookies.remove('buy_now_item');
                             // Step 4: Redirect to success page
                             router.push(
                                 `/profile/my-orders?orderId=${verifyResponse.data.order_id}`

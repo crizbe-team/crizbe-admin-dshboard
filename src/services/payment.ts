@@ -10,12 +10,19 @@ export const getRazorpayKeyId = async () => {
     return handleApiResponse(response);
 };
 
-export const createPaymentOrder = async (data?: { orderId?: string; currency?: string }) => {
+export const createPaymentOrder = async (data?: {
+    orderId?: string;
+    currency?: string;
+    variantId?: string;
+    quantity?: number;
+}) => {
     const { CREATE_PAYMENT_ORDER } = API_ENDPOINTS;
     const url = new ApiBuilder(CREATE_PAYMENT_ORDER).build();
     const response = await api.post(url, {
         order_id: data?.orderId,
         currency: data?.currency || 'INR',
+        variant_id: data?.variantId,
+        quantity: data?.quantity,
     });
     return handleApiResponse(response);
 };
@@ -25,6 +32,8 @@ export const verifyPayment = async (data: {
     razorpayPaymentId: string;
     razorpaySignature: string;
     addressId?: string;
+    variantId?: string;
+    quantity?: number;
 }) => {
     const { VERIFY_PAYMENT } = API_ENDPOINTS;
     const url = new ApiBuilder(VERIFY_PAYMENT).build();
@@ -33,6 +42,8 @@ export const verifyPayment = async (data: {
         razorpay_payment_id: data.razorpayPaymentId,
         razorpay_signature: data.razorpaySignature,
         address_id: data.addressId,
+        variant_id: data.variantId,
+        quantity: data.quantity,
     });
     return handleApiResponse(response);
 };

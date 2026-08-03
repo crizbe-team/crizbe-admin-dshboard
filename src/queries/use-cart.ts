@@ -11,10 +11,10 @@ export const useFetchCart = () => {
     });
 };
 
-export const useFetchCartSummary = () => {
+export const useFetchCartSummary = (params?: { variant_id?: string; quantity?: number }) => {
     return useQuery<any>({
-        queryKey: [GET_CART_SUMMARY],
-        queryFn: () => getCartSummary(),
+        queryKey: [GET_CART_SUMMARY, params?.variant_id, params?.quantity],
+        queryFn: () => getCartSummary(params),
     });
 };
 

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { Loader2 } from 'lucide-react';
 import { useFetchCartSummary } from '@/queries/use-cart';
+import Cookies from 'js-cookie';
 
 export default function CartSummaryCard({
     onContinue,
@@ -11,7 +12,21 @@ export default function CartSummaryCard({
     isProcessing?: boolean;
 }) {
     const { convertPrice, isLoading: isCurrencyLoading } = useCurrency();
-    const { data: summaryResponse, isLoading: isSummaryLoading } = useFetchCartSummary();
+    const buyNowCookie = Cookies.get('buy_now_item');
+    const buyNowParams = useMemo(() => {
+        if (!buyNowCookie) return undefined;
+        try {
+            const parsed = JSON.parse(buyNowCookie);
+            if (parsed.variant_id) {
+                return { variant_id: parsed.variant_id, quantity: parsed.quantity || 1 };
+            }
+        } catch (e) {
+            return undefined;
+        }
+        return undefined;
+    }, [buyNowCookie]);
+
+    const { data: summaryResponse, isLoading: isSummaryLoading } = useFetchCartSummary(buyNowParams);
 
     const formatMoney = (n: number) => {
         return isCurrencyLoading ? 'Loading...' : convertPrice(n);
