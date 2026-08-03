@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ModalWrapper } from '@/components/ui/ModalWrapper';
 import FormInput from '@/components/ui/FormInput';
 import FormTextarea from '@/components/ui/FormTextarea';
@@ -18,19 +20,17 @@ interface PreOrderModalProps {
     onClose: () => void;
 }
 
-type PreOrderFormErrors = Partial<Record<keyof PreOrderFormData, string>>;
+const FIELD_MAP: Record<string, keyof PreOrderFormData> = {
+    name: 'name',
+    phone_number: 'phoneNumber',
+    phone_country_code: 'phoneCountryCode',
+    email: 'email',
+    target_date: 'targetDate',
+    message: 'message',
+};
 
 export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
     const [countrySearchQuery, setCountrySearchQuery] = useState('');
-    const [formData, setFormData] = useState<PreOrderFormData>({
-        name: '',
-        phoneNumber: '',
-        phoneCountryCode: '+91',
-        email: '',
-        targetDate: '',
-        message: '',
-    });
-    const [errors, setErrors] = useState<PreOrderFormErrors>({});
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const { data: countriesData } = useFetchCountries({
@@ -39,52 +39,93 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
     const countries = countriesData?.data || [];
 
     const submitMutation = useSubmitContactForm();
-
     const todayString = new Date().toISOString().split('T')[0];
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const {
+        control,
+        handleSubmit,
+        reset,
+        setError,
+        setValue,
+        watch,
+        formState: { errors },
+    } = useForm<PreOrderFormData>({
+        resolver: zodResolver(preOrderSchema),
+        mode: 'onChange',
+        defaultValues: {
+            name: '',
+            phoneNumber: '',
+            phoneCountryCode: '+91',
+            email: '',
+            targetDate: '',
+            message: '',
+        },
+    });
 
-        // Frontend Zod validation
-        const validation = preOrderSchema.safeParse(formData);
-        if (!validation.success) {
-            const fieldErrors: PreOrderFormErrors = {};
-            validation.error.issues.forEach((issue) => {
-                const fieldName = issue.path[0] as keyof PreOrderFormData;
-                if (fieldName) {
-                    fieldErrors[fieldName] = issue.message;
-                }
+    const selectedCountryCode = watch('phoneCountryCode');
+
+    useEffect(() => {
+        if (open) {
+            reset({
+                name: '',
+                phoneNumber: '',
+                phoneCountryCode: '+91',
+                email: '',
+                targetDate: '',
+                message: '',
             });
-            setErrors(fieldErrors);
-            return;
+            setIsSubmitted(false);
+            setCountrySearchQuery('');
         }
+    }, [open, reset]);
 
-        setErrors({});
+    const handleApiErrors = (apiErrors: Record<string, any>, defaultMessage?: string) => {
+        if (apiErrors && Object.keys(apiErrors).length > 0) {
+            Object.keys(apiErrors).forEach((field) => {
+                const formField = FIELD_MAP[field] || (field as keyof PreOrderFormData);
+                const msg = Array.isArray(apiErrors[field]) ? apiErrors[field][0] : apiErrors[field];
+                setError(formField as any, {
+                    type: 'server',
+                    message: msg,
+                });
+            });
+        } else if (defaultMessage) {
+            toast.error(defaultMessage);
+        }
+    };
 
+    const onSubmit = async (data: PreOrderFormData) => {
         try {
             const payload: any = {
-                name: formData.name.trim(),
-                phone_number: formData.phoneNumber.trim(),
-                phone_country_code: formData.phoneCountryCode || '+91',
-                email: formData.email?.trim() || undefined,
-                target_date: formData.targetDate || undefined,
-                message: formData.message?.trim() || 'Pre-Order Request',
+                name: data.name.trim(),
+                phone_number: data.phoneNumber.trim(),
+                phone_country_code: data.phoneCountryCode || '+91',
+                email: data.email?.trim() || undefined,
+                target_date: data.targetDate || undefined,
+                message: data.message?.trim() || 'Pre-Order Request',
                 enquiry_type: 'PRE_ORDER',
             };
 
             const res = await submitMutation.mutateAsync(payload);
             if (res.status_code === 6000 || res.status === 'success') {
                 setIsSubmitted(true);
+            } else if (res.errors && Object.keys(res.errors).length > 0) {
+                handleApiErrors(res.errors, res.message);
             } else {
                 toast.error(res.message || 'Failed to submit pre-order inquiry.');
             }
-        } catch {
-            toast.error('An error occurred. Please try again.');
+        } catch (error: any) {
+            const apiErrors = error?.errors || error?.response?.data?.errors;
+            if (apiErrors && Object.keys(apiErrors).length > 0) {
+                handleApiErrors(apiErrors, error.message);
+            } else {
+                toast.error(error?.message || 'An error occurred. Please try again.');
+            }
         }
     };
 
     const handleReset = () => {
-        setFormData({
+        reset({
             name: '',
             phoneNumber: '',
             phoneCountryCode: '+91',
@@ -92,9 +133,8 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
             targetDate: '',
             message: '',
         });
-        setErrors({});
-        setCountrySearchQuery('');
         setIsSubmitted(false);
+        setCountrySearchQuery('');
         onClose();
     };
 
@@ -133,83 +173,95 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
                         </div>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} noValidate>
+                    <form onSubmit={handleSubmit(onSubmit)} noValidate>
                         {/* Form Body */}
                         <div className="p-8 space-y-4">
-                            <FormInput
-                                label="Name"
-                                required
-                                placeholder="Enter your name"
-                                value={formData.name}
-                                onChange={(e) => {
-                                    setFormData((prev) => ({ ...prev, name: e.target.value }));
-                                    if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
-                                }}
-                                error={errors.name}
+                            <Controller
+                                name="name"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormInput
+                                        label="Name"
+                                        required
+                                        placeholder="Enter your name"
+                                        {...field}
+                                        error={errors.name?.message}
+                                    />
+                                )}
                             />
 
-                            <PhoneInput
-                                label="Phone / WhatsApp"
-                                required
-                                value={formData.phoneNumber}
-                                onChange={(val) => {
-                                    setFormData((prev) => ({ ...prev, phoneNumber: val }));
-                                    if (errors.phoneNumber) setErrors((prev) => ({ ...prev, phoneNumber: undefined }));
-                                }}
-                                enableCodeSelect
-                                codes={countries as any}
-                                selectedCode={formData.phoneCountryCode}
-                                onCodeChange={(code) =>
-                                    setFormData((prev) => ({ ...prev, phoneCountryCode: code }))
-                                }
-                                enableCodeSearch
-                                codeSearchPlaceholder="Search country code..."
-                                onCodeSearchChange={setCountrySearchQuery}
-                                placeholder="Enter phone number"
-                                error={errors.phoneNumber}
+                            <Controller
+                                name="phoneNumber"
+                                control={control}
+                                render={({ field }) => (
+                                    <PhoneInput
+                                        label="Phone / WhatsApp"
+                                        required
+                                        value={field.value || ''}
+                                        onChange={field.onChange}
+                                        enableCodeSelect
+                                        codes={countries as any}
+                                        selectedCode={selectedCountryCode || '+91'}
+                                        onCodeChange={(code) => setValue('phoneCountryCode', code)}
+                                        enableCodeSearch
+                                        codeSearchPlaceholder="Search country code..."
+                                        onCodeSearchChange={setCountrySearchQuery}
+                                        placeholder="Enter phone number"
+                                        error={errors.phoneNumber?.message}
+                                    />
+                                )}
                             />
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <FormInput
-                                    label="Email address"
-                                    type="email"
-                                    placeholder="Enter email address"
-                                    value={formData.email}
-                                    onChange={(e) => {
-                                        setFormData((prev) => ({ ...prev, email: e.target.value }));
-                                        if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-                                    }}
-                                    error={errors.email}
+                                <Controller
+                                    name="email"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <FormInput
+                                            label="Email address"
+                                            type="email"
+                                            placeholder="Enter email address"
+                                            {...field}
+                                            value={field.value || ''}
+                                            error={errors.email?.message}
+                                        />
+                                    )}
                                 />
 
-                                <DatePicker
-                                    label="Target Date"
-                                    placeholder="Select date"
-                                    minDate={todayString}
-                                    value={formData.targetDate}
-                                    onChange={(dateVal) => {
-                                        setFormData((prev) => ({ ...prev, targetDate: dateVal }));
-                                        if (errors.targetDate) setErrors((prev) => ({ ...prev, targetDate: undefined }));
-                                    }}
-                                    error={errors.targetDate}
+                                <Controller
+                                    name="targetDate"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <DatePicker
+                                            label="Target Date"
+                                            placeholder="Select date"
+                                            minDate={todayString}
+                                            value={field.value || ''}
+                                            onChange={field.onChange}
+                                            error={errors.targetDate?.message}
+                                        />
+                                    )}
                                 />
                             </div>
 
-                            <FormTextarea
-                                label="Message / Notes"
-                                rows={3}
-                                placeholder="Enter any special requests or notes..."
-                                value={formData.message}
-                                onChange={(e) => {
-                                    setFormData((prev) => ({ ...prev, message: e.target.value }));
-                                    if (errors.message) setErrors((prev) => ({ ...prev, message: undefined }));
-                                }}
-                                error={errors.message}
+                            <Controller
+                                name="message"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormTextarea
+                                        label="Message / Notes"
+                                        rows={3}
+                                        placeholder="Enter any special requests or notes..."
+                                        {...field}
+                                        value={field.value || ''}
+                                        error={errors.message?.message}
+                                    />
+                                )}
                             />
                         </div>
 
                         {/* Footer */}
-                        <div className="flex items-center justify-end gap-3 px-8 py-5 bg-white border-t border-[#E7E4DD]">
+                        <div className="flex items-center justify-end gap-3 px-8 py-5 bg-[#FAF4E6]/50 border-t border-[#E7E4DD]">
                             <button
                                 type="button"
                                 onClick={handleReset}
