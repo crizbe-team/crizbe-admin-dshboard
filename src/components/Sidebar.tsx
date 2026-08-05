@@ -68,6 +68,7 @@ export default function Sidebar() {
 
     // Filter menu items dynamically based on assigned role permissions
     const menuItems = allMenuItems.filter((item) => {
+        if (item.perm === 'dashboard') return true; // Dashboard is always accessible, showing Common Dashboard if role lacks sales dashboard permission
         if (!userPermissions || userPermissions.length === 0) return true; // Default fallback to all if super admin or loading
         return userPermissions.includes(item.perm);
     });
