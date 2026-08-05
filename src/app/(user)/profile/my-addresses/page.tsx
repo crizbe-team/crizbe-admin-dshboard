@@ -11,6 +11,7 @@ import {
     useDeleteAddress,
 } from '@/queries/use-account';
 import ConfirmationModal from '@/components/Modals/ConfirmationModal';
+import SectionLoader from '@/components/ui/SectionLoader';
 
 type Address = {
     id: string;
@@ -124,11 +125,7 @@ export default function MyAddressesPage() {
     };
 
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-[50vh]">
-                <Loader2 className="w-10 h-10 animate-spin text-[#4E3325]" />
-            </div>
-        );
+        return <SectionLoader text="Loading your addresses..." minHeight="min-h-[350px]" />;
     }
 
     return (

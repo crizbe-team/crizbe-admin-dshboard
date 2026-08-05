@@ -16,6 +16,7 @@ import {
 } from '@/queries/use-account';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { toast } from '@/components/ui/Toast';
+import SectionLoader from '@/components/ui/SectionLoader';
 
 type Address = {
     id: string;
@@ -119,18 +120,6 @@ export default function ShippingPage() {
         return `${address.phone_country_code} ${address.phone_number}`;
     };
 
-    if (isLoading) {
-        return (
-            <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
-                <div className="wrapper mx-auto pt-[110px] pb-16">
-                    <div className="flex items-center justify-center min-h-[50vh]">
-                        <Loader2 className="w-10 h-10 animate-spin text-[#4E3325]" />
-                    </div>
-                </div>
-            </main>
-        );
-    }
-
     const breadcrumbItems = [
         {
             label: (
@@ -177,7 +166,10 @@ export default function ShippingPage() {
                 </div>
                 <div className="flex items-start justify-between gap-10 flex-col lg:flex-row">
                     <section className="w-full flex-1">
-                        <div className="">
+                        {isLoading ? (
+                            <SectionLoader text="Loading your addresses..." minHeight="min-h-[350px]" />
+                        ) : (
+                            <div className="">
                             {addresses.map((a: Address) => {
                                 const active = a.id === selected;
                                 return (
@@ -285,7 +277,8 @@ export default function ShippingPage() {
                                 </div>
                             )}
                         </div>
-                    </section>
+                    )}
+                </section>
 
                     <div className="w-full lg:w-auto">
                         <CartSummaryCard

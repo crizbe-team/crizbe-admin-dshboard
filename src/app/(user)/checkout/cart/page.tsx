@@ -14,6 +14,7 @@ import { useDebouncedCallback } from '@/hooks/use-debounce';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import EmptyCart from '@/components/ui/EmptyCart';
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import SectionLoader from '@/components/ui/SectionLoader';
 
 export default function CartPage() {
     const router = useRouter();
@@ -65,15 +66,7 @@ export default function CartPage() {
         removeFromCart(id);
     };
 
-    if (cartLoading) {
-        return (
-            <div className="min-h-screen bg-[#FFFAEF] flex items-center justify-center">
-                <Loader2 className="w-10 h-10 animate-spin text-[#4E3325]" />
-            </div>
-        );
-    }
-
-    if (itemsCount === 0) {
+    if (!cartLoading && itemsCount === 0) {
         return (
             <main className="min-h-screen bg-linear-to-b from-[#FFFAEF] to-[#E3D1A5]">
                 <div className="wrapper mx-auto pt-[110px] pb-16">
@@ -92,12 +85,15 @@ export default function CartPage() {
                 <h1 className="text-[28px]  font-medium text-[#191919] py-[32px] flex items-center">
                     Your cart{' '}
                     <span className="text-sm ml-[8px] md:text-base  lg:text-lg font-normal text-[#747474]">
-                        ({itemsCount} items)
+                        ({cartLoading ? '...' : itemsCount} items)
                     </span>
                 </h1>
                 <div className="flex items-start justify-between gap-[32px] flex-col lg:flex-row">
                     <section className="w-full flex-1">
-                        <div className="flex flex-col gap-[20px]">
+                        {cartLoading ? (
+                            <SectionLoader text="Loading your cart..." minHeight="min-h-[350px]" />
+                        ) : (
+                            <div className="flex flex-col gap-[20px]">
                             {items.map((it: any) => (
                                 <div
                                     key={it.id}
@@ -279,7 +275,8 @@ export default function CartPage() {
                                 </div>
                             ))}
                         </div>
-                    </section>
+                    )}
+                </section>
 
                     <div className="w-full lg:w-auto text-[#1a1a1a]">
                         <CartSummaryCard

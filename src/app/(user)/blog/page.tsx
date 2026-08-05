@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useFetchPublicBlogs } from '@/queries/use-blogs';
 import { BlogItem } from '@/types/blog';
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import SectionLoader from '@/components/ui/SectionLoader';
 import Footer from '@/app/_components/Footer';
 
 export default function BlogListPage() {
@@ -49,7 +50,7 @@ export default function BlogListPage() {
                 </div>
 
                 {isLoading ? (
-                    <div className="text-center py-20 text-[#8C7466] font-sans">Loading journal articles...</div>
+                    <SectionLoader text="Loading journal articles..." minHeight="min-h-[350px]" />
                 ) : displayBlogs.length === 0 ? (
                     <div className="text-center py-20 bg-white border border-[#EADBBD] rounded-3xl max-w-xl mx-auto p-12 shadow-xs mb-16">
                         <h3 className="text-2xl font-bricolage font-bold text-[#4E3325] mb-2">No Articles Published Yet</h3>

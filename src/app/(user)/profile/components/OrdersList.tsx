@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Loader2 } from 'lucide-react';
+import { Search } from 'lucide-react';
 import OrderCard from './OrderCard';
 import type { Order } from '@/types/order';
 import { useFetchOrders } from '@/queries/use-orders';
 import Image from 'next/image';
+import SectionLoader from '@/components/ui/SectionLoader';
 
 export default function OrdersList() {
     const { data: ordersResponse, isLoading } = useFetchOrders();
@@ -15,11 +16,7 @@ export default function OrdersList() {
     );
 
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-[50vh]">
-                <Loader2 className="w-10 h-10 animate-spin text-[#4E3325]" />
-            </div>
-        );
+        return <SectionLoader text="Loading your orders..." minHeight="min-h-[350px]" />;
     }
 
     return (

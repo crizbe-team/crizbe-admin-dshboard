@@ -11,6 +11,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { motion } from 'framer-motion';
 import { toast } from '@/components/ui/Toast';
+import SectionLoader from '@/components/ui/SectionLoader';
 
 interface ProductCardProps {
     product: any;
@@ -61,11 +62,7 @@ function ProductCard({
         : false;
     const isAdding = addingProductId === product.id;
     const isInCart = defaultVariant?.is_in_cart || addedToCartProductIds.has(String(product.id));
-    const buttonLabel = !hasVariants
-        ? 'Coming Soon'
-        : !isInStock
-            ? 'Out of Stock'
-            : 'Add to cart';
+    const buttonLabel = !hasVariants ? 'Coming Soon' : !isInStock ? 'Out of Stock' : 'Add to cart';
 
     return (
         <motion.div
@@ -97,10 +94,11 @@ function ProductCard({
                             {images.map((_: any, i: any) => (
                                 <div
                                     key={i}
-                                    className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${i === currentImageIndex
-                                        ? 'bg-white opacity-100'
-                                        : 'bg-white/30'
-                                        }`}
+                                    className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${
+                                        i === currentImageIndex
+                                            ? 'bg-white opacity-100'
+                                            : 'bg-white/30'
+                                    }`}
                                 />
                             ))}
                         </div>
@@ -272,9 +270,10 @@ export default function ExploreBytes() {
 
                 {/* Product Grid */}
                 {isProductsLoading ? (
-                    <div className="flex items-center justify-center py-24">
-                        <Loader2 className="w-8 h-8 animate-spin text-[#C4994A]" />
-                    </div>
+                    <SectionLoader
+                        text="Crafting fresh Crizbe Bytes..."
+                        minHeight="min-h-[300px]"
+                    />
                 ) : !apiProducts || apiProducts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center px-4 max-w-md mx-auto">
                         <div className="w-16 h-16 bg-[#FAF3E2] rounded-full flex items-center justify-center mb-6">
@@ -284,7 +283,8 @@ export default function ExploreBytes() {
                             Fresh Crizbe Bytes on the Way!
                         </h3>
                         <p className="text-[#4E3325]/70 text-sm leading-relaxed">
-                            We are currently crafting our next batch of premium crunch sticks. Savor the expectation and check back soon!
+                            We are currently crafting our next batch of premium crunch sticks. Savor
+                            the expectation and check back soon!
                         </p>
                     </div>
                 ) : (

@@ -5,13 +5,18 @@ import MyProfileCard from './MyProfileCard';
 import EditProfileModal from '@/components/Modals/EditProfileModal';
 import UpdatePasswordModal from '@/components/Modals/UpdatePasswordModal';
 import { useFetchMinimalDetails, useUpdateProfile, useUploadProfilePicture } from '@/queries/use-account';
+import SectionLoader from '@/components/ui/SectionLoader';
 
 export default function MyProfileContent() {
-    const { data: minimalDetailsRes } = useFetchMinimalDetails(true);
+    const { data: minimalDetailsRes, isLoading } = useFetchMinimalDetails(true);
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
     const { mutate: uploadPicture, isPending: isUploadingPic } = useUploadProfilePicture();
     const [showEditModal, setShowEditModal] = useState(false);
     const [showUpdatePasswordModal, setShowUpdatePasswordModal] = useState(false);
+
+    if (isLoading) {
+        return <SectionLoader text="Loading your profile..." minHeight="min-h-[350px]" />;
+    }
 
     const fullName = minimalDetailsRes?.data?.first_name
         ? minimalDetailsRes?.data?.first_name + ' ' + (minimalDetailsRes?.data?.last_name || '')

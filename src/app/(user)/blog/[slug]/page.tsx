@@ -7,6 +7,8 @@ import { useFetchPublicBlogDetail } from '@/queries/use-blogs';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Footer from '@/app/_components/Footer';
 
+import SectionLoader from '@/components/ui/SectionLoader';
+
 export default function BlogPostPage() {
     const params = useParams();
     const slug = typeof params?.slug === 'string' ? params.slug : '';
@@ -20,8 +22,8 @@ export default function BlogPostPage() {
 
     if (isLoading && !post) {
         return (
-            <div className="bg-[#FFFDF7] min-h-screen pt-32 text-center text-[#8C7466] font-sans">
-                Loading article details...
+            <div className="bg-[#FFFDF7] min-h-screen pt-32 flex items-center justify-center">
+                <SectionLoader text="Loading article details..." minHeight="min-h-[400px]" />
             </div>
         );
     }

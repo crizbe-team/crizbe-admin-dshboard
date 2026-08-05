@@ -7,6 +7,8 @@ import { useFetchLandingPageReviews } from '@/queries/use-products';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+import SectionLoader from '@/components/ui/SectionLoader';
+
 const slideVariants = {
     enter: (dir: 'left' | 'right') => ({
         x: dir === 'right' ? '100%' : '-100%',
@@ -44,7 +46,17 @@ const FeedbacSection = () => {
         }
     }, [feedbackItems.length]);
 
-    if (isLoading || feedbackItems.length === 0) {
+    if (isLoading) {
+        return (
+            <section className="py-24 lg:py-36 bg-[#F9F4E8] overflow-hidden">
+                <div className="wrapper mx-auto px-6 lg:px-8 max-w-4xl text-center flex flex-col items-center">
+                    <SectionLoader text="Loading customer stories..." minHeight="min-h-[300px]" />
+                </div>
+            </section>
+        );
+    }
+
+    if (feedbackItems.length === 0) {
         return null;
     }
 
