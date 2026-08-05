@@ -30,6 +30,14 @@ export type Product = {
     images?: { image: string }[];
     description?: string;
     ingredients?: string;
+    meta_title?: string;
+    meta_description?: string;
+    meta_keywords?: string;
+    meta_details?: {
+        meta_title?: string;
+        meta_description?: string;
+        meta_keywords?: string;
+    };
     variants?: SizeVariant[];
 };
 
@@ -74,6 +82,9 @@ function ProductAddEditModal({
             category: '',
             description: '',
             ingredients: '',
+            meta_title: '',
+            meta_description: '',
+            meta_keywords: '',
         },
     });
 
@@ -85,6 +96,9 @@ function ProductAddEditModal({
                     category: editingProduct.category?.id || '',
                     description: editingProduct.description || '',
                     ingredients: editingProduct.ingredients || '',
+                    meta_title: editingProduct.meta_title || editingProduct.meta_details?.meta_title || '',
+                    meta_description: editingProduct.meta_description || editingProduct.meta_details?.meta_description || '',
+                    meta_keywords: editingProduct.meta_keywords || editingProduct.meta_details?.meta_keywords || '',
                 });
                 setExistingImagesList(editingProduct.images?.map((img) => img.image) || []);
                 setImagePreviews([]);
@@ -95,6 +109,9 @@ function ProductAddEditModal({
                     category: '',
                     description: '',
                     ingredients: '',
+                    meta_title: '',
+                    meta_description: '',
+                    meta_keywords: '',
                 });
                 setExistingImagesList([]);
                 setImagePreviews([]);
@@ -127,6 +144,9 @@ function ProductAddEditModal({
         formData.append('category', data.category);
         formData.append('description', data.description);
         formData.append('ingredients', data.ingredients || '');
+        formData.append('meta_title', data.meta_title || '');
+        formData.append('meta_description', data.meta_description || '');
+        formData.append('meta_keywords', data.meta_keywords || '');
         formData.append('icon', editingProduct?.icon || '📦');
 
         existingImagesList.forEach((url) => {
@@ -302,6 +322,37 @@ function ProductAddEditModal({
                         label="Ingredients"
                         placeholder="e.g. Belgian Chocolate, Roasted Pistachios, Hazelnut Paste"
                     />
+
+                    {/* SEO / Meta Details Section */}
+                    <div className="pt-4 border-t border-white/10 space-y-4">
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-[#E8BF7A]">
+                                SEO / Meta Details (Optional)
+                            </h4>
+                            <span className="text-[11px] text-gray-400">Used for Product Single Page SEO</span>
+                        </div>
+
+                        <DashboardInput
+                            name="meta_title"
+                            control={control}
+                            label="Meta Title"
+                            placeholder="e.g. Belgian Chocolate Crunch Stick | Premium Luxury Chocolate"
+                        />
+
+                        <DashboardTextarea
+                            name="meta_description"
+                            control={control}
+                            label="Meta Description"
+                            placeholder="Enter short meta description for search engines and social sharing..."
+                        />
+
+                        <DashboardInput
+                            name="meta_keywords"
+                            control={control}
+                            label="Meta Keywords"
+                            placeholder="e.g. Belgian chocolate, crunch stick, luxury snacks, gourmet chocolates"
+                        />
+                    </div>
 
                     <div className="flex items-center gap-3 pt-4 border-t border-white/10">
                         <button

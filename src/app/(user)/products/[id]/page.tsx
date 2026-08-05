@@ -23,23 +23,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             };
         }
 
-        const title = `${product.name} | Crizbe Premium Crunch Sticks`;
+        const metaDetails = product.meta_details || {};
+        const title =
+            metaDetails.meta_title ||
+            product.meta_title ||
+            `${product.name} | Crizbe Premium Crunch Sticks`;
         const description =
+            metaDetails.meta_description ||
+            product.meta_description ||
             product.description ||
             `Savor the roasted perfection of Crizbe's premium ${product.name} crunch sticks. Crafted with real ingredients and dipped in rich Belgian chocolate.`;
+        const rawKeywords = metaDetails.meta_keywords || product.meta_keywords;
+        const keywords = rawKeywords
+            ? typeof rawKeywords === 'string'
+                ? rawKeywords.split(',').map((k: string) => k.trim()).filter(Boolean)
+                : rawKeywords
+            : [
+                  product.name,
+                  'Crizbe crunch sticks',
+                  'Belgian chocolate snacks',
+                  'premium chocolate',
+                  'gourmet chocolate sticks',
+              ];
+
         const ogImage =
             product.images?.[0]?.image || `${siteUrl}/images/user/og-image.jpeg`;
 
         return {
             title,
             description,
-            keywords: [
-                product.name,
-                'Crizbe crunch sticks',
-                'Belgian chocolate snacks',
-                'premium chocolate',
-                'gourmet chocolate sticks',
-            ],
+            keywords,
             alternates: {
                 canonical: `${siteUrl}/products/${id}`,
             },

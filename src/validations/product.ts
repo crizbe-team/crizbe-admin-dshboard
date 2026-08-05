@@ -5,6 +5,9 @@ export const productSchema = z.object({
     category: z.string().trim().min(1, 'Category is required'),
     description: z.string().trim().min(1, 'Description is required'),
     ingredients: z.string().trim().optional().or(z.literal('')),
+    meta_title: z.string().trim().optional().or(z.literal('')),
+    meta_description: z.string().trim().optional().or(z.literal('')),
+    meta_keywords: z.string().trim().optional().or(z.literal('')),
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;
