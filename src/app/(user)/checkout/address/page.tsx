@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Pencil, Phone, Trash2, Loader2 } from 'lucide-react';
+import { Pencil, Phone, Trash2, Loader2, Plus } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
 import CartSummaryCard from '@/app/(user)/_components/checkout/CartSummaryCard';
 import AddAddressModal from '@/app/(user)/_components/checkout/AddAddressModal';
@@ -276,9 +276,10 @@ export default function ShippingPage() {
                                         <button
                                             type="button"
                                             onClick={handleAddAddress}
-                                            className="inline-flex items-center justify-center rounded-full bg-[#4E3325] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#3e291c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4E3325]/40"
+                                            className="inline-flex items-center justify-center rounded-full bg-[#4E3325] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#3e291c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4E3325]/40 cursor-pointer gap-2 shadow-md hover:scale-105"
                                         >
-                                            Add your first address
+                                            <Plus className="w-4 h-4" />
+                                            Add Address
                                         </button>
                                     </div>
                                 </div>

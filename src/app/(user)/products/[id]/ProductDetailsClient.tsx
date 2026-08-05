@@ -73,14 +73,11 @@ const ProductDetailsPage = () => {
     return (
         <>
             <div className="wrapper pt-[80px] pb-8">
-                <div className="mb-[32px]">
-                    <Breadcrumb items={breadcrumbItems} />
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 ">
-                    {/* Left Column: Gallery */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+                    {/* Left Column: Sticky Breadcrumb & Gallery */}
                     <div className="lg:col-span-6">
-                        <div className="sticky top-24">
+                        <div className="sticky top-[90px] space-y-6">
+                            <Breadcrumb items={breadcrumbItems} />
                             <ProductGallery
                                 images={product.images || []}
                                 productName={product.name}

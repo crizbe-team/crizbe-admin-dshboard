@@ -10,7 +10,9 @@ import Image from 'next/image';
 export default function OrdersList() {
     const { data: ordersResponse, isLoading } = useFetchOrders();
     const [searchTerm, setSearchTerm] = useState('');
-    const [ordersImgSrc, setOrdersImgSrc] = useState("https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-orders.png");
+    const [ordersImgSrc, setOrdersImgSrc] = useState(
+        'https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-orders.png'
+    );
 
     if (isLoading) {
         return (
@@ -59,7 +61,9 @@ export default function OrdersList() {
                                 width={144}
                                 height={144}
                                 onError={() => {
-                                    setOrdersImgSrc("https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-cart.png");
+                                    setOrdersImgSrc(
+                                        'https://crizbe-media-bucket.s3.eu-north-1.amazonaws.com/static/empty-cart.png'
+                                    );
                                 }}
                             />
                         </div>

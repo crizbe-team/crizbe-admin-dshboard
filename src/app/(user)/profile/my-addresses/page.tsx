@@ -241,6 +241,16 @@ export default function MyAddressesPage() {
                         <p className="text-sm font-regular text-[#373737] mb-5">
                             Sorry, you don&apos;t have any <br /> shipping addresses saved yet!
                         </p>
+                        <div className="flex justify-center">
+                            <button
+                                type="button"
+                                onClick={handleAddAddress}
+                                className="inline-flex items-center justify-center rounded-full bg-[#4E3325] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#3e291c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4E3325]/40 cursor-pointer gap-2 shadow-md hover:scale-105"
+                            >
+                                <Plus className="w-4 h-4" />
+                                Add Address
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>

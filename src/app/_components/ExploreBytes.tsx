@@ -75,7 +75,7 @@ function ProductCard({
             transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.08 }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group border-[#E6E6E6] border overflow-hidden flex flex-col h-full w-[350px] rounded-[28px] bg-[#FCFAF4] transition-all duration-300 hover:shadow-md relative"
+            className="group border-[#E6E6E6] border overflow-hidden flex flex-col h-full w-full rounded-[28px] bg-[#FCFAF4] transition-all duration-300 hover:shadow-md relative"
         >
             <Link
                 href={`/products/${product.slug}`}
@@ -288,7 +288,7 @@ export default function ExploreBytes() {
                         </p>
                     </div>
                 ) : (
-                    <div className="flex flex-wrap justify-between gap-x-3 gap-y-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
                         {apiProducts?.map((product: any, index: number) => (
                             <ProductCard
                                 key={product.id}
