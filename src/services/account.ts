@@ -3,9 +3,15 @@ import { API_ENDPOINTS } from '../utils/api-endpoints';
 import { ApiBuilder } from '../utils/api-builder';
 import { handleApiResponse } from '../utils/api-handler';
 
-export const getAddresses = async () => {
+export const getAddresses = async (params?: any) => {
     const { GET_ADDRESSES } = API_ENDPOINTS;
-    const url = new ApiBuilder(GET_ADDRESSES).build();
+    const builder = new ApiBuilder(GET_ADDRESSES);
+    if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+            builder.query(key, value as any);
+        });
+    }
+    const url = builder.build();
     const response = await api.get(url);
     return handleApiResponse(response);
 };

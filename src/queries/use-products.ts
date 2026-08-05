@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import {
     getProducts,
     getProduct,
@@ -16,6 +16,22 @@ export const useFetchProducts = (filters: any = {}) => {
     return useQuery<any>({
         queryKey: [GET_PRODUCTS, filters],
         queryFn: () => getProducts(filters, 'get'),
+    });
+};
+
+export const useFetchInfiniteProducts = (filters: any = {}) => {
+    return useInfiniteQuery<any>({
+        queryKey: [GET_PRODUCTS, 'infinite', filters],
+        queryFn: ({ pageParam = 1 }) =>
+            getProducts({ ...filters, page: pageParam }, 'get'),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage: any) => {
+            const pagination = lastPage?.pagination;
+            if (pagination?.has_next && pagination?.next_page_number) {
+                return pagination.next_page_number;
+            }
+            return undefined;
+        },
     });
 };
 

@@ -9,7 +9,7 @@ import AddAddressModal from '@/app/(user)/_components/checkout/AddAddressModal';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import {
-    useFetchAddresses,
+    useFetchInfiniteAddresses,
     useCreateAddress,
     useUpdateAddress,
     useDeleteAddress,
@@ -43,16 +43,44 @@ type Address = {
 
 export default function ShippingPage() {
     const router = useRouter();
-    const { data: addressesData, isLoading } = useFetchAddresses();
+    const {
+        data,
+        isLoading,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useFetchInfiniteAddresses();
+
     const { mutate: createAddress, isPending: isCreating } = useCreateAddress();
     const { mutate: updateAddress, isPending: isUpdating } = useUpdateAddress();
     const { mutate: deleteAddress, isPending: isDeleting } = useDeleteAddress();
 
-    const addresses = addressesData?.data || [];
+    const addresses = data?.pages.flatMap((page: any) => page?.data || []) || [];
 
     const [selected, setSelected] = useState<string>('');
     const [open, setOpen] = useState(false);
     const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+
+    const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
+
+    React.useEffect(() => {
+        if (!loadMoreRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        observer.observe(loadMoreRef.current);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     // Set default address as selected if available
     React.useEffect(() => {
@@ -249,6 +277,12 @@ export default function ShippingPage() {
                                     </label>
                                 );
                             })}
+
+                            <div ref={loadMoreRef} className="py-4 flex justify-center">
+                                {isFetchingNextPage && (
+                                    <SectionLoader text="Loading more addresses..." minHeight="min-h-[160px]" />
+                                )}
+                            </div>
 
                             {addresses.length === 0 && (
                                 <div className="text-center py-14 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import {
     createOrder,
     getOrderList,
@@ -43,6 +43,22 @@ export const useFetchOrders = (params?: any) => {
     return useQuery<any>({
         queryKey: [ORDER_LIST, params],
         queryFn: () => getOrderList(params),
+    });
+};
+
+export const useFetchInfiniteOrders = (params?: any) => {
+    return useInfiniteQuery<any>({
+        queryKey: [ORDER_LIST, 'infinite', params],
+        queryFn: ({ pageParam = 1 }) =>
+            getOrderList({ ...params, page: pageParam }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage: any) => {
+            const pagination = lastPage?.pagination;
+            if (pagination?.has_next && pagination?.next_page_number) {
+                return pagination.next_page_number;
+            }
+            return undefined;
+        },
     });
 };
 

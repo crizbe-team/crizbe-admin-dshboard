@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import ProductCard from '@/app/_components/ui/ProductCard';
-import { useFetchProducts } from '@/queries/use-products';
-import UserLoaders from '@/components/ui/UserLoader';
+import { useFetchInfiniteProducts } from '@/queries/use-products';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { Search } from 'lucide-react';
 import { useDebouncedCallback } from '@/hooks/use-debounce';
+import SectionLoader from '@/components/ui/SectionLoader';
 
 const ProductsPage = () => {
     const [search, setSearch] = useState('');
@@ -15,7 +15,7 @@ const ProductsPage = () => {
 
     const handleSearch = useDebouncedCallback((query: string) => {
         setDebouncedQuery(query);
-    }, 500);
+    }, 400);
 
     const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const query = e.target.value;
@@ -23,10 +23,41 @@ const ProductsPage = () => {
         handleSearch(query);
     };
 
-    // Fetch products
-    const { data: productsData, isLoading, isError } = useFetchProducts({ q: debouncedQuery });
+    // Fetch infinite products
+    const {
+        data,
+        isLoading,
+        isError,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useFetchInfiniteProducts(
+        debouncedQuery ? { q: debouncedQuery } : {}
+    );
 
-    const products = productsData?.data || [];
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+    // Infinite scroll intersection observer
+    useEffect(() => {
+        if (!loadMoreRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        observer.observe(loadMoreRef.current);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+    const allProducts = data?.pages.flatMap((page: any) => page?.data || []) || [];
 
     const breadcrumbItems = [
         {
@@ -57,16 +88,14 @@ const ProductsPage = () => {
                         value={search}
                         onChange={onSearchChange}
                         placeholder="Search products..."
-                        className="w-full h-[44px] pl-10 pr-3 rounded-[12px] border border-[#E7E4DD] bg-white text-sm text-[#474747] outline-none placeholder:text-[#B7AFA5] "
+                        className="w-full h-[44px] pl-10 pr-3 rounded-[12px] border border-[#E7E4DD] bg-white text-sm text-[#474747] outline-none placeholder:text-[#B7AFA5]"
                     />
                 </div>
             </div>
 
             {isLoading ? (
-                <div className="flex items-center justify-center min-h-[50vh]">
-                    <UserLoaders className="static" />
-                </div>
-            ) : products.length === 0 ? (
+                <SectionLoader text="Loading fresh Crizbe products..." minHeight="min-h-[400px]" />
+            ) : allProducts.length === 0 ? (
                 <div className="flex items-center justify-center min-h-[50vh]">
                     {isError ? (
                         <div className="text-red-500">
@@ -83,17 +112,27 @@ const ProductsPage = () => {
                                 />
                             </div>
                             <p className="text-sm font-regular text-[#373737]">
-                                Sorry, no products are available right now. <br /> Please check back
-                                later!
+                                {debouncedQuery
+                                    ? 'No products match your search query.'
+                                    : 'Sorry, no products are available right now. Please check back later!'}
                             </p>
                         </div>
                     )}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 space-y-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-                    {products.map((product: any) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
+                <div className="space-y-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 items-stretch">
+                        {allProducts.map((product: any) => (
+                            <ProductCard key={product.id} product={product} />
+                        ))}
+                    </div>
+
+                    {/* Infinite Scroll Sentinel */}
+                    <div ref={loadMoreRef} className="py-6 flex justify-center">
+                        {isFetchingNextPage && (
+                            <SectionLoader text="Loading more products..." minHeight="min-h-[180px]" />
+                        )}
+                    </div>
                 </div>
             )}
         </div>

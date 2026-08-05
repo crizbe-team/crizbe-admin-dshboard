@@ -9,7 +9,7 @@ import CheckoutSteps from '@/app/(user)/_components/checkout/CheckoutSteps';
 
 import { useRouter } from 'next/navigation';
 import CartSummaryCard from '../../_components/checkout/CartSummaryCard';
-import { useFetchCart, useUpdateCartItem, useRemoveFromCart } from '@/queries/use-cart';
+import { useFetchInfiniteCart, useUpdateCartItem, useRemoveFromCart } from '@/queries/use-cart';
 import { useDebouncedCallback } from '@/hooks/use-debounce';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import EmptyCart from '@/components/ui/EmptyCart';
@@ -20,12 +20,43 @@ export default function CartPage() {
     const router = useRouter();
     const { convertPrice, isLoading } = useCurrency();
 
-    const { data: cartResponse, isLoading: cartLoading } = useFetchCart();
+    const {
+        data,
+        isLoading: cartLoading,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useFetchInfiniteCart();
+
     const { mutate: updateCartItem, isPending: isUpdating } = useUpdateCartItem();
     const { mutate: removeFromCart } = useRemoveFromCart();
 
-    const cartData = cartResponse?.data;
-    const items = cartData?.items || [];
+    const allPages = data?.pages || [];
+    const items = React.useMemo(() => {
+        return allPages.flatMap((page: any) => page?.data?.items || (Array.isArray(page?.data) ? page?.data : [])) || [];
+    }, [data?.pages]);
+    const cartData = allPages[0]?.data;
+
+    const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!loadMoreRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        observer.observe(loadMoreRef.current);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     const [localQuantities, setLocalQuantities] = useState<Record<string, number>>({});
     const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -34,11 +65,17 @@ export default function CartPage() {
     // Sync local quantities with server data when it changes
     useEffect(() => {
         if (items.length > 0) {
-            const newQuantities: Record<string, number> = {};
-            items.forEach((it: any) => {
-                newQuantities[it.id] = it.quantity;
+            setLocalQuantities((prev) => {
+                let hasChanged = false;
+                const newQuantities: Record<string, number> = { ...prev };
+                items.forEach((it: any) => {
+                    if (prev[it.id] !== it.quantity) {
+                        newQuantities[it.id] = it.quantity;
+                        hasChanged = true;
+                    }
+                });
+                return hasChanged ? newQuantities : prev;
             });
-            setLocalQuantities(newQuantities);
         }
     }, [items]);
 
@@ -274,6 +311,12 @@ export default function CartPage() {
                                     </div>
                                 </div>
                             ))}
+
+                            <div ref={loadMoreRef} className="py-4 flex justify-center">
+                                {isFetchingNextPage && (
+                                    <SectionLoader text="Loading more cart items..." minHeight="min-h-[160px]" />
+                                )}
+                            </div>
                         </div>
                     )}
                 </section>

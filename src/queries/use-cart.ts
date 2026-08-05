@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { getCart, addToCart, updateCartItem, removeFromCart, clearCart, getCartSummary } from '../services/cart';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
 
@@ -8,6 +8,22 @@ export const useFetchCart = () => {
     return useQuery<any>({
         queryKey: [GET_CART],
         queryFn: () => getCart(),
+    });
+};
+
+export const useFetchInfiniteCart = (params?: any) => {
+    return useInfiniteQuery<any>({
+        queryKey: [GET_CART, 'infinite', params],
+        queryFn: ({ pageParam = 1 }) =>
+            getCart({ ...params, page: pageParam }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage: any) => {
+            const pagination = lastPage?.pagination;
+            if (pagination?.has_next && pagination?.next_page_number) {
+                return pagination.next_page_number;
+            }
+            return undefined;
+        },
     });
 };
 

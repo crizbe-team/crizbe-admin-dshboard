@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import {
     getAddresses,
     getAddress,
@@ -57,6 +57,22 @@ export const useFetchAddresses = () => {
     return useQuery<any>({
         queryKey: [GET_ADDRESSES],
         queryFn: () => getAddresses(),
+    });
+};
+
+export const useFetchInfiniteAddresses = (params?: any) => {
+    return useInfiniteQuery<any>({
+        queryKey: [GET_ADDRESSES, 'infinite', params],
+        queryFn: ({ pageParam = 1 }) =>
+            getAddresses({ ...params, page: pageParam }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage: any) => {
+            const pagination = lastPage?.pagination;
+            if (pagination?.has_next && pagination?.next_page_number) {
+                return pagination.next_page_number;
+            }
+            return undefined;
+        },
     });
 };
 

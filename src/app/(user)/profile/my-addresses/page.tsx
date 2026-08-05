@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Pencil, Phone, Trash2, Loader2, Plus } from 'lucide-react';
 import AddAddressModal from '@/app/(user)/_components/checkout/AddAddressModal';
 import {
-    useFetchAddresses,
+    useFetchInfiniteAddresses,
     useCreateAddress,
     useUpdateAddress,
     useDeleteAddress,
@@ -37,18 +37,46 @@ type Address = {
 };
 
 export default function MyAddressesPage() {
-    const { data: addressesData, isLoading } = useFetchAddresses();
+    const {
+        data,
+        isLoading,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useFetchInfiniteAddresses();
+
     const { mutate: createAddress, isPending: isCreating } = useCreateAddress();
     const { mutate: updateAddress, isPending: isUpdating } = useUpdateAddress();
     const { mutate: deleteAddress, isPending: isDeleting } = useDeleteAddress();
 
-    const addresses = addressesData?.data || [];
+    const addresses = data?.pages.flatMap((page: any) => page?.data || []) || [];
 
     const [selected, setSelected] = useState<string>('');
     const [open, setOpen] = useState(false);
     const [editingAddress, setEditingAddress] = useState<Address | null>(null);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
+
+    const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
+
+    React.useEffect(() => {
+        if (!loadMoreRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        observer.observe(loadMoreRef.current);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     React.useEffect(() => {
         if (addresses.length > 0 && !selected) {
@@ -224,6 +252,12 @@ export default function MyAddressesPage() {
                         </div>
                     );
                 })}
+
+                <div ref={loadMoreRef} className="py-4 flex justify-center">
+                    {isFetchingNextPage && (
+                        <SectionLoader text="Loading more addresses..." minHeight="min-h-[160px]" />
+                    )}
+                </div>
 
                 {addresses.length === 0 && !isLoading && (
                     <div className="text-center py-14 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">
