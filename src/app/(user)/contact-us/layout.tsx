@@ -1,16 +1,19 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Contact Us & Customer Support | Crizbe Premium Chocolate',
+    title: {
+        absolute: 'Contact Crizbe | Premium Chocolate Online India',
+    },
     description:
-        'Get in touch with Crizbe customer care. We are here to answer questions about our Belgian chocolate crunch sticks, orders, ingredient details, and wholesale enquiries.',
+        'Contact Crizbe for questions about premium chocolate crunch sticks, products, orders, delivery and customer support when shopping online in India.',
     keywords: ['contact Crizbe', 'Crizbe customer support', 'luxury chocolate contact', 'crunch sticks inquiry'],
     alternates: {
         canonical: 'https://crizbe.com/contact-us',
     },
     openGraph: {
-        title: 'Contact Us & Customer Support | Crizbe Premium Chocolate',
-        description: 'Get in touch with Crizbe for order inquiries, corporate gifts, and customer support.',
+        title: 'Contact Crizbe | Premium Chocolate Online India',
+        description:
+            'Contact Crizbe for questions about premium chocolate crunch sticks, products, orders, delivery and customer support when shopping online in India.',
         url: 'https://crizbe.com/contact-us',
         images: ['/images/user/og-image.jpeg'],
     },

@@ -1,9 +1,11 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Our Story | Crafted Belgian Chocolate Crunch Sticks & Gourmet Heritage',
+    title: {
+        absolute: 'About Crizbe | Premium Chocolate Brand in India',
+    },
     description:
-        'Discover the journey behind Crizbe—where passion for luxury Belgian chocolate meets slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond.',
+        'Discover Crizbe, a premium chocolate snack brand bringing crispy crunch sticks with hazelnut, pistachio and almond flavours to chocolate lovers across India.',
     keywords: [
         'Crizbe story',
         'luxury chocolate brand',
@@ -15,8 +17,9 @@ export const metadata: Metadata = {
         canonical: 'https://crizbe.com/our-story',
     },
     openGraph: {
-        title: 'Our Story | Crafted Belgian Chocolate Crunch Sticks & Gourmet Heritage',
-        description: 'Explore the journey of Crizbe and our commitment to premium crunch sticks.',
+        title: 'About Crizbe | Premium Chocolate Brand in India',
+        description:
+            'Discover Crizbe, a premium chocolate snack brand bringing crispy crunch sticks with hazelnut, pistachio and almond flavours to chocolate lovers across India.',
         url: 'https://crizbe.com/our-story',
         images: ['/images/user/og-image.jpeg'],
     },

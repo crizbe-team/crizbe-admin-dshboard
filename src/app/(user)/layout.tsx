@@ -6,18 +6,17 @@ export const metadata: Metadata = {
     metadataBase: new URL('https://crizbe.com'),
     title: {
         template: '%s | Crizbe',
-        default: 'Crizbe | Once in a while luxury',
+        default: 'Premium Chocolate & Crunch Sticks Online India | Crizbe',
     },
     description:
-        "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
+        "Shop premium chocolate crunch sticks online in India, featuring hazelnut, pistachio and almond flavours. Discover Crizbe's crispy, indulgent snacks today.",
     keywords: [
         'Crizbe',
-        'Once in a while luxury',
-        'crunch sticks',
-        'premium chocolate',
-        'hazelnut chocolate',
-        'pista chocolate',
-        'luxury snacks',
+        'premium chocolate crunch sticks',
+        'chocolate crunch sticks online India',
+        'hazelnut crunch sticks',
+        'pistachio crunch sticks',
+        'almond crunch sticks',
     ],
     authors: [{ name: 'Crizbe' }],
     creator: 'Crizbe',
@@ -25,9 +24,9 @@ export const metadata: Metadata = {
         type: 'website',
         locale: 'en_US',
         url: 'https://crizbe.com',
-        title: 'Crizbe | Once in a while luxury',
+        title: 'Premium Chocolate & Crunch Sticks Online India | Crizbe',
         description:
-            "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
+            "Shop premium chocolate crunch sticks online in India, featuring hazelnut, pistachio and almond flavours. Discover Crizbe's crispy, indulgent snacks today.",
         siteName: 'Crizbe',
         images: [
             {
@@ -40,9 +39,9 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Crizbe | Once in a while luxury',
+        title: 'Premium Chocolate & Crunch Sticks Online India | Crizbe',
         description:
-            "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond. Where premium texture meets chocolate indulgence in every bite.",
+            "Shop premium chocolate crunch sticks online in India, featuring hazelnut, pistachio and almond flavours. Discover Crizbe's crispy, indulgent snacks today.",
         creator: '@crizbe',
         images: ['/images/user/og-image.jpeg'],
     },

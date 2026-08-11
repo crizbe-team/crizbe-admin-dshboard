@@ -2,9 +2,11 @@ import Footer from '@/app/_components/Footer';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Gourmet Chocolate Crunch Sticks Collection | Hazelnut, Pistachio & Almond | Crizbe',
+    title: {
+        absolute: 'Premium Chocolate Crunch Sticks Online India | Crizbe',
+    },
     description:
-        'Explore the full Crizbe luxury crunch sticks collection featuring Belgian chocolate with real Hazelnut, Pistachio, Almond nut fillings, and Mixed Packs.',
+        "Explore Crizbe's premium chocolate crunch sticks online in India, available in hazelnut, pistachio, almond and mixed flavours for every chocolate lover.",
     keywords: [
         'premium chocolate crunch sticks',
         'Belgian chocolate snacks',
@@ -17,9 +19,9 @@ export const metadata: Metadata = {
         canonical: 'https://crizbe.com/products',
     },
     openGraph: {
-        title: 'Gourmet Chocolate Crunch Sticks Collection | Crizbe',
+        title: 'Premium Chocolate Crunch Sticks Online India | Crizbe',
         description:
-            'Indulge in Crizbe slender, perfectly layered Belgian chocolate crunch sticks in Hazelnut, Pistachio, and Almond flavors.',
+            "Explore Crizbe's premium chocolate crunch sticks online in India, available in hazelnut, pistachio, almond and mixed flavours for every chocolate lover.",
         url: 'https://crizbe.com/products',
         images: ['/images/user/og-image.jpeg'],
     },

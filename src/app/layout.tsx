@@ -28,11 +28,11 @@ const bricolage = Bricolage_Grotesque({
 export const metadata: Metadata = {
     metadataBase: new URL('https://crizbe.com'),
     title: {
-        default: 'Crizbe | Premium Belgian Chocolate Crunch Sticks & Gourmet Snacks',
-        template: '%s | Crizbe Premium Chocolate',
+        default: 'Premium Chocolate & Crunch Sticks Online India | Crizbe',
+        template: '%s | Crizbe',
     },
     description:
-        "Once in a while luxury. Indulge in Crizbe's slender, perfectly layered chocolate crunch sticks crafted with real hazelnut, pistachio, and almond. Premium Belgian chocolate snacks.",
+        "Shop premium chocolate crunch sticks online in India, featuring hazelnut, pistachio and almond flavours. Discover Crizbe's crispy, indulgent snacks today.",
     keywords: [
         'Crizbe',
         'premium chocolate crunch sticks',
