@@ -49,9 +49,7 @@ export default function SmoothScroll() {
             const hazelnutBottle = document.querySelector('#hazelnut-bottle');
             const pistaBottle = document.querySelector('#pista-bottle');
             const almondBottleTarget = document.querySelector('.almond-bottle-target-position');
-            const hazelnutBottleTarget = document.querySelector(
-                '.hazelnut-bottle-target-position'
-            );
+            const hazelnutBottleTarget = document.querySelector('.hazelnut-bottle-target-position');
             const pistaBottleTarget = document.querySelector('.pista-bottle-target-position');
 
             const horizontalWrapper = document.querySelector('.horizontal-scroll-wrapper');
@@ -117,11 +115,7 @@ export default function SmoothScroll() {
                     invalidateOnRefresh: true,
                     onToggle: (self) => {
                         const isPastEnd = self.progress === 1;
-                        const heroBottles = [
-                            '#almond-bottle',
-                            '#hazelnut-bottle',
-                            '#pista-bottle',
-                        ];
+                        const heroBottles = ['#almond-bottle', '#hazelnut-bottle', '#pista-bottle'];
                         const targetBottles = [
                             '#almond-bottle-target',
                             '#hazelnut-bottle-target',
@@ -157,10 +151,7 @@ export default function SmoothScroll() {
                             if (bRect.width === 0 || tRect.width === 0) return 0;
                             const curX = gsap.getProperty(almondBottle, 'x');
                             return (
-                                tRect.left +
-                                tRect.width / 2 -
-                                (bRect.left + bRect.width / 2) +
-                                curX
+                                tRect.left + tRect.width / 2 - (bRect.left + bRect.width / 2) + curX
                             );
                         },
                         y: () => {
@@ -170,10 +161,7 @@ export default function SmoothScroll() {
                             if (bRect.height === 0 || tRect.height === 0) return 0;
                             const curY = gsap.getProperty(almondBottle, 'y');
                             return (
-                                tRect.top +
-                                tRect.height / 2 -
-                                (bRect.top + bRect.height / 2) +
-                                curY
+                                tRect.top + tRect.height / 2 - (bRect.top + bRect.height / 2) + curY
                             );
                         },
                         rotate: '0deg',
@@ -195,10 +183,7 @@ export default function SmoothScroll() {
                             if (bRect.width === 0 || tRect.width === 0) return 0;
                             const curX = gsap.getProperty(hazelnutBottle, 'x');
                             return (
-                                tRect.left +
-                                tRect.width / 2 -
-                                (bRect.left + bRect.width / 2) +
-                                curX
+                                tRect.left + tRect.width / 2 - (bRect.left + bRect.width / 2) + curX
                             );
                         },
                         y: () => {
@@ -208,10 +193,7 @@ export default function SmoothScroll() {
                             if (bRect.height === 0 || tRect.height === 0) return 0;
                             const curY = gsap.getProperty(hazelnutBottle, 'y');
                             return (
-                                tRect.top +
-                                tRect.height / 2 -
-                                (bRect.top + bRect.height / 2) +
-                                curY
+                                tRect.top + tRect.height / 2 - (bRect.top + bRect.height / 2) + curY
                             );
                         },
                         rotate: '0deg',
@@ -233,10 +215,7 @@ export default function SmoothScroll() {
                             if (bRect.width === 0 || tRect.width === 0) return 0;
                             const curX = gsap.getProperty(pistaBottle, 'x');
                             return (
-                                tRect.left +
-                                tRect.width / 2 -
-                                (bRect.left + bRect.width / 2) +
-                                curX
+                                tRect.left + tRect.width / 2 - (bRect.left + bRect.width / 2) + curX
                             );
                         },
                         y: () => {
@@ -246,10 +225,7 @@ export default function SmoothScroll() {
                             if (bRect.height === 0 || tRect.height === 0) return 0;
                             const curY = gsap.getProperty(pistaBottle, 'y');
                             return (
-                                tRect.top +
-                                tRect.height / 2 -
-                                (bRect.top + bRect.height / 2) +
-                                curY
+                                tRect.top + tRect.height / 2 - (bRect.top + bRect.height / 2) + curY
                             );
                         },
                         rotate: '0deg',
@@ -285,7 +261,9 @@ export default function SmoothScroll() {
             });
 
             if (pistaBottleTarget) {
-                const nextFlavourBottleTarget = document.querySelector('#next-flavour-bottle-target');
+                const nextFlavourBottleTarget = document.querySelector(
+                    '#next-flavour-bottle-target'
+                );
                 const pistaBottleTargetEl = document.querySelector('#pista-bottle-target');
                 tlTransition.to(
                     '#pista-bottle-target',
@@ -297,10 +275,7 @@ export default function SmoothScroll() {
                             if (bRect.width === 0 || tRect.width === 0) return 0;
                             const curX = gsap.getProperty(pistaBottleTargetEl, 'x');
                             return (
-                                tRect.left +
-                                tRect.width / 2 -
-                                (bRect.left + bRect.width / 2) +
-                                curX
+                                tRect.left + tRect.width / 2 - (bRect.left + bRect.width / 2) + curX
                             );
                         },
                         y: () => {
@@ -310,10 +285,7 @@ export default function SmoothScroll() {
                             if (bRect.height === 0 || tRect.height === 0) return 0;
                             const curY = gsap.getProperty(pistaBottleTargetEl, 'y');
                             return (
-                                tRect.top +
-                                tRect.height / 2 -
-                                (bRect.top + bRect.height / 2) +
-                                curY
+                                tRect.top + tRect.height / 2 - (bRect.top + bRect.height / 2) + curY
                             );
                         },
                         width: '230px',
@@ -353,23 +325,24 @@ export default function SmoothScroll() {
                 scrollTrigger: {
                     trigger: '.next-flavour-section',
                     start: 'top top',
-                    end: '+=100%',
+                    end: '+=140%',
                     scrub: true,
                     pin: true,
                     invalidateOnRefresh: true,
                 },
             });
 
+            // Phase 1: Reveal NextFlavour lines, cards, and flavor buttons
             tl2.from(
                 '.next-flavour-line',
                 {
                     x: -100,
                     opacity: 0,
-                    stagger: 0.1,
+                    stagger: 0.05,
                     ease: 'power2.out',
-                    duration: 0.3,
+                    duration: 0.15,
                 },
-                0.1
+                0.04
             );
 
             tl2.from(
@@ -377,11 +350,11 @@ export default function SmoothScroll() {
                 {
                     x: 100,
                     opacity: 0,
-                    stagger: 0.1,
+                    stagger: 0.05,
                     ease: 'power2.out',
-                    duration: 0.3,
+                    duration: 0.15,
                 },
-                0.4
+                0.15
             );
 
             tl2.set(
@@ -390,7 +363,7 @@ export default function SmoothScroll() {
                     visibility: 'visible',
                     pointerEvents: 'auto',
                 },
-                0.75
+                0.25
             );
 
             tl2.fromTo(
@@ -399,23 +372,40 @@ export default function SmoothScroll() {
                 {
                     y: 0,
                     ease: 'power2.out',
-                    duration: 0.25,
+                    duration: 0.15,
                 },
-                0.75
+                0.25
             );
 
-            gsap.from('.quote-section-content', {
-                scrollTrigger: {
-                    trigger: '.quote-section',
-                    start: 'top bottom',
-                    end: 'bottom top',
-                    scrub: true,
+            // Phase 2: Upward Translation & Liquid Chocolate Wave Sweep (0.40 -> 1.40)
+            // Translates QuoteSection 100vh over 100vh scroll distance for EXACT 1:1 (1.0x) uniform scroll speed.
+            tl2.fromTo(
+                '.quote-section',
+                { y: '100vh' },
+                {
+                    y: '0vh',
+                    ease: 'none',
+                    duration: 1.0,
                 },
-                y: 150,
-                opacity: 0.5,
-                scale: 0.9,
-                ease: 'none',
-            });
+                0.4
+            );
+
+            // Smooth Zoom-In Scale Reveal on quote typography (starts at 0.7 as section enters viewport)
+            tl2.fromTo(
+                '.quote-section-content',
+                {
+                    scale: 0.65,
+                    opacity: 0,
+                    transformOrigin: 'center center',
+                },
+                {
+                    scale: 1,
+                    opacity: 1,
+                    ease: 'power1.out',
+                    duration: 0.7,
+                },
+                0.7
+            );
         });
 
         setTimeout(() => {

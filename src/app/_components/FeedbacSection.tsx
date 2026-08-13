@@ -80,7 +80,7 @@ const FeedbacSection = () => {
     const reviewImages: { id: string; image: string }[] = currentFeedback.images || [];
 
     return (
-        <section id="testimonials" className="w-full py-[75px] md:py-[120px] bg-[#F9F4E8] relative z-20 overflow-hidden">
+        <section id="testimonials" className="w-full py-[75px] md:py-[120px] bg-[#F9F4E8] relative z-10 overflow-hidden">
             <div className="wrapper grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center mx-auto px-6 lg:px-8">
                 {/* Left Side: Header & Slider Navigation Controls */}
                 <motion.div
