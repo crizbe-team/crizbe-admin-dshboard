@@ -9,7 +9,7 @@ import { useCartToast } from '@/contexts/CartToastContext';
 import AuthActionWrapper from '@/components/AuthActionWrapper';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from '@/components/ui/Toast';
 import SectionLoader from '@/components/ui/SectionLoader';
 
@@ -41,6 +41,18 @@ function ProductCard({
             : [{ image: '/placeholder-image.png' }];
     }, [product.images]);
 
+    // Preload all product images in browser GPU/memory to eliminate slideshow network blinking
+    useEffect(() => {
+        if (images && images.length > 1) {
+            images.forEach((imgObj: any) => {
+                if (imgObj?.image) {
+                    const img = new Image();
+                    img.src = imgObj.image;
+                }
+            });
+        }
+    }, [images]);
+
     // Slideshow loop when user hovers the card
     useEffect(() => {
         if (!isHovered || images.length <= 1) {
@@ -50,10 +62,10 @@ function ProductCard({
 
         const interval = setInterval(() => {
             setCurrentImageIndex((prev) => (prev + 1) % images.length);
-        }, 1500);
+        }, 1600);
 
         return () => clearInterval(interval);
-    }, [isHovered, images]);
+    }, [isHovered, images.length]);
 
     const defaultVariant = product.variants?.[0];
     const hasVariants = product.variants && product.variants.length > 0;
@@ -66,25 +78,28 @@ function ProductCard({
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.08 }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group border-[#E6E6E6] border overflow-hidden flex flex-col h-full w-full rounded-[28px] bg-[#FCFAF4] transition-all duration-300 hover:shadow-md relative"
+            className="group border-[#E6E6E6] hover:border-[#CDAB78]/60 border overflow-hidden flex flex-col h-full w-full rounded-[28px] bg-[#FCFAF4] transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(78,51,37,0.12)] hover:-translate-y-1.5 relative cursor-pointer"
         >
             <Link
                 href={`/products/${product.slug}`}
                 className="flex flex-col flex-grow cursor-pointer"
             >
                 {/* Image Container */}
-                <div className="relative w-full h-[320px] overflow-hidden transition-all duration-300">
-                    <img
-                        src={images[currentImageIndex]?.image}
-                        alt={product.name}
-                        className="object-cover w-full h-full scale-100 group-hover:scale-105 transition-transform duration-500"
-                    />
+                <div className="relative w-full h-[320px] overflow-hidden bg-[#F5F2EA]">
+                    {images.map((imgObj: any, imgIdx: number) => (
+                        <img
+                            key={imgObj.id || imgObj.image || imgIdx}
+                            src={imgObj.image}
+                            alt={`${product.name} - ${imgIdx + 1}`}
+                            className={`absolute inset-0 object-cover w-full h-full transform transition-all duration-500 ease-out ${
+                                imgIdx === currentImageIndex
+                                    ? 'opacity-100 scale-100 group-hover:scale-105 z-10'
+                                    : 'opacity-0 scale-100 pointer-events-none z-0'
+                            }`}
+                        />
+                    ))}
 
                     {/* Horizontal Indicators for Multiple Images (visible on hover) */}
                     {images.length > 1 && (
@@ -96,8 +111,8 @@ function ProductCard({
                                     key={i}
                                     className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${
                                         i === currentImageIndex
-                                            ? 'bg-white opacity-100'
-                                            : 'bg-white/30'
+                                            ? 'bg-white opacity-100 shadow-sm'
+                                            : 'bg-white/40'
                                     }`}
                                 />
                             ))}
