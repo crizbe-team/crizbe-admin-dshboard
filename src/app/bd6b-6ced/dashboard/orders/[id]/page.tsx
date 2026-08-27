@@ -92,7 +92,7 @@ export default function AdminOrderDetailPage() {
             <PrintableAddressLabels orders={[order]} />
 
             {/* Header */}
-            <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="print:hidden flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => router.back()}
@@ -120,7 +120,7 @@ export default function AdminOrderDetailPage() {
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="print:hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Order Items & Info */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Ordered Items */}

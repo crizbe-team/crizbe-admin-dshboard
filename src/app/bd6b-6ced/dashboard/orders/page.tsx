@@ -11,7 +11,6 @@ import {
     Clipboard,
     Truck,
     PackageCheck,
-    Loader2,
     RefreshCw,
     Printer,
     CheckSquare,
@@ -46,11 +45,31 @@ const itemVariants: Variants = {
 };
 
 const STATUS_CONFIG: Record<string, { label: string; colorClass: string; icon: any }> = {
-    Pending: { label: 'Pending', colorClass: 'bg-amber-500/15 text-amber-400 border border-amber-500/30', icon: Clock },
-    Processing: { label: 'Processing', colorClass: 'bg-blue-500/15 text-blue-400 border border-blue-500/30', icon: Loader2 },
-    Shipped: { label: 'Shipped', colorClass: 'bg-purple-500/15 text-purple-300 border border-purple-500/30', icon: Truck },
-    Delivered: { label: 'Delivered', colorClass: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30', icon: PackageCheck },
-    Canceled: { label: 'Canceled', colorClass: 'bg-rose-500/15 text-rose-400 border border-rose-500/30', icon: XCircle },
+    Pending: {
+        label: 'Pending',
+        colorClass: 'bg-amber-500/15 text-amber-400 border border-amber-500/30',
+        icon: Clock,
+    },
+    Confirmed: {
+        label: 'Confirmed',
+        colorClass: 'bg-blue-500/15 text-blue-400 border border-blue-500/30',
+        icon: CheckCircle,
+    },
+    Shipped: {
+        label: 'Shipped',
+        colorClass: 'bg-purple-500/15 text-purple-300 border border-purple-500/30',
+        icon: Truck,
+    },
+    Delivered: {
+        label: 'Delivered',
+        colorClass: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
+        icon: PackageCheck,
+    },
+    Cancelled: {
+        label: 'Cancelled',
+        colorClass: 'bg-rose-500/15 text-rose-400 border border-rose-500/30',
+        icon: XCircle,
+    },
 };
 
 export default function OrdersPage() {
@@ -63,7 +82,12 @@ export default function OrdersPage() {
     const [isBulkStatusModalOpen, setIsBulkStatusModalOpen] = useState(false);
     const [bulkTargetStatus, setBulkTargetStatus] = useState<string>('Shipped');
 
-    const { data: ordersData, isLoading, isRefetching, refetch } = useFetchAdminOrders({
+    const {
+        data: ordersData,
+        isLoading,
+        isRefetching,
+        refetch,
+    } = useFetchAdminOrders({
         q: searchQuery,
         status: selectedStatus === 'All' ? undefined : selectedStatus,
         page: currentPage,
@@ -174,7 +198,7 @@ export default function OrdersPage() {
             {/* Page Header */}
             <motion.div
                 variants={itemVariants}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                className="print:hidden flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
             >
                 <div className="space-y-1">
                     <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-bricolage tracking-tight leading-none flex items-center gap-3">
@@ -182,7 +206,8 @@ export default function OrdersPage() {
                         Order Management
                     </h1>
                     <p className="text-gray-400 text-sm sm:text-base font-medium">
-                        Track customer orders, print 4x6&quot; address labels, and manage bulk shipments.
+                        Track customer orders, print 4x6&quot; address labels, and manage bulk
+                        shipments.
                     </p>
                 </div>
 
@@ -199,7 +224,10 @@ export default function OrdersPage() {
             </motion.div>
 
             {/* Statistics Cards */}
-            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <motion.div
+                variants={itemVariants}
+                className="print:hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            >
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     return (
@@ -228,7 +256,7 @@ export default function OrdersPage() {
             </motion.div>
 
             {/* Orders Table Container */}
-            <motion.div variants={itemVariants} className="space-y-4">
+            <motion.div variants={itemVariants} className="print:hidden space-y-4">
                 {/* Bulk Action Bar Above Table */}
                 {selectedOrderIds.size > 0 && (
                     <div className="bg-[#1e1e1e] border border-[#E8BF7A]/50 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xl transition-all animate-in fade-in slide-in-from-top-3">
@@ -269,176 +297,188 @@ export default function OrdersPage() {
                 )}
 
                 <div className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
-                <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
-                    <div className="flex items-center gap-4 flex-1 min-w-[280px]">
-                        <DebouncedSearch
-                            placeholder="Search by Order ID or Client..."
-                            onSearch={setSearchQuery}
-                            className="w-72"
-                        />
-                        <SearchableSelect
-                            options={statusOptions}
-                            value={selectedStatus}
-                            onChange={setSelectedStatus}
-                            placeholder="Filter by Status"
-                            className="w-48"
-                        />
+                    <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
+                        <div className="flex items-center gap-4 flex-1 min-w-[280px]">
+                            <DebouncedSearch
+                                placeholder="Search by Order ID or Client..."
+                                onSearch={setSearchQuery}
+                                className="w-72"
+                            />
+                            <SearchableSelect
+                                options={statusOptions}
+                                value={selectedStatus}
+                                onChange={setSelectedStatus}
+                                placeholder="Filter by Status"
+                                className="w-48"
+                            />
+                        </div>
                     </div>
-                </div>
 
-                <div className="overflow-x-auto">
-                    {isLoading ? (
-                        <div className="p-12 border-t border-white/5">
-                            <DashboardLoader text="Loading your orders..." />
-                        </div>
-                    ) : orders.length === 0 ? (
-                        <div className="p-12 text-center text-gray-400 font-medium">
-                            No orders found matching your criteria.
-                        </div>
-                    ) : (
-                        <table className="w-full text-left text-sm text-gray-300">
-                            <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
-                                <tr>
-                                    <th className="px-4 py-4 w-12 text-center">
-                                        <button
-                                            type="button"
-                                            onClick={toggleSelectAll}
-                                            className="text-[#E8BF7A] hover:opacity-80 transition"
-                                            title="Select all on this page"
-                                        >
-                                            {isAllSelected ? (
-                                                <CheckSquare className="w-4 h-4" />
-                                            ) : (
-                                                <Square className="w-4 h-4" />
-                                            )}
-                                        </button>
-                                    </th>
-                                    <th className="px-6 py-4">Customer</th>
-                                    <th className="px-6 py-4">Payment</th>
-                                    <th className="px-6 py-4">Status</th>
-                                    <th className="px-6 py-4">Date</th>
-                                    <th className="px-6 py-4">Total Amount</th>
-                                    <th className="px-6 py-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5 font-medium">
-                                {orders.map((order: any) => {
-                                    const isSelected = selectedOrderIds.has(order.id);
-                                    const statusCfg = STATUS_CONFIG[order.status] || {
-                                        label: order.status,
-                                        colorClass: 'bg-white/10 text-gray-300 border border-white/10',
-                                    };
+                    <div className="overflow-x-auto">
+                        {isLoading ? (
+                            <div className="p-12 border-t border-white/5">
+                                <DashboardLoader text="Loading your orders..." />
+                            </div>
+                        ) : orders.length === 0 ? (
+                            <div className="p-12 text-center text-gray-400 font-medium">
+                                No orders found matching your criteria.
+                            </div>
+                        ) : (
+                            <table className="w-full text-left text-sm text-gray-300">
+                                <thead className="bg-white/5 text-gray-400 uppercase text-[11px] font-bold tracking-wider">
+                                    <tr>
+                                        <th className="px-4 py-4 w-12 text-center">
+                                            <button
+                                                type="button"
+                                                onClick={toggleSelectAll}
+                                                className="text-[#E8BF7A] hover:opacity-80 transition"
+                                                title="Select all on this page"
+                                            >
+                                                {isAllSelected ? (
+                                                    <CheckSquare className="w-4 h-4" />
+                                                ) : (
+                                                    <Square className="w-4 h-4" />
+                                                )}
+                                            </button>
+                                        </th>
+                                        <th className="px-6 py-4">Customer</th>
+                                        <th className="px-6 py-4">Payment</th>
+                                        <th className="px-6 py-4">Status</th>
+                                        <th className="px-6 py-4">Date</th>
+                                        <th className="px-6 py-4">Total Amount</th>
+                                        <th className="px-6 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5 font-medium">
+                                    {orders.map((order: any) => {
+                                        const isSelected = selectedOrderIds.has(order.id);
+                                        const statusCfg = STATUS_CONFIG[order.status] || {
+                                            label: order.status,
+                                            colorClass:
+                                                'bg-white/10 text-gray-300 border border-white/10',
+                                        };
 
-                                    const customerName =
-                                        [order.first_name, order.last_name].filter(Boolean).join(' ') ||
-                                        order.user_details?.name ||
-                                        order.user_details?.username ||
-                                        'Guest User';
+                                        const customerName =
+                                            [order.first_name, order.last_name]
+                                                .filter(Boolean)
+                                                .join(' ') ||
+                                            order.user_details?.name ||
+                                            order.user_details?.username ||
+                                            'Guest User';
 
-                                    const contactInfo =
-                                        order.phone_number ||
-                                        order.user_details?.phone_number ||
-                                        order.user_details?.email ||
-                                        'No contact';
+                                        const contactInfo =
+                                            order.phone_number ||
+                                            order.user_details?.phone_number ||
+                                            order.user_details?.email ||
+                                            'No contact';
 
-                                    return (
-                                        <tr
-                                            key={order.id}
-                                            className={`transition ${
-                                                isSelected ? 'bg-[#E8BF7A]/[0.08]' : 'hover:bg-white/[0.02]'
-                                            }`}
-                                        >
-                                            <td className="px-4 py-4 text-center">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => toggleSelectRow(order.id)}
-                                                    className="text-[#E8BF7A] hover:opacity-80 transition"
-                                                >
-                                                    {isSelected ? (
-                                                        <CheckSquare className="w-4 h-4" />
-                                                    ) : (
-                                                        <Square className="w-4 h-4" />
-                                                    )}
-                                                </button>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex flex-col space-y-0.5">
-                                                    <span className="text-white font-bold">
-                                                        {customerName}
-                                                    </span>
-                                                    <span className="text-xs text-gray-400 font-mono">
-                                                        {contactInfo}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex flex-col space-y-0.5">
-                                                    <span className="text-gray-200 text-xs font-semibold">
-                                                        {order.payment_method || 'Online'}
-                                                    </span>
+                                        return (
+                                            <tr
+                                                key={order.id}
+                                                className={`transition ${
+                                                    isSelected
+                                                        ? 'bg-[#E8BF7A]/[0.08]'
+                                                        : 'hover:bg-white/[0.02]'
+                                                }`}
+                                            >
+                                                <td className="px-4 py-4 text-center">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => toggleSelectRow(order.id)}
+                                                        className="text-[#E8BF7A] hover:opacity-80 transition"
+                                                    >
+                                                        {isSelected ? (
+                                                            <CheckSquare className="w-4 h-4" />
+                                                        ) : (
+                                                            <Square className="w-4 h-4" />
+                                                        )}
+                                                    </button>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex flex-col space-y-0.5">
+                                                        <span className="text-white font-bold">
+                                                            {customerName}
+                                                        </span>
+                                                        <span className="text-xs text-gray-400 font-mono">
+                                                            {contactInfo}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex flex-col space-y-0.5">
+                                                        <span className="text-gray-200 text-xs font-semibold">
+                                                            {order.payment_method || 'Online'}
+                                                        </span>
+                                                        <span
+                                                            className={`text-[10px] font-extrabold uppercase tracking-wider ${
+                                                                order.payment_status === 'Paid'
+                                                                    ? 'text-emerald-400'
+                                                                    : 'text-amber-400'
+                                                            }`}
+                                                        >
+                                                            ● {order.payment_status || 'Pending'}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
                                                     <span
-                                                        className={`text-[10px] font-extrabold uppercase tracking-wider ${
-                                                            order.payment_status === 'Paid'
-                                                                ? 'text-emerald-400'
-                                                                : 'text-amber-400'
-                                                        }`}
+                                                        className={`px-3 py-1 rounded-full text-xs font-bold transition inline-flex items-center gap-1.5 ${statusCfg.colorClass}`}
                                                     >
-                                                        ● {order.payment_status || 'Pending'}
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                                                        {statusCfg.label}
                                                     </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span
-                                                    className={`px-3 py-1 rounded-full text-xs font-bold transition inline-flex items-center gap-1.5 ${statusCfg.colorClass}`}
-                                                >
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                                                    {statusCfg.label}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-gray-400 text-sm">
-                                                {new Date(order.created_at).toLocaleDateString(undefined, {
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                    year: 'numeric',
-                                                })}
-                                            </td>
-                                            <td className="px-6 py-4 text-[#E8BF7A] font-bold font-mono text-base">
-                                                ₹{Number(order.total_amount || 0).toLocaleString('en-IN', {
-                                                    minimumFractionDigits: 2,
-                                                    maximumFractionDigits: 2,
-                                                })}
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end space-x-2">
-                                                    <Link
-                                                        href={`/bd6b-6ced/dashboard/orders/${order.id}`}
-                                                        className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition"
-                                                        title="View Order Details"
-                                                    >
-                                                        <Eye className="w-4 h-4 text-[#E8BF7A]" />
-                                                    </Link>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
-
-                {/* Pagination */}
-                {ordersData?.pagination && ordersData.pagination.total_pages > 1 && (
-                    <div className="p-4 border-t border-white/10">
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={ordersData.pagination.total_pages}
-                            onPageChange={setCurrentPage}
-                            hasNext={ordersData.pagination.has_next}
-                            hasPrevious={ordersData.pagination.has_previous}
-                        />
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-400 text-sm">
+                                                    {new Date(order.created_at).toLocaleDateString(
+                                                        undefined,
+                                                        {
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            year: 'numeric',
+                                                        }
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 text-[#E8BF7A] font-bold font-mono text-base">
+                                                    ₹
+                                                    {Number(order.total_amount || 0).toLocaleString(
+                                                        'en-IN',
+                                                        {
+                                                            minimumFractionDigits: 2,
+                                                            maximumFractionDigits: 2,
+                                                        }
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex items-center justify-end space-x-2">
+                                                        <Link
+                                                            href={`/bd6b-6ced/dashboard/orders/${order.id}`}
+                                                            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition"
+                                                            title="View Order Details"
+                                                        >
+                                                            <Eye className="w-4 h-4 text-[#E8BF7A]" />
+                                                        </Link>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
-                )}
+
+                    {/* Pagination */}
+                    {ordersData?.pagination && ordersData.pagination.total_pages > 1 && (
+                        <div className="p-4 border-t border-white/10">
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={ordersData.pagination.total_pages}
+                                onPageChange={setCurrentPage}
+                                hasNext={ordersData.pagination.has_next}
+                                hasPrevious={ordersData.pagination.has_previous}
+                            />
+                        </div>
+                    )}
                 </div>
             </motion.div>
 
@@ -450,21 +490,27 @@ export default function OrdersPage() {
                             Bulk Update Order Status
                         </h3>
                         <p className="text-xs text-gray-400">
-                            Updating status for <span className="text-[#E8BF7A] font-bold">{selectedOrderIds.size} selected orders</span>.
+                            Updating status for{' '}
+                            <span className="text-[#E8BF7A] font-bold">
+                                {selectedOrderIds.size} selected orders
+                            </span>
+                            .
                         </p>
 
                         <div>
-                            <label className="block text-xs font-semibold text-gray-300 mb-2">Select Target Status</label>
+                            <label className="block text-xs font-semibold text-gray-300 mb-2">
+                                Select Target Status
+                            </label>
                             <select
                                 value={bulkTargetStatus}
                                 onChange={(e) => setBulkTargetStatus(e.target.value)}
                                 className="w-full px-4 py-2.5 bg-[#1e1e1e] border border-[#333] rounded-xl text-white text-sm focus:border-[#E8BF7A] focus:outline-none"
                             >
                                 <option value="Pending">Pending</option>
-                                <option value="Processing">Processing</option>
+                                <option value="Confirmed">Confirmed</option>
                                 <option value="Shipped">Shipped</option>
                                 <option value="Delivered">Delivered</option>
-                                <option value="Canceled">Canceled</option>
+                                <option value="Cancelled">Cancelled</option>
                             </select>
                         </div>
 
@@ -480,7 +526,9 @@ export default function OrdersPage() {
                                 disabled={bulkUpdateMutation.isPending}
                                 className="px-5 py-2.5 bg-gradient-to-r from-[#9A7236] to-[#E8BF7A] text-[#141414] text-xs font-bold rounded-xl shadow-md hover:brightness-110 transition disabled:opacity-50"
                             >
-                                {bulkUpdateMutation.isPending ? 'Updating...' : 'Apply Status Change'}
+                                {bulkUpdateMutation.isPending
+                                    ? 'Updating...'
+                                    : 'Apply Status Change'}
                             </button>
                         </div>
                     </div>

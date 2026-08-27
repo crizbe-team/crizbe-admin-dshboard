@@ -42,7 +42,12 @@ export default function StockPage() {
         undefined
     );
 
-    const { data: stockData, isLoading: isStockLoading, isRefetching, refetch } = useFetchStockList({
+    const {
+        data: stockData,
+        isLoading: isStockLoading,
+        isRefetching,
+        refetch,
+    } = useFetchStockList({
         q: searchQuery,
         category: selectedCategory === 'All' ? undefined : selectedCategory,
         status: selectedStatus === 'All' ? undefined : selectedStatus,
@@ -147,7 +152,10 @@ export default function StockPage() {
             </motion.div>
 
             {/* Statistics Cards */}
-            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <motion.div
+                variants={itemVariants}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            >
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     return (
@@ -256,13 +264,15 @@ export default function StockPage() {
                                                           : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
                                                 }`}
                                             >
-                                                <span className={`w-1.5 h-1.5 rounded-full ${
-                                                    product.status === 'In Stock'
-                                                        ? 'bg-emerald-400'
-                                                        : product.status === 'Low Stock'
-                                                          ? 'bg-amber-400'
-                                                          : 'bg-rose-400'
-                                                }`} />
+                                                <span
+                                                    className={`w-1.5 h-1.5 rounded-full ${
+                                                        product.status === 'In Stock'
+                                                            ? 'bg-emerald-400'
+                                                            : product.status === 'Low Stock'
+                                                              ? 'bg-amber-400'
+                                                              : 'bg-rose-400'
+                                                    }`}
+                                                />
                                                 {product.status}
                                             </span>
                                         </td>

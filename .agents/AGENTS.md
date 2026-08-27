@@ -100,6 +100,20 @@ export function LoginForm() {
 ### Form API Error Handling Standard (`src/utils/form-error-handler.ts`)
 - **`handleFormApiError(error, setError)` Rule**: ALWAYS use `handleFormApiError(error, setError)` inside `onError` callbacks when submitting forms via React Query mutations. It automatically maps backend validation error objects (`error.errors`) directly to React Hook Form field errors, with automatic fallback to `root.serverError`.
 
+### Phone Input & Foreign Key Selection Handling Standards
+
+- **Mandatory Optional Chaining Rule**:
+  - ALWAYS use optional chaining `?.` when accessing nested object properties (e.g., use `country?.id` instead of `country.id`, and `phone?.full_phone` instead of `phone.full_phone`) to prevent null or undefined runtime crashes.
+
+- **Phone Field Rules**:
+  - **Form Submission**: Always submit full phone numbers as a single concatenated string including the country code (e.g., `+918129133008`).
+  - **Displaying / Read-only Views**: Use `phone?.full_phone` from the API payload object structure (`"phone": { "country_code": "+91", "phone": "8129133008", "full_phone": "+918129133008" }`).
+  - **Edit Form Pre-filling**: When opening edit forms, use `phone?.country_code` to automatically select the country code dropdown and `phone?.phone` to populate the phone number input field.
+
+- **Foreign Key Selection Rules**:
+  - **Form Submission**: Always submit the entity `id` for foreign key selections (e.g., when selecting a country, submit the country `id`).
+  - **Edit Form Pre-filling**: When populating edit forms from API responses containing relational objects (e.g., `country: { id, name }`), use optional chaining `country?.id` to automatically select the item in the select dropdown.
+
 ---
 
 ## 3. Data Fetching, Caching & API Architecture
@@ -241,3 +255,4 @@ When creating stacked layout transitions, enforce a strictly ascending z-index h
 1. **Strict Typing**: Avoid `any`. Define interfaces in `src/types/` for API responses, domain models, and prop types.
 2. **Client Components**: Add `'use client';` strictly at the top of interactive components (using hooks or event handlers). Keep page components server-rendered where possible.
 3. **Clean Code**: Keep components concise and focused. Extract sub-views or complex logic into dedicated helper functions or custom hooks in `src/hooks/`.
+4. **Mandatory Optional Chaining**: When accessing property paths on objects (e.g., relational entities like `country.id` or payload structs like `phone.full_phone`), ALWAYS use optional chaining syntax (`country?.id`, `phone?.full_phone`) to guard against uninitialized or missing nested properties.

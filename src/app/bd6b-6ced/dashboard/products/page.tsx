@@ -37,7 +37,12 @@ export default function ProductsPage() {
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
     const [currentPage, setCurrentPage] = useState(1);
 
-    const { data: productsData, isLoading: isProductsLoading, isRefetching, refetch } = useFetchProducts({
+    const {
+        data: productsData,
+        isLoading: isProductsLoading,
+        isRefetching,
+        refetch,
+    } = useFetchProducts({
         q: searchQuery,
         category: selectedCategory === 'All' ? undefined : selectedCategory,
         page: currentPage,
@@ -175,7 +180,10 @@ export default function ProductsPage() {
             </motion.div>
 
             {/* Statistics Cards */}
-            <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <motion.div
+                variants={itemVariants}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            >
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     return (
