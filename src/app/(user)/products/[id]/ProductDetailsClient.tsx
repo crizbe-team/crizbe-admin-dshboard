@@ -328,19 +328,21 @@ const ProductDetailsPage = () => {
                             <h2 className="font-inter-tight font-semibold text-[24px] sm:text-[28px] text-[#191919] mb-6">
                                 Frequently Asked Questions
                             </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="divide-y divide-[#EBE5D9]/60">
                                 {faqsList.map((faq: any, idx: number) => (
-                                    <div
+                                    <AccordionItem
                                         key={idx}
-                                        className="bg-[#FCFAF6] border border-[#EBE5D9] rounded-2xl p-5 hover:border-[#C4994A]/40 transition"
+                                        title={
+                                            <span className="font-inter-tight font-medium text-[17px] text-[#191919]">
+                                                {faq.question}
+                                            </span>
+                                        }
+                                        defaultOpen={idx === 0}
                                     >
-                                        <h3 className="font-inter-tight font-semibold text-[16px] text-[#191919] mb-2">
-                                            {faq.question}
-                                        </h3>
-                                        <p className="font-inter-tight text-[14px] text-[#555] leading-relaxed">
+                                        <p className="font-inter-tight text-[15px] text-[#525252] leading-relaxed py-1">
                                             {faq.answer}
                                         </p>
-                                    </div>
+                                    </AccordionItem>
                                 ))}
                             </div>
                         </div>

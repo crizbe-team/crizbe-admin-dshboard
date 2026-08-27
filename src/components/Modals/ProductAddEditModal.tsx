@@ -139,17 +139,17 @@ function ProductAddEditModal({
 
                 // Parse FAQs
                 let parsedFaqs: ProductFaq[] = [];
-                if (editingProduct.faqs) {
-                    try {
-                        parsedFaqs =
-                            typeof editingProduct.faqs === 'string'
-                                ? JSON.parse(editingProduct.faqs)
-                                : editingProduct.faqs;
-                    } catch {
-                        parsedFaqs = [];
+                const rawFaqs = (editingProduct as any).faqs ?? (editingProduct as any).faq_list;
+                if (rawFaqs) {
+                    if (typeof rawFaqs === 'string') {
+                        try {
+                            parsedFaqs = JSON.parse(rawFaqs);
+                        } catch {
+                            parsedFaqs = [];
+                        }
+                    } else if (Array.isArray(rawFaqs)) {
+                        parsedFaqs = rawFaqs;
                     }
-                } else if (editingProduct.faq_list) {
-                    parsedFaqs = editingProduct.faq_list;
                 }
                 setFaqs(Array.isArray(parsedFaqs) ? parsedFaqs : []);
             } else {
