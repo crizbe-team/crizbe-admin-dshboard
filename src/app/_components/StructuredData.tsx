@@ -6,12 +6,12 @@ export default function StructuredData() {
         '@graph': [
             {
                 '@type': 'Organization',
-                '@id': 'https://crizbe.com/#organization',
+                '@id': 'https://www.crizbe.com/#organization',
                 name: 'Crizbe',
-                url: 'https://crizbe.com',
+                url: 'https://www.crizbe.com',
                 logo: {
                     '@type': 'ImageObject',
-                    url: 'https://crizbe.com/favicon.svg',
+                    url: 'https://www.crizbe.com/favicon.svg',
                     width: 512,
                     height: 512,
                 },
@@ -27,28 +27,28 @@ export default function StructuredData() {
             },
             {
                 '@type': 'WebSite',
-                '@id': 'https://crizbe.com/#website',
-                url: 'https://crizbe.com',
+                '@id': 'https://www.crizbe.com/#website',
+                url: 'https://www.crizbe.com',
                 name: 'Crizbe Premium Chocolate',
                 description:
                     'Luxury Belgian chocolate crunch sticks with hazelnut, pistachio & almond.',
                 publisher: {
-                    '@id': 'https://crizbe.com/#organization',
+                    '@id': 'https://www.crizbe.com/#organization',
                 },
                 potentialAction: {
                     '@type': 'SearchAction',
-                    target: 'https://crizbe.com/products?q={search_term_string}',
+                    target: 'https://www.crizbe.com/products?q={search_term_string}',
                     'query-input': 'required name=search_term_string',
                 },
             },
             {
                 '@type': 'Product',
-                '@id': 'https://crizbe.com/#product-crunch-sticks',
+                '@id': 'https://www.crizbe.com/#product-crunch-sticks',
                 name: 'Crizbe Premium Belgian Chocolate Crunch Sticks',
                 image: [
-                    'https://crizbe.com/images/user/almond-bottle.png',
-                    'https://crizbe.com/images/user/hazelnut-bottle.png',
-                    'https://crizbe.com/images/user/pista-bottle.png',
+                    'https://www.crizbe.com/images/user/almond-bottle.png',
+                    'https://www.crizbe.com/images/user/hazelnut-bottle.png',
+                    'https://www.crizbe.com/images/user/pista-bottle.png',
                 ],
                 description:
                     'Slender, perfectly layered gourmet crunch sticks crafted with premium Belgian chocolate and real hazelnut, pistachio, and almond roasted nut fillings.',
@@ -66,17 +66,17 @@ export default function StructuredData() {
                 },
                 offers: {
                     '@type': 'Offer',
-                    url: 'https://crizbe.com/products',
+                    url: 'https://www.crizbe.com/products',
                     priceCurrency: 'USD',
                     availability: 'https://schema.org/InStock',
                     seller: {
-                        '@id': 'https://crizbe.com/#organization',
+                        '@id': 'https://www.crizbe.com/#organization',
                     },
                 },
             },
             {
                 '@type': 'FAQPage',
-                '@id': 'https://crizbe.com/#faq',
+                '@id': 'https://www.crizbe.com/#faq',
                 mainEntity: [
                     {
                         '@type': 'Question',

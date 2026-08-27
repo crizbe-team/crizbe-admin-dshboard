@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://crizbe.com';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crizbe.com';
     const apiUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://api.crizbe.com/api/v1/';
 
     // Core static public routes

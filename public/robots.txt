@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://crizbe.com/sitemap.xml
+Sitemap: https://www.crizbe.com/sitemap.xml

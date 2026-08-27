@@ -26,7 +26,7 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://crizbe.com'),
+    metadataBase: new URL('https://www.crizbe.com'),
     title: {
         default: 'Premium Chocolate & Crunch Sticks Online India | Crizbe',
         template: '%s | Crizbe',
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
         'Once in a while luxury',
     ],
     alternates: {
-        canonical: 'https://crizbe.com',
+        canonical: 'https://www.crizbe.com',
     },
     robots: {
         index: true,
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
         description:
             "Indulge in Crizbe's slender, perfectly layered crunch sticks crafted with real hazelnut, pistachio, and almond dipped in Belgian chocolate.",
         type: 'website',
-        url: 'https://crizbe.com',
+        url: 'https://www.crizbe.com',
         siteName: 'Crizbe',
         images: [
             {

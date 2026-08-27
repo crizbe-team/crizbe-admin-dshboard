@@ -4,11 +4,14 @@ export const metadata: Metadata = {
     title: 'Terms & Conditions | Crizbe Chocolate & Snacks India',
     description:
         "Review Crizbe's Terms & Conditions covering website use, orders, payments, products, shipping, returns and other policies for customers shopping online in India.",
+    alternates: {
+        canonical: 'https://www.crizbe.com/terms-and-conditions',
+    },
     openGraph: {
         title: 'Terms & Conditions | Crizbe Chocolate & Snacks India',
         description:
             "Review Crizbe's Terms & Conditions covering website use, orders, payments, products, shipping, returns and other policies for customers shopping online in India.",
-        url: 'https://crizbe.com/terms-and-conditions',
+        url: 'https://www.crizbe.com/terms-and-conditions',
     },
     twitter: {
         title: 'Terms & Conditions | Crizbe Chocolate & Snacks India',

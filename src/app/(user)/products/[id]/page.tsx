@@ -8,7 +8,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = await params;
     const apiBaseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'https://api.crizbe.com/api/v1/').replace(/\/$/, '');
-    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://crizbe.com').replace(/\/$/, '');
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crizbe.com').replace(/\/$/, '');
 
     try {
         const res = await fetch(`${apiBaseUrl}/products/products/${id}/`, {

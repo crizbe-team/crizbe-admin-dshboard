@@ -1,9 +1,10 @@
 import Header from '@/components/user/Header';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { Metadata } from 'next';
+import { CartToastProvider } from '@/contexts/CartToastContext';
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://crizbe.com'),
+    metadataBase: new URL('https://www.crizbe.com'),
     title: {
         template: '%s | Crizbe',
         default: 'Premium Chocolate & Crunch Sticks Online India | Crizbe',
@@ -20,10 +21,13 @@ export const metadata: Metadata = {
     ],
     authors: [{ name: 'Crizbe' }],
     creator: 'Crizbe',
+    alternates: {
+        canonical: 'https://www.crizbe.com',
+    },
     openGraph: {
         type: 'website',
         locale: 'en_US',
-        url: 'https://crizbe.com',
+        url: 'https://www.crizbe.com',
         title: 'Premium Chocolate & Crunch Sticks Online India | Crizbe',
         description:
             "Shop premium chocolate crunch sticks online in India, featuring hazelnut, pistachio and almond flavours. Discover Crizbe's crispy, indulgent snacks today.",
@@ -51,8 +55,6 @@ export const metadata: Metadata = {
         apple: '/favicon.svg',
     },
 };
-
-import { CartToastProvider } from '@/contexts/CartToastContext';
 
 export default function HomedLayout({
     children,
