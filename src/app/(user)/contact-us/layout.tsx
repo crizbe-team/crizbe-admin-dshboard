@@ -1,9 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: {
-        absolute: 'Contact Crizbe | Premium Chocolate Online India',
-    },
+    title: 'Contact Crizbe | Premium Chocolate Online India',
     description:
         'Contact Crizbe for questions about premium chocolate crunch sticks, products, orders, delivery and customer support when shopping online in India.',
     keywords: ['contact Crizbe', 'Crizbe customer support', 'luxury chocolate contact', 'crunch sticks inquiry'],
@@ -16,6 +14,11 @@ export const metadata: Metadata = {
             'Contact Crizbe for questions about premium chocolate crunch sticks, products, orders, delivery and customer support when shopping online in India.',
         url: 'https://crizbe.com/contact-us',
         images: ['/images/user/og-image.jpeg'],
+    },
+    twitter: {
+        title: 'Contact Crizbe | Premium Chocolate Online India',
+        description:
+            'Contact Crizbe for questions about premium chocolate crunch sticks, products, orders, delivery and customer support when shopping online in India.',
     },
 };
 
