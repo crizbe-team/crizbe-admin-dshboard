@@ -10,6 +10,7 @@ function EmptyCart() {
 
     return (
         <section className="px-6 py-14">
+            <h1 className="sr-only">Your Shopping Cart</h1>
             <div className="mx-auto flex h-36 w-36 items-center justify-center">
                 <Image
                     src="https://crizbe-media-bucket.s3.eu-north-1.amazonaws.com/static/cart.png"

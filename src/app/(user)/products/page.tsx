@@ -79,6 +79,7 @@ const ProductsPage = () => {
 
     return (
         <div className="wrapper mx-auto px-4 pt-22 pb-8">
+            <h1 className="sr-only">All Premium Chocolate Crunch Sticks | Crizbe</h1>
             <div className="flex flex-col gap-4 mb-[24px] sm:flex-row sm:items-center sm:justify-between">
                 <Breadcrumb items={breadcrumbItems} />
 
