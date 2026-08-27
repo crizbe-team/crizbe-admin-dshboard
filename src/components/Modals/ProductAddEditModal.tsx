@@ -1,5 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { X, Trash2, Loader2, Upload, Package } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+    X,
+    Trash2,
+    Loader2,
+    Upload,
+    Package,
+    Plus,
+    Heading2,
+    Heading3,
+    Bold,
+    Italic,
+    List,
+    HelpCircle,
+} from 'lucide-react';
 import SearchableSelect from '@/components/ui/SearchableSelect';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +26,11 @@ export interface SizeVariant {
     price: string;
     quantity?: string;
 }
+
+export type ProductFaq = {
+    question: string;
+    answer: string;
+};
 
 export type Product = {
     id: string;
@@ -39,6 +57,8 @@ export type Product = {
         meta_keywords?: string;
     };
     variants?: SizeVariant[];
+    faqs?: ProductFaq[] | string;
+    faq_list?: ProductFaq[];
 };
 
 interface Props {
@@ -67,11 +87,15 @@ function ProductAddEditModal({
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
     const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [existingImagesList, setExistingImagesList] = useState<string[]>([]);
+    const [faqs, setFaqs] = useState<ProductFaq[]>([]);
+
+    const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
     const {
         control,
         handleSubmit,
         reset,
+        setValue,
         setError,
         formState: { errors },
     } = useForm<ProductFormData>({
@@ -96,13 +120,38 @@ function ProductAddEditModal({
                     category: editingProduct.category?.id || '',
                     description: editingProduct.description || '',
                     ingredients: editingProduct.ingredients || '',
-                    meta_title: editingProduct.meta_title || editingProduct.meta_details?.meta_title || '',
-                    meta_description: editingProduct.meta_description || editingProduct.meta_details?.meta_description || '',
-                    meta_keywords: editingProduct.meta_keywords || editingProduct.meta_details?.meta_keywords || '',
+                    meta_title:
+                        editingProduct.meta_title ||
+                        editingProduct.meta_details?.meta_title ||
+                        '',
+                    meta_description:
+                        editingProduct.meta_description ||
+                        editingProduct.meta_details?.meta_description ||
+                        '',
+                    meta_keywords:
+                        editingProduct.meta_keywords ||
+                        editingProduct.meta_details?.meta_keywords ||
+                        '',
                 });
                 setExistingImagesList(editingProduct.images?.map((img) => img.image) || []);
                 setImagePreviews([]);
                 setImageFiles([]);
+
+                // Parse FAQs
+                let parsedFaqs: ProductFaq[] = [];
+                if (editingProduct.faqs) {
+                    try {
+                        parsedFaqs =
+                            typeof editingProduct.faqs === 'string'
+                                ? JSON.parse(editingProduct.faqs)
+                                : editingProduct.faqs;
+                    } catch {
+                        parsedFaqs = [];
+                    }
+                } else if (editingProduct.faq_list) {
+                    parsedFaqs = editingProduct.faq_list;
+                }
+                setFaqs(Array.isArray(parsedFaqs) ? parsedFaqs : []);
             } else {
                 reset({
                     name: '',
@@ -116,6 +165,7 @@ function ProductAddEditModal({
                 setExistingImagesList([]);
                 setImagePreviews([]);
                 setImageFiles([]);
+                setFaqs([]);
             }
         }
     }, [isModalOpen, editingProduct]);
@@ -138,16 +188,58 @@ function ProductAddEditModal({
         setExistingImagesList((prev) => prev.filter((_, i) => i !== index));
     };
 
+    const insertFormat = (startTag: string, endTag: string = '') => {
+        const textarea = descriptionRef.current;
+        if (!textarea) return;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const currentVal = textarea.value || '';
+        const selectedText = currentVal.substring(start, end);
+        const replacement = `${startTag}${selectedText || 'Text here'}${endTag}`;
+
+        const newVal = currentVal.substring(0, start) + replacement + currentVal.substring(end);
+        setValue('description', newVal, { shouldValidate: true });
+
+        setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(
+                start + startTag.length,
+                start + startTag.length + (selectedText.length || 9)
+            );
+        }, 50);
+    };
+
+    const addFaqItem = () => {
+        setFaqs((prev) => [...prev, { question: '', answer: '' }]);
+    };
+
+    const updateFaqItem = (index: number, field: 'question' | 'answer', value: string) => {
+        setFaqs((prev) => {
+            const next = [...prev];
+            next[index] = { ...next[index], [field]: value };
+            return next;
+        });
+    };
+
+    const removeFaqItem = (index: number) => {
+        setFaqs((prev) => prev.filter((_, i) => i !== index));
+    };
+
     const onSubmit = (data: ProductFormData) => {
         const formData = new FormData();
         formData.append('name', data.name);
         formData.append('category', data.category);
         formData.append('description', data.description);
-        formData.append('ingredients', data.ingredients || '');
         formData.append('meta_title', data.meta_title || '');
         formData.append('meta_description', data.meta_description || '');
         formData.append('meta_keywords', data.meta_keywords || '');
         formData.append('icon', editingProduct?.icon || '📦');
+
+        const validFaqs = faqs.filter(
+            (f) => f.question.trim().length > 0 && f.answer.trim().length > 0
+        );
+        formData.append('faqs', JSON.stringify(validFaqs));
 
         existingImagesList.forEach((url) => {
             formData.append('existing_images', url);
@@ -192,7 +284,7 @@ function ProductAddEditModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-            <div className="bg-[#1a1a1a] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar my-8">
+            <div className="bg-[#1a1a1a] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-3xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar my-8">
                 <button
                     onClick={handleCloseModal}
                     className="absolute top-5 right-5 text-gray-400 hover:text-white transition"
@@ -207,7 +299,7 @@ function ProductAddEditModal({
                     </h3>
                 </div>
                 <p className="text-gray-400 text-xs mb-6">
-                    Configure product attributes, category alignment, and imagery.
+                    Configure rich product attributes, formatted description, ingredients, FAQs, and imagery.
                 </p>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -277,7 +369,7 @@ function ProductAddEditModal({
                             name="name"
                             control={control}
                             label="Product Name"
-                            placeholder="e.g. Belgian Chocolate Stick"
+                            placeholder="e.g. Hazelnut Crunch Stick"
                         />
 
                         <div>
@@ -309,19 +401,166 @@ function ProductAddEditModal({
                         </div>
                     </div>
 
-                    <DashboardTextarea
-                        name="description"
-                        control={control}
-                        label="Description"
-                        placeholder="Enter detailed product description..."
-                    />
+                    {/* Rich Text Editor for About Product / Description */}
+                    <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                            <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider">
+                                About the Product (Rich HTML Content)
+                            </label>
+                            <span className="text-[11px] text-gray-400">
+                                Use toolbar to format headings &amp; lists
+                            </span>
+                        </div>
 
-                    <DashboardTextarea
-                        name="ingredients"
-                        control={control}
-                        label="Ingredients"
-                        placeholder="e.g. Belgian Chocolate, Roasted Pistachios, Hazelnut Paste"
-                    />
+                        {/* Rich Text Formatting Toolbar */}
+                        <div className="bg-[#141414] border border-[#333] border-b-0 rounded-t-xl p-2 flex flex-wrap gap-1 items-center">
+                            <button
+                                type="button"
+                                onClick={() => insertFormat('<h2>', '</h2>')}
+                                className="p-1.5 text-xs text-gray-300 hover:text-[#E8BF7A] hover:bg-white/5 rounded transition flex items-center gap-1 font-bold"
+                                title="Section Heading (H2)"
+                            >
+                                <Heading2 className="w-4 h-4" /> H2
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => insertFormat('<h3>', '</h3>')}
+                                className="p-1.5 text-xs text-gray-300 hover:text-[#E8BF7A] hover:bg-white/5 rounded transition flex items-center gap-1 font-bold"
+                                title="Sub-Heading (H3)"
+                            >
+                                <Heading3 className="w-4 h-4" /> H3
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => insertFormat('<strong>', '</strong>')}
+                                className="p-1.5 text-xs text-gray-300 hover:text-[#E8BF7A] hover:bg-white/5 rounded transition"
+                                title="Bold Text"
+                            >
+                                <Bold className="w-4 h-4" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => insertFormat('<em>', '</em>')}
+                                className="p-1.5 text-xs text-gray-300 hover:text-[#E8BF7A] hover:bg-white/5 rounded transition"
+                                title="Italic Text"
+                            >
+                                <Italic className="w-4 h-4" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    insertFormat(
+                                        '<ul>\n  <li>',
+                                        '</li>\n  <li>Item 2</li>\n</ul>'
+                                    )
+                                }
+                                className="p-1.5 text-xs text-gray-300 hover:text-[#E8BF7A] hover:bg-white/5 rounded transition flex items-center gap-1"
+                                title="Bullet List"
+                            >
+                                <List className="w-4 h-4" /> Bullet List
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => insertFormat('<p>', '</p>')}
+                                className="p-1.5 text-xs text-gray-300 hover:text-[#E8BF7A] hover:bg-white/5 rounded transition"
+                                title="Paragraph"
+                            >
+                                Paragraph
+                            </button>
+                        </div>
+
+                        <Controller
+                            control={control}
+                            name="description"
+                            render={({ field }) => (
+                                <textarea
+                                    {...field}
+                                    ref={(e) => {
+                                        field.ref(e);
+                                        descriptionRef.current = e;
+                                    }}
+                                    rows={8}
+                                    placeholder="Enter rich HTML description (e.g. <h2>Why You'll Love...</h2> <ul><li>Crispy biscuit rolls</li></ul>)"
+                                    className="w-full px-4 py-3 bg-[#1e1e1e] border border-[#333] rounded-b-xl text-white text-sm focus:border-[#E8BF7A] focus:outline-none font-mono text-xs leading-relaxed"
+                                />
+                            )}
+                        />
+                        {errors.description && (
+                            <p className="mt-1 text-xs font-semibold text-rose-400">
+                                {errors.description.message}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Product FAQs Section */}
+                    <div className="pt-4 border-t border-white/10 space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-[#E8BF7A] flex items-center gap-2">
+                                    <HelpCircle className="w-4 h-4" /> Frequently Asked Questions (FAQs)
+                                </h4>
+                                <p className="text-[11px] text-gray-400">
+                                    Add product-specific FAQs shown on the product detail page
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={addFaqItem}
+                                className="px-3 py-1.5 rounded-xl bg-[#E8BF7A]/10 border border-[#E8BF7A]/30 text-[#E8BF7A] text-xs font-bold hover:bg-[#E8BF7A]/20 transition flex items-center gap-1.5"
+                            >
+                                <Plus className="w-3.5 h-3.5" /> Add FAQ
+                            </button>
+                        </div>
+
+                        {faqs.length === 0 ? (
+                            <div className="p-4 bg-[#141414] border border-[#333] rounded-2xl text-center text-xs text-gray-400">
+                                No FAQs added yet. Click &quot;Add FAQ&quot; above to create question-and-answer accordions for this product.
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {faqs.map((faq, index) => (
+                                    <div
+                                        key={index}
+                                        className="p-3.5 bg-[#141414] border border-[#333] rounded-2xl space-y-2 relative group"
+                                    >
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="text-[11px] font-bold text-[#E8BF7A] uppercase">
+                                                FAQ #{index + 1}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeFaqItem(index)}
+                                                className="text-gray-400 hover:text-rose-400 p-1 rounded-lg hover:bg-white/5 transition"
+                                                title="Delete FAQ"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+
+                                        <input
+                                            type="text"
+                                            value={faq.question}
+                                            onChange={(e) =>
+                                                updateFaqItem(index, 'question', e.target.value)
+                                            }
+                                            placeholder="Question (e.g. What is Crizbe Hazelnut Crunch Stick?)"
+                                            className="w-full px-3 py-2 bg-[#1e1e1e] border border-[#333] rounded-xl text-white text-xs font-semibold focus:border-[#E8BF7A] focus:outline-none"
+                                        />
+
+                                        <textarea
+                                            rows={2}
+                                            value={faq.answer}
+                                            onChange={(e) =>
+                                                updateFaqItem(index, 'answer', e.target.value)
+                                            }
+                                            placeholder="Answer (e.g. Crizbe Hazelnut Crunch Stick is a crispy biscuit roll coated with milk chocolate...)"
+                                            className="w-full px-3 py-2 bg-[#1e1e1e] border border-[#333] rounded-xl text-white text-xs focus:border-[#E8BF7A] focus:outline-none"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
                     {/* SEO / Meta Details Section */}
                     <div className="pt-4 border-t border-white/10 space-y-4">
@@ -329,14 +568,16 @@ function ProductAddEditModal({
                             <h4 className="text-xs font-bold uppercase tracking-wider text-[#E8BF7A]">
                                 SEO / Meta Details (Optional)
                             </h4>
-                            <span className="text-[11px] text-gray-400">Used for Product Single Page SEO</span>
+                            <span className="text-[11px] text-gray-400">
+                                Used for Product Single Page SEO
+                            </span>
                         </div>
 
                         <DashboardInput
                             name="meta_title"
                             control={control}
                             label="Meta Title"
-                            placeholder="e.g. Belgian Chocolate Crunch Stick | Premium Luxury Chocolate"
+                            placeholder="e.g. Hazelnut Crunch Stick | Crizbe Premium Chocolate"
                         />
 
                         <DashboardTextarea

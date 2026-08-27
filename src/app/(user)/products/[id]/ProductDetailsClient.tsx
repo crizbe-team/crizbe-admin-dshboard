@@ -91,27 +91,26 @@ const ProductDetailsPage = () => {
                         <ProductInfo product={product} />
 
                         <div className="space-y-3">
-                            {/* About the product - Styled as per screenshot "About the product" with a small line on right? Screenshot shows "-" (minus) icon typically for open accordion */}
+                            {/* 1. About the Product - Rich HTML Content */}
                             <AccordionItem
                                 title={
-                                    <span className="font-[var(--font-inter-tight)] font-medium text-[18px]  tracking-[0.02em] text-[#191919] text-center lining-nums proportional-nums">
-                                        About the product
+                                    <span className="font-[var(--font-inter-tight)] font-medium text-[18px] tracking-[0.02em] text-[#191919] lining-nums proportional-nums">
+                                        About the Product
                                     </span>
                                 }
                                 defaultOpen={true}
                             >
-                                {/* Screenshot text: "Crizbe Crunch Sticks are the perfect snack... just pure, delightful crunchiness." */}
-                                <div className="font-[var(--font-inter-tight)] font-normal text-[16px] leading-[140%] tracking-[0.01em] text-[#373737] [font-variant-numeric:lining-nums_proportional-nums]">
-                                    <p>{product?.description}</p>
-                                    <br />
-                                    <p className="font-medium text-[16px]">
-                                        {' '}
-                                        ingredients :{' '}
-                                        <span className="font-light text-[14px]">
-                                            {product?.ingredients}
-                                        </span>
-                                    </p>
-                                </div>
+                                <div
+                                    className="font-[var(--font-inter-tight)] font-normal text-[15px] leading-relaxed text-[#373737] space-y-4 py-1
+                                    [&_h2]:text-lg [&_h2]:font-bricolage [&_h2]:font-bold [&_h2]:text-[#4E3325] [&_h2]:mt-5 [&_h2]:mb-2
+                                    [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-[#4E3325] [&_h3]:mt-4 [&_h3]:mb-1.5
+                                    [&_strong]:font-semibold [&_strong]:text-[#191919]
+                                    [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1.5 [&_ul]:my-3
+                                    [&_li]:text-[#373737] [&_p]:mb-3"
+                                    dangerouslySetInnerHTML={{
+                                        __html: product?.description || '',
+                                    }}
+                                />
                             </AccordionItem>
 
                             {/* Ratings & Reviews - Match API data */}
@@ -155,7 +154,7 @@ const ProductDetailsPage = () => {
                                                 </span>
                                             </div>
                                             <p className="text-sm text-[#747474] mt-1">
-                                                {product.total_reviews || 0} ratings & reviews
+                                                {product.total_reviews || 0} ratings &amp; reviews
                                             </p>
                                         </div>
                                         {/* Right: Progress Bars (Calculated from reviews) */}
@@ -305,6 +304,48 @@ const ProductDetailsPage = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* FAQs Section - New Full-Width Row Below Gallery & Right Info Grid */}
+                {(() => {
+                    let faqsList: any[] = [];
+                    if (product.faqs) {
+                        try {
+                            faqsList =
+                                typeof product.faqs === 'string'
+                                    ? JSON.parse(product.faqs)
+                                    : product.faqs;
+                        } catch {
+                            faqsList = [];
+                        }
+                    } else if (product.faq_list) {
+                        faqsList = product.faq_list;
+                    }
+
+                    if (!Array.isArray(faqsList) || faqsList.length === 0) return null;
+
+                    return (
+                        <div className="mt-12 pt-10 border-t border-[#EAEAEA]">
+                            <h2 className="font-inter-tight font-semibold text-[24px] sm:text-[28px] text-[#191919] mb-6">
+                                Frequently Asked Questions
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {faqsList.map((faq: any, idx: number) => (
+                                    <div
+                                        key={idx}
+                                        className="bg-[#FCFAF6] border border-[#EBE5D9] rounded-2xl p-5 hover:border-[#C4994A]/40 transition"
+                                    >
+                                        <h3 className="font-inter-tight font-semibold text-[16px] text-[#191919] mb-2">
+                                            {faq.question}
+                                        </h3>
+                                        <p className="font-inter-tight text-[14px] text-[#555] leading-relaxed">
+                                            {faq.answer}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })()}
 
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (
