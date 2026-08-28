@@ -35,7 +35,7 @@ export default function ProfileLayout({
 
     return (
         <div className="min-h-screen bg-[#FCF7EE]">
-            <div className="wrapper py-20 lg:py-28">
+            <div className="wrapper pt-20 lg:pt-28 pb-5">
                 <div className="flex flex-col gap-6 lg:gap-[30px] lg:flex-row lg:items-start">
                     <div className="static lg:sticky lg:top-[100px] shrink-0 w-full lg:w-[280px]">
                         <div className="mb-4 pl-2">
@@ -43,7 +43,7 @@ export default function ProfileLayout({
                         </div>
                         <ProfileSidebar userName={userName} />
                     </div>
-                    <div className="flex-1 w-full lg:pr-2 pb-6 lg:pb-10">{children}</div>
+                    <div className="flex-1 w-full lg:pr-2">{children}</div>
                 </div>
             </div>
         </div>
