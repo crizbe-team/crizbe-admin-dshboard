@@ -3,8 +3,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
-
 import { fadeInOut, zoomOutIn } from '../../utils/animations';
 import { useOutsideClick } from '@/hooks/use-outside-click';
 import { cn } from '@/lib/utils';
@@ -37,25 +35,38 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
     });
 
     useEffect(() => {
-        const handleKeyDown = (e: any) => {
-            if (e.code === 'Escape') {
+        if (!open) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
                 onClose();
             }
         };
 
-        if (modalInnerRef.current) {
-            if (open) {
-                document.addEventListener('keydown', handleKeyDown);
-                disableBodyScroll(modalInnerRef.current);
-            } else {
-                enableBodyScroll(modalInnerRef.current);
-            }
+        document.addEventListener('keydown', handleKeyDown);
+
+        // Lock background body & html scrolling
+        const originalBodyOverflow = document.body.style.overflow;
+        const originalHtmlOverflow = document.documentElement.style.overflow;
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+
+        // Pause Lenis smooth scroll engine while modal is active
+        if (typeof window !== 'undefined' && (window as any).lenis) {
+            (window as any).lenis.stop();
         }
+
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
-            clearAllBodyScrollLocks();
+            document.body.style.overflow = originalBodyOverflow;
+            document.documentElement.style.overflow = originalHtmlOverflow;
+
+            // Resume Lenis smooth scroll engine when modal closes
+            if (typeof window !== 'undefined' && (window as any).lenis) {
+                (window as any).lenis.start();
+            }
         };
-    }, [open]);
+    }, [open, onClose]);
 
     if (!mounted) return null;
 
@@ -69,9 +80,10 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
                     animate="to"
                     exit="from"
                     variants={fadeInOut(0.25)}
+                    data-lenis-prevent
                     className={cn(
-                        'flex items-center justify-center fixed bg-[#000000b3] inset-0 z-999',
-                        'p-4 md:p-5'
+                        'fixed inset-0 z-[999] flex items-center justify-center bg-[#000000b3] p-4 sm:p-6 overflow-hidden',
+                        className
                     )}
                 >
                     <motion.div
@@ -79,28 +91,20 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
                         animate="to"
                         exit="from"
                         variants={zoomOutIn()}
-                        className="relative w-full h-full mx-auto"
+                        className="relative w-full max-w-full my-auto flex flex-col items-center justify-center"
                     >
-                        <div
-                            className={cn(
-                                'w-full md:w-auto absolute left-1/2 transform -translate-x-1/2 shadow-xl',
-                                'h-auto max-h-full top-1/2 -translate-y-1/2 rounded-lg'
-                            )}
-                        >
+                        <div className="relative w-full max-w-full flex flex-col items-center justify-center">
                             <button
                                 onClick={onClose}
                                 aria-label="Close panel"
-                                className={cn(
-                                    'fixed z-10 inline-flex items-center justify-center w-7 h-7 md:w-8 md:h-8 rounded-full bg-white shadow text-gray-600 transition duration-200 focus:outline-none focus:text-gray-800 focus:shadow-md hover:text-gray-800 hover:shadow-md',
-                                    'top-[-12px] right-[-12px]'
-                                )}
+                                className="absolute -top-3 -right-3 z-50 inline-flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-lg text-gray-600 transition duration-200 hover:text-gray-900 hover:scale-105 focus:outline-none"
                             >
                                 <X className="w-5 h-5" />
                             </button>
                             <div
                                 ref={modalInnerRef}
-                                className="h-full overflow-y-auto rounded-lg"
-                                style={{ maxHeight: 'calc(100vh - 120px)' }}
+                                data-lenis-prevent
+                                className="w-full max-h-[calc(100vh-60px)] sm:max-h-[calc(100vh-80px)] overflow-y-auto rounded-2xl flex flex-col shadow-2xl"
                             >
                                 {children}
                             </div>

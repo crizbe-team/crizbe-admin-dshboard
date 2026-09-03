@@ -211,9 +211,9 @@ const FeedbacSection = () => {
 
                                 {/* Name and Designation */}
                                 <div className="flex flex-col gap-0.5">
-                                    <h4 className="text-[17px] sm:text-[18px] font-bold text-[#4E3325] font-bricolage">
+                                    <h3 className="text-[17px] sm:text-[18px] font-bold text-[#4E3325] font-bricolage">
                                         {userName}
-                                    </h4>
+                                    </h3>
                                     <p className="text-[13px] sm:text-[14px] text-[#8B7D79] font-medium">
                                         {designation}
                                     </p>

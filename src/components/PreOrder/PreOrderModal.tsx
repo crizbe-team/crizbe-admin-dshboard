@@ -83,7 +83,9 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
         if (apiErrors && Object.keys(apiErrors).length > 0) {
             Object.keys(apiErrors).forEach((field) => {
                 const formField = FIELD_MAP[field] || (field as keyof PreOrderFormData);
-                const msg = Array.isArray(apiErrors[field]) ? apiErrors[field][0] : apiErrors[field];
+                const msg = Array.isArray(apiErrors[field])
+                    ? apiErrors[field][0]
+                    : apiErrors[field];
                 setError(formField as any, {
                     type: 'server',
                     message: msg,
@@ -147,7 +149,8 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
                         Pre-Order Gift Boxes
                     </h2>
                     <p className="text-xs text-[#666666] mt-1 font-medium">
-                        Reserve your boxes in advance. Share your details below and our team will get in touch.
+                        Reserve your boxes in advance. Share your details below and our team will
+                        get in touch.
                     </p>
                 </div>
 
@@ -160,7 +163,8 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
                             Inquiry Received
                         </h3>
                         <p className="text-xs text-[#666666] max-w-xs mx-auto leading-relaxed font-medium">
-                            Thank you! Our team will reach out shortly regarding your pre-order request.
+                            Thank you! Our team will reach out shortly regarding your pre-order
+                            request.
                         </p>
                         <div className="pt-2">
                             <button
@@ -275,7 +279,7 @@ export default function PreOrderModal({ open, onClose }: PreOrderModalProps) {
                                 isLoading={submitMutation.isPending}
                                 className="min-w-[140px] h-[44px]"
                             >
-                                Submit Inquiry
+                                Submit
                             </GoldenButton>
                         </div>
                     </form>

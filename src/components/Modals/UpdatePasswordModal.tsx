@@ -266,7 +266,7 @@ export default function UpdatePasswordModal({ open, onClose, email }: UpdatePass
                 style={{
                     willChange: 'transform, opacity',
                 }}
-                className="relative w-[450px] max-w-[450px] bg-white rounded-lg shadow-2xl flex flex-col border border-[#EEE7DB] overflow-hidden"
+                className="relative w-full max-w-[450px] bg-white rounded-lg shadow-2xl flex flex-col border border-[#EEE7DB] overflow-hidden"
             >
                 {/* Step 1: Confirm Send OTP */}
                 {step === 'CONFIRM' && (

@@ -40,7 +40,7 @@ export default function Header() {
         <>
             <header className="fixed top-0 left-0 right-0 z-50 w-full h-[80px] backdrop-blur-md">
                 <div className="mx-auto wrapper flex h-full max-w-7xl items-center justify-between">
-                    <h1 className="text-lg font-semibold text-white w-[150px]">
+                    <div className="text-lg font-semibold text-white w-[150px]">
                         <Link href="/">
                             <Image
                                 src="/images/user/crizbe-logo.svg"
@@ -51,7 +51,7 @@ export default function Header() {
                                 quality={100}
                             />
                         </Link>
-                    </h1>
+                    </div>
 
                     {/* Right side actions */}
                     <div className="flex items-center gap-4 sm:gap-6">

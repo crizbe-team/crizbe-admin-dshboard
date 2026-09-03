@@ -27,6 +27,9 @@ export default function SmoothScroll() {
             smoothWheel: true,
             touchMultiplier: 1.5,
         });
+        if (typeof window !== 'undefined') {
+            window.lenis = lenis;
+        }
 
         // Synchronize Lenis scroll updates with GSAP ScrollTrigger
         lenis.on('scroll', () => {

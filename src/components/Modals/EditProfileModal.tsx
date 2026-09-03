@@ -100,10 +100,10 @@ export default function EditProfileModal({
                 style={{
                     willChange: 'transform, opacity',
                 }}
-                className="relative w-[550px] max-w-[550px] bg-white rounded-lg shadow-2xl flex flex-col border border-[#EEE7DB]"
+                className="relative w-full max-w-[550px] bg-white rounded-2xl shadow-2xl flex flex-col border border-[#EEE7DB] overflow-hidden"
             >
                 {/* Header */}
-                <div className="flex items-start justify-between px-8 pt-8 pb-5 bg-white">
+                <div className="flex items-start justify-between px-6 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-5 bg-white shrink-0">
                     <div>
                         <h2 className="text-xl font-bold text-[#191919]">Edit profile</h2>
                         <p className="text-sm font-normal text-[#474747] mt-1">
@@ -112,10 +112,10 @@ export default function EditProfileModal({
                     </div>
                 </div>
 
-                <hr className="border-t border-[#E7E4DD] mx-8" />
+                <hr className="border-t border-[#E7E4DD] mx-6 sm:mx-8 shrink-0" />
 
                 {/* Content */}
-                <div className="flex-1 px-8 py-6 space-y-5">
+                <div className="flex-1 px-6 sm:px-8 py-5 sm:py-6 space-y-4 sm:space-y-5 overflow-y-auto">
                     <FormInput
                         label="First name"
                         required
@@ -168,7 +168,7 @@ export default function EditProfileModal({
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-end gap-3 px-8 py-6 bg-white border-t border-[#E7E4DD]">
+                <div className="flex items-center justify-end gap-3 px-6 sm:px-8 py-4 sm:py-5 bg-white border-t border-[#E7E4DD] shrink-0">
                     <button
                         type="button"
                         onClick={onClose}

@@ -87,9 +87,9 @@ export default function Flavours() {
                         <article className="group relative w-[600px] h-[360px]">
                             <div className="bg-[url(/images/user/almond-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
                             <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
-                                <h2 className="text-[#5C4114] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                <h3 className="text-[#5C4114] text-[40px] font-bricolage font-semibold mb-[10px]">
                                     Almond
-                                </h2>
+                                </h3>
                                 <p className="text-[#4E3325CC] text-[16px] font-normal">
                                     Feel the premium almond <br />
                                     crunch in every byte.
@@ -133,9 +133,9 @@ export default function Flavours() {
                         <article className="group relative w-[600px] h-[360px]">
                             <div className="bg-[url(/images/user/hazelnut-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
                             <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
-                                <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                <h3 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
                                     Hazelnut
-                                </h2>
+                                </h3>
                                 <p className="text-[#FFFFFF] text-[16px] font-normal">
                                     Indulge in the rich <br />
                                     hazelnut center.
@@ -179,9 +179,9 @@ export default function Flavours() {
                         <article className="group relative w-[600px] h-[360px]">
                             <div className="bg-[url(/images/user/mix-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
                             <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
-                                <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                <h3 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
                                     Magic Mix
-                                </h2>
+                                </h3>
                                 <p className="text-[#FFFFFF] text-[16px] font-normal">
                                     Feel the premium pista, almond <br />& hazelnut crunch in every
                                     byte.
@@ -225,9 +225,9 @@ export default function Flavours() {
                         <article className="group relative w-[600px] h-[360px]">
                             <div className="bg-[url(/images/user/pista-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
                             <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
-                                <h2 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
+                                <h3 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
                                     Pista
-                                </h2>
+                                </h3>
                                 <p className="text-[#FFFFFF] text-[16px] font-normal">
                                     Savor the roasted <br />
                                     pistachio perfection.

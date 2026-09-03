@@ -110,9 +110,9 @@ export default function ResponsiveFlavours() {
                         >
                             <div className="absolute inset-0 bg-[url(/images/user/almond-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
                             <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
-                                <h2 className="text-[#5C4114] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
+                                <h3 className="text-[#5C4114] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
                                     Almond
-                                </h2>
+                                </h3>
                                 <p className="text-[#4E3325CC] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
                                     Feel the premium almond crunch in every byte.
                                 </p>
@@ -137,9 +137,9 @@ export default function ResponsiveFlavours() {
                         >
                             <div className="absolute inset-0 bg-[url(/images/user/hazelnut-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
                             <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
-                                <h2 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
+                                <h3 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
                                     Hazelnut
-                                </h2>
+                                </h3>
                                 <p className="text-[#FFFFFFDD] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
                                     Feel the premium hazelnut crunch in every byte.
                                 </p>
@@ -164,9 +164,9 @@ export default function ResponsiveFlavours() {
                         >
                             <div className="absolute inset-0 bg-[url(/images/user/pista-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
                             <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
-                                <h2 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
+                                <h3 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
                                     Pistachio
-                                </h2>
+                                </h3>
                                 <p className="text-[#FFFFFFDD] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
                                     Feel the premium pista crunch in every byte.
                                 </p>

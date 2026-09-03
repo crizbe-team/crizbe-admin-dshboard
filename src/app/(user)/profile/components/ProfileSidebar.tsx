@@ -25,6 +25,25 @@ export default function ProfileSidebar({ userName = 'Customer' }: { userName?: s
         logout();
     };
 
+    const handleNavClick = () => {
+        if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+            setTimeout(() => {
+                const contentEl = document.getElementById('profile-content');
+                if (contentEl) {
+                    const topOffset = contentEl.getBoundingClientRect().top + window.scrollY - 90;
+                    if ((window as any).lenis) {
+                        (window as any).lenis.scrollTo(topOffset);
+                    } else {
+                        window.scrollTo({
+                            top: topOffset,
+                            behavior: 'smooth',
+                        });
+                    }
+                }
+            }, 50);
+        }
+    };
+
     return (
         <>
             <aside className="w-full rounded-[24px] border border-[#EEEEEE] bg-white p-[24px] shadow-sm flex flex-col ">
@@ -40,6 +59,7 @@ export default function ProfileSidebar({ userName = 'Customer' }: { userName?: s
                             <React.Fragment key={item.href}>
                                 <Link
                                     href={item.href}
+                                    onClick={handleNavClick}
                                     className={`flex items-center justify-between rounded-xl  mb-[24px] last:mb-0 text-[18px] transition-colors ${
                                         isActive
                                             ? 'text-[#007DDC]'
