@@ -144,7 +144,7 @@ export default function PrintableAddressLabels({ orders }: PrintableAddressLabel
                                 <div>
                                     <img
                                         src="/images/user/crizbe-logo.svg"
-                                        alt="CRIZBE"
+                                        alt="Crizbe"
                                         className="h-7 w-auto object-contain mb-0.5"
                                     />
                                     <p className="text-[8px] font-black tracking-widest text-[#9A7236] uppercase">
@@ -293,7 +293,8 @@ export default function PrintableAddressLabels({ orders }: PrintableAddressLabel
                                                     colSpan={4}
                                                     className="py-1.5 px-2 text-center text-[9.5px] font-semibold text-gray-600 italic"
                                                 >
-                                                    Order Manifest (Total: ₹{totalAmount.toFixed(2)})
+                                                    Order Manifest (Total: ₹{totalAmount.toFixed(2)}
+                                                    )
                                                 </td>
                                             </tr>
                                         )}

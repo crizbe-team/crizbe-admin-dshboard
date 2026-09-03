@@ -157,12 +157,6 @@ export default function ContactUsPage() {
                                     <br />
                                     {COMPANY_CONTACT.location}
                                 </p>
-                                <button className="mt-auto px-6 py-2 rounded-full border border-gray-200 text-sm font-semibold text-[#191919] hover:bg-gray-50 flex items-center gap-2 transition-colors">
-                                    <span className="w-4 h-4 rounded-full bg-[#C4994A]/10 flex items-center justify-center">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-[#C4994A]" />
-                                    </span>
-                                    Get direction
-                                </button>
                             </motion.div>
 
                             {/* Contact Card */}

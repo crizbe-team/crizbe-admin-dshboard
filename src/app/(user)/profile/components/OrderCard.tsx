@@ -31,7 +31,6 @@ export default function OrderCard({ order }: OrderCardProps) {
     return (
         <article className="rounded-[20px] border border-[#EEEEEE] bg-white overflow-hidden shadow-sm">
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-[#EEEEEE] px-4 sm:px-6 py-3.5 sm:py-[18px] text-[12px] sm:text-[13px] text-[#555555]">
-                <span>Order id :- {order.id}</span>
                 <span>Ordered on : {formatDate(order.created_at)}</span>
             </header>
 
@@ -91,8 +90,7 @@ export default function OrderCard({ order }: OrderCardProps) {
                             <div className="mt-3 sm:mt-5">
                                 <div className="flex items-center gap-3 flex-wrap">
                                     <p className="text-[14px] sm:text-[15px] font-medium text-[#1A1A1A]">
-                                        {order.first_name || 'Customer'}{' '}
-                                        {order.last_name || ''}
+                                        {order.first_name || 'Customer'} {order.last_name || ''}
                                     </p>
                                     <span className="text-[11px] sm:text-[12px] bg-[#EEEEEE] px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[#555555]">
                                         {order.address_type || 'Home'}
@@ -108,7 +106,9 @@ export default function OrderCard({ order }: OrderCardProps) {
                         <div className="hidden md:block w-[1px] bg-[#EEEEEE] self-stretch"></div>
 
                         <div className="w-full md:w-[40%]">
-                            <h3 className="text-[16px] sm:text-[17px] font-medium text-[#1A1A1A]">Invoice</h3>
+                            <h3 className="text-[16px] sm:text-[17px] font-medium text-[#1A1A1A]">
+                                Invoice
+                            </h3>
                             <div className="mt-3 sm:mt-5">
                                 <button
                                     type="button"
@@ -138,19 +138,29 @@ export default function OrderCard({ order }: OrderCardProps) {
                                         { label: 'Shipped', backendRef: 'shipped' },
                                         { label: 'Delivered', backendRef: 'delivered' },
                                     ].map((step, index, array) => {
-                                        const statusOrder = ['pending', 'confirmed', 'shipped', 'delivered'];
-                                        const statusIndex = statusOrder.indexOf((order.status || '').toLowerCase());
+                                        const statusOrder = [
+                                            'pending',
+                                            'confirmed',
+                                            'shipped',
+                                            'delivered',
+                                        ];
+                                        const statusIndex = statusOrder.indexOf(
+                                            (order.status || '').toLowerCase()
+                                        );
                                         const activeIndex = statusIndex >= 0 ? statusIndex : 0;
                                         const isCompleted = index <= activeIndex;
                                         const isLineCompleted = index < activeIndex;
 
                                         const historyNode = (order.status_history || []).find(
                                             (historyRecord) =>
-                                                historyRecord.status.toLowerCase() === step.backendRef
+                                                historyRecord.status.toLowerCase() ===
+                                                step.backendRef
                                         );
                                         const stepDate =
                                             historyNode?.date ||
-                                            (step.backendRef === 'pending' ? order.created_at : null);
+                                            (step.backendRef === 'pending'
+                                                ? order.created_at
+                                                : null);
 
                                         const isLast = index === array.length - 1;
 
@@ -171,7 +181,9 @@ export default function OrderCard({ order }: OrderCardProps) {
                                                         </div>
                                                         <span
                                                             className={`text-[15px] font-medium ${
-                                                                isCompleted ? 'text-[#1A1A1A]' : 'text-[#888888]'
+                                                                isCompleted
+                                                                    ? 'text-[#1A1A1A]'
+                                                                    : 'text-[#888888]'
                                                             }`}
                                                         >
                                                             {step.label}
@@ -190,7 +202,9 @@ export default function OrderCard({ order }: OrderCardProps) {
                                                     <div className="ml-[11px] my-1 w-[2px] h-[28px] relative">
                                                         <div
                                                             className={`w-full h-full transition-colors duration-300 ${
-                                                                isLineCompleted ? 'bg-[#0E9F6E]' : 'bg-[#EBEBEB]'
+                                                                isLineCompleted
+                                                                    ? 'bg-[#0E9F6E]'
+                                                                    : 'bg-[#EBEBEB]'
                                                             }`}
                                                         />
                                                     </div>

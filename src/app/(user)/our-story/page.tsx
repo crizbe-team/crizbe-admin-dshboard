@@ -72,7 +72,7 @@ export default function StoryPage() {
                             EXPLORE THE STORY OF OUR JOURNEY!
                         </motion.h2>
 
-                        <div className="space-y-12 text-[#474747] text-lg md:text-xl leading-relaxed text-justify font-inter-tight">
+                        <div className="space-y-12 text-[#474747] text-lg md:text-xl leading-relaxed text-left font-inter-tight">
                             {[
                                 {
                                     title: 'Crafting the Perfect Crunch',
