@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { CreditCard, Wallet, Smartphone, Landmark } from 'lucide-react';
+import { CreditCard, Smartphone, Landmark } from 'lucide-react';
 import Footer from '@/app/_components/Footer';
 import { useRouter } from 'next/navigation';
 import CartSummaryCard from '../../_components/checkout/CartSummaryCard';
@@ -17,7 +17,7 @@ import { toast } from '@/components/ui/Toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { API_ENDPOINTS } from '@/utils/api-endpoints';
 
-type PayMethod = 'upi' | 'card' | 'netbanking' | 'wallet';
+type PayMethod = 'upi' | 'card' | 'netbanking';
 
 export default function PaymentPage() {
     const { GET_MINIMAL_DETAILS } = API_ENDPOINTS;
@@ -70,16 +70,11 @@ export default function PaymentPage() {
                 label: 'Netbanking',
                 icon: Landmark,
             },
-            {
-                id: 'wallet' as const,
-                label: 'Wallet',
-                icon: Wallet,
-            },
         ],
         []
     );
 
-    const handleRazorpayPayment = async (method: 'card' | 'upi' | 'netbanking' | 'wallet') => {
+    const handleRazorpayPayment = async (method: 'card' | 'upi' | 'netbanking') => {
         console.log('handleRazorpayPayment called with method:', method);
         if (!selectedAddress) {
             console.log('Error: No selected address');
@@ -190,12 +185,7 @@ export default function PaymentPage() {
     };
 
     const handleCheckout = async () => {
-        if (
-            selected === 'upi' ||
-            selected === 'card' ||
-            selected === 'netbanking' ||
-            selected === 'wallet'
-        ) {
+        if (selected === 'upi' || selected === 'card' || selected === 'netbanking') {
             if (!isRazorpayLoaded) {
                 console.log('Razorpay not loaded yet');
                 toast.error('Razorpay is still loading. Please wait...');
