@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Admin Login | Crizbe Dashboard',
+    title: 'Admin Login',
     description: 'Log in to Crizbe Admin Control Center to manage store items, stock, clients, and orders.',
 };
 

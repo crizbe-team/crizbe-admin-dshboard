@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Terms & Conditions | Crizbe Chocolate & Snacks India',
+    title: 'Terms & Conditions',
     description:
         "Review Crizbe's Terms & Conditions covering website use, orders, payments, products, shipping, returns and other policies for customers shopping online in India.",
     alternates: {

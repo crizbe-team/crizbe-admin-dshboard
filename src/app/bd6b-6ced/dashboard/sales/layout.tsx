@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Sales Reports & Analytics | Crizbe Admin',
+    title: 'Sales Reports & Analytics',
     description: 'Analyze sales metrics, item performance, and revenues.',
 };
 

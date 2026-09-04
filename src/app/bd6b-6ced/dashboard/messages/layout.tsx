@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Messages | Crizbe Admin',
+    title: 'Messages',
     description: 'Manage admin portal messages.',
 };
 

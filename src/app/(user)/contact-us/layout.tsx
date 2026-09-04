@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Contact Crizbe | Premium Chocolate Online India',
+    title: 'Contact Us',
     description:
         'Contact Crizbe for questions about premium chocolate crunch sticks, products, orders, delivery and customer support when shopping online in India.',
     keywords: ['contact Crizbe', 'Crizbe customer support', 'luxury chocolate contact', 'crunch sticks inquiry'],

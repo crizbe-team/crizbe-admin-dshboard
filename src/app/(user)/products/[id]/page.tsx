@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
         if (!product) {
             return {
-                title: 'Product Not Found | Crizbe',
+                title: 'Product Not Found',
             };
         }
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         const title =
             metaDetails.meta_title ||
             product.meta_title ||
-            `${product.name} | Crizbe Premium Crunch Sticks`;
+            `${product.name} - Premium Crunch Sticks`;
         const description =
             metaDetails.meta_description ||
             product.meta_description ||

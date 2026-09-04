@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Notifications | Crizbe Admin',
+    title: 'Notifications',
     description: 'System alerts and user notifications.',
 };
 

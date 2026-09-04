@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Help & Support | Crizbe Admin',
+    title: 'Help & Support',
     description: 'Admin help and support documentation.',
 };
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Product Variants | Crizbe Admin',
+    title: 'Product Variants',
     description: 'Configure and update product variant definitions.',
 };
 

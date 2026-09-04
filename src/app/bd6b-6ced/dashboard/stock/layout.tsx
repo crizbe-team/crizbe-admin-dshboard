@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Inventory & Stock Control | Crizbe Admin',
+    title: 'Inventory & Stock Control',
     description: 'Track and update product inventory levels.',
 };
 

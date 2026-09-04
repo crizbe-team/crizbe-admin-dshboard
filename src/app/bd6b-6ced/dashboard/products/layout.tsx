@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Product Management | Crizbe Admin',
+    title: 'Product Management',
     description: 'Add, update, or remove Crizbe products.',
 };
 
