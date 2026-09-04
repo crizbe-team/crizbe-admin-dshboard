@@ -43,13 +43,8 @@ type Address = {
 
 export default function ShippingPage() {
     const router = useRouter();
-    const {
-        data,
-        isLoading,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-    } = useFetchInfiniteAddresses();
+    const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+        useFetchInfiniteAddresses();
 
     const { mutate: createAddress, isPending: isCreating } = useCreateAddress();
     const { mutate: updateAddress, isPending: isUpdating } = useUpdateAddress();
@@ -195,124 +190,134 @@ export default function ShippingPage() {
                 <div className="flex items-start justify-between gap-10 flex-col lg:flex-row">
                     <section className="w-full flex-1">
                         {isLoading ? (
-                            <SectionLoader text="Loading your addresses..." minHeight="min-h-[350px]" />
+                            <SectionLoader
+                                text="Loading your addresses..."
+                                minHeight="min-h-[350px]"
+                            />
                         ) : (
                             <div className="">
-                            {addresses.map((a: Address) => {
-                                const active = a.id === selected;
-                                return (
-                                    <label
-                                        key={a.id}
-                                        className={[
-                                            'block rounded-2xl mb-[20px] last:mb-0  border bg-white/70 backdrop-blur-sm p-[24px] cursor-pointer',
-                                            active
-                                                ? 'border-[#4E3325] shadow-sm'
-                                                : 'border-[#E7E1D6]',
-                                        ].join(' ')}
-                                    >
-                                        <div className="flex items-start gap-4">
-                                            <input
-                                                type="radio"
-                                                name="address"
-                                                checked={active}
-                                                onChange={() => setSelected(a.id)}
-                                                className="accent-[#4E3325]"
-                                                disabled={isCreating || isUpdating || isDeleting}
-                                            />
+                                {addresses.map((a: Address) => {
+                                    const active = a.id === selected;
+                                    return (
+                                        <label
+                                            key={a.id}
+                                            className={[
+                                                'block rounded-2xl mb-[20px] last:mb-0  border bg-white/70 backdrop-blur-sm p-[24px] cursor-pointer',
+                                                active
+                                                    ? 'border-[#4E3325] shadow-sm'
+                                                    : 'border-[#E7E1D6]',
+                                            ].join(' ')}
+                                        >
+                                            <div className="flex items-start gap-4">
+                                                <input
+                                                    type="radio"
+                                                    name="address"
+                                                    checked={active}
+                                                    onChange={() => setSelected(a.id)}
+                                                    className="accent-[#4E3325]"
+                                                    disabled={
+                                                        isCreating || isUpdating || isDeleting
+                                                    }
+                                                />
 
-                                            <div className="flex-1">
-                                                <div className="flex justify-between items-center">
-                                                    <div className="text-sm font-medium text-[#191919]">
-                                                        {getFullName(a)}
-                                                        {a.is_default && (
-                                                            <span className="ml-2 text-xs bg-[#4E3325] text-white px-2 py-1 rounded-full">
-                                                                Default
-                                                            </span>
-                                                        )}
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between items-center">
+                                                        <div className="text-sm font-medium text-[#191919]">
+                                                            {getFullName(a)}
+                                                            {a.is_default && (
+                                                                <span className="ml-2 text-xs bg-[#4E3325] text-white px-2 py-1 rounded-full">
+                                                                    Default
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <span className="text-[12px] font-medium text-[#939393] border border-[#F5F3F0] bg-[#F5F3F0] py-1 px-[14px] rounded-full capitalize">
+                                                            {a.address_type}
+                                                        </span>
                                                     </div>
-                                                    <span className="text-[12px] font-medium text-[#939393] border border-[#F5F3F0] bg-[#F5F3F0] py-1 px-[14px] rounded-full capitalize">
-                                                        {a.address_type}
-                                                    </span>
-                                                </div>
 
-                                                <div className="mt-2 mb-[10px] font-normal text-xs text-[#474747] leading-relaxed">
-                                                    {formatAddress(a)}
-                                                </div>
-                                                {a.landmark && (
-                                                    <div className="mt-1 mb-[10px] font-normal text-xs text-[#6B635A] italic">
-                                                        Landmark: {a.landmark}
+                                                    <div className="mt-2 mb-[10px] font-normal text-xs text-[#474747] leading-relaxed">
+                                                        {formatAddress(a)}
                                                     </div>
-                                                )}
-                                                <div className="mt-2 flex items-center gap-2 text-xs text-[#474747]">
-                                                    <Phone className="w-3.5 h-3.5" />
-                                                    <span>{getPhone(a)}</span>
-                                                </div>
-                                                <hr className="border-t border-[#E7E4DD] my-4" />
-                                                <div className="mt-4 flex items-center gap-6 text-xs text-[#6B635A]">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleDeleteAddress(a.id)}
-                                                        disabled={isDeleting}
-                                                        className="flex text-[#404040] cursor-pointer items-center gap-2 hover:text-[#4E3325] transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                                    >
-                                                        {isDeleting ? (
-                                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                                        ) : (
-                                                            <Trash2 className="w-4 h-4" />
-                                                        )}
-                                                        <span>Delete</span>
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleEditAddress(a)}
-                                                        disabled={isUpdating}
-                                                        className="flex text-[#404040] cursor-pointer items-center gap-2 hover:text-[#4E3325] transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                                    >
-                                                        <Pencil className="w-4 h-4" />
-                                                        <span>Edit</span>
-                                                    </button>
+                                                    {a.landmark && (
+                                                        <div className="mt-1 mb-[10px] font-normal text-xs text-[#6B635A] italic">
+                                                            Landmark: {a.landmark}
+                                                        </div>
+                                                    )}
+                                                    <div className="mt-2 flex items-center gap-2 text-xs text-[#474747]">
+                                                        <Phone className="w-3.5 h-3.5" />
+                                                        <span>{getPhone(a)}</span>
+                                                    </div>
+                                                    <hr className="border-t border-[#E7E4DD] my-4" />
+                                                    <div className="mt-4 flex items-center gap-6 text-xs text-[#6B635A]">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                handleDeleteAddress(a.id)
+                                                            }
+                                                            disabled={isDeleting}
+                                                            className="flex text-[#404040] cursor-pointer items-center gap-2 hover:text-[#4E3325] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        >
+                                                            {isDeleting ? (
+                                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                            ) : (
+                                                                <Trash2 className="w-4 h-4" />
+                                                            )}
+                                                            <span>Delete</span>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleEditAddress(a)}
+                                                            disabled={isUpdating}
+                                                            className="flex text-[#404040] cursor-pointer items-center gap-2 hover:text-[#4E3325] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        >
+                                                            <Pencil className="w-4 h-4" />
+                                                            <span>Edit</span>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </label>
-                                );
-                            })}
+                                        </label>
+                                    );
+                                })}
 
-                            <div ref={loadMoreRef} className="py-4 flex justify-center">
-                                {isFetchingNextPage && (
-                                    <SectionLoader text="Loading more addresses..." minHeight="min-h-[160px]" />
+                                <div ref={loadMoreRef} className="py-4 flex justify-center">
+                                    {isFetchingNextPage && (
+                                        <SectionLoader
+                                            text="Loading more addresses..."
+                                            minHeight="min-h-[160px]"
+                                        />
+                                    )}
+                                </div>
+
+                                {addresses.length === 0 && (
+                                    <div className="text-center py-14 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">
+                                        <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
+                                            <Image
+                                                src="https://crizbe-media-bucket.s3.eu-north-1.amazonaws.com/static/address_empty.png"
+                                                alt="empty-address"
+                                                width={144}
+                                                height={144}
+                                            />
+                                        </div>
+                                        <p className="text-sm font-regular text-[#373737] mb-5">
+                                            Sorry, you don&apos;t have any <br /> shipping addresses
+                                            saved yet!
+                                        </p>
+                                        <div className="flex justify-center">
+                                            <button
+                                                type="button"
+                                                onClick={handleAddAddress}
+                                                className="inline-flex items-center justify-center rounded-full bg-[#4E3325] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#3e291c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4E3325]/40 cursor-pointer gap-2 shadow-md hover:scale-105"
+                                            >
+                                                <Plus className="w-4 h-4" />
+                                                Add Address
+                                            </button>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
-
-                            {addresses.length === 0 && (
-                                <div className="text-center py-14 rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm">
-                                    <div className="mx-auto flex h-36 w-36 items-center justify-center mb-4">
-                                        <Image
-                                            src="https://crizbe-media-bucket.s3.eu-north-1.amazonaws.com/static/address_empty.png"
-                                            alt="empty-address"
-                                            width={144}
-                                            height={144}
-                                        />
-                                    </div>
-                                    <p className="text-sm font-regular text-[#373737] mb-5">
-                                        Sorry, you don&apos;t have any <br /> shipping addresses
-                                        saved yet!
-                                    </p>
-                                    <div className="flex justify-center">
-                                        <button
-                                            type="button"
-                                            onClick={handleAddAddress}
-                                            className="inline-flex items-center justify-center rounded-full bg-[#4E3325] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#3e291c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4E3325]/40 cursor-pointer gap-2 shadow-md hover:scale-105"
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                            Add Address
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </section>
+                        )}
+                    </section>
 
                     <div className="w-full lg:w-auto">
                         <CartSummaryCard

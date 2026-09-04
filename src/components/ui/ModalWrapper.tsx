@@ -93,7 +93,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
                         variants={zoomOutIn()}
                         className="relative w-full max-w-full my-auto flex flex-col items-center justify-center"
                     >
-                        <div className="relative w-full max-w-full flex flex-col items-center justify-center">
+                        <div className="relative w-fit max-w-full flex flex-col items-center justify-center">
                             <button
                                 onClick={onClose}
                                 aria-label="Close panel"

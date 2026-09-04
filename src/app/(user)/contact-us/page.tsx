@@ -151,6 +151,8 @@ export default function ContactUsPage() {
                                 <p className="text-[#474747] text-sm leading-relaxed">
                                     {COMPANY_CONTACT.name}
                                     <br />
+                                    {COMPANY_CONTACT.building}
+                                    <br />
                                     {COMPANY_CONTACT.door}
                                     <br />
                                     {COMPANY_CONTACT.junction}

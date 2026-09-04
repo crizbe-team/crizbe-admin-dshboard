@@ -13,7 +13,7 @@ export default function OrdersList() {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [ordersImgSrc, setOrdersImgSrc] = useState(
-        'https://crizbe.s3.eu-north-1.amazonaws.com/static/empty-orders.png'
+        'https://crizbe-media-bucket.s3.eu-north-1.amazonaws.com/static/product_empty.png'
     );
 
     const handleDebouncedSearch = useDebouncedCallback((val: string) => {
@@ -26,15 +26,8 @@ export default function OrdersList() {
         handleDebouncedSearch(val);
     };
 
-    const {
-        data,
-        isLoading,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-    } = useFetchInfiniteOrders(
-        debouncedSearch ? { search: debouncedSearch } : undefined
-    );
+    const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+        useFetchInfiniteOrders(debouncedSearch ? { search: debouncedSearch } : undefined);
 
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -107,7 +100,10 @@ export default function OrdersList() {
                         {/* Infinite Scroll Sentinel */}
                         <div ref={loadMoreRef} className="py-4 flex justify-center">
                             {isFetchingNextPage && (
-                                <SectionLoader text="Loading more orders..." minHeight="min-h-[160px]" />
+                                <SectionLoader
+                                    text="Loading more orders..."
+                                    minHeight="min-h-[160px]"
+                                />
                             )}
                         </div>
                     </>
@@ -121,7 +117,7 @@ export default function OrdersList() {
                                 height={144}
                                 onError={() => {
                                     setOrdersImgSrc(
-                                        'https://crizbe-media-bucket.s3.eu-north-1.amazonaws.com/static/empty-cart.png'
+                                        'https://crizbe-media-bucket.s3.eu-north-1.amazonaws.com/static/product_empty.png'
                                     );
                                 }}
                             />

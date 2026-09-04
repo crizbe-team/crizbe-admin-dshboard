@@ -111,6 +111,7 @@ export const generateInvoicePDF = async (order: any, convertPrice: (val: number)
 
     const companyLines = [
         COMPANY_CONTACT.name,
+        COMPANY_CONTACT.building,
         COMPANY_CONTACT.door,
         COMPANY_CONTACT.junction,
         COMPANY_CONTACT.location,
