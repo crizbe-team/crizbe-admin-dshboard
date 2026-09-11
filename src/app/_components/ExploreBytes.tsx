@@ -323,7 +323,7 @@ export default function ExploreBytes() {
                 <div className="mt-16 flex justify-center">
                     <Link
                         href="/products"
-                        className="font-inter-tight font-semibold text-[16px] text-[#8E8E8E] hover:text-[#4E3325] transition-colors duration-300 flex items-center gap-1 cursor-pointer"
+                        className="font-inter-tight font-semibold text-[16px] text-[#595959] hover:text-[#4E3325] transition-colors duration-300 flex items-center gap-1 cursor-pointer"
                     >
                         View all <span className="text-lg">→</span>
                     </Link>

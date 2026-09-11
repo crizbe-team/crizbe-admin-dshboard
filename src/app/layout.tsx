@@ -13,16 +13,19 @@ import GlobalImageLoader from '@/components/ui/GlobalImageLoader';
 const interTight = Inter_Tight({
     variable: '--font-inter-tight',
     subsets: ['latin'],
+    display: 'swap',
 });
 
 const geistMono = Geist_Mono({
     variable: '--font-geist-mono',
     subsets: ['latin'],
+    display: 'swap',
 });
 
 const bricolage = Bricolage_Grotesque({
     variable: '--font-bricolage',
     subsets: ['latin'],
+    display: 'swap',
 });
 
 export const metadata: Metadata = {

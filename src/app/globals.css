@@ -467,21 +467,19 @@ button {
 }
 
 @keyframes imgShimmer {
-    0% {
-        background-position: -200% 0;
+    0%, 100% {
+        opacity: 0.3;
     }
-    100% {
-        background-position: 200% 0;
+    50% {
+        opacity: 0.7;
     }
 }
 
 /* Global Image Loading Styling */
 img:not(.img-loaded):not(.no-shimmer):not([id*="target"]):not([id*="next"]):not([src*="line"]):not([class*="orbit"]) {
-    opacity: 0;
-    filter: blur(5px);
-    background: linear-gradient(90deg, #f5f2ea 25%, #faf8f5 50%, #f5f2ea 75%);
-    background-size: 200% 100%;
-    animation: imgShimmer 1.5s infinite;
+    opacity: 0.3;
+    background: #f5f2ea;
+    animation: imgShimmer 1.5s ease-in-out infinite;
 }
 
 img.img-loaded:not(.no-shimmer):not([id*="target"]):not([id*="next"]):not([src*="line"]):not([class*="orbit"]) {

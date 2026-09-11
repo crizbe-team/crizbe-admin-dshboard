@@ -276,8 +276,8 @@ export default function Flavours() {
                     <Image
                         src="/images/user/arrow-right.svg"
                         alt=""
-                        width={100}
-                        height={100}
+                        width={16}
+                        height={16}
                         className="w-[16px]"
                     />
                 </Button>
