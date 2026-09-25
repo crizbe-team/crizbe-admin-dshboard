@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { CreditCard, Smartphone, Landmark } from 'lucide-react';
+import Image from 'next/image';
 import Footer from '@/app/_components/Footer';
 import { useRouter } from 'next/navigation';
 import CartSummaryCard from '../../_components/checkout/CartSummaryCard';
@@ -58,17 +58,32 @@ export default function PaymentPage() {
             {
                 id: 'upi' as const,
                 label: 'UPI (GPay, PhonePe, Paytm)',
-                icon: Smartphone,
+                image: '/images/payment/upi.svg',
+                subLogos: [
+                    { src: '/images/payment/gpay.svg', alt: 'Google Pay' },
+                    { src: '/images/payment/phonepe.svg', alt: 'PhonePe' },
+                    { src: '/images/payment/paytm.svg', alt: 'Paytm' },
+                ],
             },
             {
                 id: 'card' as const,
                 label: 'Card (Credit/Debit)',
-                icon: CreditCard,
+                image: '/images/payment/card.svg',
+                subLogos: [
+                    { src: '/images/payment/visa.svg', alt: 'Visa' },
+                    { src: '/images/payment/mastercard.svg', alt: 'Mastercard' },
+                    { src: '/images/payment/rupay.svg', alt: 'RuPay' },
+                ],
             },
             {
                 id: 'netbanking' as const,
                 label: 'Netbanking',
-                icon: Landmark,
+                image: '/images/payment/netbanking.svg',
+                subLogos: [
+                    { src: '/images/payment/hdfc.svg', alt: 'HDFC' },
+                    { src: '/images/payment/sbi.svg', alt: 'SBI' },
+                    { src: '/images/payment/icici.svg', alt: 'ICICI' },
+                ],
             },
         ],
         []
@@ -213,26 +228,49 @@ export default function PaymentPage() {
                     <section className="w-full flex-1">
                         <div className="rounded-2xl border border-[#E7E1D6] bg-white/70 backdrop-blur-sm overflow-hidden">
                             {methods.map((m, idx) => {
-                                const Icon = m.icon;
                                 const active = selected === m.id;
                                 return (
                                     <label
                                         key={m.id}
                                         className={[
-                                            'flex items-center justify-between gap-4 px-5 py-4 cursor-pointer',
+                                            'flex items-center justify-between gap-4 px-5 py-4 cursor-pointer transition-colors',
                                             idx !== methods.length - 1
                                                 ? 'border-b border-[#EFE7DA]'
                                                 : '',
-                                            active ? 'bg-white/70' : '',
+                                            active ? 'bg-white/70' : 'hover:bg-white/40',
                                         ].join(' ')}
                                     >
-                                        <div className="flex items-center gap-3 ">
-                                            <div className="w-8 h-8 rounded-full bg-[#F6F0E6]  grid place-items-center">
-                                                <Icon className="w-4 h-4 text-[#4E3325]" />
+                                        <div className="flex items-center gap-3.5 min-w-0">
+                                            <div className="w-12 h-8 rounded-lg bg-white border border-[#E7E1D6] p-1 flex items-center justify-center shrink-0 shadow-2xs">
+                                                <Image
+                                                    src={m.image}
+                                                    alt={m.label}
+                                                    width={44}
+                                                    height={26}
+                                                    className="max-h-full max-w-full object-contain"
+                                                />
                                             </div>
-                                            <span className="text-sm text-[#4E3325]">
-                                                {m.label}
-                                            </span>
+                                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 min-w-0">
+                                                <span className="text-sm font-medium text-[#4E3325] truncate">
+                                                    {m.label}
+                                                </span>
+                                                <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+                                                    {m.subLogos.map((logo) => (
+                                                        <span
+                                                            key={logo.alt}
+                                                            className="inline-flex items-center justify-center h-4.5 px-1.5 bg-[#FAF7F2] rounded border border-[#EBE4D8]"
+                                                        >
+                                                            <Image
+                                                                src={logo.src}
+                                                                alt={logo.alt}
+                                                                width={24}
+                                                                height={12}
+                                                                className="max-h-3 max-w-6 object-contain"
+                                                            />
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <input
@@ -240,7 +278,7 @@ export default function PaymentPage() {
                                             name="pay"
                                             checked={active}
                                             onChange={() => setSelected(m.id)}
-                                            className="accent-[#4E3325] w-4 h-4"
+                                            className="accent-[#4E3325] w-4 h-4 cursor-pointer shrink-0"
                                         />
                                     </label>
                                 );

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 32" fill="none">
+  <!-- Bank Pillar Building Icon -->
+  <g transform="translate(6, 4)">
+    <rect width="24" height="24" rx="6" fill="#EFF6FF" />
+    <!-- Pediment Roof -->
+    <path d="M4 8.5L12 3.5L20 8.5H4Z" fill="#1D4ED8" />
+    <!-- Entablature bar -->
+    <rect x="4" y="9.5" width="16" height="1.8" rx="0.5" fill="#1D4ED8" />
+    <!-- 4 Pillars -->
+    <rect x="5.5" y="12" width="2" height="6.5" rx="0.5" fill="#2563EB" />
+    <rect x="9.5" y="12" width="2" height="6.5" rx="0.5" fill="#2563EB" />
+    <rect x="13.5" y="12" width="2" height="6.5" rx="0.5" fill="#2563EB" />
+    <rect x="17.5" y="12" width="2" height="6.5" rx="0.5" fill="#2563EB" />
+    <!-- Foundation Base -->
+    <rect x="4" y="19.5" width="16" height="2" rx="0.5" fill="#1D4ED8" />
+  </g>
+
+  <!-- Typography: NET BANKING -->
+  <text x="36" y="15.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="9" font-weight="800" fill="#1E3A8A" letter-spacing="0.5">NET</text>
+  <text x="36" y="24.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="8.5" font-weight="700" fill="#2563EB" letter-spacing="0.2">BANKING</text>
+</svg>
