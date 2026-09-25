@@ -1,12 +1,21 @@
 import { z } from 'zod';
 
 export const contactSchema = z.object({
-    name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
-    email: z.string().email({ message: 'Invalid email address' }),
-    phone_number: z.string().min(10, { message: 'Invalid phone number' }),
+    name: z
+        .string()
+        .min(1, { message: 'Name is required' })
+        .min(2, { message: 'Name must be at least 2 characters' }),
+    email: z
+        .string()
+        .min(1, { message: 'Email address is required' })
+        .email({ message: 'Invalid email address' }),
+    phone_number: z.string().optional(),
     phone_country_code: z.string().optional(),
-    location: z.string().min(2, { message: 'Location must be at least 2 characters' }),
-    message: z.string().min(5, { message: 'Message must be at least 5 characters' }),
+    location: z.string().optional(),
+    message: z
+        .string()
+        .min(1, { message: 'Message is required' })
+        .min(5, { message: 'Message must be at least 5 characters' }),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;

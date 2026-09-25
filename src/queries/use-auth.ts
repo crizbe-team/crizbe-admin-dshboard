@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     login,
     signupInitiate,
@@ -81,12 +81,14 @@ export const useSetPassword = () => {
 };
 
 export const useLogout = () => {
+    const queryClient = useQueryClient();
     const clearCredentials = () => {
         const isAdmin = typeof window !== 'undefined' && window.location.pathname.startsWith('/bd6b-6ced');
         authUtils.removeTokens();
         authUtils.removeRole();
+        queryClient.clear();
         if (typeof window !== 'undefined') {
-            window.location.href = isAdmin ? '/bd6b-6ced/dashboard/login' : '/login';
+            window.location.replace(isAdmin ? '/bd6b-6ced/dashboard/login' : '/login');
         }
     };
     return useMutation({
@@ -99,3 +101,4 @@ export const useLogout = () => {
         },
     });
 };
+

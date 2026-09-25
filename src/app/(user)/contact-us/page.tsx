@@ -69,7 +69,8 @@ export default function ContactUsPage() {
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                 <FormInput
-                                    label="Name *"
+                                    label="Name"
+                                    required
                                     placeholder="Enter your name"
                                     className="h-[42px] rounded-[10px] border-gray-100"
                                     {...register('name')}
@@ -77,6 +78,7 @@ export default function ContactUsPage() {
                                 />
                                 <FormInput
                                     label="Email id"
+                                    required
                                     type="email"
                                     placeholder="Enter email id"
                                     className="h-[42px] rounded-[10px] border-gray-100"
@@ -89,8 +91,8 @@ export default function ContactUsPage() {
                                     render={({ field }) => (
                                         <PhoneInput
                                             {...field}
+                                            value={field.value || ''}
                                             label="Phone number"
-                                            required
                                             enableCodeSelect
                                             selectedCode={watch('phone_country_code')}
                                             onCodeChange={(code) =>
@@ -115,6 +117,7 @@ export default function ContactUsPage() {
 
                             <FormTextarea
                                 label="Message"
+                                required
                                 placeholder="Enter your message"
                                 rows={6}
                                 className="rounded-2xl border-gray-100 p-6"
@@ -178,12 +181,15 @@ export default function ContactUsPage() {
                                 <div className="text-[#474747] text-sm space-y-1">
                                     <p>{COMPANY_CONTACT.phone}</p>
                                 </div>
-                                <button className="mt-auto px-6 py-2 rounded-full border border-gray-200 text-sm font-semibold text-[#191919] hover:bg-gray-50 flex items-center gap-2 transition-colors">
+                                <a
+                                    href={`tel:${COMPANY_CONTACT.phone.replace(/\s+/g, '')}`}
+                                    className="mt-auto px-6 py-2 rounded-full border border-gray-200 text-sm font-semibold text-[#191919] hover:bg-gray-50 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
                                     <span className="w-4 h-4 rounded-full bg-[#C4994A]/10 flex items-center justify-center">
                                         <Phone className="w-3 h-3 text-[#C4994A]" />
                                     </span>
                                     Request a call
-                                </button>
+                                </a>
                             </motion.div>
 
                             {/* Email Card */}
@@ -201,10 +207,13 @@ export default function ContactUsPage() {
                                     <span className="font-bold text-[#191919]">Email</span>
                                 </div>
                                 <p className="text-[#474747] text-sm">{COMPANY_CONTACT.email}</p>
-                                <button className="mt-auto px-6 py-2 rounded-full border border-gray-200 text-sm font-semibold text-[#191919] hover:bg-gray-50 flex items-center gap-2 transition-colors">
+                                <a
+                                    href={`mailto:${COMPANY_CONTACT.email}?subject=${encodeURIComponent('Inquiry from Crizbe Website')}`}
+                                    className="mt-auto px-6 py-2 rounded-full border border-gray-200 text-sm font-semibold text-[#191919] hover:bg-gray-50 flex items-center gap-2 transition-colors cursor-pointer"
+                                >
                                     <Mail className="w-4 h-4 text-[#C4994A]" />
                                     Mail now
-                                </button>
+                                </a>
                             </motion.div>
                         </div>
                     </motion.div>

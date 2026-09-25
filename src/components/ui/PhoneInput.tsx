@@ -15,7 +15,7 @@ type PhoneCodeOption = {
 interface PhoneInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
     label?: string;
     required?: boolean;
-    value: string;
+    value?: string;
     onChange: (value: string) => void;
 
     enableCodeSelect?: boolean;
@@ -37,7 +37,7 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         {
             label,
             required,
-            value,
+            value = '',
             onChange,
             enableCodeSelect = false,
             selectedCode,
@@ -92,8 +92,8 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
                 )}
                 <div
                     className={cn(
-                        'mt-1 relative flex items-center gap-2 rounded-lg border bg-white px-3 py-2 hover:border-[#C4994A] focus-within:border-[#C4994A] transition-colors',
-                        error ? 'border-red-500' : 'border-[#E7E4DD]'
+                        'mt-1 relative flex items-center gap-2 rounded-lg border bg-white px-3 py-2 hover:border-[#C4994A] focus-within:border-[#C4994A] transition-colors border-[#E7E4DD]',
+                        error && '!border-red-500 border-red-500'
                     )}
                 >
                     {enableCodeSelect ? (

@@ -99,7 +99,7 @@ api.interceptors.response.use(
 
                 if (typeof window !== 'undefined') {
                     const isAdmin = window.location.pathname.startsWith('/bd6b-6ced');
-                    window.location.href = isAdmin ? '/bd6b-6ced/dashboard/login' : '/login';
+                    window.location.replace(isAdmin ? '/bd6b-6ced/dashboard/login' : '/login');
                 }
 
                 return Promise.reject(refreshError);

@@ -5,6 +5,8 @@ import ProfileSidebar from './components/ProfileSidebar';
 import { useFetchMinimalDetails } from '@/queries/use-account';
 import { usePathname } from 'next/navigation';
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import { ProtectedRoute } from '@/hooks/use-protected-route';
+import { authUtils } from '@/utils/auth';
 
 const BREADCRUMB_MAP: Record<string, string> = {
     '/profile/my-orders': 'My Orders',
@@ -20,8 +22,9 @@ export default function ProfileLayout({
     children: React.ReactNode;
 }>) {
     const pathname = usePathname();
+    const isAuth = authUtils.isAuthenticated();
 
-    const { data: minimalDetailsRes } = useFetchMinimalDetails();
+    const { data: minimalDetailsRes } = useFetchMinimalDetails(isAuth);
     const userName = minimalDetailsRes?.data?.first_name || 'Customer';
 
     const breadcrumbItems = [
@@ -54,20 +57,22 @@ export default function ProfileLayout({
     }, [pathname]);
 
     return (
-        <div className="min-h-screen bg-[#FCF7EE]">
-            <div className="wrapper pt-20 lg:pt-28 pb-5">
-                <div className="flex flex-col gap-6 lg:gap-[30px] lg:flex-row lg:items-start">
-                    <div className="static lg:sticky lg:top-[100px] shrink-0 w-full lg:w-[280px]">
-                        <div className="mb-4 pl-2">
-                            <Breadcrumb items={breadcrumbItems} />
+        <ProtectedRoute requireAuth={true}>
+            <div className="min-h-screen bg-[#FCF7EE]">
+                <div className="wrapper pt-20 lg:pt-28 pb-5">
+                    <div className="flex flex-col gap-6 lg:gap-[30px] lg:flex-row lg:items-start">
+                        <div className="static lg:sticky lg:top-[100px] shrink-0 w-full lg:w-[280px]">
+                            <div className="mb-4 pl-2">
+                                <Breadcrumb items={breadcrumbItems} />
+                            </div>
+                            <ProfileSidebar userName={userName} />
                         </div>
-                        <ProfileSidebar userName={userName} />
-                    </div>
-                    <div id="profile-content" className="flex-1 w-full lg:pr-2 scroll-mt-24">
-                        {children}
+                        <div id="profile-content" className="flex-1 w-full lg:pr-2 scroll-mt-24">
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </ProtectedRoute>
     );
 }

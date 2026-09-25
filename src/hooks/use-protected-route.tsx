@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { authUtils } from '@/utils/auth';
 import Cookies from 'js-cookie';
@@ -17,50 +17,87 @@ export function ProtectedRoute({ children, requireAuth = false }: ProtectedRoute
     const [isChecking, setIsChecking] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        const checkAuth = () => {
-            // Check if user has access token in cookies
-            const isAuth = !!Cookies.get('access_token');
-            setIsAuthenticated(isAuth);
+    const checkAuth = useCallback(() => {
+        const isAuth = authUtils.isAuthenticated();
+        setIsAuthenticated(isAuth);
 
-            // List of auth pages that should redirect to home if user is authenticated
-            const authPages = ['/login', '/register', '/enter-otp', '/setup-password', '/forgot-password'];
-            const isAuthPage = authPages.some(page => pathname?.startsWith(page));
+        const authPages = ['/login', '/register', '/enter-otp', '/setup-password', '/forgot-password'];
+        const isAuthPage = authPages.some(page => pathname?.startsWith(page));
 
-            if (isAuth && isAuthPage) {
-                // User is authenticated and trying to access auth pages, redirect to home
-                router.push('/');
-                return;
-            }
+        if (isAuth && isAuthPage) {
+            router.replace('/');
+            return;
+        }
 
-            // If page requires auth and user is not authenticated
-            if (requireAuth && !isAuth) {
-                // Store the attempted URL for redirecting after login
-                Cookies.set('redirectAfterLogin', pathname || '/', {
-                    expires: 1 / 24, // 1 hour
-                    secure: process.env.NEXT_PUBLIC_SERVER === 'PRODUCTION',
-                    sameSite: 'strict',
-                    path: '/',
-                });
-                router.push('/login');
-                return;
-            }
+        if (requireAuth && !isAuth) {
+            Cookies.set('redirectAfterLogin', pathname || '/', {
+                expires: 1 / 24, // 1 hour
+                secure: process.env.NEXT_PUBLIC_SERVER === 'PRODUCTION',
+                sameSite: 'strict',
+                path: '/',
+            });
+            window.location.replace('/login');
+            return;
+        }
 
-            setIsChecking(false);
-        };
-
-        checkAuth();
+        setIsChecking(false);
     }, [pathname, requireAuth, router]);
 
-    // Show loading state while checking authentication
+    useEffect(() => {
+        checkAuth();
+
+        const handlePageShow = (event: PageTransitionEvent) => {
+            const isAuth = authUtils.isAuthenticated();
+            if (requireAuth && !isAuth) {
+                window.location.replace('/login');
+            } else if (
+                isAuth &&
+                ['/login', '/register', '/enter-otp', '/setup-password', '/forgot-password'].some(page =>
+                    pathname?.startsWith(page)
+                )
+            ) {
+                window.location.replace('/');
+            }
+        };
+
+        const handlePopState = () => {
+            const isAuth = authUtils.isAuthenticated();
+            if (requireAuth && !isAuth) {
+                window.location.replace('/login');
+            }
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                const isAuth = authUtils.isAuthenticated();
+                if (requireAuth && !isAuth) {
+                    window.location.replace('/login');
+                }
+            }
+        };
+
+        window.addEventListener('pageshow', handlePageShow);
+        window.addEventListener('popstate', handlePopState);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            window.removeEventListener('pageshow', handlePageShow);
+            window.removeEventListener('popstate', handlePopState);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [checkAuth, pathname, requireAuth]);
+
     if (isChecking) {
         return <UserLoaders />;
     }
 
-    // Don't render if user is authenticated and on auth page (will redirect)
-    if (isAuthenticated && pathname?.startsWith('/')) {
+    if (requireAuth && !isAuthenticated) {
+        return null;
+    }
+
+    if (isAuthenticated) {
         const authPages = ['/login', '/register', '/enter-otp', '/setup-password', '/forgot-password'];
-        const isAuthPage = authPages.some(page => pathname.startsWith(page));
+        const isAuthPage = authPages.some(page => pathname?.startsWith(page));
         if (isAuthPage) {
             return null;
         }
@@ -68,3 +105,4 @@ export function ProtectedRoute({ children, requireAuth = false }: ProtectedRoute
 
     return <>{children}</>;
 }
+

@@ -100,7 +100,7 @@ export default function EditProfileModal({
                 style={{
                     willChange: 'transform, opacity',
                 }}
-                className="relative w-full max-w-[550px] bg-white rounded-2xl shadow-2xl flex flex-col border border-[#EEE7DB] overflow-hidden"
+                className="relative w-full max-w-[550px] min-w-[450px] bg-white rounded-2xl shadow-2xl flex flex-col border border-[#EEE7DB] overflow-hidden"
             >
                 {/* Header */}
                 <div className="flex items-start justify-between px-6 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-5 bg-white shrink-0">
