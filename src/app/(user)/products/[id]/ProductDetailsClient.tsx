@@ -63,7 +63,7 @@ const ProductDetailsPage = () => {
         },
         {
             label: (
-                <span className="font-[var(--font-inter-tight)]  text-[16px] text-[#191919] font-medium leading-[140%] tracking-[0.01em] lining-nums proportional-nums">
+                <span className="font-[var(--font-inter-tight)] text-[16px] text-[#191919] font-medium leading-[140%] tracking-[0.01em] lining-nums proportional-nums inline-block truncate max-w-[160px] sm:max-w-none align-bottom">
                     {product.name}
                 </span>
             ),

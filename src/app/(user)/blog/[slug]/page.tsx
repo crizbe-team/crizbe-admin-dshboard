@@ -49,7 +49,7 @@ export default function BlogPostPage() {
         },
         {
             label: (
-                <span className="font-[var(--font-inter-tight)] font-medium text-[#191919] text-base line-clamp-1 max-w-[200px] sm:max-w-none">
+                <span className="font-[var(--font-inter-tight)] font-medium text-[#191919] text-base inline-block truncate max-w-[160px] sm:max-w-none align-bottom">
                     {post.title}
                 </span>
             ),
