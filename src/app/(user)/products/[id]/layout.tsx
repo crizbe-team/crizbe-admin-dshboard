@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
         if (!product) return {};
 
-        const imageUrl = product.images?.[0]?.image || product.icon || '';
+        const imageUrl = product.images?.[0]?.image || product.icon || '/images/user/og-image.jpeg';
         const title = product.name;
         const description = product.description || `Buy ${product.name} at Crizbe`;
 
@@ -30,13 +30,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             openGraph: {
                 title: title,
                 description: description,
-                images: imageUrl ? [{ url: imageUrl }] : [],
+                images: [
+                    {
+                        url: imageUrl,
+                        width: 1200,
+                        height: 630,
+                        alt: title,
+                    },
+                ],
             },
             twitter: {
                 card: 'summary_large_image',
                 title: title,
                 description: description,
-                images: imageUrl ? [imageUrl] : [],
+                images: [imageUrl],
             },
         };
     } catch (error) {

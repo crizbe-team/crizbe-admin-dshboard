@@ -12,11 +12,21 @@ export const metadata: Metadata = {
         description:
             'Discover Crizbe, a premium chocolate snack brand bringing crispy crunch sticks with hazelnut, pistachio and almond flavours to chocolate lovers across India.',
         url: 'https://www.crizbe.com/our-story',
+        images: [
+            {
+                url: '/images/user/og-image.jpeg',
+                width: 1200,
+                height: 630,
+                alt: 'About Crizbe Premium Chocolate',
+            },
+        ],
     },
     twitter: {
+        card: 'summary_large_image',
         title: 'About Crizbe | Premium Chocolate Brand in India',
         description:
             'Discover Crizbe, a premium chocolate snack brand bringing crispy crunch sticks with hazelnut, pistachio and almond flavours to chocolate lovers across India.',
+        images: ['/images/user/og-image.jpeg'],
     },
 };
 

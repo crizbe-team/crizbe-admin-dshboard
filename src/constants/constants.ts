@@ -17,4 +17,6 @@ export const COMPANY_CONTACT = {
     fullAddress: 'Crizbe Foods Private Limited, Charuvila Building 1st Floor, Door: 773, Venchempu PO Punalur, Kollam, Kerala - 691333',
     phone: '+91 90724 20226',
     email: 'info@crizbe.com',
+    instagram: 'https://www.instagram.com/_crizbe_?stkn=NDhjOWE0dmE0NjAz',
+    facebook: 'https://www.facebook.com/share/1UGDY1f5AD/?mibextid=wwXIfr',
 };

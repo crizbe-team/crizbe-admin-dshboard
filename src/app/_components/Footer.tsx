@@ -3,6 +3,8 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { Instagram, Facebook } from 'lucide-react';
+import { COMPANY_CONTACT } from '@/constants/constants';
 
 const Footer = () => {
     const navLinks = [
@@ -59,7 +61,7 @@ const Footer = () => {
                     </motion.div>
 
                     {/* Navigation Links */}
-                    <motion.nav variants={itemVariants} className="mb-10 md:mb-16">
+                    <motion.nav variants={itemVariants} className="mb-8 md:mb-10">
                         <ul className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-12">
                             {navLinks.map((link) => (
                                 <li key={link.name}>
@@ -73,6 +75,28 @@ const Footer = () => {
                             ))}
                         </ul>
                     </motion.nav>
+
+                    {/* Social Media Links */}
+                    <motion.div variants={itemVariants} className="flex items-center gap-5 mb-8 md:mb-12">
+                        <a
+                            href={COMPANY_CONTACT.instagram}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Instagram"
+                            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-[#4E3325] hover:text-[#C4994A] hover:border-[#CDAB78] hover:bg-[#FAF3E2] transition-all duration-300 transform hover:-translate-y-1 shadow-xs"
+                        >
+                            <Instagram className="w-5 h-5" />
+                        </a>
+                        <a
+                            href={COMPANY_CONTACT.facebook}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Facebook"
+                            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-[#4E3325] hover:text-[#C4994A] hover:border-[#CDAB78] hover:bg-[#FAF3E2] transition-all duration-300 transform hover:-translate-y-1 shadow-xs"
+                        >
+                            <Facebook className="w-5 h-5" />
+                        </a>
+                    </motion.div>
 
                     {/* Divider */}
                     <motion.div
