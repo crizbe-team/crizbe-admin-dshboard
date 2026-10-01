@@ -87,7 +87,7 @@ function ProductCard({
                 className="flex flex-col flex-grow cursor-pointer"
             >
                 {/* Image Container */}
-                <div className="relative w-full h-[320px] overflow-hidden bg-[#F5F2EA]">
+                <div className="relative w-full h-[300px] sm:h-[330px] lg:h-[370px] xl:h-[390px] overflow-hidden bg-[#F5F2EA]">
                     {images.map((imgObj: any, imgIdx: number) => (
                         <img
                             key={imgObj.id || imgObj.image || imgIdx}
