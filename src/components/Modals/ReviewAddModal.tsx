@@ -8,6 +8,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { reviewSchema, type ReviewFormData } from '@/validations/review';
 import Image from 'next/image';
+import { compressImages } from '@/utils/image-compressor';
 
 interface ReviewAddModalProps {
     open: boolean;
@@ -48,9 +49,12 @@ export default function ReviewAddModal({
     const rating = watch('rating');
     const globalError = (errors.root as any)?.serverError?.message;
 
-    const handlePhotoAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePhotoAdd = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
-        const newPhotos = files
+        if (files.length === 0) return;
+
+        const compressedFiles = await compressImages(files);
+        const newPhotos = compressedFiles
             .slice(0, 4 - photos.length)
             .map((file) => ({ url: URL.createObjectURL(file), file }));
         setPhotos((prev) => [...prev, ...newPhotos].slice(0, 4));

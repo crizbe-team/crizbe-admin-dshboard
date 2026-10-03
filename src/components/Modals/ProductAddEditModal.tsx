@@ -20,6 +20,7 @@ import { productSchema, type ProductFormData } from '@/validations/product';
 import { useCreateProduct, useUpdateProduct } from '@/queries/use-products';
 import { useFetchCategories } from '@/queries/use-categories';
 import { DashboardInput, DashboardTextarea } from '@/components/ui/DashboardFields';
+import { compressImages } from '@/utils/image-compressor';
 
 export interface SizeVariant {
     size: string;
@@ -170,12 +171,16 @@ function ProductAddEditModal({
         }
     }, [isModalOpen, editingProduct]);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
-        setImageFiles((prev) => [...prev, ...files]);
+        if (files.length === 0) return;
 
-        const newPreviews = files.map((file) => URL.createObjectURL(file));
+        const compressedFiles = await compressImages(files);
+        setImageFiles((prev) => [...prev, ...compressedFiles]);
+
+        const newPreviews = compressedFiles.map((file) => URL.createObjectURL(file));
         setImagePreviews((prev) => [...prev, ...newPreviews]);
+        e.target.value = '';
     };
 
     const removeNewImage = (index: number) => {
