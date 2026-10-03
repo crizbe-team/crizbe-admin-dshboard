@@ -54,7 +54,10 @@ export default function ProfileSidebar({ userName = 'Customer' }: { userName?: s
 
                 <nav className="flex flex-col">
                     {NAV_ITEMS.map((item) => {
-                        const isActive = pathname === item.href;
+                        const isActive =
+                            item.href === '/profile'
+                                ? pathname === '/profile'
+                                : pathname === item.href || pathname.startsWith(item.href + '/');
                         return (
                             <React.Fragment key={item.href}>
                                 <Link

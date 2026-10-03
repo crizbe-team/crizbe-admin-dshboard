@@ -150,7 +150,10 @@ export default function Sidebar() {
                 <nav className="flex-1 px-4 overflow-y-auto custom-scrollbar">
                     {menuItems.map((item) => {
                         const Icon = item.icon;
-                        const isActive = pathname === item.path;
+                        const isActive =
+                            item.path === '/bd6b-6ced/dashboard'
+                                ? pathname === '/bd6b-6ced/dashboard'
+                                : pathname === item.path || pathname.startsWith(item.path + '/');
 
                         return (
                             <Link
