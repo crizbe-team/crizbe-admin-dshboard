@@ -68,7 +68,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName, pr
             <div
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className="relative w-full aspect-square bg-[#FAF6EE] border border-[#EADBBD]/40 rounded-[32px] overflow-hidden shadow-xs group cursor-pointer min-h-[350px] sm:min-h-[450px]"
+                className="relative w-full aspect-square max-h-[500px] sm:max-h-[540px] bg-[#FAF6EE] border border-[#EADBBD]/40 rounded-[32px] overflow-hidden shadow-xs group cursor-pointer min-h-[320px] sm:min-h-[420px]"
             >
                 {currentImage?.image ? (
                     <img
@@ -128,7 +128,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName, pr
 
             {/* Thumbnails */}
             {validImages.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+                <div className="flex gap-3 overflow-x-auto py-2 px-1 scrollbar-none">
                     {validImages.map((imgObj, index) => (
                         <button
                             key={imgObj.id || imgObj.image || index}
