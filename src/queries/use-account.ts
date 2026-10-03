@@ -20,6 +20,7 @@ import {
     AdminUserData,
 } from '../services/account';
 import { API_ENDPOINTS } from '../utils/api-endpoints';
+import { toast } from '@/components/ui/Toast';
 
 const { GET_ADDRESSES, GET_CLIENTS, GET_MINIMAL_DETAILS, GET_ADMIN_ROLES, GET_ADMIN_USERS } =
     API_ENDPOINTS;
@@ -39,6 +40,10 @@ export const useUpdateProfile = () => {
         mutationFn: (data: any) => updateProfile(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_MINIMAL_DETAILS] });
+            toast.success('Profile details updated successfully!');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to update profile details.');
         },
     });
 };
@@ -49,6 +54,10 @@ export const useUploadProfilePicture = () => {
         mutationFn: (file: File) => uploadProfilePicture(file),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [GET_MINIMAL_DETAILS] });
+            toast.success('Profile picture updated successfully!');
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to update profile picture.');
         },
     });
 };
