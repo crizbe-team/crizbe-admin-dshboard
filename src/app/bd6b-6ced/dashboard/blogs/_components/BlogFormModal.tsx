@@ -36,6 +36,10 @@ export default function BlogFormModal({ isOpen, onClose, initialData }: BlogForm
     const [keywordInput, setKeywordInput] = useState('');
     const [keywords, setKeywords] = useState<string[]>([]);
 
+    const [metaTitle, setMetaTitle] = useState('');
+    const [metaDescription, setMetaDescription] = useState('');
+    const [metaKeywords, setMetaKeywords] = useState('');
+
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
@@ -51,6 +55,9 @@ export default function BlogFormModal({ isOpen, onClose, initialData }: BlogForm
             setStatus(initialData.status || 'draft');
             setTags(initialData.tags || []);
             setKeywords(initialData.keywords || []);
+            setMetaTitle(initialData.meta_title || initialData.meta_details?.meta_title || '');
+            setMetaDescription(initialData.meta_description || initialData.meta_details?.meta_description || '');
+            setMetaKeywords(initialData.meta_keywords || initialData.meta_details?.meta_keywords || '');
             setCoverImagePreview(initialData.cover_image_url || initialData.cover_image || null);
             setCoverImage(null);
         } else {
@@ -65,6 +72,9 @@ export default function BlogFormModal({ isOpen, onClose, initialData }: BlogForm
             setStatus('draft');
             setTags(['Belgian Chocolate', 'Crunch Sticks']);
             setKeywords(['luxury chocolate', 'gourmet snacks']);
+            setMetaTitle('');
+            setMetaDescription('');
+            setMetaKeywords('');
             setCoverImage(null);
             setCoverImagePreview(null);
         }
@@ -79,6 +89,9 @@ export default function BlogFormModal({ isOpen, onClose, initialData }: BlogForm
                 .trim()
                 .replace(/\s+/g, '-');
             setSlug(generatedSlug);
+            if (!metaTitle) {
+                setMetaTitle(`${val} | Crizbe Blog`);
+            }
         }
     };
 
@@ -146,6 +159,9 @@ export default function BlogFormModal({ isOpen, onClose, initialData }: BlogForm
         formData.append('status', status);
         formData.append('tags', JSON.stringify(tags));
         formData.append('keywords', JSON.stringify(keywords));
+        formData.append('meta_title', metaTitle);
+        formData.append('meta_description', metaDescription);
+        formData.append('meta_keywords', metaKeywords);
 
         if (coverImage) {
             formData.append('cover_image', coverImage);
@@ -476,6 +492,104 @@ export default function BlogFormModal({ isOpen, onClose, initialData }: BlogForm
                                     </button>
                                 </span>
                             ))}
+                        </div>
+                    </div>
+
+                    {/* SEO Metadata Settings */}
+                    <div className="p-5 bg-[#1a1a1a] rounded-2xl border border-[#E8BF7A]/30 space-y-4">
+                        <div className="border-b border-[#333] pb-3 flex items-center justify-between">
+                            <div>
+                                <h3 className="text-sm font-bold text-white flex items-center gap-2 font-bricolage">
+                                    🔍 SEO &amp; Search Metadata
+                                </h3>
+                                <p className="text-xs text-gray-400 mt-0.5">
+                                    Configure custom title tags, search engine descriptions, and meta keywords for maximum search visibility.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (title) setMetaTitle(`${title} | Crizbe Blog`);
+                                    if (excerpt) setMetaDescription(excerpt.slice(0, 160));
+                                    if (keywords.length > 0) setMetaKeywords(keywords.join(', '));
+                                }}
+                                className="px-3 py-1.5 bg-[#E8BF7A]/15 hover:bg-[#E8BF7A]/25 border border-[#E8BF7A]/30 text-[#E8BF7A] text-xs font-semibold rounded-lg transition"
+                                title="Auto-fill meta details from title, excerpt & keywords"
+                            >
+                                ✨ Auto-fill Meta
+                            </button>
+                        </div>
+
+                        {/* Google SERP Preview Card */}
+                        <div className="p-4 bg-[#0d0d0d] border border-[#2d2d2d] rounded-xl space-y-1">
+                            <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block mb-2">
+                                Google Search Snippet Preview
+                            </span>
+                            <div className="text-xs text-[#8ab4f8] flex items-center gap-2">
+                                <span className="w-4 h-4 rounded-full bg-[#E8BF7A] text-[#141414] text-[9px] font-bold flex items-center justify-center">C</span>
+                                <div>
+                                    <div className="text-white text-xs font-medium leading-none">Crizbe Gourmet Journal</div>
+                                    <div className="text-[11px] text-[#bdc1c6] leading-none mt-0.5">https://crizbe.com › blog › {slug || 'article-slug'}</div>
+                                </div>
+                            </div>
+                            <div className="text-sm text-[#8ab4f8] font-medium hover:underline cursor-pointer pt-1 line-clamp-1">
+                                {metaTitle || title || 'Article Title | Crizbe Blog'}
+                            </div>
+                            <div className="text-xs text-[#bdc1c6] leading-relaxed line-clamp-2 pt-0.5">
+                                {metaDescription || excerpt || 'Search engines will display this description snippet when this article appears in search results.'}
+                            </div>
+                        </div>
+
+                        {/* Meta Title Input */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-semibold text-gray-300">
+                                    Meta Title
+                                </label>
+                                <span className={`text-[11px] font-mono ${metaTitle.length > 60 ? 'text-amber-400 font-bold' : 'text-gray-400'}`}>
+                                    {metaTitle.length} / 60 chars {metaTitle.length > 60 && '(Ideal max 60)'}
+                                </span>
+                            </div>
+                            <input
+                                type="text"
+                                value={metaTitle}
+                                onChange={(e) => setMetaTitle(e.target.value)}
+                                placeholder="e.g. Gourmet Belgian Chocolate Sticks | Crizbe Blog"
+                                className="w-full px-4 py-2.5 bg-[#141414] border border-[#333] rounded-xl text-white text-xs focus:border-[#E8BF7A] focus:outline-none"
+                            />
+                        </div>
+
+                        {/* Meta Description Input */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-semibold text-gray-300">
+                                    Meta Description
+                                </label>
+                                <span className={`text-[11px] font-mono ${metaDescription.length > 160 ? 'text-amber-400 font-bold' : 'text-gray-400'}`}>
+                                    {metaDescription.length} / 160 chars {metaDescription.length > 160 && '(Ideal max 160)'}
+                                </span>
+                            </div>
+                            <textarea
+                                rows={3}
+                                value={metaDescription}
+                                onChange={(e) => setMetaDescription(e.target.value)}
+                                placeholder="Enter a search-friendly meta description (150-160 characters recommended for optimal Google snippets)..."
+                                className="w-full px-4 py-2.5 bg-[#141414] border border-[#333] rounded-xl text-white text-xs focus:border-[#E8BF7A] focus:outline-none resize-none leading-relaxed"
+                            />
+                        </div>
+
+                        {/* Meta Keywords Input */}
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                Meta Keywords (Comma Separated)
+                            </label>
+                            <input
+                                type="text"
+                                value={metaKeywords}
+                                onChange={(e) => setMetaKeywords(e.target.value)}
+                                placeholder="e.g. luxury chocolate, belgian crunch, gourmet snacks, hazelnut chocolate"
+                                className="w-full px-4 py-2.5 bg-[#141414] border border-[#333] rounded-xl text-white text-xs focus:border-[#E8BF7A] focus:outline-none"
+                            />
                         </div>
                     </div>
 

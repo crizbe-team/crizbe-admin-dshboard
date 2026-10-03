@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { notFound, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useFetchPublicBlogDetail } from '@/queries/use-blogs';
@@ -16,6 +16,46 @@ export default function BlogPostPage() {
     const { data: detailRes, isLoading } = useFetchPublicBlogDetail(slug);
     const post = detailRes?.data;
 
+    const metaTitle = post?.meta_title || post?.meta_details?.meta_title || (post?.title ? `${post.title} | Crizbe Blog` : '');
+    const metaDescription = post?.meta_description || post?.meta_details?.meta_description || post?.excerpt || '';
+    const metaKeywords = post?.meta_keywords || post?.meta_details?.meta_keywords || (post?.keywords ? post.keywords.join(', ') : '');
+    const coverImg = post?.cover_image_url || post?.cover_image || '/images/user/hazelnut-bottle.png';
+
+    // Dynamically update document title and head meta tags on user side
+    useEffect(() => {
+        if (!post) return;
+
+        if (metaTitle) {
+            document.title = metaTitle;
+        }
+
+        const setMetaTag = (name: string, content: string, isProperty = false) => {
+            if (!content) return;
+            const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+            let el = document.querySelector(selector) as HTMLMetaElement | null;
+            if (!el) {
+                el = document.createElement('meta');
+                if (isProperty) {
+                    el.setAttribute('property', name);
+                } else {
+                    el.setAttribute('name', name);
+                }
+                document.head.appendChild(el);
+            }
+            el.setAttribute('content', content);
+        };
+
+        setMetaTag('description', metaDescription);
+        setMetaTag('keywords', metaKeywords);
+        setMetaTag('og:title', metaTitle, true);
+        setMetaTag('og:description', metaDescription, true);
+        setMetaTag('og:image', coverImg, true);
+        setMetaTag('og:url', `https://crizbe.com/blog/${slug}`, true);
+        setMetaTag('twitter:title', metaTitle);
+        setMetaTag('twitter:description', metaDescription);
+        setMetaTag('twitter:image', coverImg);
+    }, [post, metaTitle, metaDescription, metaKeywords, coverImg, slug]);
+
     if (!isLoading && !post) {
         return notFound();
     }
@@ -30,7 +70,6 @@ export default function BlogPostPage() {
 
     if (!post) return null;
 
-    const coverImg = post.cover_image_url || post.cover_image || '/images/user/hazelnut-bottle.png';
     const category = post.category || 'Gourmet Chocolate';
     const readTime = post.read_time || '4 min read';
     const pubDate = post.published_at ? new Date(post.published_at).toISOString().split('T')[0] : '2026-08-01';
@@ -59,8 +98,8 @@ export default function BlogPostPage() {
     const articleJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'Article',
-        headline: post.title,
-        description: post.excerpt,
+        headline: metaTitle,
+        description: metaDescription,
         image: coverImg,
         datePublished: pubDate,
         author: {

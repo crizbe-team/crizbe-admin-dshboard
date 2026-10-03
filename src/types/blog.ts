@@ -19,6 +19,14 @@ export interface BlogItem {
     read_time: string;
     tags: string[];
     keywords: string[];
+    meta_title?: string;
+    meta_description?: string;
+    meta_keywords?: string;
+    meta_details?: {
+        meta_title?: string;
+        meta_description?: string;
+        meta_keywords?: string;
+    };
     status: 'draft' | 'published';
     published_at?: string | null;
     created_at: string;
