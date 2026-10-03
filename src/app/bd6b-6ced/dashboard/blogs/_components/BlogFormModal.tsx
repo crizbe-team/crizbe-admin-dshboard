@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Upload, Plus, Trash2, Bold, Italic, Heading2, Heading3, List, ListOrdered, Quote, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
 import { BlogItem } from '@/types/blog';
 import { useCreateBlog, useUpdateBlog } from '@/queries/use-blogs';
+import { compressImage } from '@/utils/image-compressor';
 
 interface BlogFormModalProps {
     isOpen: boolean;
@@ -81,11 +82,12 @@ export default function BlogFormModal({ isOpen, onClose, initialData }: BlogForm
         }
     };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setCoverImage(file);
-            setCoverImagePreview(URL.createObjectURL(file));
+            const compressed = await compressImage(file);
+            setCoverImage(compressed);
+            setCoverImagePreview(URL.createObjectURL(compressed));
         }
     };
 

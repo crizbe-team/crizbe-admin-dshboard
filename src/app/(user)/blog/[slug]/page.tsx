@@ -121,11 +121,27 @@ export default function BlogPostPage() {
                 </div>
 
                 <div
-                    className="prose prose-lg max-w-none text-[#4E3325] font-sans leading-relaxed mb-12
+                    className="prose prose-lg max-w-none text-[#4E3325] font-sans leading-relaxed mb-12 overflow-x-auto
                     [&_h2]:text-2xl [&_h2]:sm:text-3xl [&_h2]:font-bricolage [&_h2]:font-bold [&_h2]:text-[#4E3325] [&_h2]:mt-8 [&_h2]:mb-4
+                    [&_h3]:text-xl [&_h3]:sm:text-2xl [&_h3]:font-bricolage [&_h3]:font-bold [&_h3]:text-[#4E3325] [&_h3]:mt-6 [&_h3]:mb-3
+                    [&_h4]:text-lg [&_h4]:font-bricolage [&_h4]:font-bold [&_h4]:text-[#4E3325] [&_h4]:mt-5 [&_h4]:mb-2
                     [&_p]:mb-6 [&_p]:text-base [&_p]:sm:text-lg [&_p]:text-[#5E4A3E]
-                    [&_p.lead]:text-xl [&_p.lead]:font-medium [&_p.lead]:text-[#4E3325]"
-                    dangerouslySetInnerHTML={{ __html: post.content }}
+                    [&_p.lead]:text-xl [&_p.lead]:font-medium [&_p.lead]:text-[#4E3325]
+                    [&_strong]:font-semibold [&_strong]:text-[#4E3325]
+                    [&_em]:italic
+                    [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-6 [&_ul]:space-y-2.5
+                    [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-6 [&_ol]:space-y-2.5
+                    [&_li]:text-base [&_li]:sm:text-lg [&_li]:text-[#5E4A3E] [&_li]:pl-1
+                    [&_blockquote]:border-l-4 [&_blockquote]:border-[#9A7236] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-6 [&_blockquote]:text-[#6C5549]
+                    [&_img]:rounded-2xl [&_img]:my-8 [&_img]:mx-auto [&_img]:max-w-full [&_img]:h-auto
+                    [&_a]:text-[#9A7236] [&_a]:underline [&_a]:font-medium hover:[&_a]:text-[#4E3325]
+                    [&_table]:w-full [&_table]:my-8 [&_table]:border-collapse [&_table]:border [&_table]:border-[#EADBBD] [&_table]:rounded-2xl [&_table]:overflow-hidden [&_table]:shadow-xs
+                    [&_thead]:bg-[#FAF4E6] [&_thead]:text-[#4E3325]
+                    [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:font-bricolage [&_th]:font-bold [&_th]:text-sm [&_th]:sm:text-base [&_th]:border-b [&_th]:border-[#EADBBD]
+                    [&_td]:px-4 [&_td]:py-3 [&_td]:text-sm [&_td]:sm:text-base [&_td]:text-[#5E4A3E] [&_td]:border-b [&_td]:border-[#EADBBD]/60
+                    [&_tr:last-child_td]:border-b-0
+                    [&_tr:nth-child(even)]:bg-[#FFFDF7]"
+                    dangerouslySetInnerHTML={{ __html: post.content || '' }}
                 />
 
                 {tagsList.length > 0 && (

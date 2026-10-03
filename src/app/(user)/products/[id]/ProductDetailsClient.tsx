@@ -101,12 +101,18 @@ const ProductDetailsPage = () => {
                                 defaultOpen={true}
                             >
                                 <div
-                                    className="font-[var(--font-inter-tight)] font-normal text-[15px] leading-relaxed text-[#373737] space-y-4 py-1
+                                    className="font-[var(--font-inter-tight)] font-normal text-[15px] leading-relaxed text-[#373737] space-y-4 py-1 overflow-x-auto
                                     [&_h2]:text-lg [&_h2]:font-bricolage [&_h2]:font-bold [&_h2]:text-[#4E3325] [&_h2]:mt-5 [&_h2]:mb-2
                                     [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-[#4E3325] [&_h3]:mt-4 [&_h3]:mb-1.5
                                     [&_strong]:font-semibold [&_strong]:text-[#191919]
                                     [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1.5 [&_ul]:my-3
-                                    [&_li]:text-[#373737] [&_p]:mb-3"
+                                    [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1.5 [&_ol]:my-3
+                                    [&_li]:text-[#373737] [&_p]:mb-3
+                                    [&_table]:w-full [&_table]:my-4 [&_table]:border-collapse [&_table]:border [&_table]:border-[#EAEAEA] [&_table]:rounded-xl [&_table]:overflow-hidden
+                                    [&_thead]:bg-[#FAF4E6] [&_thead]:text-[#4E3325]
+                                    [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_th]:text-xs [&_th]:border-b [&_th]:border-[#EAEAEA]
+                                    [&_td]:px-3 [&_td]:py-2 [&_td]:text-xs [&_td]:text-[#525252] [&_td]:border-b [&_td]:border-[#EAEAEA]/60
+                                    [&_tr:last-child_td]:border-b-0"
                                     dangerouslySetInnerHTML={{
                                         __html: product?.description || '',
                                     }}
