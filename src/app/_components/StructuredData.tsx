@@ -67,10 +67,32 @@ export default function StructuredData() {
                 offers: {
                     '@type': 'Offer',
                     url: 'https://www.crizbe.com/products',
+                    price: '19.99',
                     priceCurrency: 'USD',
+                    priceValidUntil: '2027-12-31',
                     availability: 'https://schema.org/InStock',
                     seller: {
                         '@id': 'https://www.crizbe.com/#organization',
+                    },
+                    hasMerchantReturnPolicy: {
+                        '@type': 'MerchantReturnPolicy',
+                        applicableCountry: 'US',
+                        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+                        merchantReturnDays: 30,
+                        returnMethod: 'https://schema.org/ReturnByMail',
+                        returnFees: 'https://schema.org/FreeReturn',
+                    },
+                    shippingDetails: {
+                        '@type': 'OfferShippingDetails',
+                        shippingRate: {
+                            '@type': 'MonetaryAmount',
+                            value: '0',
+                            currency: 'USD',
+                        },
+                        shippingDestination: {
+                            '@type': 'DefinedRegion',
+                            addressCountry: 'US',
+                        },
                     },
                 },
             },

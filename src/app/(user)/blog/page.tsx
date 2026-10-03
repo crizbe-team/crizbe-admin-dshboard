@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useFetchPublicBlogs } from '@/queries/use-blogs';
 import { BlogItem } from '@/types/blog';
@@ -11,6 +11,17 @@ import Footer from '@/app/_components/Footer';
 export default function BlogListPage() {
     const { data: publicBlogsRes, isLoading } = useFetchPublicBlogs();
     const displayBlogs = publicBlogsRes?.data || [];
+
+    useEffect(() => {
+        document.title = 'Chocolate & Snack Guides | Crizbe Journal';
+        let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+        if (!link) {
+            link = document.createElement('link');
+            link.setAttribute('rel', 'canonical');
+            document.head.appendChild(link);
+        }
+        link.setAttribute('href', 'https://www.crizbe.com/blog');
+    }, []);
 
     const breadcrumbItems = [
         {
