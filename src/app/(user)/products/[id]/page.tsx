@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
               ? 'image/png'
               : 'image/jpeg';
 
-        const productUrl = `${siteUrl}/products/${id}`;
+        const productUrl = `${siteUrl}/products/${id}/`;
 
         return {
             title,

@@ -81,7 +81,7 @@ const ProductDetailsPage = () => {
         setMetaTag('og:image:type', mimeType, true);
         setMetaTag('og:image:width', '1200', true);
         setMetaTag('og:image:height', '630', true);
-        setMetaTag('og:url', `${siteUrl}/products/${productId}`, true);
+        setMetaTag('og:url', `${siteUrl}/products/${productId}/`, true);
         setMetaTag('twitter:card', 'summary_large_image');
         setMetaTag('twitter:title', title);
         setMetaTag('twitter:description', description);
