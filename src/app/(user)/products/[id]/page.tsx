@@ -27,12 +27,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         const title =
             metaDetails.meta_title ||
             product.meta_title ||
-            `${product.name} - Premium Crunch Sticks`;
-        const description =
+            `${product.name} | Crizbe Chocolate`;
+
+        const rawDesc =
             metaDetails.meta_description ||
             product.meta_description ||
-            product.description ||
-            `Savor the roasted perfection of Crizbe's premium ${product.name} crunch sticks. Crafted with real ingredients and dipped in rich Belgian chocolate.`;
+            (product.description ? product.description.replace(/<[^>]*>?/gm, '') : '') ||
+            `Savor the roasted perfection of Crizbe's premium ${product.name} crunch sticks.`;
+        const description = rawDesc.replace(/\s+/g, ' ').slice(0, 200).trim();
+
         const rawKeywords = metaDetails.meta_keywords || product.meta_keywords;
         const keywords = rawKeywords
             ? typeof rawKeywords === 'string'
@@ -46,15 +49,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                   'gourmet chocolate sticks',
               ];
 
-        const ogImage =
-            product.images?.[0]?.image || `${siteUrl}/images/user/og-image.jpeg`;
+        let rawImage = product.images?.[0]?.image || `${siteUrl}/images/user/og-image.jpeg`;
+        let ogImage = rawImage;
+        if (!ogImage.startsWith('http://') && !ogImage.startsWith('https://')) {
+            const cleanPath = ogImage.startsWith('/') ? ogImage : `/${ogImage}`;
+            ogImage = `${siteUrl}${cleanPath}`;
+        }
+
+        const mimeType = ogImage.endsWith('.webp')
+            ? 'image/webp'
+            : ogImage.endsWith('.png')
+              ? 'image/png'
+              : 'image/jpeg';
+
+        const productUrl = `${siteUrl}/products/${id}`;
 
         return {
             title,
             description,
             keywords,
             alternates: {
-                canonical: `${siteUrl}/products/${id}`,
+                canonical: productUrl,
             },
             robots: {
                 index: true,
@@ -64,15 +79,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 title,
                 description,
                 type: 'website',
-                url: `${siteUrl}/products/${id}`,
+                url: productUrl,
+                siteName: 'Crizbe',
                 images: [
                     {
                         url: ogImage,
-                        width: 800,
-                        height: 800,
+                        secureUrl: ogImage,
+                        type: mimeType,
+                        width: 1200,
+                        height: 630,
                         alt: product.name,
                     },
                 ],
+            },
+            twitter: {
+                card: 'summary_large_image',
+                title,
+                description,
+                images: [ogImage],
             },
         };
     } catch (error) {

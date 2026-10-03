@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useFetchSingleProduct, useFetchRelatedProducts } from '@/queries/use-products';
 import UserLoaders from '@/components/ui/UserLoader';
@@ -25,6 +25,61 @@ const ProductDetailsPage = () => {
     const relatedProducts = relatedProductsData?.data || [];
     const [showAllReviews, setShowAllReviews] = useState(false);
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (!product) return;
+
+        const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crizbe.com').replace(/\/$/, '');
+        const metaDetails = product.meta_details || {};
+        const title = metaDetails.meta_title || product.meta_title || `${product.name} | Crizbe Chocolate`;
+        const rawDesc = metaDetails.meta_description || product.meta_description || (product.description ? product.description.replace(/<[^>]*>?/gm, '') : '') || `Savor the roasted perfection of Crizbe's premium ${product.name} crunch sticks.`;
+        const description = rawDesc.replace(/\s+/g, ' ').slice(0, 200).trim();
+
+        document.title = title;
+
+        let rawImage = product.images?.[0]?.image || `${siteUrl}/images/user/og-image.jpeg`;
+        let ogImage = rawImage;
+        if (!ogImage.startsWith('http://') && !ogImage.startsWith('https://')) {
+            const cleanPath = ogImage.startsWith('/') ? ogImage : `/${ogImage}`;
+            ogImage = `${siteUrl}${cleanPath}`;
+        }
+
+        const mimeType = ogImage.endsWith('.webp')
+            ? 'image/webp'
+            : ogImage.endsWith('.png')
+              ? 'image/png'
+              : 'image/jpeg';
+
+        const setMetaTag = (name: string, content: string, isProperty = false) => {
+            if (!content) return;
+            const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+            let el = document.querySelector(selector) as HTMLMetaElement | null;
+            if (!el) {
+                el = document.createElement('meta');
+                if (isProperty) {
+                    el.setAttribute('property', name);
+                } else {
+                    el.setAttribute('name', name);
+                }
+                document.head.appendChild(el);
+            }
+            el.setAttribute('content', content);
+        };
+
+        setMetaTag('description', description);
+        setMetaTag('og:title', title, true);
+        setMetaTag('og:description', description, true);
+        setMetaTag('og:image', ogImage, true);
+        setMetaTag('og:image:secure_url', ogImage, true);
+        setMetaTag('og:image:type', mimeType, true);
+        setMetaTag('og:image:width', '1200', true);
+        setMetaTag('og:image:height', '630', true);
+        setMetaTag('og:url', `${siteUrl}/products/${productId}`, true);
+        setMetaTag('twitter:card', 'summary_large_image');
+        setMetaTag('twitter:title', title);
+        setMetaTag('twitter:description', description);
+        setMetaTag('twitter:image', ogImage);
+    }, [product, productId]);
 
     if (isLoading) {
         return <UserLoaders />;
