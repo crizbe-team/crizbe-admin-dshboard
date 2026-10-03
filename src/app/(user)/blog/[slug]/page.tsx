@@ -13,9 +13,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const canonicalUrl = `${siteUrl}/blog/${slug}`;
 
     try {
-        const res = await fetch(`${apiBaseUrl}/blogs/public/${slug}/`, {
+        const res = await fetch(`${apiBaseUrl}/blogs/${slug}/`, {
             next: { revalidate: 60 },
         });
+
+        if (!res.ok) {
+            return {
+                title: 'Article | Crizbe Blog',
+                alternates: {
+                    canonical: canonicalUrl,
+                },
+            };
+        }
+
         const responseData = await res.json();
         const post = responseData?.data;
 
