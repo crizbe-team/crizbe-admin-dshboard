@@ -32,9 +32,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         const rawDesc =
             metaDetails.meta_description ||
             product.meta_description ||
-            (product.description ? product.description.replace(/<[^>]*>?/gm, '') : '') ||
+            product.description ||
+            '';
+        const cleanDesc = rawDesc
+            .replace(/<[^>]*>?/gm, '')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        const description =
+            cleanDesc.slice(0, 160) ||
             `Savor the roasted perfection of Crizbe's premium ${product.name} crunch sticks.`;
-        const description = rawDesc.replace(/\s+/g, ' ').slice(0, 200).trim();
 
         const rawKeywords = metaDetails.meta_keywords || product.meta_keywords;
         const keywords = rawKeywords
@@ -71,6 +78,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
         const productUrl = `${siteUrl}/products/${id}/`;
 
+        const ogImagesList: any[] = [
+            {
+                url: ogImage,
+                secureUrl: ogImage,
+                type: mimeType,
+                width: 1200,
+                height: 630,
+                alt: product.name,
+            },
+        ];
+
+        if (mimeType === 'image/webp') {
+            const fallbackJpeg = `${siteUrl}/images/user/og-image.jpeg`;
+            ogImagesList.push({
+                url: fallbackJpeg,
+                secureUrl: fallbackJpeg,
+                type: 'image/jpeg',
+                width: 1200,
+                height: 630,
+                alt: product.name,
+            });
+        }
+
         return {
             title,
             description,
@@ -88,16 +118,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 type: 'website',
                 url: productUrl,
                 siteName: 'Crizbe',
-                images: [
-                    {
-                        url: ogImage,
-                        secureUrl: ogImage,
-                        type: mimeType,
-                        width: 1200,
-                        height: 630,
-                        alt: product.name,
-                    },
-                ],
+                images: ogImagesList,
             },
             twitter: {
                 card: 'summary_large_image',

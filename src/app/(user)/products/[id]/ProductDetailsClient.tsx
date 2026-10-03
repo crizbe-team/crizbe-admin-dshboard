@@ -32,8 +32,9 @@ const ProductDetailsPage = () => {
         const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crizbe.com').replace(/\/$/, '');
         const metaDetails = product.meta_details || {};
         const title = metaDetails.meta_title || product.meta_title || `${product.name} | Crizbe Chocolate`;
-        const rawDesc = metaDetails.meta_description || product.meta_description || (product.description ? product.description.replace(/<[^>]*>?/gm, '') : '') || `Savor the roasted perfection of Crizbe's premium ${product.name} crunch sticks.`;
-        const description = rawDesc.replace(/\s+/g, ' ').slice(0, 200).trim();
+        const rawDesc = metaDetails.meta_description || product.meta_description || product.description || '';
+        const cleanDesc = rawDesc.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+        const description = cleanDesc.slice(0, 160) || `Savor the roasted perfection of Crizbe's premium ${product.name} crunch sticks.`;
 
         document.title = title;
 
