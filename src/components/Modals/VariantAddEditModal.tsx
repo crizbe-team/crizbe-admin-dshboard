@@ -170,6 +170,7 @@ function VariantAddEditModal({
                 {
                     id: currentVariantData.variants[0].id!,
                     data: {
+                        product: data.productId || currentVariantData.productId,
                         size: variantObj.size,
                         price: parseFloat(variantObj.price),
                         weight_per_unit: parseFloat(variantObj.weight_per_unit),

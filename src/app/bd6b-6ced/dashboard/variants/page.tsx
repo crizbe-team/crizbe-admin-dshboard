@@ -103,8 +103,9 @@ export default function VariantsPage() {
     };
 
     const handleEditVariant = (variant: any) => {
+        const prodId = variant.product_detail?.id || variant.product?.id || variant.product || '';
         setEditingVariantData({
-            productId: variant.product_detail?.id || '',
+            productId: String(prodId),
             productName: variant.product_detail?.name || '',
             variants: [
                 {
