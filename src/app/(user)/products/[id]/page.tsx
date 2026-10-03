@@ -49,11 +49,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                   'gourmet chocolate sticks',
               ];
 
-        let rawImage = product.images?.[0]?.image || `${siteUrl}/images/user/og-image.jpeg`;
+        let rawImage = product.images?.[0]?.image || product.icon || `${siteUrl}/images/user/og-image.jpeg`;
         let ogImage = rawImage;
-        if (!ogImage.startsWith('http://') && !ogImage.startsWith('https://')) {
-            const cleanPath = ogImage.startsWith('/') ? ogImage : `/${ogImage}`;
-            ogImage = `${siteUrl}${cleanPath}`;
+        if (ogImage && !ogImage.startsWith('http://') && !ogImage.startsWith('https://')) {
+            const apiDomain = (process.env.NEXT_PUBLIC_BASE_URL || 'https://api.crizbe.com')
+                .replace(/\/api\/v1\/?$/, '')
+                .replace(/\/$/, '');
+            if (ogImage.startsWith('/media/')) {
+                ogImage = `${apiDomain}${ogImage}`;
+            } else {
+                const cleanPath = ogImage.startsWith('/') ? ogImage : `/${ogImage}`;
+                ogImage = `${siteUrl}${cleanPath}`;
+            }
         }
 
         const mimeType = ogImage.endsWith('.webp')
