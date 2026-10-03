@@ -7,6 +7,7 @@ import { useCartToast } from '@/contexts/CartToastContext';
 import AuthActionWrapper from '@/components/AuthActionWrapper';
 import { motion } from 'framer-motion';
 import { toast } from '@/components/ui/Toast';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface Product {
     id: string;
@@ -28,12 +29,9 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const { mutate: addToCart, isPending } = useAddToCart();
     const { showToast } = useCartToast();
+    const { convertPrice, isLoading: isCurrencyLoading } = useCurrency();
 
-    // Format price
-    const formattedPrice = new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-    }).format(Number(product.price) || 0);
+    const formattedPrice = isCurrencyLoading ? '...' : convertPrice(product.price);
 
     const imageUrl = product.images?.[0]?.image || '/placeholder-image.png';
 
