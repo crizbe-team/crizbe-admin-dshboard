@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Search, Loader2 } from 'lucide-react';
 import { useDebouncedCallback } from '@/hooks/use-debounce';
 
@@ -32,10 +33,38 @@ export default function SearchableSelect({
 }: SearchableSelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [mounted, setMounted] = useState(false);
+    const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
+    
     const containerRef = useRef<HTMLDivElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
     const debouncedSearchChange = useDebouncedCallback((query: string) => {
         onSearchChange?.(query);
     }, 500);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const updatePosition = useCallback(() => {
+        if (!containerRef.current) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const dropdownMaxHeight = 280;
+        const spaceBelow = viewportHeight - rect.bottom;
+
+        const showAbove = spaceBelow < dropdownMaxHeight && rect.top > dropdownMaxHeight;
+
+        setDropdownStyle({
+            position: 'fixed',
+            left: `${rect.left}px`,
+            width: `${rect.width}px`,
+            top: showAbove ? 'auto' : `${rect.bottom + 6}px`,
+            bottom: showAbove ? `${viewportHeight - rect.top + 6}px` : 'auto',
+            zIndex: 99999,
+        });
+    }, []);
 
     const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const query = e.target.value;
@@ -53,16 +82,29 @@ export default function SearchableSelect({
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(event.target as Node) &&
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
                 setIsOpen(false);
             }
         };
 
-        document.addEventListener('mousedown', handleClickOutside);
+        if (isOpen) {
+            updatePosition();
+            document.addEventListener('mousedown', handleClickOutside);
+            window.addEventListener('resize', updatePosition);
+            window.addEventListener('scroll', updatePosition, true);
+        }
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('resize', updatePosition);
+            window.removeEventListener('scroll', updatePosition, true);
         };
-    }, []);
+    }, [isOpen, updatePosition]);
 
     const handleSelect = (optionValue: string) => {
         if (isDisabled) return;
@@ -88,8 +130,12 @@ export default function SearchableSelect({
                 />
             </div>
 
-            {isOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#141414] border border-white/15 rounded-2xl shadow-2xl z-50 overflow-hidden">
+            {isOpen && mounted && createPortal(
+                <div
+                    ref={dropdownRef}
+                    style={dropdownStyle}
+                    className="bg-[#141414] border border-white/15 rounded-2xl shadow-2xl overflow-hidden"
+                >
                     <div className="p-2 border-b border-white/10">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#E8BF7A]" />
@@ -129,8 +175,10 @@ export default function SearchableSelect({
                             </div>
                         )}
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
 }
+
