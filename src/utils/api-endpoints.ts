@@ -19,6 +19,7 @@ export const API_ENDPOINTS = {
     GET_PRODUCT: 'products/products/:id/',
     GET_RELATED_PRODUCTS: 'products/products/:id/related/',
     GET_PRODUCT_REVIEWS: 'products/products/:slug/reviews/',
+    MANAGE_PRODUCT_REVIEW: 'products/reviews/:id/',
     GET_LANDING_PAGE_REVIEWS: 'products/landing-page/reviews/',
 
     // Variant endpoints

@@ -4,6 +4,8 @@ import {
     getProduct,
     getRelatedProducts,
     createProductReview,
+    updateProductReview,
+    deleteProductReview,
     getLandingPageReviews,
     getProductReviews,
 } from '../services/products';
@@ -101,10 +103,38 @@ export const useCreateProductReview = (productSlug: string) => {
         mutationFn: (data) => createProductReview(productSlug, data),
         onSuccess: () => {
             toast.success('Review submitted successfully!');
-            queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.GET_PRODUCT] });
+            queryClient.invalidateQueries({ queryKey: ['product-reviews'] });
         },
         onError: (error: any) => {
             toast.error(error?.message || 'Failed to submit review. Please try again.');
+        },
+    });
+};
+
+export const useUpdateProductReview = () => {
+    const queryClient = useQueryClient();
+    return useMutation<any, any, { id: string | number; data: FormData | Record<string, any> }>({
+        mutationFn: ({ id, data }) => updateProductReview(id, data),
+        onSuccess: () => {
+            toast.success('Review updated successfully!');
+            queryClient.invalidateQueries({ queryKey: ['product-reviews'] });
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to update review.');
+        },
+    });
+};
+
+export const useDeleteProductReview = () => {
+    const queryClient = useQueryClient();
+    return useMutation<any, any, string | number>({
+        mutationFn: (id: string | number) => deleteProductReview(id),
+        onSuccess: () => {
+            toast.success('Review deleted successfully!');
+            queryClient.invalidateQueries({ queryKey: ['product-reviews'] });
+        },
+        onError: (error: any) => {
+            toast.error(error?.message || 'Failed to delete review.');
         },
     });
 };
@@ -122,3 +152,4 @@ export const useFetchProductReviews = (slug: string, params: any = {}) => {
         enabled: !!slug,
     });
 };
+

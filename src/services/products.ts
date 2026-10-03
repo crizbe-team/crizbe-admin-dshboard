@@ -63,6 +63,31 @@ export const createProductReview = async (slug: string, data: FormData | Record<
     return handleApiResponse(response);
 };
 
+export const updateProductReview = async (
+    reviewId: string | number,
+    data: FormData | Record<string, any>
+) => {
+    const { MANAGE_PRODUCT_REVIEW } = API_ENDPOINTS;
+    const url = new ApiBuilder(MANAGE_PRODUCT_REVIEW).path('id', reviewId).build();
+    const config =
+        data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
+    try {
+        const response = await api.put(url, data, config);
+        return handleApiResponse(response);
+    } catch (err) {
+        // Fallback to patch if put fails
+        const response = await api.patch(url, data, config);
+        return handleApiResponse(response);
+    }
+};
+
+export const deleteProductReview = async (reviewId: string | number) => {
+    const { MANAGE_PRODUCT_REVIEW } = API_ENDPOINTS;
+    const url = new ApiBuilder(MANAGE_PRODUCT_REVIEW).path('id', reviewId).build();
+    const response = await api.delete(url);
+    return handleApiResponse(response);
+};
+
 export const getLandingPageReviews = async () => {
     const { GET_LANDING_PAGE_REVIEWS } = API_ENDPOINTS;
     const url = new ApiBuilder(GET_LANDING_PAGE_REVIEWS).build();
@@ -82,3 +107,4 @@ export const getProductReviews = async (slug: string, params: any = {}) => {
     const response = await api.get(url);
     return handleApiResponse(response);
 };
+

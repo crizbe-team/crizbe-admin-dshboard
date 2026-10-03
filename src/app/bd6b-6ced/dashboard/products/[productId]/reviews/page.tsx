@@ -1,11 +1,17 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Star, MessageSquare } from 'lucide-react';
-import { useFetchSingleProduct, useFetchProductReviews } from '@/queries/use-products';
+import { ArrowLeft, Star, MessageSquare, Pencil, Trash2 } from 'lucide-react';
+import {
+    useFetchSingleProduct,
+    useFetchProductReviews,
+    useDeleteProductReview,
+} from '@/queries/use-products';
 import DashboardLoader from '@/components/ui/DashboardLoader';
 import Pagination from '@/components/ui/Pagination';
 import DebouncedSearch from '@/components/ui/DebouncedSearch';
+import ReviewEditModal, { ReviewItem } from '@/components/Modals/ReviewEditModal';
+import DashboardConfirmationModal from '@/components/Modals/DashboardConfirmationModal';
 import { useState, useEffect } from 'react';
 
 const formatDateTime = (dateString: string) => {
@@ -32,6 +38,8 @@ export default function AllReviewsPage() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedReviewForEdit, setSelectedReviewForEdit] = useState<ReviewItem | null>(null);
+    const [selectedReviewForDelete, setSelectedReviewForDelete] = useState<ReviewItem | null>(null);
 
     const { data: productData, isLoading: isProductLoading } = useFetchSingleProduct(productId);
     const product = productData?.data || {};
@@ -44,6 +52,8 @@ export default function AllReviewsPage() {
         }
     );
 
+    const { mutate: deleteReview, isPending: isDeleting } = useDeleteProductReview();
+
     const reviews = reviewsData?.data || [];
     const pagination = reviewsData?.pagination || {};
     const baseData = reviewsData?.base_data || {};
@@ -52,6 +62,15 @@ export default function AllReviewsPage() {
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery]);
+
+    const handleConfirmDelete = () => {
+        if (!selectedReviewForDelete?.id) return;
+        deleteReview(selectedReviewForDelete.id, {
+            onSuccess: () => {
+                setSelectedReviewForDelete(null);
+            },
+        });
+    };
 
     if (isProductLoading) {
         return (
@@ -182,6 +201,9 @@ export default function AllReviewsPage() {
                                     <th className="text-left p-6 text-gray-400 font-semibold uppercase tracking-wider text-xs">
                                         DATE
                                     </th>
+                                    <th className="text-right p-6 text-gray-400 font-semibold uppercase tracking-wider text-xs">
+                                        ACTIONS
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[#2a2a2a]">
@@ -239,6 +261,24 @@ export default function AllReviewsPage() {
                                         <td className="p-6 text-gray-400 whitespace-nowrap">
                                             {formatDateTime(review.created_at)}
                                         </td>
+                                        <td className="p-6 text-right whitespace-nowrap">
+                                            <div className="flex items-center justify-end space-x-2">
+                                                <button
+                                                    onClick={() => setSelectedReviewForEdit(review)}
+                                                    title="Edit Review"
+                                                    className="p-2 rounded-xl bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 transition-all"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => setSelectedReviewForDelete(review)}
+                                                    title="Delete Review"
+                                                    className="p-2 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-all"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -265,6 +305,25 @@ export default function AllReviewsPage() {
                     </div>
                 )}
             </div>
+
+            {/* Modals */}
+            <ReviewEditModal
+                open={!!selectedReviewForEdit}
+                onClose={() => setSelectedReviewForEdit(null)}
+                review={selectedReviewForEdit}
+            />
+
+            <DashboardConfirmationModal
+                open={!!selectedReviewForDelete}
+                onClose={() => setSelectedReviewForDelete(null)}
+                onConfirm={handleConfirmDelete}
+                isPending={isDeleting}
+                title="Delete Review"
+                description={`Are you sure you want to delete the review by "${selectedReviewForDelete?.user_name || 'Customer'}"? This action cannot be undone.`}
+                confirmText="Delete Review"
+                variant="destructive"
+            />
         </div>
     );
 }
+
