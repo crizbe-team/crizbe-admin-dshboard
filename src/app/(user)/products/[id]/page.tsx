@@ -7,13 +7,27 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = await params;
-    const apiBaseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'https://api.crizbe.com/api/v1/').replace(/\/$/, '');
-    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crizbe.com').replace(/\/$/, '');
+    const apiBaseUrl = (
+        process.env.NEXT_PUBLIC_BASE_URL || 'https://api.crizbe.com/api/v1/'
+    ).replace(/\/$/, '');
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crizbe.com').replace(
+        /\/$/,
+        ''
+    );
 
     try {
         const res = await fetch(`${apiBaseUrl}/products/products/${id}/`, {
             next: { revalidate: 60 }, // cache for 60 seconds
         });
+        if (!res.ok) {
+            return {
+                title: 'Product | Crizbe Chocolate',
+                alternates: {
+                    canonical: `${siteUrl}/products/${id}/`,
+                },
+            };
+        }
+
         const responseData = await res.json();
         const product = responseData?.data;
 
@@ -25,15 +39,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
         const metaDetails = product.meta_details || {};
         const title =
-            metaDetails.meta_title ||
-            product.meta_title ||
-            `${product.name} | Crizbe Chocolate`;
+            metaDetails.meta_title || product.meta_title || `${product.name} | Crizbe Chocolate`;
 
         const rawDesc =
-            metaDetails.meta_description ||
-            product.meta_description ||
-            product.description ||
-            '';
+            metaDetails.meta_description || product.meta_description || product.description || '';
         const cleanDesc = rawDesc
             .replace(/<[^>]*>?/gm, '')
             .replace(/&nbsp;/g, ' ')
@@ -46,7 +55,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         const rawKeywords = metaDetails.meta_keywords || product.meta_keywords;
         const keywords = rawKeywords
             ? typeof rawKeywords === 'string'
-                ? rawKeywords.split(',').map((k: string) => k.trim()).filter(Boolean)
+                ? rawKeywords
+                      .split(',')
+                      .map((k: string) => k.trim())
+                      .filter(Boolean)
                 : rawKeywords
             : [
                   product.name,
@@ -56,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                   'gourmet chocolate sticks',
               ];
 
-        let rawImage = product.images?.[0]?.image || product.icon || `${siteUrl}/images/user/og-image.jpeg`;
+        let rawImage = product.images?.[0]?.image || `${siteUrl}/images/user/og-image.jpeg`;
         let ogImage = rawImage;
         if (ogImage && !ogImage.startsWith('http://') && !ogImage.startsWith('https://')) {
             const apiDomain = (process.env.NEXT_PUBLIC_BASE_URL || 'https://api.crizbe.com')
