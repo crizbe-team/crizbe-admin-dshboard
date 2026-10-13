@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ShoppingCart, Loader2, ArrowRight } from 'lucide-react';
 import { useFetchProducts } from '@/queries/use-products';
@@ -25,47 +25,15 @@ interface ProductCardProps {
 
 function ProductCard({
     product,
-    index,
+    index: _index,
     convertPrice,
     isCurrencyLoading,
     addingProductId,
     addedToCartProductIds,
     handleAddToCart,
 }: ProductCardProps) {
-    const [isHovered, setIsHovered] = useState(false);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-    const images = useMemo(() => {
-        return product.images && product.images.length > 0
-            ? product.images
-            : [{ image: '/placeholder-image.png' }];
-    }, [product.images]);
-
-    // Preload all product images in browser GPU/memory to eliminate slideshow network blinking
-    useEffect(() => {
-        if (images && images.length > 1) {
-            images.forEach((imgObj: any) => {
-                if (imgObj?.image) {
-                    const img = new Image();
-                    img.src = imgObj.image;
-                }
-            });
-        }
-    }, [images]);
-
-    // Slideshow loop when user hovers the card
-    useEffect(() => {
-        if (!isHovered || images.length <= 1) {
-            setCurrentImageIndex(0);
-            return;
-        }
-
-        const interval = setInterval(() => {
-            setCurrentImageIndex((prev) => (prev + 1) % images.length);
-        }, 1600);
-
-        return () => clearInterval(interval);
-    }, [isHovered, images.length]);
+    const primaryImage =
+        product.images?.[0]?.image || product.image || '/placeholder-image.png';
 
     const defaultVariant = product.variants?.[0];
     const hasVariants = product.variants && product.variants.length > 0;
@@ -78,8 +46,6 @@ function ProductCard({
 
     return (
         <motion.div
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             className="group border-[#E6E6E6] hover:border-[#CDAB78]/60 border overflow-hidden flex flex-col h-full w-full rounded-[28px] bg-[#FCFAF4] transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(78,51,37,0.12)] hover:-translate-y-1.5 relative cursor-pointer"
         >
             <Link
@@ -88,36 +54,11 @@ function ProductCard({
             >
                 {/* Image Container */}
                 <div className="relative w-full h-[300px] sm:h-[330px] lg:h-[370px] xl:h-[390px] overflow-hidden bg-[#F5F2EA]">
-                    {images.map((imgObj: any, imgIdx: number) => (
-                        <img
-                            key={imgObj.id || imgObj.image || imgIdx}
-                            src={imgObj.image}
-                            alt={`${product.name} - ${imgIdx + 1}`}
-                            className={`absolute inset-0 object-cover w-full h-full transform transition-all duration-500 ease-out ${
-                                imgIdx === currentImageIndex
-                                    ? 'opacity-100 scale-100 group-hover:scale-105 z-10'
-                                    : 'opacity-0 scale-100 pointer-events-none z-0'
-                            }`}
-                        />
-                    ))}
-
-                    {/* Horizontal Indicators for Multiple Images (visible on hover) */}
-                    {images.length > 1 && (
-                        <div
-                            className={`absolute bottom-3 left-4 right-4 flex gap-1.5 z-20 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
-                        >
-                            {images.map((_: any, i: any) => (
-                                <div
-                                    key={i}
-                                    className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${
-                                        i === currentImageIndex
-                                            ? 'bg-white opacity-100 shadow-sm'
-                                            : 'bg-white/40'
-                                    }`}
-                                />
-                            ))}
-                        </div>
-                    )}
+                    <img
+                        src={primaryImage}
+                        alt={product.name}
+                        className="absolute inset-0 object-cover w-full h-full transform transition-transform duration-500 ease-out group-hover:scale-105"
+                    />
                 </div>
 
                 <div className="p-[20px] pb-0 bg-[#fff] flex-grow">

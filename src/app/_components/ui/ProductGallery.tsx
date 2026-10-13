@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ModalWrapper } from '@/components/ui/ModalWrapper';
 
 interface ProductGalleryProps {
     images: { id?: string | number; image: string }[];
@@ -9,146 +10,158 @@ interface ProductGalleryProps {
     productIcon?: string;
 }
 
+const GRID_LIMIT = 4;
+
 const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName, productIcon }) => {
+    const [lightboxOpen, setLightboxOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const [isHovered, setIsHovered] = useState(false);
 
     const validImages = useMemo(() => {
-        return images && images.length > 0 ? images : [];
+        return images && images.length > 0 ? images.filter((img) => img?.image) : [];
     }, [images]);
 
-    // Unique stable key based on actual image URLs/IDs to avoid volatile array reference resets
     const imagesKey = useMemo(() => {
         return validImages.map((img) => img.id || img.image).join(',');
     }, [validImages]);
 
-    // Reset selected index ONLY when the image IDs/URLs list actually changes
+    const gridImages = validImages.slice(0, GRID_LIMIT);
+    const extraCount = Math.max(0, validImages.length - GRID_LIMIT);
+
     useEffect(() => {
         setSelectedIndex(0);
+        setLightboxOpen(false);
     }, [imagesKey]);
 
-    // Preload all gallery images into browser cache to eliminate network flashing
     useEffect(() => {
-        if (validImages.length > 1) {
-            validImages.forEach((imgObj) => {
-                if (imgObj?.image) {
-                    const img = new Image();
-                    img.src = imgObj.image;
-                }
-            });
-        }
+        validImages.forEach((imgObj) => {
+            if (imgObj?.image) {
+                const img = new Image();
+                img.src = imgObj.image;
+            }
+        });
     }, [validImages]);
 
-    // Auto-change image if more than one image exists
-    useEffect(() => {
-        if (validImages.length <= 1 || isHovered) return;
+    const openLightbox = (index: number) => {
+        setSelectedIndex(index);
+        setLightboxOpen(true);
+    };
 
-        const interval = setInterval(() => {
-            setSelectedIndex((prev) => (prev + 1) % validImages.length);
-        }, 4000);
-
-        return () => clearInterval(interval);
-    }, [validImages.length, isHovered]);
-
-    const handlePrev = (e: React.MouseEvent) => {
-        e.stopPropagation();
+    const handlePrev = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
         setSelectedIndex((prev) => (prev === 0 ? validImages.length - 1 : prev - 1));
     };
 
-    const handleNext = (e: React.MouseEvent) => {
-        e.stopPropagation();
+    const handleNext = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
         setSelectedIndex((prev) => (prev + 1) % validImages.length);
     };
 
-    const currentImage = validImages[selectedIndex] || validImages[0];
+    const currentImage = validImages[selectedIndex];
+
+    if (validImages.length === 0) {
+        return (
+            <div className="w-full aspect-square bg-[#FAF6EE] border border-[#E8E8E8] rounded-xl overflow-hidden flex items-center justify-center text-6xl text-gray-300">
+                {productIcon || '📦'}
+            </div>
+        );
+    }
 
     return (
-        <div className="flex flex-col gap-5">
-            {/* Main Image Container */}
+        <>
             <div
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                className="relative w-full aspect-square max-h-[500px] sm:max-h-[540px] bg-[#FAF6EE] border border-[#EADBBD]/40 rounded-[32px] overflow-hidden shadow-xs group cursor-pointer min-h-[320px] sm:min-h-[420px]"
+                className={`grid gap-2 sm:gap-2.5 ${
+                    validImages.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
+                }`}
             >
-                {currentImage?.image ? (
-                    <img
-                        key={currentImage.id || currentImage.image || selectedIndex}
-                        src={currentImage.image}
-                        alt={`${productName} - View ${selectedIndex + 1}`}
-                        className="w-full h-full object-cover transition-all duration-500 ease-out group-hover:scale-105"
-                    />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center text-6xl text-gray-300">
-                        {productIcon || '📦'}
-                    </div>
-                )}
+                {gridImages.map((imgObj, index) => {
+                    const isLastVisible = index === gridImages.length - 1 && extraCount > 0;
 
-                {/* Left / Right Arrow Controls */}
-                {validImages.length > 1 && (
-                    <>
-                        <button
-                            type="button"
-                            onClick={handlePrev}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-[#4E3325] backdrop-blur-md shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-                            aria-label="Previous Image"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleNext}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-[#4E3325] backdrop-blur-md shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-                            aria-label="Next Image"
-                        >
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
-
-                        {/* Slide Indicator Dots */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-md">
-                            {validImages.map((_, idx) => (
-                                <button
-                                    key={idx}
-                                    type="button"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setSelectedIndex(idx);
-                                    }}
-                                    className={`h-2 rounded-full transition-all duration-300 ${
-                                        idx === selectedIndex
-                                            ? 'w-6 bg-[#9A7236]'
-                                            : 'w-2 bg-white/60 hover:bg-white'
-                                    }`}
-                                    aria-label={`Go to slide ${idx + 1}`}
-                                />
-                            ))}
-                        </div>
-                    </>
-                )}
-            </div>
-
-            {/* Thumbnails */}
-            {validImages.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto py-2 px-1 scrollbar-none">
-                    {validImages.map((imgObj, index) => (
+                    return (
                         <button
                             key={imgObj.id || imgObj.image || index}
-                            className={`relative w-20 h-20 shrink-0 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-300 ${
-                                selectedIndex === index
-                                    ? 'border-[#9A7236] opacity-100 scale-105 shadow-md'
-                                    : 'border-transparent opacity-70 hover:opacity-100'
-                            }`}
-                            onClick={() => setSelectedIndex(index)}
+                            type="button"
+                            onClick={() => openLightbox(index)}
+                            className="relative w-full aspect-square overflow-hidden rounded-xl bg-[#F5F5F5] border border-[#EFEFEF] cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A7236] focus-visible:ring-offset-2"
+                            aria-label={
+                                isLastVisible
+                                    ? `View ${extraCount} more images of ${productName}`
+                                    : `View ${productName} image ${index + 1}`
+                            }
                         >
                             <img
                                 src={imgObj.image}
-                                alt={`${productName} thumbnail ${index + 1}`}
-                                className="object-cover w-full h-full"
+                                alt={`${productName} - View ${index + 1}`}
+                                className="w-full h-full object-cover"
                             />
+                            {isLastVisible && (
+                                <span className="absolute inset-0 bg-black/45 flex items-center justify-center text-white font-bricolage text-2xl sm:text-3xl font-semibold tracking-wide">
+                                    +{extraCount}
+                                </span>
+                            )}
                         </button>
-                    ))}
+                    );
+                })}
+            </div>
+
+            <ModalWrapper open={lightboxOpen} onClose={() => setLightboxOpen(false)}>
+                <div className="relative w-[min(92vw,920px)] max-h-[88vh] bg-[#FCFAF4] rounded-2xl overflow-hidden shadow-xl">
+                    <div className="relative w-full aspect-square max-h-[88vh] bg-[#FAF6EE]">
+                        {currentImage?.image && (
+                            <img
+                                src={currentImage.image}
+                                alt={`${productName} - View ${selectedIndex + 1}`}
+                                className="w-full h-full object-contain"
+                            />
+                        )}
+
+                        {validImages.length > 1 && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={handlePrev}
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-[#4E3325] shadow-md flex items-center justify-center transition-transform duration-200 hover:scale-105"
+                                    aria-label="Previous image"
+                                >
+                                    <ChevronLeft className="w-5 h-5" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleNext}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-[#4E3325] shadow-md flex items-center justify-center transition-transform duration-200 hover:scale-105"
+                                    aria-label="Next image"
+                                >
+                                    <ChevronRight className="w-5 h-5" />
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    {validImages.length > 1 && (
+                        <div className="flex gap-2 overflow-x-auto px-4 py-3 scrollbar-none bg-[#FCFAF4] border-t border-[#EADBBD]/40">
+                            {validImages.map((imgObj, index) => (
+                                <button
+                                    key={imgObj.id || imgObj.image || index}
+                                    type="button"
+                                    onClick={() => setSelectedIndex(index)}
+                                    className={`relative w-16 h-16 shrink-0 rounded-xl overflow-hidden border-2 transition-opacity duration-200 ${
+                                        selectedIndex === index
+                                            ? 'border-[#9A7236] opacity-100'
+                                            : 'border-transparent opacity-70 hover:opacity-100'
+                                    }`}
+                                    aria-label={`Select image ${index + 1}`}
+                                >
+                                    <img
+                                        src={imgObj.image}
+                                        alt={`${productName} thumbnail ${index + 1}`}
+                                        className="object-cover w-full h-full"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
-            )}
-        </div>
+            </ModalWrapper>
+        </>
     );
 };
 

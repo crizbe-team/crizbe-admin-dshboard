@@ -136,7 +136,7 @@ const ProductDetailsPage = () => {
     return (
         <>
             <div className="wrapper pt-[80px] pb-8">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8">
                     {/* Left Column: Sticky Breadcrumb & Gallery */}
                     <div className="lg:col-span-6">
                         <div className="sticky top-[90px] space-y-6">
