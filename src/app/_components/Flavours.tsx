@@ -4,9 +4,13 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import pistaBottle from '../../../public/images/user/pista-bottle.png';
 import { useRouter } from 'next/navigation';
 import { useFetchProducts } from '@/queries/use-products';
+import pistaBottle from '../../../public/images/user/pista-bottle.png';
+import hazelnutBottle from '../../../public/images/user/hazelnut-bottle.png';
+import almondBottle from '../../../public/images/user/almond-bottle.png';
+import mixBottle from '../../../public/images/user/mix-bottle.png';
+
 
 const ingredientsConfig = [
     { size: 50, blur: 'blur-[4px]', z: 'z-1', delay: '0.1s' }, // Back far
@@ -116,7 +120,7 @@ export default function Flavours() {
 
                                 <Image
                                     id="almond-bottle-target"
-                                    src="/images/user/almond-bottle.png"
+                                    src={almondBottle}
                                     alt="Crizbe Almond Premium Crunch Stick Bottle"
                                     width={230}
                                     height={100}
@@ -162,7 +166,7 @@ export default function Flavours() {
 
                                 <Image
                                     id="hazelnut-bottle-target"
-                                    src="/images/user/hazelnut-bottle.png"
+                                    src={hazelnutBottle}
                                     alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
                                     width={230}
                                     height={100}
@@ -208,7 +212,7 @@ export default function Flavours() {
 
                                 <Image
                                     id="mix-bottle-target"
-                                    src="/images/user/mix-bottle.png"
+                                    src={mixBottle}
                                     alt="Crizbe Mixed Premium Crunch Stick Bottle"
                                     width={230}
                                     height={100}

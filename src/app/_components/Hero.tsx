@@ -5,6 +5,8 @@ import { ImageParticles } from '@/components/user/ImageParticles';
 import Image from 'next/image';
 import React from 'react';
 import pistaBottle from '../../../public/images/user/pista-bottle.png';
+import hazelnutBottle from '../../../public/images/user/hazelnut-bottle.png';
+import almondBottle from '../../../public/images/user/almond-bottle.png';
 
 export default function Hero() {
     return (
@@ -40,7 +42,7 @@ export default function Hero() {
                 </p>
             </div>
             <Image
-                src="/images/user/almond-bottle.png"
+                src={almondBottle}
                 alt="Crizbe Almond Premium Crunch Stick Bottle"
                 width={230}
                 height={100}
@@ -50,7 +52,7 @@ export default function Hero() {
                 className="absolute z-[9999]  bottom-0 -rotate-[28.55deg] left-[45%] top-[60%] max-[1280px]:w-[175px] max-[1280px]:top-[50%] max-[1280px]:left-[50%]"
             />
             <Image
-                src="/images/user/hazelnut-bottle.png"
+                src={hazelnutBottle}
                 alt="Crizbe Hazelnut Premium Crunch Stick Bottle"
                 width={230}
                 height={100}
