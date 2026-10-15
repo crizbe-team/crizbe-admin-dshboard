@@ -12,9 +12,16 @@ export default function AuthTransition({ children }: { children: ReactNode }) {
         setIsMounted(true);
     }, []);
 
+    const cardClassName =
+        'w-full max-w-md mx-4 border border-[#CDAB78] border-[1.5px] rounded-[28px] px-6 py-8 sm:px-10 sm:py-10 bg-white';
+
     // Prevent hydration mismatch
     if (!isMounted) {
-        return <div className="w-full h-full flex justify-center items-center">{children}</div>;
+        return (
+            <div className="w-full h-full flex justify-center items-center">
+                <div className={cardClassName}>{children}</div>
+            </div>
+        );
     }
 
     return (
@@ -47,7 +54,7 @@ export default function AuthTransition({ children }: { children: ReactNode }) {
                     animate="animate"
                     exit="exit"
                 >
-                    {children}
+                    <div className={cardClassName}>{children}</div>
                 </motion.div>
             </AnimatePresence>
         </div>

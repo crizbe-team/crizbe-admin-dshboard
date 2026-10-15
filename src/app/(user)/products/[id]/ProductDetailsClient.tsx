@@ -55,8 +55,8 @@ const ProductDetailsPage = () => {
         const mimeType = ogImage.endsWith('.webp')
             ? 'image/webp'
             : ogImage.endsWith('.png')
-              ? 'image/png'
-              : 'image/jpeg';
+                ? 'image/png'
+                : 'image/jpeg';
 
         const setMetaTag = (name: string, content: string, isProperty = false) => {
             if (!content) return;
@@ -161,7 +161,7 @@ const ProductDetailsPage = () => {
                                         About the Product
                                     </span>
                                 }
-                                defaultOpen={true}
+                                defaultOpen={false}
                             >
                                 <div
                                     className="font-[var(--font-inter-tight)] font-normal text-[15px] leading-relaxed text-[#373737] space-y-4 py-1 overflow-x-auto
@@ -239,12 +239,12 @@ const ProductDetailsPage = () => {
                                                     rating === 5
                                                         ? 'Excellent'
                                                         : rating === 4
-                                                          ? 'Very good'
-                                                          : rating === 3
-                                                            ? 'Good'
-                                                            : rating === 2
-                                                              ? 'Average'
-                                                              : 'Poor';
+                                                            ? 'Very good'
+                                                            : rating === 3
+                                                                ? 'Good'
+                                                                : rating === 2
+                                                                    ? 'Average'
+                                                                    : 'Poor';
 
                                                 return (
                                                     <div
@@ -296,12 +296,12 @@ const ProductDetailsPage = () => {
                                                                     {review.rating >= 5
                                                                         ? 'Excellent product!!'
                                                                         : review.rating >= 4
-                                                                          ? 'Worth It'
-                                                                          : review.rating >= 3
-                                                                            ? 'Good product'
-                                                                            : review.rating >= 2
-                                                                              ? 'Average product'
-                                                                              : 'Poor product'}
+                                                                            ? 'Worth It'
+                                                                            : review.rating >= 3
+                                                                                ? 'Good product'
+                                                                                : review.rating >= 2
+                                                                                    ? 'Average product'
+                                                                                    : 'Poor product'}
                                                                 </h4>
                                                             </div>
                                                             <p className="font-inter-tight font-normal text-[16px] leading-[24px] tracking-[0.02em] text-[#747474] mb-2">

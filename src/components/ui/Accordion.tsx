@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, Minus } from 'lucide-react';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 
 interface AccordionItemProps {
     title: React.ReactNode;
@@ -34,9 +34,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children, defaultO
                     {title}
                 </span>
                 {isOpen ? (
-                    <Minus className="w-5 h-5 text-[#1A1A1A]" />
+                    <ChevronUp className="w-5 h-5 text-[#1A1A1A] shrink-0" />
                 ) : (
-                    <Plus className="w-5 h-5 text-[#1A1A1A]" />
+                    <ChevronDown className="w-5 h-5 text-[#1A1A1A] shrink-0" />
                 )}
             </button>
             <div
