@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import pistaBottle from '../../../public/images/user/pista-bottle.png';
+import mixBottle from '../../../public/images/user/mix-bottle.png';
 import { useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
 import { useFetchProducts } from '@/queries/use-products';
@@ -156,6 +157,33 @@ export default function ResponsiveFlavours() {
                         </motion.article>
                     </Link>
 
+                    {/* Mixed Card */}
+                    <Link href={getProductHref('mix')} className="w-full block">
+                        <motion.article
+                            variants={cardVariants}
+                            className="relative w-full aspect-[600/360]"
+                        >
+                            <div className="absolute inset-0 bg-[url(/images/user/mix-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
+                            <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
+                                <h3 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
+                                    Trio Mix
+                                </h3>
+                                <p className="text-[#FFFFFFDD] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[160px] sm:max-w-[190px]">
+                                    Feel the premium pista, almond & hazelnut crunch in every byte.
+                                </p>
+                            </div>
+                            <Image
+                                src={mixBottle}
+                                alt="Crizbe Mixed Premium Crunch Stick Bottle"
+                                width={200}
+                                height={500}
+                                priority
+                                quality={100}
+                                className="absolute right-[-2%] top-1/2 -translate-y-1/2 h-[105%] w-auto object-contain drop-shadow-2xl z-20 pointer-events-none"
+                            />
+                        </motion.article>
+                    </Link>
+
                     {/* Pista Card */}
                     <Link href={getProductHref('pista')} className="w-full block">
                         <motion.article
@@ -165,7 +193,7 @@ export default function ResponsiveFlavours() {
                             <div className="absolute inset-0 bg-[url(/images/user/pista-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
                             <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
                                 <h3 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
-                                    Pistachio
+                                    Pistacho
                                 </h3>
                                 <p className="text-[#FFFFFFDD] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[140px] sm:max-w-[170px]">
                                     Feel the premium pista crunch in every byte.
