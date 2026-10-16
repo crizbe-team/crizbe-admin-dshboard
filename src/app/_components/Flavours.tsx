@@ -230,7 +230,7 @@ export default function Flavours() {
                             <div className="bg-[url(/images/user/pista-card.png)] bg-contain bg-no-repeat w-full h-full transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.02] group-hover:rotate-[3deg]"></div>
                             <div className="absolute bottom-[42px] left-[42px] parallax-content z-5 pointer-events-none">
                                 <h3 className="text-[#FFFFFF] text-[40px] font-bricolage font-semibold mb-[10px]">
-                                    Pistacho
+                                    Pistachio
                                 </h3>
                                 <p className="text-[#FFFFFF] text-[16px] font-normal">
                                     Savor the roasted <br />
