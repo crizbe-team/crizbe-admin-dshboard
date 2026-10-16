@@ -166,7 +166,7 @@ export default function ResponsiveFlavours() {
                             <div className="absolute inset-0 bg-[url(/images/user/mix-card.png)] bg-[length:100%_100%] bg-no-repeat w-full h-full rounded-[24px]"></div>
                             <div className="absolute top-1/2 -translate-y-1/2 left-[10%] z-10">
                                 <h3 className="text-[#FFFFFF] text-[24px] sm:text-[28px] font-bricolage font-bold mb-[4px]">
-                                    Trio Mix
+                                    Trio Pack
                                 </h3>
                                 <p className="text-[#FFFFFFDD] text-[13px] sm:text-[14px] leading-[1.4] font-normal max-w-[160px] sm:max-w-[190px]">
                                     Feel the premium pista, almond & hazelnut crunch in every byte.
