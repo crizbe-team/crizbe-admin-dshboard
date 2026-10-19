@@ -41,8 +41,84 @@ export default function BlogListPage() {
         },
     ];
 
+    const blogJsonLd = {
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'CollectionPage',
+                '@id': 'https://www.crizbe.com/blog#webpage',
+                url: 'https://www.crizbe.com/blog',
+                name: 'Chocolate Blog & Articles | Crizbe',
+                description:
+                    "Explore Crizbe's chocolate articles, guides, insights and helpful tips about premium chocolate, crunch sticks and indulgent treats.",
+                isPartOf: {
+                    '@id': 'https://www.crizbe.com/#website',
+                },
+                breadcrumb: {
+                    '@id': 'https://www.crizbe.com/blog#breadcrumb',
+                },
+                inLanguage: 'en-IN',
+            },
+            {
+                '@type': 'ItemList',
+                '@id': 'https://www.crizbe.com/blog#itemlist',
+                name: 'Crizbe Chocolate Articles',
+                itemListOrder: 'https://schema.org/ItemListOrderDescending',
+                itemListElement: displayBlogs.map((post: BlogItem, idx: number) => ({
+                    '@type': 'ListItem',
+                    position: idx + 1,
+                    name: post.title,
+                    url: `https://www.crizbe.com/blog/${post.slug}`,
+                })),
+            },
+            {
+                '@type': 'BreadcrumbList',
+                '@id': 'https://www.crizbe.com/blog#breadcrumb',
+                itemListElement: [
+                    {
+                        '@type': 'ListItem',
+                        position: 1,
+                        name: 'Home',
+                        item: 'https://www.crizbe.com/',
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 2,
+                        name: 'Blog',
+                        item: 'https://www.crizbe.com/blog',
+                    },
+                ],
+            },
+            {
+                '@type': 'WebSite',
+                '@id': 'https://www.crizbe.com/#website',
+                url: 'https://www.crizbe.com/',
+                name: 'Crizbe',
+                publisher: {
+                    '@id': 'https://www.crizbe.com/#organization',
+                },
+                inLanguage: 'en-IN',
+            },
+            {
+                '@type': 'Organization',
+                '@id': 'https://www.crizbe.com/#organization',
+                name: 'Crizbe Foods Private Limited',
+                alternateName: 'Crizbe',
+                url: 'https://www.crizbe.com/',
+                logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://www.crizbe.com/images/user/crizbe-logo.svg',
+                },
+            },
+        ],
+    };
+
     return (
         <div className="bg-[#FFFDF7] min-h-screen pt-24 pb-12">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+            />
             <div className="wrapper mx-auto px-4">
                 <div className="mb-8">
                     <Breadcrumb items={breadcrumbItems} />

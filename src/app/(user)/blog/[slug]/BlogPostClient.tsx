@@ -104,26 +104,96 @@ export default function BlogPostClient() {
         },
     ];
 
+    const articleUrl = `https://www.crizbe.com/blog/${slug}`;
+
     const articleJsonLd = {
         '@context': 'https://schema.org',
-        '@type': 'Article',
-        headline: metaTitle,
-        description: metaDescription,
-        image: coverImg,
-        datePublished: pubDate,
-        author: {
-            '@type': 'Person',
-            name: authorName,
-            jobTitle: authorRole,
-        },
-        publisher: {
-            '@type': 'Organization',
-            name: 'Crizbe',
-        },
-        mainEntityOfPage: {
-            '@type': 'WebPage',
-            '@id': `https://crizbe.com/blog/${post.slug}`,
-        },
+        '@graph': [
+            {
+                '@type': 'BlogPosting',
+                '@id': `${articleUrl}#article`,
+                url: articleUrl,
+                mainEntityOfPage: {
+                    '@type': 'WebPage',
+                    '@id': `${articleUrl}#webpage`,
+                },
+                headline: post.title || metaTitle,
+                description: metaDescription,
+                image: [coverImg],
+                datePublished: post.created_at || post.date || pubDate,
+                dateModified: post.updated_at || post.created_at || pubDate,
+                author: {
+                    '@type': 'Organization',
+                    '@id': 'https://www.crizbe.com/#organization',
+                },
+                publisher: {
+                    '@id': 'https://www.crizbe.com/#organization',
+                },
+                articleSection: category || 'Chocolate',
+                inLanguage: 'en-IN',
+            },
+            {
+                '@type': 'WebPage',
+                '@id': `${articleUrl}#webpage`,
+                url: articleUrl,
+                name: `${post.title || metaTitle} | Crizbe Blog`,
+                isPartOf: {
+                    '@id': 'https://www.crizbe.com/#website',
+                },
+                mainEntity: {
+                    '@id': `${articleUrl}#article`,
+                },
+                breadcrumb: {
+                    '@id': `${articleUrl}#breadcrumb`,
+                },
+                inLanguage: 'en-IN',
+            },
+            {
+                '@type': 'BreadcrumbList',
+                '@id': `${articleUrl}#breadcrumb`,
+                itemListElement: [
+                    {
+                        '@type': 'ListItem',
+                        position: 1,
+                        name: 'Home',
+                        item: 'https://www.crizbe.com/',
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 2,
+                        name: 'Blog',
+                        item: 'https://www.crizbe.com/blog',
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 3,
+                        name: post.title,
+                        item: articleUrl,
+                    },
+                ],
+            },
+            {
+                '@type': 'WebSite',
+                '@id': 'https://www.crizbe.com/#website',
+                url: 'https://www.crizbe.com/',
+                name: 'Crizbe',
+                publisher: {
+                    '@id': 'https://www.crizbe.com/#organization',
+                },
+                inLanguage: 'en-IN',
+            },
+            {
+                '@type': 'Organization',
+                '@id': 'https://www.crizbe.com/#organization',
+                name: 'Crizbe Foods Private Limited',
+                alternateName: 'Crizbe',
+                url: 'https://www.crizbe.com/',
+                logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://www.crizbe.com/images/user/crizbe-logo.svg',
+                },
+            },
+        ],
     };
 
     return (

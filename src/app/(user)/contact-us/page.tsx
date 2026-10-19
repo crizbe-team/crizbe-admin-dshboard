@@ -53,8 +53,88 @@ export default function ContactUsPage() {
         });
     };
 
+    const contactJsonLd = {
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'ContactPage',
+                '@id': 'https://www.crizbe.com/contact-us#contactpage',
+                url: 'https://www.crizbe.com/contact-us',
+                name: 'Contact Us | Crizbe',
+                description:
+                    'Contact Crizbe Foods Private Limited for product enquiries, support, orders, and other chocolate-related questions.',
+                isPartOf: {
+                    '@id': 'https://www.crizbe.com/#website',
+                },
+                about: {
+                    '@id': 'https://www.crizbe.com/#organization',
+                },
+                mainEntity: {
+                    '@id': 'https://www.crizbe.com/#organization',
+                },
+                breadcrumb: {
+                    '@id': 'https://www.crizbe.com/contact-us#breadcrumb',
+                },
+                inLanguage: 'en-IN',
+            },
+            {
+                '@type': 'Organization',
+                '@id': 'https://www.crizbe.com/#organization',
+                name: 'Crizbe Foods Private Limited',
+                alternateName: 'Crizbe',
+                url: 'https://www.crizbe.com/',
+                logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://www.crizbe.com/images/user/crizbe-logo.svg',
+                },
+                email: 'mailto:info@crizbe.com',
+                telephone: '+91 90724 20226',
+                address: {
+                    '@type': 'PostalAddress',
+                    streetAddress: 'Charuvila Building 1st Floor, Door: 773, Venchempu PO',
+                    addressLocality: 'Punalur',
+                    addressRegion: 'Kerala',
+                    postalCode: '691333',
+                    addressCountry: 'IN',
+                },
+            },
+            {
+                '@type': 'WebSite',
+                '@id': 'https://www.crizbe.com/#website',
+                url: 'https://www.crizbe.com/',
+                name: 'Crizbe',
+                publisher: {
+                    '@id': 'https://www.crizbe.com/#organization',
+                },
+                inLanguage: 'en-IN',
+            },
+            {
+                '@type': 'BreadcrumbList',
+                '@id': 'https://www.crizbe.com/contact-us#breadcrumb',
+                itemListElement: [
+                    {
+                        '@type': 'ListItem',
+                        position: 1,
+                        name: 'Home',
+                        item: 'https://www.crizbe.com/',
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 2,
+                        name: 'Contact Us',
+                        item: 'https://www.crizbe.com/contact-us',
+                    },
+                ],
+            },
+        ],
+    };
+
     return (
         <div className="bg-white min-h-screen">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }}
+            />
             <PageBanner title="Help" showWatermark={true} />
 
             <main className="relative -mt-10 z-10">

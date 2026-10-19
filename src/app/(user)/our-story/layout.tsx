@@ -1,31 +1,33 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Our Story',
+    title: {
+        absolute: 'Our Story | Crizbe Premium UAE Chocolate',
+    },
     description:
-        'Discover Crizbe, a premium chocolate snack brand bringing crispy crunch sticks with hazelnut, pistachio and almond flavours to chocolate lovers across India.',
+        'Discover the Crizbe story and our passion for premium UAE chocolate, crafted to bring rich flavors, crispy textures and indulgent moments to chocolate lovers.',
     alternates: {
         canonical: 'https://www.crizbe.com/our-story',
     },
     openGraph: {
-        title: 'About Crizbe | Premium Chocolate Brand in India',
+        title: 'Our Story | Crizbe Premium UAE Chocolate',
         description:
-            'Discover Crizbe, a premium chocolate snack brand bringing crispy crunch sticks with hazelnut, pistachio and almond flavours to chocolate lovers across India.',
+            'Discover the Crizbe story and our passion for premium UAE chocolate, crafted to bring rich flavors, crispy textures and indulgent moments to chocolate lovers.',
         url: 'https://www.crizbe.com/our-story',
         images: [
             {
                 url: '/images/user/og-image.jpeg',
                 width: 1200,
                 height: 630,
-                alt: 'About Crizbe Premium Chocolate',
+                alt: 'Our Story | Crizbe Premium UAE Chocolate',
             },
         ],
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'About Crizbe | Premium Chocolate Brand in India',
+        title: 'Our Story | Crizbe Premium UAE Chocolate',
         description:
-            'Discover Crizbe, a premium chocolate snack brand bringing crispy crunch sticks with hazelnut, pistachio and almond flavours to chocolate lovers across India.',
+            'Discover the Crizbe story and our passion for premium UAE chocolate, crafted to bring rich flavors, crispy textures and indulgent moments to chocolate lovers.',
         images: ['/images/user/og-image.jpeg'],
     },
 };

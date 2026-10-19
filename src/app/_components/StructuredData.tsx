@@ -7,124 +7,46 @@ export default function StructuredData() {
             {
                 '@type': 'Organization',
                 '@id': 'https://www.crizbe.com/#organization',
-                name: 'Crizbe',
-                url: 'https://www.crizbe.com',
+                name: 'Crizbe Foods Private Limited',
+                alternateName: 'Crizbe',
+                url: 'https://www.crizbe.com/',
                 logo: {
                     '@type': 'ImageObject',
-                    url: 'https://www.crizbe.com/favicon.svg',
-                    width: 512,
-                    height: 512,
+                    url: 'https://www.crizbe.com/images/user/crizbe-logo.svg',
                 },
-                description:
-                    'Crizbe produces premium Belgian chocolate crunch sticks infused with real hazelnut, pistachio, and almond.',
-                sameAs: ['https://www.instagram.com/crizbe', 'https://www.facebook.com/crizbe'],
-                contactPoint: {
-                    '@type': 'ContactPoint',
-                    contactType: 'customer support',
-                    email: 'support@crizbe.com',
-                    availableLanguage: ['English'],
+                email: 'mailto:info@crizbe.com',
+                telephone: '+91 90724 20226',
+                address: {
+                    '@type': 'PostalAddress',
+                    streetAddress: 'Charuvila Building 1st Floor, Door: 773, Venchempu PO',
+                    addressLocality: 'Punalur',
+                    addressRegion: 'Kerala',
+                    postalCode: '691333',
+                    addressCountry: 'IN',
                 },
             },
             {
                 '@type': 'WebSite',
                 '@id': 'https://www.crizbe.com/#website',
-                url: 'https://www.crizbe.com',
-                name: 'Crizbe Premium Chocolate',
-                description:
-                    'Luxury Belgian chocolate crunch sticks with hazelnut, pistachio & almond.',
+                url: 'https://www.crizbe.com/',
+                name: 'Crizbe',
                 publisher: {
                     '@id': 'https://www.crizbe.com/#organization',
                 },
-                potentialAction: {
-                    '@type': 'SearchAction',
-                    target: 'https://www.crizbe.com/products?q={search_term_string}',
-                    'query-input': 'required name=search_term_string',
-                },
+                inLanguage: 'en-IN',
             },
             {
-                '@type': 'Product',
-                '@id': 'https://www.crizbe.com/#product-crunch-sticks',
-                name: 'Crizbe Premium Belgian Chocolate Crunch Sticks',
-                image: [
-                    'https://www.crizbe.com/images/user/almond-bottle.png',
-                    'https://www.crizbe.com/images/user/hazelnut-bottle.png',
-                    'https://www.crizbe.com/images/user/pista-bottle.png',
-                ],
-                description:
-                    'Slender, perfectly layered gourmet crunch sticks crafted with premium Belgian chocolate and real hazelnut, pistachio, and almond roasted nut fillings.',
-                brand: {
-                    '@type': 'Brand',
-                    name: 'Crizbe',
+                '@type': 'WebPage',
+                '@id': 'https://www.crizbe.com/#webpage',
+                url: 'https://www.crizbe.com/',
+                name: 'Premium Chocolate & Crunch Sticks Online India | Crizbe',
+                isPartOf: {
+                    '@id': 'https://www.crizbe.com/#website',
                 },
-                category: 'Confectionery & Gourmet Chocolate',
-                aggregateRating: {
-                    '@type': 'AggregateRating',
-                    ratingValue: '4.9',
-                    reviewCount: '128',
-                    bestRating: '5',
-                    worstRating: '1',
+                about: {
+                    '@id': 'https://www.crizbe.com/#organization',
                 },
-                offers: {
-                    '@type': 'Offer',
-                    url: 'https://www.crizbe.com/products',
-                    price: '19.99',
-                    priceCurrency: 'USD',
-                    priceValidUntil: '2027-12-31',
-                    availability: 'https://schema.org/InStock',
-                    seller: {
-                        '@id': 'https://www.crizbe.com/#organization',
-                    },
-                    hasMerchantReturnPolicy: {
-                        '@type': 'MerchantReturnPolicy',
-                        applicableCountry: 'US',
-                        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
-                        merchantReturnDays: 30,
-                        returnMethod: 'https://schema.org/ReturnByMail',
-                        returnFees: 'https://schema.org/FreeReturn',
-                    },
-                    shippingDetails: {
-                        '@type': 'OfferShippingDetails',
-                        shippingRate: {
-                            '@type': 'MonetaryAmount',
-                            value: '0',
-                            currency: 'USD',
-                        },
-                        shippingDestination: {
-                            '@type': 'DefinedRegion',
-                            addressCountry: 'US',
-                        },
-                    },
-                },
-            },
-            {
-                '@type': 'FAQPage',
-                '@id': 'https://www.crizbe.com/#faq',
-                mainEntity: [
-                    {
-                        '@type': 'Question',
-                        name: 'What makes Crizbe chocolate crunch sticks unique?',
-                        acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'Crizbe crunch sticks combine ultra-slender crispy wafer layers with rich Belgian chocolate and premium roasted nuts (hazelnut, pistachio, almond) for an unparalleled crunch and flavor balance.',
-                        },
-                    },
-                    {
-                        '@type': 'Question',
-                        name: 'What flavors are available in Crizbe crunch sticks?',
-                        acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'Crizbe offers three signature flavors: Roasted Hazelnut Belgian Chocolate, Gourmet Pistachio Cream Crunch, and Caramelized Almond Crunch, as well as a Mixed Variety Pack.',
-                        },
-                    },
-                    {
-                        '@type': 'Question',
-                        name: 'Are Crizbe chocolates suitable for gifting?',
-                        acceptedAnswer: {
-                            '@type': 'Answer',
-                            text: 'Yes, Crizbe packaging is designed with a modern, elegant aesthetic, making it an ideal gift for dessert lovers, corporate gifting, and special occasions.',
-                        },
-                    },
-                ],
+                inLanguage: 'en-IN',
             },
         ],
     };

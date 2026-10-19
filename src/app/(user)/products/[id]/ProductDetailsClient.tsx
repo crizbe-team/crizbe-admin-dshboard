@@ -144,8 +144,112 @@ const ProductDetailsPage = () => {
         },
     ];
 
+    const currentSlug = product.slug || productId;
+    const currentProductUrl = `https://www.crizbe.com/products/${currentSlug}`;
+    const productImages = product.images?.map((img: any) => img.image).filter(Boolean) || [product.icon].filter(Boolean);
+    const productPrice = product.price || product.selling_price || product.variants?.[0]?.price || '0';
+
+    const productJsonLd = {
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'Product',
+                '@id': `${currentProductUrl}#product`,
+                name: product.name,
+                url: currentProductUrl,
+                image: productImages.length > 0 ? productImages : ['https://www.crizbe.com/images/user/og-image.jpeg'],
+                description:
+                    product.description?.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim() ||
+                    product.meta_description ||
+                    `${product.name} by Crizbe`,
+                sku: product.sku || product.id,
+                brand: {
+                    '@type': 'Brand',
+                    name: 'Crizbe',
+                },
+                category: 'Chocolate',
+                offers: {
+                    '@type': 'Offer',
+                    url: currentProductUrl,
+                    priceCurrency: 'INR',
+                    price: String(productPrice),
+                    availability: 'https://schema.org/InStock',
+                    itemCondition: 'https://schema.org/NewCondition',
+                    seller: {
+                        '@id': 'https://www.crizbe.com/#organization',
+                    },
+                },
+            },
+            {
+                '@type': 'Organization',
+                '@id': 'https://www.crizbe.com/#organization',
+                name: 'Crizbe Foods Private Limited',
+                alternateName: 'Crizbe',
+                url: 'https://www.crizbe.com/',
+                logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://www.crizbe.com/images/user/crizbe-logo.svg',
+                },
+            },
+            {
+                '@type': 'WebPage',
+                '@id': `${currentProductUrl}#webpage`,
+                url: currentProductUrl,
+                name: `${product.name} | Crizbe Chocolate`,
+                isPartOf: {
+                    '@id': 'https://www.crizbe.com/#website',
+                },
+                mainEntity: {
+                    '@id': `${currentProductUrl}#product`,
+                },
+                breadcrumb: {
+                    '@id': `${currentProductUrl}#breadcrumb`,
+                },
+                inLanguage: 'en-IN',
+            },
+            {
+                '@type': 'WebSite',
+                '@id': 'https://www.crizbe.com/#website',
+                url: 'https://www.crizbe.com/',
+                name: 'Crizbe',
+                publisher: {
+                    '@id': 'https://www.crizbe.com/#organization',
+                },
+                inLanguage: 'en-IN',
+            },
+            {
+                '@type': 'BreadcrumbList',
+                '@id': `${currentProductUrl}#breadcrumb`,
+                itemListElement: [
+                    {
+                        '@type': 'ListItem',
+                        position: 1,
+                        name: 'Home',
+                        item: 'https://www.crizbe.com/',
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 2,
+                        name: 'Products',
+                        item: 'https://www.crizbe.com/products',
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 3,
+                        name: product.name,
+                        item: currentProductUrl,
+                    },
+                ],
+            },
+        ],
+    };
+
     return (
         <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+            />
             <div className="wrapper pt-[80px] pb-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8">
                     {/* Left Column: Sticky Breadcrumb & Gallery */}

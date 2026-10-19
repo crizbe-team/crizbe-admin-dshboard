@@ -77,8 +77,60 @@ const ProductsPage = () => {
         },
     ];
 
+    const productsJsonLd = {
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'CollectionPage',
+                '@id': 'https://www.crizbe.com/products#webpage',
+                url: 'https://www.crizbe.com/products',
+                name: 'All Premium Chocolate Crunch Sticks | Crizbe',
+                isPartOf: {
+                    '@id': 'https://www.crizbe.com/#website',
+                },
+                breadcrumb: {
+                    '@id': 'https://www.crizbe.com/products#breadcrumb',
+                },
+            },
+            {
+                '@type': 'ItemList',
+                '@id': 'https://www.crizbe.com/products#itemlist',
+                name: 'Crizbe Premium Chocolate Crunch Sticks',
+                numberOfItems: allProducts.length,
+                itemListElement: allProducts.map((p: any, idx: number) => ({
+                    '@type': 'ListItem',
+                    position: idx + 1,
+                    url: `https://www.crizbe.com/products/${p.slug || p.id}`,
+                    name: p.name,
+                })),
+            },
+            {
+                '@type': 'BreadcrumbList',
+                '@id': 'https://www.crizbe.com/products#breadcrumb',
+                itemListElement: [
+                    {
+                        '@type': 'ListItem',
+                        position: 1,
+                        name: 'Home',
+                        item: 'https://www.crizbe.com/',
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 2,
+                        name: 'Products',
+                        item: 'https://www.crizbe.com/products',
+                    },
+                ],
+            },
+        ],
+    };
+
     return (
         <div className="wrapper mx-auto px-4 pt-22 pb-8">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(productsJsonLd) }}
+            />
             <h1 className="sr-only">All Premium Chocolate Crunch Sticks | Crizbe</h1>
             <div className="flex flex-col gap-4 mb-[24px] sm:flex-row sm:items-center sm:justify-between">
                 <Breadcrumb items={breadcrumbItems} />
