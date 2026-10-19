@@ -444,7 +444,7 @@ export default function BlogFormModal({ isOpen, onClose, initialData }: BlogForm
                                     <img
                                         src={coverImagePreview}
                                         alt="Cover preview"
-                                        className="w-full h-full object-contain"
+                                        className="w-full h-full object-cover"
                                     />
                                 </div>
                             )}

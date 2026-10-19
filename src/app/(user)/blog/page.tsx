@@ -158,13 +158,13 @@ export default function BlogListPage() {
                                     key={post.id}
                                     className="bg-white border border-[#EADBBD] rounded-2xl overflow-hidden shadow-xs flex flex-col hover:shadow-md transition-all duration-300 group"
                                 >
-                                    <div className="relative h-56 w-full bg-[#FAF4E6] flex items-center justify-center p-6 overflow-hidden">
+                                    <div className="relative h-60 w-full bg-[#FAF4E6] overflow-hidden">
                                         <img
                                             src={coverImg}
                                             alt={post.title}
-                                            className="object-contain max-h-48 group-hover:scale-105 transition-transform duration-300"
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                                         />
-                                        <span className="absolute top-4 left-4 bg-[#9A7236] text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider font-sans">
+                                        <span className="absolute top-4 left-4 bg-[#9A7236] text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider font-sans shadow-xs">
                                             {category}
                                         </span>
                                     </div>

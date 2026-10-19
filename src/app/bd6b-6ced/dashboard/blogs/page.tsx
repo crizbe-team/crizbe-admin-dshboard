@@ -275,7 +275,7 @@ export default function AdminBlogsPage() {
                                                                 ''
                                                             }
                                                             alt={item.title}
-                                                            className="w-full h-full object-contain p-1"
+                                                            className="w-full h-full object-cover"
                                                         />
                                                     ) : (
                                                         <FileText className="w-5 h-5 text-gray-500" />

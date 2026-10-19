@@ -230,11 +230,11 @@ export default function BlogPostClient() {
                     </div>
                 </header>
 
-                <div className="relative w-full h-[320px] sm:h-[420px] bg-[#FAF4E6] rounded-2xl mb-12 flex items-center justify-center p-8 overflow-hidden border border-[#EADBBD]">
+                <div className="relative w-full max-w-3xl mx-auto h-[200px] sm:h-[280px] md:h-[320px] bg-[#FAF4E6] rounded-2xl sm:rounded-3xl mb-10 overflow-hidden shadow-xs border border-[#EADBBD]">
                     <img
                         src={coverImg}
                         alt={post.title}
-                        className="object-contain max-h-[340px]"
+                        className="w-full h-full object-cover object-center"
                     />
                 </div>
 
