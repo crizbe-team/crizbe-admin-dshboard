@@ -74,6 +74,17 @@ const ProductDetailsPage = () => {
             el.setAttribute('content', content);
         };
 
+        const productSlug = product.slug || productId;
+        const canonicalUrl = `${siteUrl}/products/${productSlug}`;
+
+        let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+        if (!link) {
+            link = document.createElement('link');
+            link.setAttribute('rel', 'canonical');
+            document.head.appendChild(link);
+        }
+        link.setAttribute('href', canonicalUrl);
+
         setMetaTag('description', description);
         setMetaTag('og:title', title, true);
         setMetaTag('og:description', description, true);
@@ -82,7 +93,7 @@ const ProductDetailsPage = () => {
         setMetaTag('og:image:type', mimeType, true);
         setMetaTag('og:image:width', '1200', true);
         setMetaTag('og:image:height', '630', true);
-        setMetaTag('og:url', `${siteUrl}/products/${productId}/`, true);
+        setMetaTag('og:url', canonicalUrl, true);
         setMetaTag('twitter:card', 'summary_large_image');
         setMetaTag('twitter:title', title);
         setMetaTag('twitter:description', description);

@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             return {
                 title: 'Product | Crizbe Chocolate',
                 alternates: {
-                    canonical: `${siteUrl}/products/${id}/`,
+                    canonical: `${siteUrl}/products/${id}`,
                 },
             };
         }
@@ -88,7 +88,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
               ? 'image/png'
               : 'image/jpeg';
 
-        const productUrl = `${siteUrl}/products/${id}/`;
+        const productSlug = product.slug || id;
+        const productUrl = `${siteUrl}/products/${productSlug}`;
 
         const ogImagesList: any[] = [
             {
