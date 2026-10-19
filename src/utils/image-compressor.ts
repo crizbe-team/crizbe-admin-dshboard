@@ -15,11 +15,21 @@ export async function compressImage(
     file: File,
     options: ImageCompressionOptions = {}
 ): Promise<File> {
+    const isWebp = file.type === 'image/webp' || file.name.toLowerCase().endsWith('.webp');
+    const isPng = file.type === 'image/png' || file.name.toLowerCase().endsWith('.png');
+
+    // Keep the exact same format as the uploaded file
+    const defaultOutputType = isWebp
+        ? 'image/webp'
+        : isPng
+          ? 'image/png'
+          : 'image/jpeg';
+
     const {
         maxWidth = 1600,
         maxHeight = 1600,
         quality = 0.82,
-        outputType = 'image/webp',
+        outputType = defaultOutputType,
     } = options;
 
     // SVG or non-raster images don't need canvas compression
@@ -73,13 +83,19 @@ export async function compressImage(
 
                         const nameWithoutExt =
                             file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-                        const ext = outputType === 'image/webp' ? 'webp' : 'jpg';
+                        const ext =
+                            outputType === 'image/webp'
+                                ? 'webp'
+                                : outputType === 'image/png'
+                                  ? 'png'
+                                  : 'jpg';
+
                         const compressedFile = new File([blob], `${nameWithoutExt}.${ext}`, {
                             type: outputType,
                             lastModified: Date.now(),
                         });
 
-                        // Only use compressed file if it's smaller than the original
+                        // Keep format matching original, use compressed if smaller
                         resolve(compressedFile.size < file.size ? compressedFile : file);
                     },
                     outputType,
